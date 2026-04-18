@@ -56,8 +56,9 @@ function layout(title: string, body: string): string {
   <div style="max-width:520px;margin:0 auto;background:#141414;border:1px solid #262626;border-radius:14px;padding:32px;">
     <div style="font-family:Georgia,serif;font-size:22px;font-weight:500;letter-spacing:-0.02em;margin-bottom:24px;">Dunamis Studios</div>
     ${body}
-    <div style="margin-top:32px;padding-top:24px;border-top:1px solid #262626;color:#888;font-size:12px;">
-      Dunamis Studios — precision tools for HubSpot.
+    <div style="margin-top:32px;padding-top:24px;border-top:1px solid #262626;color:#888;font-size:12px;line-height:1.6;">
+      Dunamis Studios — precision tools for HubSpot.<br>
+      Questions? <a href="mailto:josh@dunamisstudios.net" style="color:#6d5cf5;">josh@dunamisstudios.net</a>
     </div>
   </div>
 </body></html>`;
@@ -70,7 +71,7 @@ export async function sendVerificationEmail(
 ): Promise<void> {
   const url = `${process.env.APP_URL ?? "http://localhost:3000"}/verify-email/${token}`;
   const subject = "Verify your Dunamis Studios account";
-  const text = `Hi ${firstName},\n\nConfirm your email to finish setting up Dunamis Studios:\n${url}\n\nThis link expires in 24 hours.`;
+  const text = `Hi ${firstName},\n\nConfirm your email to finish setting up Dunamis Studios:\n${url}\n\nThis link expires in 24 hours.\n\nQuestions? josh@dunamisstudios.net`;
   const html = layout(
     subject,
     `<p style="font-size:15px;line-height:1.6;">Hi ${firstName},</p>
@@ -89,7 +90,7 @@ export async function sendPasswordResetEmail(
 ): Promise<void> {
   const url = `${process.env.APP_URL ?? "http://localhost:3000"}/reset-password/${token}`;
   const subject = "Reset your Dunamis Studios password";
-  const text = `Hi ${firstName},\n\nWe received a request to reset your password. If this was you, use this link (expires in 1 hour):\n${url}\n\nIf not, you can safely ignore this email.`;
+  const text = `Hi ${firstName},\n\nWe received a request to reset your password. If this was you, use this link (expires in 1 hour):\n${url}\n\nIf not, you can safely ignore this email.\n\nQuestions? josh@dunamisstudios.net`;
   const html = layout(
     subject,
     `<p style="font-size:15px;line-height:1.6;">Hi ${firstName},</p>
@@ -106,12 +107,12 @@ export async function sendWelcomeEmail(
   firstName: string,
 ): Promise<void> {
   const subject = "Welcome to Dunamis Studios";
-  const text = `Hi ${firstName},\n\nThanks for creating an account. When you install Property Pulse or Debrief from the HubSpot marketplace, your entitlements will appear automatically in your dashboard.\n\n— Dunamis Studios`;
+  const text = `Hi ${firstName},\n\nThanks for creating an account. When you install Property Pulse or Debrief from the HubSpot marketplace, your entitlements will appear automatically in your dashboard.\n\nNeed anything? Email josh@dunamisstudios.net and I'll get back to you personally.\n\n— Dunamis Studios`;
   const html = layout(
     subject,
     `<p style="font-size:15px;line-height:1.6;">Hi ${firstName},</p>
      <p style="font-size:15px;line-height:1.6;">Thanks for creating an account. When you install Property Pulse or Debrief from the HubSpot marketplace, your entitlements will appear automatically in your dashboard.</p>
-     <p style="font-size:15px;line-height:1.6;">Need anything, just reply to this email.</p>
+     <p style="font-size:15px;line-height:1.6;">Need anything? Email <a href="mailto:josh@dunamisstudios.net" style="color:#6d5cf5;">josh@dunamisstudios.net</a> and I&apos;ll get back to you personally.</p>
      <p style="font-size:15px;line-height:1.6;color:#aaa;">— Dunamis Studios</p>`,
   );
   await send({ to, subject, html, text });
