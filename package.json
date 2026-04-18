@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "seed:entitlement": "tsx scripts/seed-test-entitlement.ts"
+    "seed:entitlement": "tsx scripts/seed-test-entitlement.ts",
+    "stripe:cleanup-incomplete": "tsx scripts/cleanup-incomplete-subscriptions.ts"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.2",
