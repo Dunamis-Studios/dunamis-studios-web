@@ -41,18 +41,15 @@ export function ProductTile({
   comingSoon,
   className,
 }: ProductTileProps) {
-  const Wrapper = comingSoon ? "div" : Link;
-  return (
-    <Wrapper
-      {...(comingSoon ? {} : { href })}
-      className={cn(
-        "group relative isolate flex flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-7 transition-all duration-300",
-        "hover:shadow-md",
-        BORDER[accent],
-        comingSoon && "cursor-default opacity-80",
-        className,
-      )}
-    >
+  const shellClass = cn(
+    "group relative isolate flex flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-7 transition-all duration-300",
+    "hover:shadow-md",
+    BORDER[accent],
+    comingSoon && "cursor-default opacity-80",
+    className,
+  );
+  const inner = (
+    <>
       <div
         aria-hidden
         className={cn(
@@ -91,7 +88,16 @@ export function ProductTile({
       <p className="mt-5 text-sm leading-relaxed text-[var(--fg-muted)]">
         {description}
       </p>
-    </Wrapper>
+    </>
+  );
+
+  if (comingSoon) {
+    return <div className={shellClass}>{inner}</div>;
+  }
+  return (
+    <Link href={href} className={shellClass}>
+      {inner}
+    </Link>
   );
 }
 

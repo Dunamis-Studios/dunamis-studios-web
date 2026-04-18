@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
@@ -78,7 +79,7 @@ export function VerifyClient({ token }: { token: string }) {
         {message}
       </div>
       <Button asChild className="w-full" variant="secondary">
-        <a href="/account">Back to dashboard</a>
+        <Link href="/account">Back to dashboard</Link>
       </Button>
     </div>
   );

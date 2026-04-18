@@ -40,11 +40,29 @@ export interface ButtonProps
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild, loading, children, disabled, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button";
+    const classes = cn(buttonVariants({ variant, size }), className);
+
+    // Radix Slot requires exactly one child, so asChild skips the spinner and
+    // defers loading-state rendering to the caller. Slot also doesn't accept
+    // `disabled` directly — when asChild is used the caller is typically a
+    // Link, which has no disabled semantics.
+    if (asChild) {
+      return (
+        <Slot
+          ref={ref}
+          className={classes}
+          aria-disabled={disabled || loading ? true : undefined}
+          {...props}
+        >
+          {children}
+        </Slot>
+      );
+    }
+
     return (
-      <Comp
+      <button
         ref={ref}
-        className={cn(buttonVariants({ variant, size }), className)}
+        className={classes}
         disabled={disabled || loading}
         {...props}
       >
@@ -55,7 +73,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           />
         ) : null}
         {children}
-      </Comp>
+      </button>
     );
   },
 );

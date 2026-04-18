@@ -6,7 +6,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import { getCurrentSession } from "@/lib/session";
 import { sendVerificationEmail } from "@/lib/email";
 
-export async function POST(_req: Request) {
+export async function POST() {
   const current = await getCurrentSession();
   if (!current) return apiError(401, "unauthenticated", "Please sign in.");
 

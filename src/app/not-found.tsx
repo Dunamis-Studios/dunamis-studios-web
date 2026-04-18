@@ -14,7 +14,7 @@ export default function NotFound() {
           404
         </div>
         <h1 className="mt-3 font-[var(--font-display)] text-4xl font-medium tracking-tight sm:text-5xl">
-          That page doesn't exist.
+          That page doesn&apos;t exist.
         </h1>
         <p className="mt-4 text-[var(--fg-muted)]">
           The link might be broken, or the page may have moved.

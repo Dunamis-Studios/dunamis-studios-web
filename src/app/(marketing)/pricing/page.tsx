@@ -129,8 +129,8 @@ export default function PricingPage() {
             Not sure which tier fits?
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-[var(--fg-muted)]">
-            We're a one-person studio. Send me a note and I'll tell you which
-            tier is right — even if the honest answer is Starter.
+            We&apos;re a one-person studio. Send me a note and I&apos;ll tell
+            you which tier is right — even if the honest answer is Starter.
           </p>
           <div className="mt-6">
             <Button asChild size="lg" variant="secondary">

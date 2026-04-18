@@ -9,7 +9,6 @@ const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono-src" });
 const display = Fraunces({
   subsets: ["latin"],
   variable: "--font-display-src",
-  weight: ["400", "500", "600"],
   style: ["normal", "italic"],
   axes: ["opsz"],
 });
