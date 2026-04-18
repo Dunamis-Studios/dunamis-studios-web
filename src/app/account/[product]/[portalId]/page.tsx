@@ -10,6 +10,7 @@ import { SectionCard } from "@/components/account/section-card";
 import { CancelSubscriptionBlock } from "@/components/account/cancel-subscription-block";
 import { UpgradeButton } from "@/components/account/upgrade-button";
 import { BuyCreditsButton } from "@/components/account/buy-credits-button";
+import { ManageBillingButton } from "@/components/account/manage-billing-button";
 import { getCurrentSession } from "@/lib/session";
 import { getEntitlement } from "@/lib/accounts";
 import { PRODUCT_META, type Entitlement, type EntitlementTier } from "@/lib/types";
@@ -111,8 +112,14 @@ export default async function EntitlementDetailPage({
           ) : null}
           {entitlement.renewalDate ? (
             <span className="text-xs text-[var(--fg-muted)]">
-              Renews {formatDate(entitlement.renewalDate)}
+              {entitlement.cancelAtPeriodEnd
+                ? `Ends ${formatDate(entitlement.renewalDate)}`
+                : `Renews ${formatDate(entitlement.renewalDate)}`}
             </span>
+          ) : null}
+          {entitlement.product === "debrief" &&
+          entitlement.stripeSubscriptionId ? (
+            <ManageBillingButton entitlement={entitlement} />
           ) : null}
         </div>
       </header>
@@ -127,7 +134,7 @@ export default async function EntitlementDetailPage({
           accountEmail={s.account.email}
         />
         <BillingHistorySection />
-        <CancelSubscriptionBlock />
+        <CancelSubscriptionBlock entitlement={entitlement} />
       </div>
     </>
   );
