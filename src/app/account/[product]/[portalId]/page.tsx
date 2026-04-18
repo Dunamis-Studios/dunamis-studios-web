@@ -14,6 +14,8 @@ import { ManageBillingButton } from "@/components/account/manage-billing-button"
 import { getCurrentSession } from "@/lib/session";
 import { getEntitlement } from "@/lib/accounts";
 import { PRODUCT_META, type Entitlement, type EntitlementTier } from "@/lib/types";
+import { stripe } from "@/lib/stripe";
+import type Stripe from "stripe";
 import { productSlugSchema, portalIdSchema } from "@/lib/validation";
 import { formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -133,7 +135,7 @@ export default async function EntitlementDetailPage({
           entitlement={entitlement}
           accountEmail={s.account.email}
         />
-        <BillingHistorySection />
+        <BillingHistorySection entitlement={entitlement} />
         <CancelSubscriptionBlock entitlement={entitlement} />
       </div>
     </>
@@ -258,17 +260,129 @@ function CreditsSection({
   );
 }
 
-function BillingHistorySection() {
+async function BillingHistorySection({
+  entitlement,
+}: {
+  entitlement: Entitlement;
+}) {
+  const customerId = entitlement.stripeCustomerId;
+  const subscriptionId = entitlement.stripeSubscriptionId;
+
+  let invoices: Stripe.Invoice[] = [];
+  if (customerId && entitlement.product === "debrief") {
+    try {
+      const all = await stripe().invoices.list({
+        customer: customerId,
+        limit: 24,
+      });
+      invoices = subscriptionId
+        ? all.data.filter((inv) => {
+            const sid = (inv as unknown as { subscription?: string })
+              .subscription;
+            return sid === subscriptionId;
+          })
+        : all.data;
+    } catch (err) {
+      console.error("[billing-history] stripe fetch failed", err);
+    }
+  }
+
+  if (invoices.length === 0) {
+    return (
+      <SectionCard
+        title="Billing history"
+        description="Invoices for this entitlement."
+      >
+        <EmptyState
+          icon={<Receipt className="h-5 w-5" />}
+          title="No invoices yet"
+          description="Invoices will appear here once your first charge runs."
+        />
+      </SectionCard>
+    );
+  }
+
   return (
     <SectionCard
       title="Billing history"
       description="Invoices for this entitlement."
     >
-      <EmptyState
-        icon={<Receipt className="h-5 w-5" />}
-        title="No invoices yet"
-        description="Invoices will appear here once Stripe is wired up and your first charge runs."
-      />
+      <div className="overflow-x-auto rounded-lg border border-[var(--border)]">
+        <table className="w-full text-sm">
+          <thead className="border-b border-[var(--border)] bg-[var(--bg-subtle)]">
+            <tr className="text-xs uppercase tracking-wider text-[var(--fg-subtle)]">
+              <th className="px-4 py-2.5 text-left font-medium">Date</th>
+              <th className="px-4 py-2.5 text-left font-medium">Amount</th>
+              <th className="px-4 py-2.5 text-left font-medium">Status</th>
+              <th className="px-4 py-2.5 text-right font-medium">
+                <span className="sr-only">Actions</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {invoices.map((inv) => (
+              <tr
+                key={inv.id}
+                className="border-b border-[var(--border)] last:border-0"
+              >
+                <td className="px-4 py-3 text-[var(--fg)]">
+                  {formatDate(
+                    inv.created
+                      ? new Date(inv.created * 1000).toISOString()
+                      : null,
+                  )}
+                </td>
+                <td className="px-4 py-3 font-mono text-[var(--fg)]">
+                  ${(inv.amount_paid / 100).toFixed(2)}{" "}
+                  <span className="text-[var(--fg-subtle)]">
+                    {inv.currency?.toUpperCase()}
+                  </span>
+                </td>
+                <td className="px-4 py-3">
+                  <InvoiceStatusPill status={inv.status} />
+                </td>
+                <td className="px-4 py-3 text-right">
+                  <div className="inline-flex gap-2">
+                    {inv.hosted_invoice_url ? (
+                      <a
+                        href={inv.hosted_invoice_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs text-[var(--accent)] hover:underline"
+                      >
+                        View
+                      </a>
+                    ) : null}
+                    {inv.invoice_pdf ? (
+                      <a
+                        href={inv.invoice_pdf}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs text-[var(--fg-muted)] hover:text-[var(--fg)]"
+                      >
+                        PDF
+                      </a>
+                    ) : null}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </SectionCard>
   );
+}
+
+function InvoiceStatusPill({ status }: { status: string | null }) {
+  const s = status ?? "—";
+  const variant =
+    s === "paid"
+      ? "success"
+      : s === "open" || s === "draft"
+        ? "neutral"
+        : s === "uncollectible" || s === "void"
+          ? "danger"
+          : "neutral";
+  return <Badge variant={variant} className="capitalize">{s}</Badge>;
 }

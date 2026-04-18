@@ -35,6 +35,32 @@ npm run dev
 payload instead of sending — useful for local signup/reset flows without a
 real inbox.
 
+## Stripe testing
+
+This project wires Stripe in **test mode only**. Product and price IDs are
+documented in the debrief repo's `docs/stripe-integration-test.md` and
+resolved here via env vars (`STRIPE_PRICE_DEBRIEF_*`).
+
+**Local webhook forwarding** (required for subscription/credit-pack
+state to sync back to Redis while developing):
+
+```bash
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+```
+
+Copy the `whsec_…` that `stripe listen` prints as `STRIPE_WEBHOOK_SECRET`
+in `.env.local`. Stripe's published webhook signing secret for the
+production endpoint is separate — don't reuse it locally.
+
+**Test cards** (future expiry, any CVC, any ZIP):
+
+| Card                  | Behavior                          |
+| --------------------- | --------------------------------- |
+| `4242 4242 4242 4242` | Success                           |
+| `4000 0025 0000 3155` | 3D Secure challenge, then success |
+| `4000 0000 0000 0002` | Decline — generic                 |
+| `4000 0000 0000 9995` | Decline — insufficient funds      |
+
 ## Seed a test entitlement
 
 To see the populated dashboard and entitlement-detail pages without wiring
