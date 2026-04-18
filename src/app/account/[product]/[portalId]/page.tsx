@@ -316,6 +316,47 @@ function invoiceSubscriptionId(inv: Stripe.Invoice): string | null {
   return direct ?? null;
 }
 
+interface BillingRow {
+  key: string;
+  kind: "invoice" | "pack";
+  created: number;
+  amountCents: number;
+  currency: string;
+  status: string;
+  primaryUrl: string | null;
+  primaryLabel: string;
+  pdfUrl: string | null;
+  label: string | null;
+}
+
+function piInvoiceId(pi: Stripe.PaymentIntent): string | null {
+  // Stripe older API: pi.invoice top-level; newer: sometimes exposed
+  // under latest_charge.invoice. Accept either.
+  const direct = (pi as unknown as { invoice?: string | null }).invoice;
+  if (direct) return direct;
+  const charge = (
+    pi as unknown as {
+      latest_charge?: string | { invoice?: string | null } | null;
+    }
+  ).latest_charge;
+  if (charge && typeof charge !== "string") {
+    return charge.invoice ?? null;
+  }
+  return null;
+}
+
+function chargeReceiptUrl(pi: Stripe.PaymentIntent): string | null {
+  const charge = (
+    pi as unknown as {
+      latest_charge?: { receipt_url?: string | null } | string | null;
+    }
+  ).latest_charge;
+  if (charge && typeof charge !== "string") {
+    return charge.receipt_url ?? null;
+  }
+  return null;
+}
+
 async function BillingHistorySection({
   entitlement,
 }: {
@@ -324,58 +365,115 @@ async function BillingHistorySection({
   const customerId = entitlement.stripeCustomerId;
   const history = entitlement.subscriptionHistory ?? [];
 
-  // Every sub ID ever associated with this entitlement. An invoice
-  // belongs to the entitlement if it's linked to one of these — OR if
-  // its subscription field is null (one-off credit pack charges, which
-  // usually ride a PaymentIntent without an invoice but this is
-  // defense-in-depth for anything Stripe surfaces as an invoice without
-  // a subscription).
   const relevantSubIds = new Set<string>(history);
   if (entitlement.stripeSubscriptionId) {
     relevantSubIds.add(entitlement.stripeSubscriptionId);
   }
 
-  let invoices: Stripe.Invoice[] = [];
+  let rows: BillingRow[] = [];
   if (customerId && entitlement.product === "debrief") {
-    // Customer-wide fetch — no subscription filter at the API boundary.
-    // We filter locally against every sub in subscriptionHistory so
-    // invoices from prior cancel/resubscribe cycles stay visible.
-    const listInvoices = async (): Promise<Stripe.Invoice[]> => {
+    const api = stripe();
+
+    // Fetch invoices + payment intents in parallel. latest_charge is
+    // expanded on PIs so we can pick up receipt_url for credit pack
+    // rows (which never become invoices).
+    const fetchBoth = async (): Promise<{
+      invoices: Stripe.Invoice[];
+      intents: Stripe.PaymentIntent[];
+    }> => {
       try {
-        const resp = await stripe().invoices.list({
-          customer: customerId,
-          limit: 100,
-        });
-        return resp.data;
+        const [invResp, piResp] = await Promise.all([
+          api.invoices.list({ customer: customerId, limit: 100 }),
+          api.paymentIntents.list({
+            customer: customerId,
+            limit: 100,
+            expand: ["data.latest_charge"],
+          }),
+        ]);
+        return { invoices: invResp.data, intents: piResp.data };
       } catch (err) {
         console.error("[billing-history] stripe fetch failed", err);
-        return [];
+        return { invoices: [], intents: [] };
       }
     };
 
-    let raw = await listInvoices();
+    let { invoices, intents } = await fetchBoth();
 
-    // Retry once on empty when a subscription exists — catches the
-    // narrow window between webhook landing and Stripe's server-side
-    // invoice commit. The customer-wide list inherits this protection.
-    if (raw.length === 0 && relevantSubIds.size > 0) {
+    // One 1s retry when a subscription exists but nothing came back —
+    // covers the narrow webhook-landed / Stripe-committed race.
+    if (
+      invoices.length === 0 &&
+      intents.length === 0 &&
+      relevantSubIds.size > 0
+    ) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      raw = await listInvoices();
+      const retry = await fetchBoth();
+      invoices = retry.invoices;
+      intents = retry.intents;
     }
 
-    invoices = raw
+    // Invoices → BillingRow. Filter by subscription history so
+    // invoices for subs other accounts canceled don't leak in when the
+    // Customer is somehow shared (should never happen, but belt +
+    // suspenders).
+    const invoiceRows: BillingRow[] = invoices
       .filter((inv) => {
         const subId = invoiceSubscriptionId(inv);
         if (subId === null) return true;
         return relevantSubIds.has(subId);
       })
-      .sort((a, b) => (b.created ?? 0) - (a.created ?? 0));
+      .map((inv) => ({
+        key: `inv:${inv.id ?? Math.random()}`,
+        kind: "invoice" as const,
+        created: inv.created ?? 0,
+        amountCents: invoiceDisplayAmountCents(inv),
+        currency: inv.currency ?? "usd",
+        status: inv.status ?? "unknown",
+        primaryUrl: inv.hosted_invoice_url ?? null,
+        primaryLabel: "View",
+        pdfUrl: inv.invoice_pdf ?? null,
+        label: null,
+      }));
+
+    // PaymentIntents → BillingRow. Include only succeeded credit-pack
+    // PIs (no invoice attachment — subscription PIs are represented by
+    // their invoice above). Abandoned / requires_payment_method /
+    // canceled / processing PIs are UI artifacts, not billing events.
+    const packRows: BillingRow[] = intents
+      .filter((pi) => pi.status === "succeeded" && !piInvoiceId(pi))
+      .map((pi) => {
+        const packName =
+          typeof pi.metadata?.packName === "string"
+            ? pi.metadata.packName
+            : null;
+        const creditAmount = Number(pi.metadata?.creditAmount ?? 0);
+        const label =
+          packName && Number.isFinite(creditAmount) && creditAmount > 0
+            ? `${creditAmount.toLocaleString()} credits (${packName})`
+            : "Credit pack";
+        return {
+          key: `pi:${pi.id}`,
+          kind: "pack" as const,
+          created: pi.created ?? 0,
+          amountCents: pi.amount_received ?? pi.amount ?? 0,
+          currency: pi.currency ?? "usd",
+          status: "paid",
+          primaryUrl: chargeReceiptUrl(pi),
+          primaryLabel: "Receipt",
+          pdfUrl: null,
+          label,
+        };
+      });
+
+    rows = [...invoiceRows, ...packRows].sort(
+      (a, b) => b.created - a.created,
+    );
   }
 
   const showPortalLink =
     entitlement.product === "debrief" && !!entitlement.stripeCustomerId;
 
-  if (invoices.length === 0) {
+  if (rows.length === 0) {
     return (
       <SectionCard
         title="Billing history"
@@ -411,6 +509,7 @@ async function BillingHistorySection({
           <thead className="border-b border-[var(--border)] bg-[var(--bg-subtle)]">
             <tr className="text-xs uppercase tracking-wider text-[var(--fg-subtle)]">
               <th className="px-4 py-2.5 text-left font-medium">Date</th>
+              <th className="px-4 py-2.5 text-left font-medium">Detail</th>
               <th className="px-4 py-2.5 text-left font-medium">Amount</th>
               <th className="px-4 py-2.5 text-left font-medium">Status</th>
               <th className="px-4 py-2.5 text-right font-medium">
@@ -419,42 +518,43 @@ async function BillingHistorySection({
             </tr>
           </thead>
           <tbody>
-            {invoices.map((inv) => (
+            {rows.map((row) => (
               <tr
-                key={inv.id}
+                key={row.key}
                 className="border-b border-[var(--border)] last:border-0"
               >
                 <td className="px-4 py-3 text-[var(--fg)]">
-                  {formatDate(
-                    inv.created
-                      ? new Date(inv.created * 1000).toISOString()
-                      : null,
-                  )}
+                  {formatDate(new Date(row.created * 1000).toISOString())}
+                </td>
+                <td className="px-4 py-3 text-[var(--fg-muted)]">
+                  {row.kind === "pack"
+                    ? (row.label ?? "Credit pack")
+                    : "Subscription"}
                 </td>
                 <td className="px-4 py-3 font-mono text-[var(--fg)]">
-                  ${(invoiceDisplayAmountCents(inv) / 100).toFixed(2)}{" "}
+                  ${(row.amountCents / 100).toFixed(2)}{" "}
                   <span className="text-[var(--fg-subtle)]">
-                    {inv.currency?.toUpperCase()}
+                    {row.currency.toUpperCase()}
                   </span>
                 </td>
                 <td className="px-4 py-3">
-                  <InvoiceStatusPill status={inv.status} />
+                  <InvoiceStatusPill status={row.status} />
                 </td>
                 <td className="px-4 py-3 text-right">
                   <div className="inline-flex gap-2">
-                    {inv.hosted_invoice_url ? (
+                    {row.primaryUrl ? (
                       <a
-                        href={inv.hosted_invoice_url}
+                        href={row.primaryUrl}
                         target="_blank"
                         rel="noreferrer"
                         className="text-xs text-[var(--accent)] hover:underline"
                       >
-                        View
+                        {row.primaryLabel}
                       </a>
                     ) : null}
-                    {inv.invoice_pdf ? (
+                    {row.pdfUrl ? (
                       <a
-                        href={inv.invoice_pdf}
+                        href={row.pdfUrl}
                         target="_blank"
                         rel="noreferrer"
                         className="text-xs text-[var(--fg-muted)] hover:text-[var(--fg)]"
