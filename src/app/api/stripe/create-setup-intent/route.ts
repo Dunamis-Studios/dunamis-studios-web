@@ -13,6 +13,13 @@ import { portalIdSchema } from "@/lib/validation";
 const bodySchema = z.object({
   product: z.literal("debrief"),
   portalId: portalIdSchema,
+  /**
+   * When the client is abandoning a previous SetupIntent (modal
+   * remount, retry after error), pass its id so we can cancel it
+   * server-side instead of leaving it to linger until Stripe's 23-hour
+   * auto-expire.
+   */
+  previousSetupIntentId: z.string().min(1).max(200).optional(),
 });
 
 /**
@@ -33,7 +40,7 @@ export async function POST(req: Request) {
 
   const parsed = await parseJson(req, bodySchema);
   if (!parsed.ok) return parsed.response;
-  const { product, portalId } = parsed.data;
+  const { product, portalId, previousSetupIntentId } = parsed.data;
 
   const entitlement = await getEntitlement(product, portalId);
   if (!entitlement) {
@@ -48,6 +55,12 @@ export async function POST(req: Request) {
   }
 
   const api = stripe();
+
+  // Best-effort cancel of the abandoned SetupIntent. Non-fatal: a
+  // missing / already-canceled id can't block creating a new one.
+  if (previousSetupIntentId) {
+    await cancelSetupIntentSafely(api, previousSetupIntentId);
+  }
 
   // Lazy-create / reuse the Stripe Customer. Prefer the entitlement-level
   // pairing; fall back to the account-level id; else create.
@@ -116,4 +129,23 @@ function stripeMessage(err: unknown): string {
     if (typeof m === "string") return m;
   }
   return "Stripe error.";
+}
+
+async function cancelSetupIntentSafely(
+  api: ReturnType<typeof stripe>,
+  setupIntentId: string,
+): Promise<void> {
+  try {
+    const si = await api.setupIntents.retrieve(setupIntentId);
+    // Never invalidate a succeeded SetupIntent — it may be about to be
+    // consumed by a concurrent subscription create. Canceled ones are
+    // already dead, no-op.
+    if (si.status === "succeeded" || si.status === "canceled") return;
+    await api.setupIntents.cancel(setupIntentId);
+  } catch (err) {
+    console.warn(
+      `[create-setup-intent] previous ${setupIntentId} cancel skipped:`,
+      err instanceof Error ? err.message : err,
+    );
+  }
 }

@@ -14,6 +14,14 @@ const bodySchema = z.object({
   product: z.literal("debrief"),
   portalId: portalIdSchema,
   pack: z.enum(["small", "medium", "large", "bulk"]),
+  /**
+   * The Buy credits modal recreates the PaymentIntent on every pack
+   * selection change (clientSecret is amount-bound). Pass the id of
+   * the previous PI so we can cancel it server-side — otherwise each
+   * pack toggle leaves a stale incomplete intent in Stripe's dashboard
+   * until the 23-hour auto-expire.
+   */
+  previousPaymentIntentId: z.string().min(1).max(200).optional(),
 });
 
 export async function POST(req: Request) {
@@ -22,7 +30,7 @@ export async function POST(req: Request) {
 
   const parsed = await parseJson(req, bodySchema);
   if (!parsed.ok) return parsed.response;
-  const { product, portalId, pack } = parsed.data;
+  const { product, portalId, pack, previousPaymentIntentId } = parsed.data;
 
   const entitlement = await getEntitlement(product, portalId);
   if (!entitlement || entitlement.accountId !== s.account.accountId) {
@@ -31,6 +39,12 @@ export async function POST(req: Request) {
 
   const packSpec = getCreditPack(pack);
   const api = stripe();
+
+  // Cancel the abandoned PaymentIntent from the previous pack selection
+  // so the Stripe dashboard doesn't accumulate incomplete rows.
+  if (previousPaymentIntentId) {
+    await cancelPaymentIntentSafely(api, previousPaymentIntentId);
+  }
 
   // Reuse existing Customer or create one — credit packs stack on the
   // same Customer whether or not a subscription is active, so this path
@@ -78,4 +92,29 @@ export async function POST(req: Request) {
       dollars: packSpec.dollars,
     },
   });
+}
+
+async function cancelPaymentIntentSafely(
+  api: ReturnType<typeof stripe>,
+  paymentIntentId: string,
+): Promise<void> {
+  try {
+    const pi = await api.paymentIntents.retrieve(paymentIntentId);
+    // Only cancel PIs that are still abandonable. Succeeded ones have
+    // already charged; canceled ones are no-ops; processing ones are
+    // mid-charge and canceling them would be destructive.
+    if (
+      pi.status === "succeeded" ||
+      pi.status === "canceled" ||
+      pi.status === "processing"
+    ) {
+      return;
+    }
+    await api.paymentIntents.cancel(paymentIntentId);
+  } catch (err) {
+    console.warn(
+      `[buy-credits] previous ${paymentIntentId} cancel skipped:`,
+      err instanceof Error ? err.message : err,
+    );
+  }
 }

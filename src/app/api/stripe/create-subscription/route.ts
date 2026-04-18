@@ -14,6 +14,14 @@ const bodySchema = z.object({
   portalId: portalIdSchema,
   tier: z.enum(["starter", "pro", "enterprise"]),
   setupIntentId: z.string().min(1).max(200),
+  /**
+   * If the client had a previous incomplete SetupIntent or
+   * subscription attempt it wants cleaned up (e.g., failed first
+   * attempt that left an incomplete subscription), pass the id here
+   * and we'll cancel it server-side before creating the new one.
+   * Swallowed on any error — cleanup is best-effort.
+   */
+  previousIntentId: z.string().min(1).max(200).optional(),
 });
 
 /**
@@ -35,7 +43,8 @@ export async function POST(req: Request) {
 
   const parsed = await parseJson(req, bodySchema);
   if (!parsed.ok) return parsed.response;
-  const { product, portalId, tier, setupIntentId } = parsed.data;
+  const { product, portalId, tier, setupIntentId, previousIntentId } =
+    parsed.data;
 
   const entitlement = await getEntitlement(product, portalId);
   if (!entitlement) {
@@ -68,6 +77,13 @@ export async function POST(req: Request) {
   }
 
   const api = stripe();
+
+  // Best-effort cancel of any previous abandoned intent the client
+  // passes (e.g. a leftover SetupIntent or subscription from a prior
+  // failed attempt). Non-fatal on error.
+  if (previousIntentId && previousIntentId !== setupIntentId) {
+    await cancelPreviousIntentSafely(api, previousIntentId);
+  }
 
   // 1. Validate the SetupIntent belongs to the right customer and is ready.
   let setupIntent: Stripe.SetupIntent;
@@ -160,6 +176,46 @@ function stripeMessage(err: unknown): string {
     if (typeof m === "string") return m;
   }
   return "Stripe error.";
+}
+
+/**
+ * Cancel any previous intent-like object — SetupIntent, PaymentIntent,
+ * or a stuck Subscription — that the client says it's abandoning.
+ * Prefixes on Stripe ids let us dispatch without a second API call:
+ * seti_ → SetupIntent, pi_ → PaymentIntent, sub_ → Subscription.
+ * Anything else is skipped.
+ */
+async function cancelPreviousIntentSafely(
+  api: ReturnType<typeof stripe>,
+  id: string,
+): Promise<void> {
+  try {
+    if (id.startsWith("seti_")) {
+      const si = await api.setupIntents.retrieve(id);
+      if (si.status === "succeeded" || si.status === "canceled") return;
+      await api.setupIntents.cancel(id);
+    } else if (id.startsWith("pi_")) {
+      const pi = await api.paymentIntents.retrieve(id);
+      if (
+        pi.status === "succeeded" ||
+        pi.status === "canceled" ||
+        pi.status === "processing"
+      ) {
+        return;
+      }
+      await api.paymentIntents.cancel(id);
+    } else if (id.startsWith("sub_")) {
+      const sub = await api.subscriptions.retrieve(id);
+      if (sub.status === "incomplete") {
+        await api.subscriptions.cancel(id);
+      }
+    }
+  } catch (err) {
+    console.warn(
+      `[create-subscription] previous ${id} cancel skipped:`,
+      err instanceof Error ? err.message : err,
+    );
+  }
 }
 
 function isAuthRequired(err: unknown): boolean {

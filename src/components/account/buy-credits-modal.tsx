@@ -152,6 +152,12 @@ function PackCheckout({
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
 
+  // Track the PaymentIntent id we last handed to Elements so the next
+  // pack-selection change can ask the server to cancel it — otherwise
+  // every toggle between Small/Medium/Large/Bulk leaves a stale
+  // incomplete PI in Stripe's dashboard.
+  const lastPaymentIntentIdRef = React.useRef<string | null>(null);
+
   React.useEffect(() => {
     let cancelled = false;
     async function init() {
@@ -166,6 +172,8 @@ function PackCheckout({
             product: entitlement.product,
             portalId: entitlement.portalId,
             pack: selected,
+            previousPaymentIntentId:
+              lastPaymentIntentIdRef.current ?? undefined,
           }),
         });
         const data = await res.json();
@@ -175,6 +183,9 @@ function PackCheckout({
           return;
         }
         setClientSecret(data.clientSecret);
+        if (data.paymentIntentId) {
+          lastPaymentIntentIdRef.current = data.paymentIntentId;
+        }
       } catch {
         if (!cancelled) setError("Network error — please try again.");
       } finally {

@@ -327,6 +327,11 @@ function CreateSubscriptionCheckout({
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
 
+  // Track the most recent SetupIntent id we handed to Elements, so any
+  // subsequent re-init can ask the server to cancel it instead of
+  // leaving a zombie in Stripe's dashboard.
+  const lastSetupIntentIdRef = React.useRef<string | null>(null);
+
   // SetupIntent is tier-agnostic. Create it ONCE on mount and reuse it
   // across tier changes — the tier only matters at subscription-create
   // time (step 2 of the two-step flow).
@@ -344,6 +349,8 @@ function CreateSubscriptionCheckout({
           body: JSON.stringify({
             product: entitlement.product,
             portalId: entitlement.portalId,
+            previousSetupIntentId:
+              lastSetupIntentIdRef.current ?? undefined,
           }),
         });
         const data = await res.json();
@@ -354,6 +361,7 @@ function CreateSubscriptionCheckout({
         }
         setClientSecret(data.clientSecret);
         setSetupIntentId(data.setupIntentId);
+        lastSetupIntentIdRef.current = data.setupIntentId;
       } catch {
         if (!cancelled) setError("Network error — please try again.");
       } finally {
