@@ -1,0 +1,71 @@
+import type { Metadata } from "next";
+import { ProductPageShell } from "@/components/marketing/product-page-shell";
+import { PRODUCT_META } from "@/lib/types";
+
+export const metadata: Metadata = {
+  title: "Property Pulse",
+  description:
+    "Property Pulse watches every deal property you care about in HubSpot and surfaces drift, staleness, and risk before your next forecast call.",
+};
+
+export default function PropertyPulsePage() {
+  return (
+    <ProductPageShell
+      accent="pulse"
+      eyebrow="Property Pulse"
+      name="Property Pulse"
+      headline="Real-time deal health for HubSpot CRM."
+      lede="Watch every property that matters across every deal — and get a signal the moment things go off-trend."
+      marketplaceUrl={PRODUCT_META["property-pulse"].marketplaceUrl}
+      problem={{
+        title: "You can't forecast what you can't see.",
+        body:
+          "HubSpot reports tell you where deals are — not whether the underlying data still reflects reality. Stale amounts, missing close dates, untouched next steps: they rot quietly and ambush you on Friday.",
+      }}
+      features={[
+        {
+          title: "Drift detection",
+          body: "Define what ‘healthy’ looks like per pipeline. We flag every deal that wandered outside the lines.",
+        },
+        {
+          title: "Staleness alerts",
+          body: "Configurable timers per stage. A deal idle too long surfaces with full context, not a digest.",
+        },
+        {
+          title: "Risk scoring",
+          body: "Composite health score per deal, per rep, per pipeline — tuned by you, explained on hover.",
+        },
+        {
+          title: "Inline remediation",
+          body: "Update fields from the Pulse view. No context-switch, no deep-link trips.",
+        },
+        {
+          title: "Daily rollups",
+          body: "Opinionated morning email: what changed, what's at risk, what needs a human today.",
+        },
+        {
+          title: "Audit trail",
+          body: "Every Pulse action is logged with who, what, when. Managers see the work, not just the outcome.",
+        },
+      ]}
+      faq={[
+        {
+          q: "Will this slow down my HubSpot?",
+          a: "No. Pulse polls incrementally and batches writes. We never touch the UI thread of your HubSpot portal.",
+        },
+        {
+          q: "Which plan pipelines are supported?",
+          a: "Any custom pipeline. Pulse reads your schema at install time and adapts — no hardcoded field assumptions.",
+        },
+        {
+          q: "What permissions do you need?",
+          a: "Read on deals, companies, contacts, owners, and pipeline metadata. Write only on fields you explicitly enable.",
+        },
+        {
+          q: "How does Pulse handle custom properties?",
+          a: "First-class. Every custom property on the deal object is selectable for health rules — strings, numbers, dates, enumerations.",
+        },
+      ]}
+    />
+  );
+}
