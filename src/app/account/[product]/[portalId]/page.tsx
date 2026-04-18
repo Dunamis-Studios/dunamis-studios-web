@@ -88,7 +88,6 @@ export default async function EntitlementDetailPage({
       <Breadcrumbs
         items={[
           { label: "Dashboard", href: "/account" },
-          { label: meta.name, href: `/products/${entitlement.product}` },
           { label: entitlement.portalId },
         ]}
       />
