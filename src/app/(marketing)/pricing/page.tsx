@@ -68,7 +68,7 @@ const TIERS: Record<Product, Tier[]> = {
   debrief: [
     {
       name: "Starter",
-      price: "$15",
+      price: "$19",
       cadence: "/ portal / month",
       description: "Solo reps, auto-linked summaries.",
       features: [
@@ -80,7 +80,7 @@ const TIERS: Record<Product, Tier[]> = {
     },
     {
       name: "Pro",
-      price: "$30",
+      price: "$49",
       cadence: "/ portal / month",
       description: "Unlimited meetings, team-wide search.",
       highlighted: true,
@@ -94,7 +94,8 @@ const TIERS: Record<Product, Tier[]> = {
     },
     {
       name: "Enterprise",
-      price: "Custom",
+      price: "$149",
+      cadence: "/ portal / month",
       description: "Compliance, residency, dedicated support.",
       features: [
         "Everything in Pro",
