@@ -1,0 +1,189 @@
+# Dunamis Studios — Web
+
+Marketing site + customer portal for [Dunamis Studios](https://dunamisstudios.net).
+
+> One account. Every app. Every portal.
+
+## Stack
+
+- **Next.js 15** (App Router) + **TypeScript** (strict)
+- **Tailwind CSS v4** (CSS-based `@theme` config) + **shadcn-style** primitives on top of Radix
+- **Upstash Redis** for all persistence (keys prefixed `dunamis:*`)
+- **bcryptjs** password hashing + **jose** JWT-signed session cookies
+- **Resend** transactional email (swappable — see `src/lib/email.ts`)
+- **zod** for every request/form schema
+
+## Local development
+
+```bash
+# 1. Install
+npm install
+
+# 2. Configure env
+cp .env.example .env.local
+# Then fill in:
+#   KV_REST_API_URL, KV_REST_API_TOKEN  (Upstash REST URL + token)
+#   JWT_SECRET                          (openssl rand -base64 48)
+#   RESEND_API_KEY, RESEND_FROM_EMAIL   (optional in dev — see below)
+
+# 3. Run
+npm run dev
+# → http://localhost:3000
+```
+
+**Without Resend**: if `RESEND_API_KEY` is unset the email layer logs the
+payload instead of sending — useful for local signup/reset flows without a
+real inbox.
+
+## Seed a test entitlement
+
+To see the populated dashboard and entitlement-detail pages without wiring
+up the HubSpot install flow, use the seed script. It requires an account
+that already exists (create one at `/signup` first).
+
+```bash
+npm run seed:entitlement -- \
+  --email you@example.com \
+  --product property-pulse \
+  --portal-id 12345678 \
+  --domain acme.com \
+  --status active \
+  --tier pro \
+  --credits 1200
+```
+
+Run `npm run seed:entitlement -- --help` for all flags, including `--unlink`
+to remove an entitlement.
+
+## Routes
+
+### Marketing
+| Route | What it does |
+|-|-|
+| `/` | Hero, product tiles, social proof, principles, CTA |
+| `/products/property-pulse` | Full product page — hero, problem, features, FAQ |
+| `/products/debrief` | Same structure, Debrief-specific content |
+| `/pricing` | Side-by-side tier tables for both products |
+| `/terms` | ToS placeholder with draft banner |
+| `/privacy` | Privacy placeholder with draft banner |
+
+### Auth
+| Route | What it does |
+|-|-|
+| `/signup` | Create an account, auto-login, send verification email |
+| `/login` | Sign in, supports `?redirect=` |
+| `/forgot-password` | Request reset link (account-existence-opaque response) |
+| `/reset-password/[token]` | Set a new password, revokes all sessions |
+| `/verify-email/[token]` | Confirms the email and redirects to dashboard |
+
+### Account (auth required — redirect to `/login` if signed out)
+| Route | What it does |
+|-|-|
+| `/account` | Personalized dashboard + entitlement table with empty state |
+| `/account/settings` | Profile, password, sessions, danger zone |
+| `/account/[product]/[portalId]` | Per-entitlement management screen |
+
+### API
+| Method + path | Purpose |
+|-|-|
+| `POST /api/auth/signup` | Create account, set session cookie |
+| `POST /api/auth/login` | Verify credentials, set session cookie |
+| `POST /api/auth/logout` | Destroy session, clear cookie |
+| `POST /api/auth/forgot-password` | Send reset email (opaque response) |
+| `POST /api/auth/reset-password` | Validate token, set new password |
+| `POST /api/auth/verify-email` | Validate token, mark email verified |
+| `GET  /api/auth/me` | Current account + session |
+| `PATCH /api/account/profile` | Update name + email (re-verification on email change) |
+| `PATCH /api/account/password` | Change password, revoke all sessions, issue new |
+| `GET  /api/account/sessions` | List active sessions |
+| `DELETE /api/account/sessions` | Sign out of all other sessions |
+| `DELETE /api/account/sessions/[sessionId]` | Revoke a specific session |
+| `DELETE /api/account` | Soft-delete account (30-day recovery window) |
+| `POST /api/account/resend-verification` | Re-issue the email-verification token |
+| `GET  /api/entitlements` | List entitlements for the signed-in account |
+| `GET  /api/entitlements/[product]/[portalId]` | Fetch a specific entitlement |
+
+All endpoints validate input with zod and return typed JSON errors of the
+shape `{ error: { code, message, fields? } }`.
+
+## Redis key schema
+
+All keys prefixed `dunamis:` so we don't collide with Property Pulse or
+Debrief data that share the same KV instance.
+
+```
+dunamis:account:{accountId}                → Account record
+dunamis:email-to-account:{emailLower}       → accountId  (unique index)
+dunamis:session:{sessionId}                 → Session record, 30d rolling TTL
+dunamis:account-sessions:{accountId}        → Set of sessionIds
+dunamis:verify-email:{token}                → VerifyRecord, 24h TTL
+dunamis:reset-password:{token}              → ResetRecord, 1h TTL
+dunamis:entitlement:{product}:{portalId}    → Entitlement record
+dunamis:account-entitlements:{accountId}    → Set of "product::portalId" compound keys
+dunamis:rate:{bucket}:{key}                 → Rate-limit counter (15-min windows)
+```
+
+## Security posture
+
+- **Session cookies**: `__Host-session` (Secure, SameSite=Lax, Path=/) in
+  production; dev uses a plain-name cookie so localhost works over http.
+- **JWT**: HS256, contains only `{ sid }` — the actual session lives in
+  Redis and is checked/extended on every request (rolling 30-day TTL).
+- **Passwords**: bcryptjs cost 12, min 8 chars, number-or-symbol required,
+  72-byte guard.
+- **Rate limits**: IP-based fixed-window counters on login, signup,
+  forgot-password, reset-password (10 attempts / 15 min).
+- **Enumeration**: forgot-password always returns the same response
+  whether or not the email exists.
+- **CSRF**: mitigated by `SameSite=Lax` + same-origin-only POSTs from our
+  own forms. No CSRF tokens.
+- **Headers**: `X-Content-Type-Options`, `X-Frame-Options: DENY`,
+  `Referrer-Policy`, restrictive `Permissions-Policy` in `next.config.ts`.
+
+## Design
+
+- Dark-first with a proper toggle (default dark, persisted to
+  `localStorage`, no flash on load).
+- Fonts: **Fraunces** display serif for headings, **Geist** sans for body,
+  **Geist Mono** for IDs + technical detail.
+- Design tokens live in `src/app/globals.css` under `@theme` — colors use
+  OKLCH so the palette stays perceptually even across light/dark.
+- Per-product accent colors thread through marketing, dashboard badges,
+  and detail pages: **pulse** green for Property Pulse, **brief** amber
+  for Debrief.
+
+## Deploying to Vercel
+
+The site was scaffolded against a Vercel project called `dunamis-studios-web`.
+Steps you'll run yourself:
+
+1. `vercel link` (or import the repo in the Vercel dashboard)
+2. Link the existing **dunamis-studios-kv** Upstash integration to this
+   project for all environments (prefix `REDIS`). The integration
+   auto-populates `KV_REST_API_URL` + `KV_REST_API_TOKEN`.
+3. Add env vars: `JWT_SECRET`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`,
+   `APP_URL=https://dunamisstudios.net`.
+4. Add domains `dunamisstudios.net` and `www.dunamisstudios.net` in the
+   Vercel project settings (set `www` to redirect to apex). Vercel will
+   show the exact A / CNAME records to set at your registrar.
+5. In Resend, add and verify the `dunamisstudios.net` sending domain
+   (SPF, DKIM records). Set `RESEND_FROM_EMAIL=hello@dunamisstudios.net`.
+
+## Known gaps / future work
+
+- **Stripe integration**: every billing CTA is intentionally disabled with
+  a tooltip. Wire up subscription checkout, webhooks, and the customer
+  portal next.
+- **HubSpot install flow**: creation of stub (account-less) entitlements
+  on HubSpot install lives in the Property Pulse and Debrief app repos,
+  not here. This repo only *claims* entitlements once an account exists.
+- **Admin panel**: no internal admin view for listing every account /
+  entitlement. Spec calls this phase 2.
+- **Docs / blog / changelog**: footer links go nowhere yet.
+- **i18n**: English only.
+- **Test suite**: none scaffolded. The data-access layer and the zod
+  schemas are the right places to add unit tests first.
+
+## License
+
+Proprietary. © Dunamis Studios.
