@@ -16,6 +16,7 @@ import { getEntitlement } from "@/lib/accounts";
 import { PRODUCT_META, type Entitlement, type EntitlementTier } from "@/lib/types";
 import { stripe } from "@/lib/stripe";
 import type Stripe from "stripe";
+import { getTierFeatures } from "@/lib/pricing";
 import { productSlugSchema, portalIdSchema } from "@/lib/validation";
 import { formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -33,18 +34,32 @@ export async function generateMetadata({
   return { title: `${PRODUCT_META[prod.data].name} · ${portalId}` };
 }
 
-const TIER_FEATURES: Record<EntitlementTier, string[]> = {
-  starter: ["Core product functionality", "Email support", "7-day audit history"],
+/**
+ * Property Pulse has no canonical pricing source yet (out of scope), so
+ * we keep a stub feature list here. Debrief reads from pricing.ts via
+ * getTierFeatures so it matches the pricing page and subscribe modal.
+ */
+const PROPERTY_PULSE_TIER_FEATURES: Record<EntitlementTier, string[]> = {
+  starter: [
+    "1 pipeline",
+    "Up to 3 health rules",
+    "Daily rollup email",
+    "7-day audit history",
+    "Email support",
+  ],
   pro: [
-    "Everything in Starter",
-    "Advanced rules & automations",
-    "Priority support",
+    "Unlimited pipelines",
+    "Unlimited health rules",
+    "Staleness + drift timers",
+    "Inline remediation",
     "90-day audit history",
+    "Priority support",
   ],
   enterprise: [
     "Everything in Pro",
     "SSO + SCIM",
-    "Data residency controls",
+    "Data residency",
+    "Custom SLAs",
     "Dedicated engineer",
   ],
 };
@@ -149,9 +164,12 @@ function CurrentPlanSection({
   entitlement: Entitlement;
   accountEmail: string;
 }) {
-  const features =
-    entitlement.tier ? TIER_FEATURES[entitlement.tier] : [];
   const isDebrief = entitlement.product === "debrief";
+  const features = entitlement.tier
+    ? isDebrief
+      ? getTierFeatures(entitlement.tier)
+      : PROPERTY_PULSE_TIER_FEATURES[entitlement.tier]
+    : [];
 
   return (
     <SectionCard title="Current plan" description="Your tier and what's included.">

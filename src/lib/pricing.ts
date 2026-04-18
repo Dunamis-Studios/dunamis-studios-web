@@ -105,6 +105,16 @@ export function getTierAllotment(tier: EntitlementTier): number {
   return DEBRIEF_TIERS[tier].monthlyAllotment;
 }
 
+/**
+ * Canonical Debrief tier feature list. Same data the /pricing page and
+ * the subscribe modal render, surfaced here so the Current plan card on
+ * the entitlement detail page stays in lockstep instead of drifting its
+ * own fabricated copy.
+ */
+export function getTierFeatures(tier: EntitlementTier): string[] {
+  return DEBRIEF_TIERS[tier].features;
+}
+
 export function getFirstMonthBonus(tier: EntitlementTier): number {
   return DEBRIEF_TIERS[tier].firstMonthBonus;
 }
