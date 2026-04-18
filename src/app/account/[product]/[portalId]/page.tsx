@@ -15,6 +15,8 @@ import { productSlugSchema, portalIdSchema } from "@/lib/validation";
 import { formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {

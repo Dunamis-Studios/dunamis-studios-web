@@ -8,6 +8,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { EntitlementsTable } from "@/components/account/entitlements-table";
 import { PRODUCT_META } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = { title: "Dashboard" };
 
 export default async function AccountDashboard() {

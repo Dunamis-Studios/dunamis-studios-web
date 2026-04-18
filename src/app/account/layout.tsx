@@ -3,6 +3,10 @@ import { getCurrentSession } from "@/lib/session";
 import { AccountShell } from "@/components/account/account-shell";
 import { VerifyBanner } from "@/components/account/verify-banner";
 
+// Reads the session cookie — force dynamic rendering so Next doesn't try
+// to prerender at build time and trip DYNAMIC_SERVER_USAGE.
+export const dynamic = "force-dynamic";
+
 export default async function AccountLayout({
   children,
 }: {

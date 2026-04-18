@@ -5,6 +5,8 @@ import { AuthCard } from "@/components/auth/auth-card";
 import { SignupForm } from "./signup-form";
 import { getCurrentSession } from "@/lib/session";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Create an account",
   description: "Create your Dunamis Studios account.",

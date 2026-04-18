@@ -2,6 +2,10 @@ import { SiteNav } from "@/components/marketing/site-nav";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { getCurrentSession } from "@/lib/session";
 
+// Layout probes the session cookie for signed-in nav state, which means
+// every page inside this group is dynamic.
+export const dynamic = "force-dynamic";
+
 export default async function MarketingLayout({
   children,
 }: {

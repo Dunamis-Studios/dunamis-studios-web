@@ -6,6 +6,8 @@ import { PasswordSection } from "@/components/account/password-section";
 import { SessionsSection } from "@/components/account/sessions-section";
 import { DangerZone } from "@/components/account/danger-zone";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = { title: "Account settings" };
 
 export default async function SettingsPage() {
