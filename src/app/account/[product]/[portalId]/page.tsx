@@ -149,6 +149,7 @@ export default async function EntitlementDetailPage({
           entitlement={entitlement}
           accountEmail={s.account.email}
         />
+        <UpcomingChargeSection entitlement={entitlement} />
         <BillingHistorySection entitlement={entitlement} />
         <CancelSubscriptionBlock entitlement={entitlement} />
       </div>
@@ -290,6 +291,91 @@ function CreditsSection({
             accountEmail={accountEmail}
           />
         ) : null}
+      </div>
+    </SectionCard>
+  );
+}
+
+async function UpcomingChargeSection({
+  entitlement,
+}: {
+  entitlement: Entitlement;
+}) {
+  // Only Debrief + active subscription + not scheduled to cancel. A
+  // cancel-at-period-end subscription has no "next charge"; past_due
+  // subs have a failing in-flight invoice that's already in history.
+  if (entitlement.product !== "debrief") return null;
+  if (!entitlement.stripeSubscriptionId) return null;
+  if (!entitlement.stripeCustomerId) return null;
+  if (entitlement.cancelAtPeriodEnd) return null;
+  if (entitlement.status !== "active") return null;
+
+  type PreviewLike = {
+    amount_due?: number;
+    currency?: string;
+    next_payment_attempt?: number | null;
+    period_end?: number;
+    lines?: { data?: Array<{ description?: string | null }> };
+  };
+  let preview: PreviewLike | null = null;
+  try {
+    // Stripe API 2026-03-25.dahlia: invoices.createPreview is the
+    // canonical way to peek at a subscription's next invoice. Older
+    // retrieveUpcoming still exists as a shim on some SDKs — createPreview
+    // is future-proof.
+    const api = stripe() as unknown as {
+      invoices: {
+        createPreview: (params: {
+          customer: string;
+          subscription: string;
+        }) => Promise<PreviewLike>;
+      };
+    };
+    preview = await api.invoices.createPreview({
+      customer: entitlement.stripeCustomerId,
+      subscription: entitlement.stripeSubscriptionId,
+    });
+  } catch (err) {
+    console.warn(
+      "[upcoming-charge] createPreview failed — skipping section:",
+      err instanceof Error ? err.message : err,
+    );
+    return null;
+  }
+
+  if (!preview || typeof preview.amount_due !== "number") return null;
+
+  const dateIso = preview.next_payment_attempt
+    ? new Date(preview.next_payment_attempt * 1000).toISOString()
+    : preview.period_end
+      ? new Date(preview.period_end * 1000).toISOString()
+      : entitlement.renewalDate;
+  const lineDescription =
+    preview.lines?.data?.[0]?.description ?? "Subscription";
+
+  return (
+    <SectionCard
+      title="Upcoming charge"
+      description="The next charge Stripe will attempt on this entitlement."
+    >
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-1">
+          <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+            {formatDate(dateIso)}
+          </div>
+          <div className="font-[var(--font-display)] text-2xl font-medium tracking-tight text-[var(--fg)]">
+            ${(preview.amount_due / 100).toFixed(2)}
+            <span className="ml-2 text-sm font-normal text-[var(--fg-subtle)]">
+              {(preview.currency ?? "usd").toUpperCase()}
+            </span>
+          </div>
+          <div className="text-sm text-[var(--fg-muted)]">
+            {lineDescription}
+          </div>
+        </div>
+        <Badge variant="warning" className="self-start">
+          Upcoming
+        </Badge>
       </div>
     </SectionCard>
   );
