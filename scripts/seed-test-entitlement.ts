@@ -175,6 +175,7 @@ const KEY = {
     renewalDate,
     stripeCustomerId: null,
     stripeSubscriptionId: null,
+    subscriptionHistory: [],
     cancelAtPeriodEnd: false,
   };
 

@@ -123,6 +123,15 @@ function resolveTier(
   return price ? getTierByPriceId(price) : null;
 }
 
+function appendToHistory(
+  history: string[] | undefined,
+  subscriptionId: string,
+): string[] {
+  const existing = Array.isArray(history) ? history : [];
+  if (existing.includes(subscriptionId)) return existing;
+  return [...existing, subscriptionId];
+}
+
 function toIso(unixSeconds: number | null | undefined): string {
   if (!unixSeconds) return new Date().toISOString();
   return new Date(unixSeconds * 1000).toISOString();
@@ -210,6 +219,10 @@ async function onSubscriptionCreated(
     entitlement.stripeCustomerId =
       typeof sub.customer === "string" ? sub.customer : sub.customer.id;
     entitlement.stripeSubscriptionId = sub.id;
+    entitlement.subscriptionHistory = appendToHistory(
+      entitlement.subscriptionHistory,
+      sub.id,
+    );
     entitlement.renewalDate = toIso(end);
     entitlement.credits = credits;
     entitlement.cancelAtPeriodEnd = sub.cancel_at_period_end ?? false;
@@ -261,6 +274,10 @@ async function onSubscriptionUpdated(
     entitlement.status = mapSubscriptionStatus(sub.status);
     entitlement.tier = effectiveTier;
     entitlement.stripeSubscriptionId = sub.id;
+    entitlement.subscriptionHistory = appendToHistory(
+      entitlement.subscriptionHistory,
+      sub.id,
+    );
     entitlement.renewalDate = toIso(end);
     entitlement.credits = credits;
     entitlement.cancelAtPeriodEnd = sub.cancel_at_period_end ?? false;

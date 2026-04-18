@@ -72,7 +72,16 @@ export interface Entitlement {
   createdAt: string;
   renewalDate: string | null;
   stripeCustomerId: string | null;
+  /** The current (most recent, possibly canceled) Stripe subscription id. */
   stripeSubscriptionId: string | null;
+  /**
+   * Every Stripe subscription id that has ever been associated with this
+   * entitlement, oldest-first. stripeSubscriptionId mirrors the tail.
+   * Immutable — canceling a subscription never removes it. Powers the
+   * billing-history query so invoices from prior cancel/resubscribe
+   * cycles don't disappear.
+   */
+  subscriptionHistory: string[];
   /** Set true when Stripe has scheduled cancellation at period end. */
   cancelAtPeriodEnd?: boolean;
 }

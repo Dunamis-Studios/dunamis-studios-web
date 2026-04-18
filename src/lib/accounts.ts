@@ -8,41 +8,79 @@ import type {
 import { getTierAllotment } from "./pricing";
 
 /**
- * Read an entitlement raw from Redis and upgrade its shape in place if
- * it's still the legacy flat `credits: number`. Used by every read path
- * below so callers always see the new bucket shape.
+ * Read an entitlement raw from Redis and upgrade its shape on the fly.
+ * Handles two independent migrations:
+ *   1. Legacy flat `credits: number` → CreditBuckets object
+ *   2. Missing `subscriptionHistory` array → initialize from current
+ *      stripeSubscriptionId (so cancel/resubscribe cycles don't lose
+ *      the older subscription ID from the audit trail).
+ *
+ * Returns { entitlement, dirty } — dirty=true when any upgrade ran, so
+ * the caller can persist the upgraded shape back.
  */
-function migrateCreditsInPlace(
+function migrateEntitlementInPlace(
   raw: LegacyOrCurrentEntitlement,
-): Entitlement {
-  const credits = raw.credits;
-  if (credits === null || credits === undefined) {
-    return { ...raw, credits: null } as Entitlement;
+): { entitlement: Entitlement; dirty: boolean } {
+  let dirty = false;
+
+  // --- credits ---
+  let credits: CreditBuckets | null = null;
+  const rawCredits = raw.credits;
+  if (rawCredits === null || rawCredits === undefined) {
+    credits = null;
+  } else if (isBuckets(rawCredits)) {
+    credits = rawCredits;
+  } else {
+    // Legacy flat number — migrate.
+    const allotment = raw.tier ? getTierAllotment(raw.tier) : 0;
+    const periodStart = raw.createdAt ?? new Date().toISOString();
+    const periodEnd =
+      raw.renewalDate ??
+      new Date(
+        new Date(periodStart).getTime() + 30 * 24 * 3600 * 1000,
+      ).toISOString();
+    credits = {
+      monthly: typeof rawCredits === "number" ? rawCredits : 0,
+      monthlyAllotment: allotment,
+      addon: 0,
+      currentPeriodStart: periodStart,
+      currentPeriodEnd: periodEnd,
+      firstMonthBonusGranted: false,
+    };
+    dirty = true;
   }
-  if (isBuckets(credits)) {
-    return raw as Entitlement;
+
+  // --- subscriptionHistory ---
+  let history = Array.isArray(raw.subscriptionHistory)
+    ? [...raw.subscriptionHistory]
+    : null;
+  if (history === null) {
+    history = raw.stripeSubscriptionId ? [raw.stripeSubscriptionId] : [];
+    dirty = true;
+  } else if (
+    raw.stripeSubscriptionId &&
+    !history.includes(raw.stripeSubscriptionId)
+  ) {
+    history.push(raw.stripeSubscriptionId);
+    dirty = true;
   }
-  // Legacy flat number — migrate.
-  const allotment = raw.tier ? getTierAllotment(raw.tier) : 0;
-  const periodStart = raw.createdAt ?? new Date().toISOString();
-  const periodEnd =
-    raw.renewalDate ??
-    new Date(
-      new Date(periodStart).getTime() + 30 * 24 * 3600 * 1000,
-    ).toISOString();
-  const buckets: CreditBuckets = {
-    monthly: typeof credits === "number" ? credits : 0,
-    monthlyAllotment: allotment,
-    addon: 0,
-    currentPeriodStart: periodStart,
-    currentPeriodEnd: periodEnd,
-    firstMonthBonusGranted: false,
+
+  return {
+    entitlement: {
+      ...raw,
+      credits,
+      subscriptionHistory: history,
+    } as Entitlement,
+    dirty,
   };
-  return { ...raw, credits: buckets } as Entitlement;
 }
 
-type LegacyOrCurrentEntitlement = Omit<Entitlement, "credits"> & {
+type LegacyOrCurrentEntitlement = Omit<
+  Entitlement,
+  "credits" | "subscriptionHistory"
+> & {
   credits: number | CreditBuckets | null;
+  subscriptionHistory?: string[] | null;
   tier: EntitlementTier | null;
 };
 
@@ -121,8 +159,8 @@ export async function getEntitlementsForAccount(
       KEY.entitlement(product, portalId),
     );
     if (!raw || raw.accountId !== accountId) continue;
-    const ent = migrateCreditsInPlace(raw);
-    if (raw.credits !== ent.credits) upgrades.push(ent);
+    const { entitlement: ent, dirty } = migrateEntitlementInPlace(raw);
+    if (dirty) upgrades.push(ent);
     results.push(ent);
   }
   // Persist shape upgrades so the next read is a cache hit.
@@ -140,8 +178,8 @@ export async function getEntitlement(
     KEY.entitlement(product, portalId),
   );
   if (!raw) return null;
-  const ent = migrateCreditsInPlace(raw);
-  if (raw.credits !== ent.credits) {
+  const { entitlement: ent, dirty } = migrateEntitlementInPlace(raw);
+  if (dirty) {
     await redis().set(KEY.entitlement(product, portalId), ent);
   }
   return ent;
