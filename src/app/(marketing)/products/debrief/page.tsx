@@ -1,6 +1,65 @@
 import type { Metadata } from "next";
 import { ProductPageShell } from "@/components/marketing/product-page-shell";
+import { JsonLd } from "@/components/seo/json-ld";
 import { PRODUCT_META } from "@/lib/types";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+const debriefSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Debrief",
+  applicationCategory: "BusinessApplication",
+  applicationSubCategory: "CRM",
+  operatingSystem: "Web-based",
+  description:
+    "Handoff intelligence for HubSpot CRM. Generates structured briefs and conversational handoff messages when a CRM record changes ownership.",
+  url: `${SITE_URL}/products/debrief`,
+  publisher: {
+    "@type": "Organization",
+    name: "Dunamis Studios",
+    url: SITE_URL,
+  },
+  offers: [
+    {
+      "@type": "Offer",
+      name: "Starter",
+      price: "19",
+      priceCurrency: "USD",
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: 19,
+        priceCurrency: "USD",
+        unitText: "MON",
+      },
+    },
+    {
+      "@type": "Offer",
+      name: "Pro",
+      price: "49",
+      priceCurrency: "USD",
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: 49,
+        priceCurrency: "USD",
+        unitText: "MON",
+      },
+    },
+    {
+      "@type": "Offer",
+      name: "Enterprise",
+      price: "149",
+      priceCurrency: "USD",
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: 149,
+        priceCurrency: "USD",
+        unitText: "MON",
+      },
+    },
+  ],
+};
 
 export const metadata: Metadata = {
   title: "Debrief — Handoff intelligence for HubSpot CRM",
@@ -24,7 +83,9 @@ export const metadata: Metadata = {
 
 export default function DebriefPage() {
   return (
-    <ProductPageShell
+    <>
+      <JsonLd id="jsonld-debrief" schema={debriefSchema} />
+      <ProductPageShell
       accent="brief"
       eyebrow="Debrief"
       name="Debrief"
@@ -94,6 +155,7 @@ export default function DebriefPage() {
           a: "Read on the record plus its associated contacts, companies, deals, tickets, custom objects, and recent engagements. Write permission only for the atomic Handoff flow — to reassign owner and attach the brief Note.",
         },
       ]}
-    />
+      />
+    </>
   );
 }

@@ -2,7 +2,38 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
+import { JsonLd } from "@/components/seo/json-ld";
 import "./globals.css";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+/**
+ * Organization schema — emitted into <head> on every page so search
+ * engines and LLM crawlers can attach entity signals (founder, support
+ * contact, logo) to the Dunamis Studios brand regardless of which URL
+ * is crawled first.
+ */
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Dunamis Studios",
+  url: SITE_URL,
+  logo: `${SITE_URL}/icon`,
+  description:
+    "Dunamis Studios builds focused, reliable apps for the HubSpot marketplace.",
+  sameAs: [] as string[],
+  foundingDate: "2026",
+  founder: {
+    "@type": "Person",
+    name: "Joshua Bradford",
+  },
+  contactPoint: {
+    "@type": "ContactPoint",
+    email: "support@dunamisstudios.net",
+    contactType: "customer support",
+  },
+};
 
 const sans = Geist({ subsets: ["latin"], variable: "--font-sans-src" });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono-src" });
@@ -77,6 +108,7 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('dunamis-theme');var p=window.matchMedia('(prefers-color-scheme: dark)').matches;var d=t? t==='dark' : true;if(d)document.documentElement.classList.add('dark');}catch(e){document.documentElement.classList.add('dark');}})();`,
           }}
         />
+        <JsonLd id="jsonld-organization" schema={organizationSchema} />
       </head>
       <body>
         <a href="#main" className="skip-link">

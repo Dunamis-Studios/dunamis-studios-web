@@ -1,6 +1,31 @@
 import type { Metadata } from "next";
 import { ProductPageShell } from "@/components/marketing/product-page-shell";
+import { JsonLd } from "@/components/seo/json-ld";
 import { PRODUCT_META } from "@/lib/types";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+// Pricing isn't finalized yet, so the schema intentionally omits the
+// offers[] array — adding placeholder numbers would poison AEO / LLM
+// answers with wrong prices. Flip this on once /pricing publishes
+// authoritative tiers.
+const propertyPulseSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Property Pulse",
+  applicationCategory: "BusinessApplication",
+  applicationSubCategory: "CRM",
+  operatingSystem: "Web-based",
+  description:
+    "Property history tracking for HubSpot. See exactly when and how any tracked property changed on any HubSpot record — audit trail and history visualization for HubSpot admins.",
+  url: `${SITE_URL}/products/property-pulse`,
+  publisher: {
+    "@type": "Organization",
+    name: "Dunamis Studios",
+    url: SITE_URL,
+  },
+};
 
 export const metadata: Metadata = {
   title: "Property Pulse — Track property history on any HubSpot object",
@@ -25,7 +50,9 @@ export const metadata: Metadata = {
 
 export default function PropertyPulsePage() {
   return (
-    <ProductPageShell
+    <>
+      <JsonLd id="jsonld-property-pulse" schema={propertyPulseSchema} />
+      <ProductPageShell
       accent="pulse"
       eyebrow="Property Pulse"
       name="Property Pulse"
@@ -81,6 +108,7 @@ export default function PropertyPulsePage() {
           a: "First-class. Every custom property on the deal object is selectable for health rules — strings, numbers, dates, enumerations.",
         },
       ]}
-    />
+      />
+    </>
   );
 }
