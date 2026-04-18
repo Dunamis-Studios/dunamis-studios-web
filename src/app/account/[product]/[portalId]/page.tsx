@@ -305,20 +305,32 @@ async function BillingHistorySection({
 
   let invoices: Stripe.Invoice[] = [];
   if (customerId && entitlement.product === "debrief") {
-    try {
-      const all = await stripe().invoices.list({
-        customer: customerId,
-        limit: 24,
-      });
-      invoices = subscriptionId
-        ? all.data.filter((inv) => {
-            const sid = (inv as unknown as { subscription?: string })
-              .subscription;
-            return sid === subscriptionId;
-          })
-        : all.data;
-    } catch (err) {
-      console.error("[billing-history] stripe fetch failed", err);
+    // Prefer the server-side subscription filter — Stripe's 2026-03-25
+    // invoice shape moved the subscription ref around, and the server
+    // filter is the canonical path regardless of shape drift.
+    const listInvoices = async (): Promise<Stripe.Invoice[]> => {
+      try {
+        const resp = await stripe().invoices.list(
+          subscriptionId
+            ? { customer: customerId, subscription: subscriptionId, limit: 24 }
+            : { customer: customerId, limit: 24 },
+        );
+        return resp.data;
+      } catch (err) {
+        console.error("[billing-history] stripe fetch failed", err);
+        return [];
+      }
+    };
+
+    invoices = await listInvoices();
+
+    // An active subscription with zero invoices usually means Stripe
+    // hasn't finished committing the first invoice server-side. One
+    // 1s retry covers that race — every other scenario (no sub,
+    // canceled sub) bails before this line.
+    if (invoices.length === 0 && subscriptionId) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      invoices = await listInvoices();
     }
   }
 
