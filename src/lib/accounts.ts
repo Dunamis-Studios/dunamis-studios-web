@@ -1,5 +1,59 @@
 import { redis, KEY } from "./redis";
-import type { Account, Entitlement } from "./types";
+import type {
+  Account,
+  CreditBuckets,
+  Entitlement,
+  EntitlementTier,
+} from "./types";
+import { getTierAllotment } from "./pricing";
+
+/**
+ * Read an entitlement raw from Redis and upgrade its shape in place if
+ * it's still the legacy flat `credits: number`. Used by every read path
+ * below so callers always see the new bucket shape.
+ */
+function migrateCreditsInPlace(
+  raw: LegacyOrCurrentEntitlement,
+): Entitlement {
+  const credits = raw.credits;
+  if (credits === null || credits === undefined) {
+    return { ...raw, credits: null } as Entitlement;
+  }
+  if (isBuckets(credits)) {
+    return raw as Entitlement;
+  }
+  // Legacy flat number — migrate.
+  const allotment = raw.tier ? getTierAllotment(raw.tier) : 0;
+  const periodStart = raw.createdAt ?? new Date().toISOString();
+  const periodEnd =
+    raw.renewalDate ??
+    new Date(
+      new Date(periodStart).getTime() + 30 * 24 * 3600 * 1000,
+    ).toISOString();
+  const buckets: CreditBuckets = {
+    monthly: typeof credits === "number" ? credits : 0,
+    monthlyAllotment: allotment,
+    addon: 0,
+    currentPeriodStart: periodStart,
+    currentPeriodEnd: periodEnd,
+    firstMonthBonusGranted: false,
+  };
+  return { ...raw, credits: buckets } as Entitlement;
+}
+
+type LegacyOrCurrentEntitlement = Omit<Entitlement, "credits"> & {
+  credits: number | CreditBuckets | null;
+  tier: EntitlementTier | null;
+};
+
+function isBuckets(v: unknown): v is CreditBuckets {
+  return (
+    !!v &&
+    typeof v === "object" &&
+    "monthly" in (v as object) &&
+    "addon" in (v as object)
+  );
+}
 
 export async function getAccountById(
   accountId: string,
@@ -59,11 +113,21 @@ export async function getEntitlementsForAccount(
   const ids = (await r.smembers(KEY.accountEntitlements(accountId))) ?? [];
   if (ids.length === 0) return [];
   const results: Entitlement[] = [];
+  const upgrades: Entitlement[] = [];
   for (const compound of ids) {
     const [product, portalId] = compound.split("::");
     if (!product || !portalId) continue;
-    const ent = await r.get<Entitlement>(KEY.entitlement(product, portalId));
-    if (ent && ent.accountId === accountId) results.push(ent);
+    const raw = await r.get<LegacyOrCurrentEntitlement>(
+      KEY.entitlement(product, portalId),
+    );
+    if (!raw || raw.accountId !== accountId) continue;
+    const ent = migrateCreditsInPlace(raw);
+    if (raw.credits !== ent.credits) upgrades.push(ent);
+    results.push(ent);
+  }
+  // Persist shape upgrades so the next read is a cache hit.
+  for (const ent of upgrades) {
+    await r.set(KEY.entitlement(ent.product, ent.portalId), ent);
   }
   return results.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 }
@@ -72,10 +136,24 @@ export async function getEntitlement(
   product: string,
   portalId: string,
 ): Promise<Entitlement | null> {
-  const ent = await redis().get<Entitlement>(
+  const raw = await redis().get<LegacyOrCurrentEntitlement>(
     KEY.entitlement(product, portalId),
   );
-  return ent ?? null;
+  if (!raw) return null;
+  const ent = migrateCreditsInPlace(raw);
+  if (raw.credits !== ent.credits) {
+    await redis().set(KEY.entitlement(product, portalId), ent);
+  }
+  return ent;
+}
+
+export async function saveEntitlement(
+  entitlement: Entitlement,
+): Promise<void> {
+  await redis().set(
+    KEY.entitlement(entitlement.product, entitlement.portalId),
+    entitlement,
+  );
 }
 
 export async function linkEntitlementToAccount(
@@ -93,4 +171,29 @@ export async function linkEntitlementToAccount(
     KEY.accountEntitlements(entitlement.accountId),
     `${entitlement.product}::${entitlement.portalId}`,
   );
+}
+
+// ---- Stripe customer <-> account reverse lookup -------------------------
+
+export async function setStripeCustomerId(
+  account: Account,
+  stripeCustomerId: string,
+): Promise<void> {
+  const r = redis();
+  account.stripeCustomerId = stripeCustomerId;
+  account.updatedAt = new Date().toISOString();
+  await r.set(KEY.account(account.accountId), account);
+  await r.set(
+    KEY.stripeCustomerToAccount(stripeCustomerId),
+    account.accountId,
+  );
+}
+
+export async function getAccountIdByStripeCustomerId(
+  stripeCustomerId: string,
+): Promise<string | null> {
+  const id = await redis().get<string>(
+    KEY.stripeCustomerToAccount(stripeCustomerId),
+  );
+  return id ?? null;
 }

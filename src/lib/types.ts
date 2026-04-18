@@ -13,6 +13,8 @@ export interface Account {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
+  /** One Stripe Customer per Dunamis account, created lazily on first checkout. */
+  stripeCustomerId?: string | null;
 }
 
 export interface PublicAccount {
@@ -33,6 +35,24 @@ export interface Session {
   ip: string;
 }
 
+/**
+ * Credit buckets on a Debrief entitlement.
+ *
+ * Spend order (enforced by the Debrief app, not this site):
+ *   monthly first, then addon. Monthly is use-it-or-lose-it and resets
+ *   when Stripe rolls the subscription period. Addon is cumulative and
+ *   never expires — fed by credit-pack purchases and the first-month
+ *   bonus on initial subscription.
+ */
+export interface CreditBuckets {
+  monthly: number;
+  monthlyAllotment: number;
+  addon: number;
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  firstMonthBonusGranted: boolean;
+}
+
 export interface Entitlement {
   entitlementId: string;
   accountId: string | null;
@@ -42,11 +62,19 @@ export interface Entitlement {
   installerEmail: string;
   status: EntitlementStatus;
   tier: EntitlementTier | null;
-  credits: number | null;
+  /** null only when the entitlement has never been activated. */
+  credits: CreditBuckets | null;
   createdAt: string;
   renewalDate: string | null;
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
+  /** Set true when Stripe has scheduled cancellation at period end. */
+  cancelAtPeriodEnd?: boolean;
+}
+
+export function sumCredits(c: CreditBuckets | null): number {
+  if (!c) return 0;
+  return (c.monthly ?? 0) + (c.addon ?? 0);
 }
 
 export const PRODUCTS: Product[] = ["property-pulse", "debrief"];

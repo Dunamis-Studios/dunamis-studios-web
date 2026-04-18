@@ -1,19 +1,20 @@
 /**
- * Seed a fake entitlement into Redis and link it to an existing Dunamis
- * Studios account by email.
+ * Seed a fake Debrief or Property Pulse entitlement into Redis and
+ * link it to an existing account by email.
  *
  * Usage (loads .env.local automatically):
  *   npm run seed:entitlement -- \
  *     --email you@example.com \
- *     --product property-pulse \
+ *     --product debrief \
  *     --portal-id 12345678 \
  *     --domain acme.com \
  *     --status active \
  *     --tier pro \
- *     --credits 1200
+ *     --monthly-credits 250 \
+ *     --addon-credits 0
  *
- * Re-running with the same product + portal-id updates the existing record
- * rather than creating a duplicate.
+ * Re-running with the same product + portal-id updates the existing
+ * record rather than creating a duplicate.
  */
 import "dotenv/config";
 import { config as loadDotenv } from "dotenv";
@@ -48,7 +49,8 @@ Optional:
   --installer <email>      Default: same as --email
   --status <status>        trial | active | past_due | canceled (default: active)
   --tier <tier>            starter | pro | enterprise (default: pro)
-  --credits <n>            Default: 1000
+  --monthly-credits <n>    Current monthly balance (default: tier allotment)
+  --addon-credits <n>      Addon bucket balance (default: 0)
   --renewal <iso>          Default: 30 days from now
   --unlink                 Remove this entitlement's link to the account
   --help, -h               Show this message
@@ -61,17 +63,30 @@ const product = arg("--product") as "property-pulse" | "debrief" | undefined;
 const portalId = arg("--portal-id");
 const portalDomain = arg("--domain", "example.com")!;
 const installerEmail = arg("--installer") ?? email;
-const status = (arg("--status", "active") as
+const status = arg("--status", "active") as
   | "trial"
   | "active"
   | "past_due"
-  | "canceled");
-const tier = (arg("--tier", "pro") as "starter" | "pro" | "enterprise");
-const credits = Number(arg("--credits", "1000"));
+  | "canceled";
+const tier = arg("--tier", "pro") as "starter" | "pro" | "enterprise";
+const unlink = has("--unlink");
+
+const now = new Date();
+const periodStart = now.toISOString();
 const renewalDate =
   arg("--renewal") ??
-  new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
-const unlink = has("--unlink");
+  new Date(now.getTime() + 30 * 24 * 3600 * 1000).toISOString();
+
+const TIER_ALLOTMENTS: Record<string, number> = {
+  starter: 50,
+  pro: 250,
+  enterprise: 1000,
+};
+const monthlyAllotment = TIER_ALLOTMENTS[tier] ?? 0;
+const monthlyCredits = Number(
+  arg("--monthly-credits", String(monthlyAllotment)),
+);
+const addonCredits = Number(arg("--addon-credits", "0"));
 
 if (!email || !product || !portalId) {
   console.error("Missing required flags. Run with --help.");
@@ -127,10 +142,24 @@ const KEY = {
       await redis.del(existingKey);
       console.log(`Unlinked ${product}:${portalId} from ${email}.`);
     } else {
-      console.log(`Nothing to unlink; entitlement ${product}:${portalId} does not exist.`);
+      console.log(
+        `Nothing to unlink; entitlement ${product}:${portalId} does not exist.`,
+      );
     }
     return;
   }
+
+  const credits =
+    product === "debrief"
+      ? {
+          monthly: Number.isFinite(monthlyCredits) ? monthlyCredits : 0,
+          monthlyAllotment,
+          addon: Number.isFinite(addonCredits) ? addonCredits : 0,
+          currentPeriodStart: periodStart,
+          currentPeriodEnd: renewalDate,
+          firstMonthBonusGranted: false,
+        }
+      : null;
 
   const entitlement = {
     entitlementId: existing?.entitlementId ?? randomUUID(),
@@ -141,11 +170,12 @@ const KEY = {
     installerEmail,
     status,
     tier,
-    credits: Number.isFinite(credits) ? credits : null,
-    createdAt: new Date().toISOString(),
+    credits,
+    createdAt: periodStart,
     renewalDate,
     stripeCustomerId: null,
     stripeSubscriptionId: null,
+    cancelAtPeriodEnd: false,
   };
 
   await redis.set(existingKey, entitlement);

@@ -39,4 +39,12 @@ export const KEY = {
   accountEntitlements: (accountId: string) =>
     `dunamis:account-entitlements:${accountId}`,
   rate: (bucket: string, key: string) => `dunamis:rate:${bucket}:${key}`,
+  stripeCustomerToAccount: (customerId: string) =>
+    `dunamis:stripe-customer-to-account:${customerId}`,
+  stripeEvent: (eventId: string) => `dunamis:stripe-event:${eventId}`,
+  tierOverride: (product: string, portalId: string) =>
+    `dunamis:tier-override:${product}:${portalId}`,
+  /** Short-TTL lock used to serialize webhook writes per entitlement. */
+  entitlementLock: (product: string, portalId: string) =>
+    `dunamis:lock:entitlement:${product}:${portalId}`,
 } as const;
