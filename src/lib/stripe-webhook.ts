@@ -2,6 +2,7 @@ import type Stripe from "stripe";
 import { redis, KEY } from "./redis";
 import { saveEntitlement, getEntitlement } from "./accounts";
 import { withEntitlementLock } from "./entitlement-lock";
+import { stripe } from "./stripe";
 import {
   getTierByPriceId,
   getTierAllotment,
@@ -177,6 +178,15 @@ async function applyTierWithOverride(
   return desiredTier;
 }
 
+// Stripe subscription statuses that indicate the stored subscription is
+// no longer the live one — a newly-created subscription carrying a
+// different id is the real replacement and should overwrite state.
+const DEAD_STATUSES = new Set<Stripe.Subscription.Status>([
+  "canceled",
+  "incomplete_expired",
+  "unpaid",
+]);
+
 async function onSubscriptionCreated(
   sub: Stripe.Subscription,
 ): Promise<void> {
@@ -195,6 +205,41 @@ async function onSubscriptionCreated(
       );
       return;
     }
+
+    // Always maintain the audit trail, even if we decide not to write
+    // tier/credits below.
+    entitlement.subscriptionHistory = appendToHistory(
+      entitlement.subscriptionHistory,
+      sub.id,
+    );
+
+    // Decide whether this event should overwrite current state.
+    const stored = entitlement.stripeSubscriptionId;
+    let shouldOverwrite: boolean;
+    if (!stored) {
+      // First subscription — normal path.
+      shouldOverwrite = true;
+    } else if (stored === sub.id) {
+      // Same subscription, re-delivery. Idempotent rewrite.
+      shouldOverwrite = true;
+    } else {
+      // Different stored sub — check if the stored one is dead.
+      const storedStatus = await fetchSubscriptionStatus(stored);
+      if (storedStatus === null || DEAD_STATUSES.has(storedStatus)) {
+        shouldOverwrite = true;
+      } else {
+        console.error(
+          `[stripe-webhook] subscription.created ${sub.id} arrived but entitlement ${ref.product}:${ref.portalId} still has live stored subscription ${stored} (status=${storedStatus}). Not overwriting; history appended only.`,
+        );
+        shouldOverwrite = false;
+      }
+    }
+
+    if (!shouldOverwrite) {
+      await saveEntitlement(entitlement);
+      return;
+    }
+
     const tier = resolveTier(sub);
     const effectiveTier = await applyTierWithOverride(ref, tier, entitlement);
     const { start, end } = periodFromSubscription(sub);
@@ -219,10 +264,6 @@ async function onSubscriptionCreated(
     entitlement.stripeCustomerId =
       typeof sub.customer === "string" ? sub.customer : sub.customer.id;
     entitlement.stripeSubscriptionId = sub.id;
-    entitlement.subscriptionHistory = appendToHistory(
-      entitlement.subscriptionHistory,
-      sub.id,
-    );
     entitlement.renewalDate = toIso(end);
     entitlement.credits = credits;
     entitlement.cancelAtPeriodEnd = sub.cancel_at_period_end ?? false;
@@ -244,6 +285,22 @@ async function onSubscriptionUpdated(
   await withEntitlementLock(ref.product, ref.portalId, async () => {
     const entitlement = await getEntitlement(ref.product, ref.portalId);
     if (!entitlement) return;
+
+    entitlement.subscriptionHistory = appendToHistory(
+      entitlement.subscriptionHistory,
+      sub.id,
+    );
+
+    // Stale-event guard: a subscription.updated for an older sub must
+    // not clobber the current subscription's tier/credits/status.
+    const stored = entitlement.stripeSubscriptionId;
+    if (stored && stored !== sub.id) {
+      console.log(
+        `[stripe-webhook] subscription.updated ${sub.id} is stale (current stored: ${stored}). History appended; tier/credits/status writes skipped.`,
+      );
+      await saveEntitlement(entitlement);
+      return;
+    }
 
     const tier = resolveTier(sub);
     const effectiveTier = await applyTierWithOverride(ref, tier, entitlement);
@@ -274,10 +331,6 @@ async function onSubscriptionUpdated(
     entitlement.status = mapSubscriptionStatus(sub.status);
     entitlement.tier = effectiveTier;
     entitlement.stripeSubscriptionId = sub.id;
-    entitlement.subscriptionHistory = appendToHistory(
-      entitlement.subscriptionHistory,
-      sub.id,
-    );
     entitlement.renewalDate = toIso(end);
     entitlement.credits = credits;
     entitlement.cancelAtPeriodEnd = sub.cancel_at_period_end ?? false;
@@ -294,10 +347,49 @@ async function onSubscriptionDeleted(
   await withEntitlementLock(ref.product, ref.portalId, async () => {
     const entitlement = await getEntitlement(ref.product, ref.portalId);
     if (!entitlement) return;
+
+    entitlement.subscriptionHistory = appendToHistory(
+      entitlement.subscriptionHistory,
+      sub.id,
+    );
+
+    // Only mark the entitlement canceled if the deleted subscription is
+    // actually the current one. An older sub winding down after the user
+    // has already re-subscribed must not flip the current record to
+    // canceled.
+    const stored = entitlement.stripeSubscriptionId;
+    if (stored && stored !== sub.id) {
+      console.log(
+        `[stripe-webhook] subscription.deleted ${sub.id} is not current (stored: ${stored}). History appended; status write skipped.`,
+      );
+      await saveEntitlement(entitlement);
+      return;
+    }
+
     entitlement.status = "canceled";
     entitlement.cancelAtPeriodEnd = false;
     await saveEntitlement(entitlement);
   });
+}
+
+/**
+ * Retrieve the current status of a Stripe subscription. Returns null on
+ * error (404, rate-limit, etc.) so callers can fall through to
+ * "treat the stored sub as dead" when Stripe claims it doesn't exist.
+ */
+async function fetchSubscriptionStatus(
+  subscriptionId: string,
+): Promise<Stripe.Subscription.Status | null> {
+  try {
+    const sub = await stripe().subscriptions.retrieve(subscriptionId);
+    return sub.status;
+  } catch (err) {
+    console.warn(
+      `[stripe-webhook] fetchSubscriptionStatus(${subscriptionId}) failed:`,
+      err instanceof Error ? err.message : err,
+    );
+    return null;
+  }
 }
 
 async function onInvoicePaymentFailed(
