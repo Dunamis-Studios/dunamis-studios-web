@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Check, Receipt } from "lucide-react";
+import { Check, ChevronDown, Receipt } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Badge, StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -310,19 +310,19 @@ async function UpcomingChargeSection({
   if (entitlement.cancelAtPeriodEnd) return null;
   if (entitlement.status !== "active") return null;
 
+  type PreviewLine = {
+    description?: string | null;
+    amount?: number | null;
+  };
   type PreviewLike = {
     amount_due?: number;
     currency?: string;
     next_payment_attempt?: number | null;
     period_end?: number;
-    lines?: { data?: Array<{ description?: string | null }> };
+    lines?: { data?: PreviewLine[] };
   };
   let preview: PreviewLike | null = null;
   try {
-    // Stripe API 2026-03-25.dahlia: invoices.createPreview is the
-    // canonical way to peek at a subscription's next invoice. Older
-    // retrieveUpcoming still exists as a shim on some SDKs — createPreview
-    // is future-proof.
     const api = stripe() as unknown as {
       invoices: {
         createPreview: (params: {
@@ -350,35 +350,112 @@ async function UpcomingChargeSection({
     : preview.period_end
       ? new Date(preview.period_end * 1000).toISOString()
       : entitlement.renewalDate;
-  const lineDescription =
-    preview.lines?.data?.[0]?.description ?? "Subscription";
+
+  const lines = (preview.lines?.data ?? [])
+    .map((l) => ({
+      description:
+        typeof l.description === "string" && l.description.trim().length > 0
+          ? l.description.trim()
+          : "Subscription",
+      amountCents: typeof l.amount === "number" ? l.amount : 0,
+    }));
+  const currency = (preview.currency ?? "usd").toUpperCase();
 
   return (
     <SectionCard
       title="Upcoming charge"
       description="The next charge Stripe will attempt on this entitlement."
     >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-col gap-1">
-          <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-            {formatDate(dateIso)}
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex flex-col gap-1">
+            <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+              {formatDate(dateIso)}
+            </div>
+            <div className="font-[var(--font-display)] text-2xl font-medium tracking-tight text-[var(--fg)]">
+              {formatCents(preview.amount_due)}
+              <span className="ml-2 text-sm font-normal text-[var(--fg-subtle)]">
+                {currency}
+              </span>
+            </div>
+            <UpcomingLineSummary lines={lines} />
           </div>
-          <div className="font-[var(--font-display)] text-2xl font-medium tracking-tight text-[var(--fg)]">
-            ${(preview.amount_due / 100).toFixed(2)}
-            <span className="ml-2 text-sm font-normal text-[var(--fg-subtle)]">
-              {(preview.currency ?? "usd").toUpperCase()}
-            </span>
-          </div>
-          <div className="text-sm text-[var(--fg-muted)]">
-            {lineDescription}
-          </div>
+          <Badge variant="warning" className="self-start">
+            Upcoming
+          </Badge>
         </div>
-        <Badge variant="warning" className="self-start">
-          Upcoming
-        </Badge>
+
+        {lines.length > 1 ? (
+          <details className="group rounded-lg border border-[var(--border)] bg-[var(--bg-subtle)]">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-2.5 text-sm text-[var(--fg-muted)] hover:text-[var(--fg)]">
+              <span>Show breakdown</span>
+              <ChevronDown
+                className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180"
+                aria-hidden
+              />
+            </summary>
+            <ul className="divide-y divide-[var(--border)] border-t border-[var(--border)]">
+              {lines.map((l, i) => (
+                <li
+                  key={i}
+                  className="flex items-baseline justify-between gap-4 px-4 py-2.5 text-sm"
+                >
+                  <span className="min-w-0 flex-1 text-[var(--fg)]">
+                    {l.description}
+                  </span>
+                  <span
+                    className={cn(
+                      "font-mono shrink-0",
+                      l.amountCents < 0
+                        ? "text-[var(--fg-subtle)]"
+                        : "text-[var(--fg)]",
+                    )}
+                  >
+                    {formatCents(l.amountCents)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <div className="flex items-baseline justify-between gap-4 border-t-2 border-[var(--border-strong)] px-4 py-2.5 text-sm font-medium">
+              <span className="text-[var(--fg)]">Total</span>
+              <span className="font-mono text-[var(--fg)]">
+                {formatCents(preview.amount_due)}{" "}
+                <span className="font-normal text-[var(--fg-subtle)]">
+                  {currency}
+                </span>
+              </span>
+            </div>
+          </details>
+        ) : null}
       </div>
     </SectionCard>
   );
+}
+
+function UpcomingLineSummary({
+  lines,
+}: {
+  lines: Array<{ description: string; amountCents: number }>;
+}) {
+  if (lines.length === 0) return null;
+  if (lines.length === 1) {
+    return (
+      <div className="text-sm text-[var(--fg-muted)]">
+        {lines[0]!.description}
+      </div>
+    );
+  }
+  return (
+    <div className="text-sm text-[var(--fg-muted)]">
+      {lines.length} line items
+    </div>
+  );
+}
+
+function formatCents(cents: number): string {
+  const negative = cents < 0;
+  const abs = Math.abs(cents) / 100;
+  return `${negative ? "-" : ""}$${abs.toFixed(2)}`;
 }
 
 /**
