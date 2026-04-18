@@ -15,7 +15,6 @@ import {
   DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -71,39 +70,49 @@ export function SubscribeModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl">
-        <DialogHeader>
-          <DialogTitle>
-            {isChangePlan ? "Change plan" : "Start a Debrief subscription"}
-          </DialogTitle>
-          <DialogDescription>
-            Portal {entitlement.portalId} · {entitlement.portalDomain}. All
-            tiers billed monthly in USD. Upgrade, downgrade, or cancel any
-            time.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-w-4xl md:max-h-[90vh] flex flex-col overflow-hidden p-0">
+        <div className="shrink-0 border-b border-[var(--border)] px-6 py-5">
+          <DialogHeader className="mb-0">
+            <DialogTitle>
+              {isChangePlan ? "Change plan" : "Start a Debrief subscription"}
+            </DialogTitle>
+            <DialogDescription>
+              Portal {entitlement.portalId} · {entitlement.portalDomain}. All
+              tiers billed monthly in USD. Upgrade, downgrade, or cancel any
+              time.
+            </DialogDescription>
+          </DialogHeader>
+        </div>
 
-        <TierPicker
-          selectedTier={selectedTier}
-          onSelect={setSelectedTier}
-          currentTier={currentTier}
-        />
+        <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+          {/* LEFT column: tier picker + selected tier detail */}
+          <div className="border-b border-[var(--border)] p-6 md:border-b-0 md:border-r md:overflow-y-auto">
+            <TierPicker
+              selectedTier={selectedTier}
+              onSelect={setSelectedTier}
+              currentTier={currentTier}
+            />
+          </div>
 
-        {isChangePlan ? (
-          <ChangePlanActions
-            entitlement={entitlement}
-            selectedTier={selectedTier}
-            currentTier={currentTier}
-            onDone={() => onOpenChange(false)}
-          />
-        ) : (
-          <CreateSubscriptionCheckout
-            entitlement={entitlement}
-            selectedTier={selectedTier}
-            accountEmail={accountEmail}
-            onDone={() => onOpenChange(false)}
-          />
-        )}
+          {/* RIGHT column: checkout + sticky CTA footer */}
+          <div className="flex min-h-0 flex-col">
+            {isChangePlan ? (
+              <ChangePlanActions
+                entitlement={entitlement}
+                selectedTier={selectedTier}
+                currentTier={currentTier}
+                onDone={() => onOpenChange(false)}
+              />
+            ) : (
+              <CreateSubscriptionCheckout
+                entitlement={entitlement}
+                selectedTier={selectedTier}
+                accountEmail={accountEmail}
+                onDone={() => onOpenChange(false)}
+              />
+            )}
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
@@ -140,7 +149,7 @@ function TierPicker({
       <div
         role="radiogroup"
         aria-label="Subscription tier"
-        className="grid grid-cols-3 gap-2"
+        className="flex flex-col gap-2"
       >
         {tiers.map((t) => {
           const tierSpec = DEBRIEF_TIERS[t];
@@ -154,25 +163,27 @@ function TierPicker({
               aria-checked={selected}
               onClick={() => onSelect(t)}
               className={cn(
-                "flex flex-col gap-1 rounded-lg border p-3 text-left transition-colors",
+                "flex items-center justify-between gap-3 rounded-lg border p-3 text-left transition-colors",
                 selected
                   ? "border-[var(--accent)] bg-[color-mix(in_oklch,var(--accent)_6%,transparent)]"
                   : "border-[var(--border)] hover:border-[var(--border-strong)]",
               )}
             >
-              <span className="flex items-center justify-between">
-                <span className="text-sm font-medium">{tierSpec.label}</span>
-                {current ? (
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-[var(--fg-subtle)]">
-                    Current
-                  </span>
-                ) : null}
+              <span className="flex flex-col gap-0.5 min-w-0">
+                <span className="flex items-center gap-2">
+                  <span className="text-sm font-medium">{tierSpec.label}</span>
+                  {current ? (
+                    <span className="text-[10px] font-medium uppercase tracking-wider text-[var(--fg-subtle)]">
+                      Current
+                    </span>
+                  ) : null}
+                </span>
+                <span className="text-xs text-[var(--fg-subtle)]">
+                  {tierSpec.monthlyAllotment.toLocaleString()} credits / mo
+                </span>
               </span>
-              <span className="font-mono text-xs text-[var(--fg-muted)]">
+              <span className="font-mono text-sm text-[var(--fg)] shrink-0">
                 ${tierSpec.monthlyDollars} / mo
-              </span>
-              <span className="text-xs text-[var(--fg-subtle)]">
-                {tierSpec.monthlyAllotment} credits / mo
               </span>
             </button>
           );
@@ -265,30 +276,34 @@ function ChangePlanActions({
   }
 
   return (
-    <>
-      {error ? (
-        <div
-          role="alert"
-          className="rounded-md border border-[var(--color-danger)]/40 bg-[color-mix(in_oklch,var(--color-danger)_10%,transparent)] px-3 py-2 text-sm text-[var(--color-danger)]"
-        >
-          {error}
+    <div className="flex flex-col min-h-0 flex-1">
+      <div className="flex-1 md:overflow-y-auto p-6">
+        <p className="text-sm text-[var(--fg-muted)]">
+          Stripe will prorate the price difference for the current billing
+          period. Your dashboard will update in a moment.
+        </p>
+        {error ? (
+          <div
+            role="alert"
+            className="mt-4 rounded-md border border-[var(--color-danger)]/40 bg-[color-mix(in_oklch,var(--color-danger)_10%,transparent)] px-3 py-2 text-sm text-[var(--color-danger)]"
+          >
+            {error}
+          </div>
+        ) : null}
+      </div>
+      <div className="shrink-0 border-t border-[var(--border)] bg-[var(--bg-elevated)] px-6 py-4">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <DialogClose asChild>
+            <Button variant="secondary">Cancel</Button>
+          </DialogClose>
+          <Button onClick={submit} disabled={sameTier} loading={loading}>
+            {sameTier
+              ? `Already on ${DEBRIEF_TIERS[selectedTier].label}`
+              : `Switch to ${DEBRIEF_TIERS[selectedTier].label}`}
+          </Button>
         </div>
-      ) : null}
-      <DialogFooter>
-        <DialogClose asChild>
-          <Button variant="secondary">Cancel</Button>
-        </DialogClose>
-        <Button
-          onClick={submit}
-          disabled={sameTier}
-          loading={loading}
-        >
-          {sameTier
-            ? `Already on ${DEBRIEF_TIERS[selectedTier].label}`
-            : `Switch to ${DEBRIEF_TIERS[selectedTier].label}`}
-        </Button>
-      </DialogFooter>
-    </>
+      </div>
+    </div>
   );
 }
 
@@ -353,23 +368,38 @@ function CreateSubscriptionCheckout({
 
   if (error) {
     return (
-      <div
-        role="alert"
-        className="rounded-md border border-[var(--color-danger)]/40 bg-[color-mix(in_oklch,var(--color-danger)_10%,transparent)] px-3 py-2 text-sm text-[var(--color-danger)]"
-      >
-        {error}
+      <div className="flex flex-col min-h-0 flex-1">
+        <div className="flex-1 p-6">
+          <div
+            role="alert"
+            className="rounded-md border border-[var(--color-danger)]/40 bg-[color-mix(in_oklch,var(--color-danger)_10%,transparent)] px-3 py-2 text-sm text-[var(--color-danger)]"
+          >
+            {error}
+          </div>
+        </div>
+        <div className="shrink-0 border-t border-[var(--border)] bg-[var(--bg-elevated)] px-6 py-4">
+          <div className="flex justify-end">
+            <DialogClose asChild>
+              <Button variant="secondary">Close</Button>
+            </DialogClose>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!clientSecret || !setupIntentId || loading) {
     return (
-      <div className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg-subtle)] px-4 py-5 text-sm text-[var(--fg-muted)]">
-        <span
-          className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
-          aria-hidden
-        />
-        Preparing secure checkout…
+      <div className="flex flex-col min-h-0 flex-1">
+        <div className="flex-1 p-6">
+          <div className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg-subtle)] px-4 py-5 text-sm text-[var(--fg-muted)]">
+            <span
+              className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
+              aria-hidden
+            />
+            Preparing secure checkout…
+          </div>
+        </div>
       </div>
     );
   }
@@ -546,14 +576,16 @@ function CheckoutForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
-      <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
-        <div className="flex items-center gap-2 text-xs text-[var(--fg-muted)]">
-          <CreditCard className="h-3.5 w-3.5" aria-hidden />
-          Payment · billed to {accountEmail}
+    <form onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
+      <div className="flex-1 md:overflow-y-auto p-6">
+        <div className="flex items-center justify-between text-xs text-[var(--fg-muted)] mb-3">
+          <span className="flex items-center gap-2">
+            <CreditCard className="h-3.5 w-3.5" aria-hidden />
+            Payment · billed to {accountEmail}
+          </span>
         </div>
         {finalizing ? (
-          <div className="mt-4 flex items-center gap-3 rounded-md border border-[var(--border)] bg-[var(--bg-subtle)] px-3 py-4 text-sm text-[var(--fg-muted)]">
+          <div className="flex items-center gap-3 rounded-md border border-[var(--border)] bg-[var(--bg-subtle)] px-3 py-4 text-sm text-[var(--fg-muted)]">
             <span
               className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
               aria-hidden
@@ -562,37 +594,42 @@ function CheckoutForm({
             Stripe&apos;s confirmation webhook.
           </div>
         ) : (
-          <div className="mt-4">
+          <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
             <PaymentElement options={{ layout: "tabs" }} />
           </div>
         )}
+        {error ? (
+          <div
+            role="alert"
+            className="mt-4 rounded-md border border-[var(--color-danger)]/40 bg-[color-mix(in_oklch,var(--color-danger)_10%,transparent)] px-3 py-2 text-sm text-[var(--color-danger)]"
+          >
+            {error}
+          </div>
+        ) : null}
+        <p className="mt-4 text-xs text-[var(--fg-subtle)]">
+          Subscriptions renew monthly. Cancel any time from this dashboard or
+          Stripe&apos;s customer portal.
+        </p>
       </div>
 
-      {error ? (
-        <div
-          role="alert"
-          className="rounded-md border border-[var(--color-danger)]/40 bg-[color-mix(in_oklch,var(--color-danger)_10%,transparent)] px-3 py-2 text-sm text-[var(--color-danger)]"
-        >
-          {error}
-        </div>
-      ) : null}
-
-      <DialogFooter>
-        <DialogClose asChild>
-          <Button type="button" variant="secondary" disabled={finalizing}>
-            Cancel
+      <div className="shrink-0 border-t border-[var(--border)] bg-[var(--bg-elevated)] px-6 py-4">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <DialogClose asChild>
+            <Button type="button" variant="secondary" disabled={finalizing}>
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button
+            type="submit"
+            loading={submitting}
+            disabled={!stripeSDK || finalizing}
+          >
+            {finalizing
+              ? "Finalizing…"
+              : `Start ${DEBRIEF_TIERS[selectedTier].label} subscription`}
           </Button>
-        </DialogClose>
-        <Button
-          type="submit"
-          loading={submitting}
-          disabled={!stripeSDK || finalizing}
-        >
-          {finalizing
-            ? "Finalizing…"
-            : `Start ${DEBRIEF_TIERS[selectedTier].label} subscription`}
-        </Button>
-      </DialogFooter>
+        </div>
+      </div>
     </form>
   );
 }

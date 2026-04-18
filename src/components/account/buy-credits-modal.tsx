@@ -15,7 +15,6 @@ import {
   DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -56,23 +55,30 @@ export function BuyCreditsModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl">
-        <DialogHeader>
-          <DialogTitle>Buy credits</DialogTitle>
-          <DialogDescription>
-            Credit packs stack on top of your monthly allotment and never
-            expire. One-time charge, no subscription change.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-w-4xl md:max-h-[90vh] flex flex-col overflow-hidden p-0">
+        <div className="shrink-0 border-b border-[var(--border)] px-6 py-5">
+          <DialogHeader className="mb-0">
+            <DialogTitle>Buy credits</DialogTitle>
+            <DialogDescription>
+              Credit packs stack on top of your monthly allotment and never
+              expire. One-time charge, no subscription change.
+            </DialogDescription>
+          </DialogHeader>
+        </div>
 
-        <PackPicker selected={selected} onSelect={setSelected} />
-
-        <PackCheckout
-          entitlement={entitlement}
-          selected={selected}
-          accountEmail={accountEmail}
-          onDone={() => onOpenChange(false)}
-        />
+        <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+          <div className="border-b border-[var(--border)] p-6 md:border-b-0 md:border-r md:overflow-y-auto">
+            <PackPicker selected={selected} onSelect={setSelected} />
+          </div>
+          <div className="flex min-h-0 flex-col">
+            <PackCheckout
+              entitlement={entitlement}
+              selected={selected}
+              accountEmail={accountEmail}
+              onDone={() => onOpenChange(false)}
+            />
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
@@ -89,7 +95,7 @@ function PackPicker({
     <div
       role="radiogroup"
       aria-label="Credit pack"
-      className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+      className="grid grid-cols-2 gap-2"
     >
       {CREDIT_PACKS.map((p) => {
         const isSelected = selected === p.name;
@@ -183,23 +189,38 @@ function PackCheckout({
 
   if (error) {
     return (
-      <div
-        role="alert"
-        className="rounded-md border border-[var(--color-danger)]/40 bg-[color-mix(in_oklch,var(--color-danger)_10%,transparent)] px-3 py-2 text-sm text-[var(--color-danger)]"
-      >
-        {error}
+      <div className="flex flex-col min-h-0 flex-1">
+        <div className="flex-1 p-6">
+          <div
+            role="alert"
+            className="rounded-md border border-[var(--color-danger)]/40 bg-[color-mix(in_oklch,var(--color-danger)_10%,transparent)] px-3 py-2 text-sm text-[var(--color-danger)]"
+          >
+            {error}
+          </div>
+        </div>
+        <div className="shrink-0 border-t border-[var(--border)] bg-[var(--bg-elevated)] px-6 py-4">
+          <div className="flex justify-end">
+            <DialogClose asChild>
+              <Button variant="secondary">Close</Button>
+            </DialogClose>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!clientSecret || loading) {
     return (
-      <div className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg-subtle)] px-4 py-5 text-sm text-[var(--fg-muted)]">
-        <span
-          className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
-          aria-hidden
-        />
-        Preparing secure checkout…
+      <div className="flex flex-col min-h-0 flex-1">
+        <div className="flex-1 p-6">
+          <div className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg-subtle)] px-4 py-5 text-sm text-[var(--fg-muted)]">
+            <span
+              className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
+              aria-hidden
+            />
+            Preparing secure checkout…
+          </div>
+        </div>
       </div>
     );
   }
@@ -313,20 +334,23 @@ function CheckoutForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
-      <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
-        <div className="flex items-center justify-between text-xs text-[var(--fg-muted)]">
+    <form onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
+      <div className="flex-1 md:overflow-y-auto p-6">
+        <div className="flex items-center justify-between text-xs text-[var(--fg-muted)] mb-3">
           <span className="flex items-center gap-2">
             <CreditCard className="h-3.5 w-3.5" aria-hidden />
             One-time charge · billed to {accountEmail}
           </span>
           <span className="flex items-center gap-1 text-[var(--fg)]">
-            <Check className="h-3.5 w-3.5 text-[var(--color-success)]" aria-hidden />
+            <Check
+              className="h-3.5 w-3.5 text-[var(--color-success)]"
+              aria-hidden
+            />
             Credits never expire
           </span>
         </div>
         {finalizing ? (
-          <div className="mt-4 flex items-center gap-3 rounded-md border border-[var(--border)] bg-[var(--bg-subtle)] px-3 py-4 text-sm text-[var(--fg-muted)]">
+          <div className="flex items-center gap-3 rounded-md border border-[var(--border)] bg-[var(--bg-subtle)] px-3 py-4 text-sm text-[var(--fg-muted)]">
             <span
               className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
               aria-hidden
@@ -335,37 +359,38 @@ function CheckoutForm({
             webhook.
           </div>
         ) : (
-          <div className="mt-4">
+          <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
             <PaymentElement options={{ layout: "tabs" }} />
           </div>
         )}
+        {error ? (
+          <div
+            role="alert"
+            className="mt-4 rounded-md border border-[var(--color-danger)]/40 bg-[color-mix(in_oklch,var(--color-danger)_10%,transparent)] px-3 py-2 text-sm text-[var(--color-danger)]"
+          >
+            {error}
+          </div>
+        ) : null}
       </div>
 
-      {error ? (
-        <div
-          role="alert"
-          className="rounded-md border border-[var(--color-danger)]/40 bg-[color-mix(in_oklch,var(--color-danger)_10%,transparent)] px-3 py-2 text-sm text-[var(--color-danger)]"
-        >
-          {error}
-        </div>
-      ) : null}
-
-      <DialogFooter>
-        <DialogClose asChild>
-          <Button type="button" variant="secondary" disabled={finalizing}>
-            Cancel
+      <div className="shrink-0 border-t border-[var(--border)] bg-[var(--bg-elevated)] px-6 py-4">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <DialogClose asChild>
+            <Button type="button" variant="secondary" disabled={finalizing}>
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button
+            type="submit"
+            loading={submitting}
+            disabled={!stripeSDK || finalizing}
+          >
+            {finalizing
+              ? "Finalizing…"
+              : `Buy ${pack.credits.toLocaleString()} credits`}
           </Button>
-        </DialogClose>
-        <Button
-          type="submit"
-          loading={submitting}
-          disabled={!stripeSDK || finalizing}
-        >
-          {finalizing
-            ? "Finalizing…"
-            : `Buy ${pack.credits.toLocaleString()} credits`}
-        </Button>
-      </DialogFooter>
+        </div>
+      </div>
     </form>
   );
 }
