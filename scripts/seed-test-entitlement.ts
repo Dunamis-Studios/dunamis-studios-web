@@ -116,6 +116,8 @@ const KEY = {
   emailIndex: (e: string) => `dunamis:email-to-account:${e.toLowerCase()}`,
   entitlement: (p: string, pid: string) => `dunamis:entitlement:${p}:${pid}`,
   accountEntitlements: (id: string) => `dunamis:account-entitlements:${id}`,
+  stripeCustomerToAccount: (customerId: string) =>
+    `dunamis:stripe-customer-to-account:${customerId}`,
 };
 
 // --------------------------------------------------------------------------
@@ -131,10 +133,23 @@ const KEY = {
   }
 
   const existingKey = KEY.entitlement(product, portalId);
-  const existing = await redis.get<{ entitlementId?: string }>(existingKey);
+  const existing = await redis.get<{
+    entitlementId?: string;
+    stripeCustomerId?: string | null;
+  }>(existingKey);
 
   if (unlink) {
     if (existing) {
+      // Cascade: if this entitlement owned a Stripe Customer, drop its
+      // reverse index so a later re-seed (or a webhook for a now-dead
+      // customer) can't resolve back to an orphaned accountId.
+      const customerId = existing.stripeCustomerId ?? null;
+      if (customerId) {
+        await redis.del(KEY.stripeCustomerToAccount(customerId));
+        console.log(
+          `  removed reverse index stripe-customer-to-account:${customerId}`,
+        );
+      }
       await redis.srem(
         KEY.accountEntitlements(accountId),
         `${product}::${portalId}`,
