@@ -292,7 +292,7 @@ function ChangePlanActions({
 }
 
 // --------------------------------------------------------------------------
-// Create-subscription path (new Customer or no active sub)
+// Create-subscription path (SetupIntent-first — new Customer or no active sub)
 // --------------------------------------------------------------------------
 
 function CreateSubscriptionCheckout({
@@ -307,35 +307,37 @@ function CreateSubscriptionCheckout({
   onDone: () => void;
 }) {
   const [clientSecret, setClientSecret] = React.useState<string | null>(null);
+  const [setupIntentId, setSetupIntentId] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
 
-  // Create (or swap) the incomplete subscription whenever tier changes.
-  // Each tier swap cancels the previous incomplete sub and creates a new
-  // one so the Elements PaymentIntent amount matches the displayed price.
+  // SetupIntent is tier-agnostic. Create it ONCE on mount and reuse it
+  // across tier changes — the tier only matters at subscription-create
+  // time (step 2 of the two-step flow).
   React.useEffect(() => {
     let cancelled = false;
     async function init() {
       setLoading(true);
       setError(null);
       setClientSecret(null);
+      setSetupIntentId(null);
       try {
-        const res = await fetch("/api/stripe/create-subscription", {
+        const res = await fetch("/api/stripe/create-setup-intent", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
             product: entitlement.product,
             portalId: entitlement.portalId,
-            tier: selectedTier,
           }),
         });
         const data = await res.json();
         if (cancelled) return;
-        if (!res.ok || !data.clientSecret) {
+        if (!res.ok || !data.clientSecret || !data.setupIntentId) {
           setError(data?.error?.message ?? "Couldn't initialize checkout.");
           return;
         }
         setClientSecret(data.clientSecret);
+        setSetupIntentId(data.setupIntentId);
       } catch {
         if (!cancelled) setError("Network error — please try again.");
       } finally {
@@ -346,7 +348,7 @@ function CreateSubscriptionCheckout({
     return () => {
       cancelled = true;
     };
-  }, [selectedTier, entitlement.product, entitlement.portalId]);
+  }, [entitlement.product, entitlement.portalId]);
 
   if (error) {
     return (
@@ -359,7 +361,7 @@ function CreateSubscriptionCheckout({
     );
   }
 
-  if (!clientSecret || loading) {
+  if (!clientSecret || !setupIntentId || loading) {
     return (
       <div className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg-subtle)] px-4 py-5 text-sm text-[var(--fg-muted)]">
         <span
@@ -372,8 +374,6 @@ function CreateSubscriptionCheckout({
   }
 
   return (
-    // Key on clientSecret so Elements fully remounts on tier change — the
-    // provider doesn't accept clientSecret changes after init.
     <Elements
       key={clientSecret}
       stripe={getStripe()}
@@ -393,8 +393,10 @@ function CreateSubscriptionCheckout({
       }}
     >
       <CheckoutForm
+        entitlement={entitlement}
         accountEmail={accountEmail}
         selectedTier={selectedTier}
+        setupIntentId={setupIntentId}
         onDone={onDone}
       />
     </Elements>
@@ -402,12 +404,16 @@ function CreateSubscriptionCheckout({
 }
 
 function CheckoutForm({
+  entitlement,
   accountEmail,
   selectedTier,
+  setupIntentId,
   onDone,
 }: {
+  entitlement: Entitlement;
   accountEmail: string;
   selectedTier: EntitlementTier;
+  setupIntentId: string;
   onDone: () => void;
 }) {
   const stripeSDK = useStripe();
@@ -422,24 +428,76 @@ function CheckoutForm({
     if (!stripeSDK || !elements) return;
     setSubmitting(true);
     setError(null);
-    const { error: confirmError } = await stripeSDK.confirmPayment({
+
+    // Step 1 — attach the payment method to the customer via the
+    // SetupIntent. No charge happens here.
+    const { error: setupError } = await stripeSDK.confirmSetup({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/account/debrief/${
-          // portalId is part of the current URL; Stripe handles redirect-back
-          window.location.pathname.split("/").pop()
-        }?subscribed=1`,
+        return_url: `${window.location.origin}${window.location.pathname}?subscribed=1`,
       },
       redirect: "if_required",
     });
-    if (confirmError) {
-      setError(confirmError.message ?? "Payment failed.");
+    if (setupError) {
+      setError(setupError.message ?? "Couldn't save your payment method.");
       setSubmitting(false);
       return;
     }
+
+    // Step 2 — create the subscription with the confirmed SetupIntent.
+    let createResp: Response;
+    try {
+      createResp = await fetch("/api/stripe/create-subscription", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          product: entitlement.product,
+          portalId: entitlement.portalId,
+          tier: selectedTier,
+          setupIntentId,
+        }),
+      });
+    } catch {
+      setError("Network error while creating subscription.");
+      setSubmitting(false);
+      return;
+    }
+    const createData = await createResp.json().catch(() => null);
+    if (!createResp.ok || !createData) {
+      setError(
+        createData?.error?.message ?? "Subscription could not be created.",
+      );
+      setSubmitting(false);
+      return;
+    }
+
+    // Step 3 — 3DS handoff. If Stripe needs an authentication challenge,
+    // the subscription is live-but-incomplete and the backend hands us
+    // a PaymentIntent client_secret to confirm the first invoice.
+    if (createData.requires3DS && createData.clientSecret) {
+      const { error: threeDsError, paymentIntent } =
+        await stripeSDK.confirmCardPayment(createData.clientSecret);
+      if (threeDsError) {
+        setError(
+          threeDsError.message ?? "3D Secure authentication failed.",
+        );
+        setSubmitting(false);
+        return;
+      }
+      if (paymentIntent?.status !== "succeeded") {
+        setError(
+          `Payment is ${paymentIntent?.status ?? "pending"} — please retry.`,
+        );
+        setSubmitting(false);
+        return;
+      }
+    }
+
+    // Step 4 — success. The webhook does the authoritative Redis writes
+    // (customer.subscription.created); we refresh to pick them up.
     push({
       kind: "success",
-      title: "Subscription started",
+      title: "Subscription active",
       description: "Your dashboard will update in a few seconds.",
     });
     onDone();
