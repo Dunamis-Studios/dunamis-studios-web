@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { HintTooltip } from "@/components/ui/tooltip";
 import { SectionCard } from "@/components/account/section-card";
 import { CancelSubscriptionBlock } from "@/components/account/cancel-subscription-block";
+import { UpgradeButton } from "@/components/account/upgrade-button";
 import { getCurrentSession } from "@/lib/session";
 import { getEntitlement } from "@/lib/accounts";
 import { PRODUCT_META, type Entitlement, type EntitlementTier } from "@/lib/types";
@@ -116,7 +117,10 @@ export default async function EntitlementDetailPage({
       </header>
 
       <div className="mt-10 space-y-8">
-        <CurrentPlanSection entitlement={entitlement} />
+        <CurrentPlanSection
+          entitlement={entitlement}
+          accountEmail={s.account.email}
+        />
         <CreditsSection entitlement={entitlement} />
         <BillingHistorySection />
         <CancelSubscriptionBlock />
@@ -125,9 +129,16 @@ export default async function EntitlementDetailPage({
   );
 }
 
-function CurrentPlanSection({ entitlement }: { entitlement: Entitlement }) {
+function CurrentPlanSection({
+  entitlement,
+  accountEmail,
+}: {
+  entitlement: Entitlement;
+  accountEmail: string;
+}) {
   const features =
     entitlement.tier ? TIER_FEATURES[entitlement.tier] : [];
+  const isDebrief = entitlement.product === "debrief";
 
   return (
     <SectionCard title="Current plan" description="Your tier and what's included.">
@@ -154,13 +165,20 @@ function CurrentPlanSection({ entitlement }: { entitlement: Entitlement }) {
             </p>
           )}
         </div>
-        <HintTooltip content="Billing is coming soon. Plan changes will be available once Stripe is wired up.">
-          <span tabIndex={0} className="inline-flex">
-            <Button variant="secondary" disabled>
-              Upgrade plan
-            </Button>
-          </span>
-        </HintTooltip>
+        {isDebrief ? (
+          <UpgradeButton
+            entitlement={entitlement}
+            accountEmail={accountEmail}
+          />
+        ) : (
+          <HintTooltip content="Billing is coming soon. Plan changes will be available once Stripe is wired up.">
+            <span tabIndex={0} className="inline-flex">
+              <Button variant="secondary" disabled aria-disabled>
+                Upgrade plan
+              </Button>
+            </span>
+          </HintTooltip>
+        )}
       </div>
     </SectionCard>
   );
@@ -168,6 +186,8 @@ function CurrentPlanSection({ entitlement }: { entitlement: Entitlement }) {
 
 function CreditsSection({ entitlement }: { entitlement: Entitlement }) {
   if (entitlement.credits === null) return null;
+  const c = entitlement.credits;
+  const total = (c.monthly ?? 0) + (c.addon ?? 0);
   return (
     <SectionCard
       title="Credits"
@@ -179,7 +199,7 @@ function CreditsSection({ entitlement }: { entitlement: Entitlement }) {
             Balance
           </div>
           <div className="mt-1 font-mono text-3xl font-medium text-[var(--fg)]">
-            {entitlement.credits.toLocaleString()}
+            {total.toLocaleString()}
           </div>
         </div>
         <HintTooltip content="Billing is coming soon. Credit top-ups will be available once Stripe is wired up.">
