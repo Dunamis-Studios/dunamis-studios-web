@@ -239,6 +239,7 @@ function ChangePlanActions({
   const router = useRouter();
   const { push } = useToast();
   const [loading, setLoading] = React.useState(false);
+  const [finalizing, setFinalizing] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const sameTier = selectedTier === currentTier;
 
@@ -260,17 +261,46 @@ function ChangePlanActions({
         setError(data?.error?.message ?? "Couldn't change plan.");
         return;
       }
-      push({
-        kind: "success",
-        title: `Plan change queued`,
-        description:
-          "Stripe will prorate the difference and your dashboard will update in a moment.",
-      });
+
+      // Stripe accepted the plan change; the customer.subscription.updated
+      // webhook will land async. Poll until the tier on the entitlement
+      // reflects the new selection, then close.
+      setFinalizing(true);
+      const priorTier = currentTier;
+
+      const { matched } = await pollUntil<Entitlement | null>(
+        async () => {
+          const r = await fetch(
+            `/api/entitlements/${entitlement.product}/${entitlement.portalId}`,
+            { cache: "no-store" },
+          );
+          if (!r.ok) return null;
+          const body = await r.json().catch(() => null);
+          return (body?.entitlement as Entitlement | undefined) ?? null;
+        },
+        (ent) =>
+          !!ent?.tier && ent.tier !== priorTier && ent.tier === selectedTier,
+        { intervalMs: 500, timeoutMs: 10_000 },
+      );
+
+      if (matched) {
+        push({
+          kind: "success",
+          title: `Plan changed to ${DEBRIEF_TIERS[selectedTier].label}`,
+        });
+      } else {
+        push({
+          kind: "info",
+          title: "Plan change is processing",
+          description: "Refresh in a moment to see updates.",
+        });
+      }
       onDone();
       router.refresh();
     } catch {
       setError("Network error — please try again.");
     } finally {
+      setFinalizing(false);
       setLoading(false);
     }
   }
@@ -278,10 +308,20 @@ function ChangePlanActions({
   return (
     <div className="flex flex-col min-h-0 flex-1">
       <div className="flex-1 md:overflow-y-auto p-6">
-        <p className="text-sm text-[var(--fg-muted)]">
-          Stripe will prorate the price difference for the current billing
-          period. Your dashboard will update in a moment.
-        </p>
+        {finalizing ? (
+          <div className="flex items-center gap-3 rounded-md border border-[var(--border)] bg-[var(--bg-subtle)] px-3 py-4 text-sm text-[var(--fg-muted)]">
+            <span
+              className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
+              aria-hidden
+            />
+            Applying plan change — waiting on Stripe&apos;s confirmation webhook.
+          </div>
+        ) : (
+          <p className="text-sm text-[var(--fg-muted)]">
+            Stripe will prorate the price difference and bill it today, so
+            next month&apos;s invoice stays at the new tier&apos;s flat rate.
+          </p>
+        )}
         {error ? (
           <div
             role="alert"
@@ -294,12 +334,20 @@ function ChangePlanActions({
       <div className="shrink-0 border-t border-[var(--border)] bg-[var(--bg-elevated)] px-6 py-4">
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <DialogClose asChild>
-            <Button variant="secondary">Cancel</Button>
+            <Button variant="secondary" disabled={finalizing}>
+              Cancel
+            </Button>
           </DialogClose>
-          <Button onClick={submit} disabled={sameTier} loading={loading}>
-            {sameTier
-              ? `Already on ${DEBRIEF_TIERS[selectedTier].label}`
-              : `Switch to ${DEBRIEF_TIERS[selectedTier].label}`}
+          <Button
+            onClick={submit}
+            disabled={sameTier || finalizing}
+            loading={loading}
+          >
+            {finalizing
+              ? "Applying…"
+              : sameTier
+                ? `Already on ${DEBRIEF_TIERS[selectedTier].label}`
+                : `Switch to ${DEBRIEF_TIERS[selectedTier].label}`}
           </Button>
         </div>
       </div>
