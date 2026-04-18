@@ -295,26 +295,57 @@ function CreditsSection({
   );
 }
 
+/**
+ * Pull the subscription id off a Stripe Invoice without committing to a
+ * specific API-version shape. 2026-03-25.dahlia stashes it under
+ * parent.subscription_details.subscription; older releases kept it at
+ * the top level. Checks both, returns whichever is set.
+ */
+function invoiceSubscriptionId(inv: Stripe.Invoice): string | null {
+  const parent = (
+    inv as unknown as {
+      parent?: {
+        subscription_details?: { subscription?: string | null };
+      };
+    }
+  ).parent;
+  const nested = parent?.subscription_details?.subscription ?? null;
+  if (nested) return nested;
+  const direct = (inv as unknown as { subscription?: string | null })
+    .subscription;
+  return direct ?? null;
+}
+
 async function BillingHistorySection({
   entitlement,
 }: {
   entitlement: Entitlement;
 }) {
   const customerId = entitlement.stripeCustomerId;
-  const subscriptionId = entitlement.stripeSubscriptionId;
+  const history = entitlement.subscriptionHistory ?? [];
+
+  // Every sub ID ever associated with this entitlement. An invoice
+  // belongs to the entitlement if it's linked to one of these — OR if
+  // its subscription field is null (one-off credit pack charges, which
+  // usually ride a PaymentIntent without an invoice but this is
+  // defense-in-depth for anything Stripe surfaces as an invoice without
+  // a subscription).
+  const relevantSubIds = new Set<string>(history);
+  if (entitlement.stripeSubscriptionId) {
+    relevantSubIds.add(entitlement.stripeSubscriptionId);
+  }
 
   let invoices: Stripe.Invoice[] = [];
   if (customerId && entitlement.product === "debrief") {
-    // Prefer the server-side subscription filter — Stripe's 2026-03-25
-    // invoice shape moved the subscription ref around, and the server
-    // filter is the canonical path regardless of shape drift.
+    // Customer-wide fetch — no subscription filter at the API boundary.
+    // We filter locally against every sub in subscriptionHistory so
+    // invoices from prior cancel/resubscribe cycles stay visible.
     const listInvoices = async (): Promise<Stripe.Invoice[]> => {
       try {
-        const resp = await stripe().invoices.list(
-          subscriptionId
-            ? { customer: customerId, subscription: subscriptionId, limit: 24 }
-            : { customer: customerId, limit: 24 },
-        );
+        const resp = await stripe().invoices.list({
+          customer: customerId,
+          limit: 100,
+        });
         return resp.data;
       } catch (err) {
         console.error("[billing-history] stripe fetch failed", err);
@@ -322,17 +353,27 @@ async function BillingHistorySection({
       }
     };
 
-    invoices = await listInvoices();
+    let raw = await listInvoices();
 
-    // An active subscription with zero invoices usually means Stripe
-    // hasn't finished committing the first invoice server-side. One
-    // 1s retry covers that race — every other scenario (no sub,
-    // canceled sub) bails before this line.
-    if (invoices.length === 0 && subscriptionId) {
+    // Retry once on empty when a subscription exists — catches the
+    // narrow window between webhook landing and Stripe's server-side
+    // invoice commit. The customer-wide list inherits this protection.
+    if (raw.length === 0 && relevantSubIds.size > 0) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      invoices = await listInvoices();
+      raw = await listInvoices();
     }
+
+    invoices = raw
+      .filter((inv) => {
+        const subId = invoiceSubscriptionId(inv);
+        if (subId === null) return true;
+        return relevantSubIds.has(subId);
+      })
+      .sort((a, b) => (b.created ?? 0) - (a.created ?? 0));
   }
+
+  const showPortalLink =
+    entitlement.product === "debrief" && !!entitlement.stripeCustomerId;
 
   if (invoices.length === 0) {
     return (
@@ -345,6 +386,17 @@ async function BillingHistorySection({
           title="No invoices yet"
           description="Invoices will appear here once your first charge runs."
         />
+        {showPortalLink ? (
+          <div className="mt-4 text-center">
+            <ManageBillingButton
+              entitlement={entitlement}
+              variant="link"
+              size="sm"
+              label="View all in the billing portal"
+              showIcon
+            />
+          </div>
+        ) : null}
       </SectionCard>
     );
   }
@@ -352,7 +404,7 @@ async function BillingHistorySection({
   return (
     <SectionCard
       title="Billing history"
-      description="Invoices for this entitlement."
+      description="Invoices for this entitlement, including prior subscriptions."
     >
       <div className="overflow-x-auto rounded-lg border border-[var(--border)]">
         <table className="w-full text-sm">
@@ -380,7 +432,7 @@ async function BillingHistorySection({
                   )}
                 </td>
                 <td className="px-4 py-3 font-mono text-[var(--fg)]">
-                  ${(inv.amount_paid / 100).toFixed(2)}{" "}
+                  ${(invoiceDisplayAmountCents(inv) / 100).toFixed(2)}{" "}
                   <span className="text-[var(--fg-subtle)]">
                     {inv.currency?.toUpperCase()}
                   </span>
@@ -417,8 +469,31 @@ async function BillingHistorySection({
           </tbody>
         </table>
       </div>
+      {showPortalLink ? (
+        <div className="mt-4 flex justify-end">
+          <ManageBillingButton
+            entitlement={entitlement}
+            variant="link"
+            size="sm"
+            label="View all in the billing portal"
+            showIcon
+          />
+        </div>
+      ) : null}
     </SectionCard>
   );
+}
+
+/**
+ * Voided invoices have amount_paid=0 but often carry a non-zero
+ * amount_due. Prefer the total they were originally charged for so
+ * $19 shows as $19 even after void — otherwise the row reads $0.00
+ * and the user thinks the charge never happened.
+ */
+function invoiceDisplayAmountCents(inv: Stripe.Invoice): number {
+  if (inv.amount_paid && inv.amount_paid > 0) return inv.amount_paid;
+  if (inv.amount_due && inv.amount_due > 0) return inv.amount_due;
+  return inv.total ?? 0;
 }
 
 function InvoiceStatusPill({ status }: { status: string | null }) {
