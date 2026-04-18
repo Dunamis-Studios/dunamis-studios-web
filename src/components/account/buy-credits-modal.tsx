@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
+import { pollUntil } from "@/lib/poll";
 import { CREDIT_PACKS, type CreditPackName } from "@/lib/pricing";
 import type { Entitlement } from "@/lib/types";
 
@@ -223,6 +224,7 @@ function PackCheckout({
       }}
     >
       <CheckoutForm
+        entitlement={entitlement}
         accountEmail={accountEmail}
         selected={selected}
         onDone={onDone}
@@ -232,10 +234,12 @@ function PackCheckout({
 }
 
 function CheckoutForm({
+  entitlement,
   accountEmail,
   selected,
   onDone,
 }: {
+  entitlement: Entitlement;
   accountEmail: string;
   selected: CreditPackName;
   onDone: () => void;
@@ -245,8 +249,13 @@ function CheckoutForm({
   const router = useRouter();
   const { push } = useToast();
   const [submitting, setSubmitting] = React.useState(false);
+  const [finalizing, setFinalizing] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const pack = CREDIT_PACKS.find((p) => p.name === selected)!;
+
+  // Capture the starting addon balance so the poll can detect when the
+  // payment_intent.succeeded webhook has incremented it.
+  const priorAddonRef = React.useRef(entitlement.credits?.addon ?? 0);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -265,13 +274,41 @@ function CheckoutForm({
       setSubmitting(false);
       return;
     }
-    push({
-      kind: "success",
-      title: `${pack.credits.toLocaleString()} credits added`,
-      description: "Your balance will update in a moment.",
-    });
+
+    // Stripe's payment_intent.succeeded webhook drives the addon-bucket
+    // increment in Redis. Poll the entitlement until the bucket matches
+    // the expected post-purchase balance. Fall back gracefully on timeout.
+    setFinalizing(true);
+    const expectedAddon = priorAddonRef.current + pack.credits;
+    const { matched } = await pollUntil<Entitlement | null>(
+      async () => {
+        const res = await fetch(
+          `/api/entitlements/${entitlement.product}/${entitlement.portalId}`,
+          { cache: "no-store" },
+        );
+        if (!res.ok) return null;
+        const data = await res.json().catch(() => null);
+        return (data?.entitlement as Entitlement | undefined) ?? null;
+      },
+      (ent) => (ent?.credits?.addon ?? 0) >= expectedAddon,
+      { intervalMs: 500, timeoutMs: 10_000 },
+    );
+
+    if (matched) {
+      push({
+        kind: "success",
+        title: `${pack.credits.toLocaleString()} credits added`,
+      });
+    } else {
+      push({
+        kind: "info",
+        title: "Your purchase is processing",
+        description: "Refresh in a moment to see the new balance.",
+      });
+    }
     onDone();
     router.refresh();
+    setFinalizing(false);
     setSubmitting(false);
   }
 
@@ -288,9 +325,20 @@ function CheckoutForm({
             Credits never expire
           </span>
         </div>
-        <div className="mt-4">
-          <PaymentElement options={{ layout: "tabs" }} />
-        </div>
+        {finalizing ? (
+          <div className="mt-4 flex items-center gap-3 rounded-md border border-[var(--border)] bg-[var(--bg-subtle)] px-3 py-4 text-sm text-[var(--fg-muted)]">
+            <span
+              className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
+              aria-hidden
+            />
+            Finalizing your purchase — waiting on Stripe&apos;s confirmation
+            webhook.
+          </div>
+        ) : (
+          <div className="mt-4">
+            <PaymentElement options={{ layout: "tabs" }} />
+          </div>
+        )}
       </div>
 
       {error ? (
@@ -304,12 +352,18 @@ function CheckoutForm({
 
       <DialogFooter>
         <DialogClose asChild>
-          <Button type="button" variant="secondary">
+          <Button type="button" variant="secondary" disabled={finalizing}>
             Cancel
           </Button>
         </DialogClose>
-        <Button type="submit" loading={submitting} disabled={!stripeSDK}>
-          Buy {pack.credits.toLocaleString()} credits
+        <Button
+          type="submit"
+          loading={submitting}
+          disabled={!stripeSDK || finalizing}
+        >
+          {finalizing
+            ? "Finalizing…"
+            : `Buy ${pack.credits.toLocaleString()} credits`}
         </Button>
       </DialogFooter>
     </form>
