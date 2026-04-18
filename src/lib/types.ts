@@ -1,6 +1,11 @@
 export type Product = "debrief" | "property-pulse";
 
-export type EntitlementStatus = "trial" | "active" | "past_due" | "canceled";
+export type EntitlementStatus =
+  | "trial"
+  | "active"
+  | "incomplete"
+  | "past_due"
+  | "canceled";
 export type EntitlementTier = "starter" | "pro" | "enterprise";
 
 export interface Account {

@@ -102,6 +102,10 @@ function mapSubscriptionStatus(s: Stripe.Subscription.Status): EntitlementStatus
     case "incomplete_expired":
       return "canceled";
     case "incomplete":
+      // Should not happen under payment_behavior='error_if_incomplete',
+      // but defense-in-depth: reflect the real state rather than lying
+      // with 'trial'. UI treats this as a stuck state.
+      return "incomplete";
     case "paused":
     default:
       return "trial";

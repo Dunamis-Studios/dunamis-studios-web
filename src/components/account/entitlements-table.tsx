@@ -71,6 +71,7 @@ export function EntitlementsTable({
               { value: "all", label: "All" },
               { value: "trial", label: "Trial" },
               { value: "active", label: "Active" },
+              { value: "incomplete", label: "Incomplete" },
               { value: "past_due", label: "Past due" },
               { value: "canceled", label: "Canceled" },
             ]}

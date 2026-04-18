@@ -39,6 +39,7 @@ export function StatusBadge({ status }: { status: string }) {
   const map: Record<string, VariantProps<typeof badgeVariants>["variant"]> = {
     trial: "warning",
     active: "success",
+    incomplete: "warning",
     past_due: "danger",
     canceled: "neutral",
   };
