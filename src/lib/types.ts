@@ -18,8 +18,12 @@ export interface Account {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
-  /** One Stripe Customer per Dunamis account, created lazily on first checkout. */
-  stripeCustomerId?: string | null;
+  // NOTE: stripeCustomerId is NOT stored on the Account. Each entitlement
+  // (one per HubSpot portal) owns its own Stripe Customer because billing
+  // is per-portal — an account with Debrief on portals A and B has two
+  // distinct Customers. See Entitlement.stripeCustomerId. The reverse
+  // index dunamis:stripe-customer-to-account:{customerId} resolves
+  // customer → account for webhook joins.
 }
 
 export interface PublicAccount {

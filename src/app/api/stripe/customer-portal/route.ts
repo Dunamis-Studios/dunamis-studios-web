@@ -24,13 +24,12 @@ export async function POST(req: Request) {
     return apiError(404, "not_found", "Entitlement not found.");
   }
 
-  const customerId =
-    s.account.stripeCustomerId ?? entitlement.stripeCustomerId;
+  const customerId = entitlement.stripeCustomerId;
   if (!customerId) {
     return apiError(
       400,
       "no_customer",
-      "No Stripe customer is associated with this account yet. Start a subscription first.",
+      "No Stripe customer associated with this entitlement yet. Start a subscription or buy credits first.",
     );
   }
 

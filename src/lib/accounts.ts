@@ -96,9 +96,36 @@ function isBuckets(v: unknown): v is CreditBuckets {
 export async function getAccountById(
   accountId: string,
 ): Promise<Account | null> {
-  const acc = await redis().get<Account>(KEY.account(accountId));
+  const acc = await redis().get<Account & { stripeCustomerId?: unknown }>(
+    KEY.account(accountId),
+  );
   if (!acc || acc.deletedAt) return null;
-  return acc;
+  return migrateAccountInPlace(acc);
+}
+
+/**
+ * Legacy Account records stored stripeCustomerId on the account. That
+ * field is dead — billing is per-entitlement, not per-account. Strip
+ * the field on read and persist the cleaned record so the next read is
+ * a cache hit. Safe to call on already-clean records (no-op).
+ */
+async function migrateAccountInPlace(
+  acc: Account & { stripeCustomerId?: unknown },
+): Promise<Account> {
+  if (!("stripeCustomerId" in acc)) return acc;
+  // Shallow clone without the dead field.
+  const {
+    stripeCustomerId: _legacy,
+    ...clean
+  } = acc as Account & { stripeCustomerId?: unknown };
+  void _legacy;
+  const migrated = clean as Account;
+  try {
+    await redis().set(KEY.account(migrated.accountId), migrated);
+  } catch {
+    // Migration write failure is non-fatal — next read will try again.
+  }
+  return migrated;
 }
 
 export async function getAccountIdByEmail(
@@ -213,18 +240,30 @@ export async function linkEntitlementToAccount(
 
 // ---- Stripe customer <-> account reverse lookup -------------------------
 
-export async function setStripeCustomerId(
-  account: Account,
+/**
+ * Write the reverse index dunamis:stripe-customer-to-account:{id}.
+ * Called whenever a new Stripe Customer is created for an entitlement
+ * so webhooks can resolve customerId → accountId without walking
+ * every entitlement for the account.
+ *
+ * Note: the Customer itself lives on the Entitlement, not the Account.
+ * This helper ONLY writes the reverse index — callers are responsible
+ * for persisting stripeCustomerId on the entitlement they just linked.
+ */
+export async function linkStripeCustomerToAccount(
+  accountId: string,
   stripeCustomerId: string,
 ): Promise<void> {
-  const r = redis();
-  account.stripeCustomerId = stripeCustomerId;
-  account.updatedAt = new Date().toISOString();
-  await r.set(KEY.account(account.accountId), account);
-  await r.set(
+  await redis().set(
     KEY.stripeCustomerToAccount(stripeCustomerId),
-    account.accountId,
+    accountId,
   );
+}
+
+export async function unlinkStripeCustomerFromAccount(
+  stripeCustomerId: string,
+): Promise<void> {
+  await redis().del(KEY.stripeCustomerToAccount(stripeCustomerId));
 }
 
 export async function getAccountIdByStripeCustomerId(

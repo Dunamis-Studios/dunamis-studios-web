@@ -6,7 +6,7 @@ import { getCurrentSession } from "@/lib/session";
 import {
   getEntitlement,
   saveEntitlement,
-  setStripeCustomerId,
+  linkStripeCustomerToAccount,
 } from "@/lib/accounts";
 import { portalIdSchema } from "@/lib/validation";
 
@@ -62,10 +62,11 @@ export async function POST(req: Request) {
     await cancelSetupIntentSafely(api, previousSetupIntentId);
   }
 
-  // Lazy-create / reuse the Stripe Customer. Prefer the entitlement-level
-  // pairing; fall back to the account-level id; else create.
-  let customerId =
-    entitlement.stripeCustomerId ?? s.account.stripeCustomerId ?? null;
+  // Lazy-create / reuse the Stripe Customer. Each entitlement (= portal)
+  // owns its own Customer. No account-level fallback — billing is
+  // strictly per-portal, so an account with Debrief on two portals
+  // ends up with two distinct Customers.
+  let customerId = entitlement.stripeCustomerId ?? null;
 
   if (!customerId) {
     try {
@@ -79,18 +80,13 @@ export async function POST(req: Request) {
         },
       });
       customerId = customer.id;
-      await setStripeCustomerId(s.account, customerId);
+      entitlement.stripeCustomerId = customerId;
+      await saveEntitlement(entitlement);
+      // Reverse index: webhook lookups need customerId → accountId.
+      await linkStripeCustomerToAccount(s.account.accountId, customerId);
     } catch (err) {
       return apiError(400, "stripe_error", stripeMessage(err));
     }
-  }
-
-  // Persist the customer pairing on the entitlement so future lookups
-  // (webhook, change-plan, cancel, portal) don't have to re-walk the
-  // account object.
-  if (entitlement.stripeCustomerId !== customerId) {
-    entitlement.stripeCustomerId = customerId;
-    await saveEntitlement(entitlement);
   }
 
   try {

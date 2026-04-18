@@ -5,7 +5,8 @@ import { stripe } from "@/lib/stripe";
 import { getCurrentSession } from "@/lib/session";
 import {
   getEntitlement,
-  setStripeCustomerId,
+  saveEntitlement,
+  linkStripeCustomerToAccount,
 } from "@/lib/accounts";
 import { getCreditPack } from "@/lib/pricing";
 import { portalIdSchema } from "@/lib/validation";
@@ -46,18 +47,25 @@ export async function POST(req: Request) {
     await cancelPaymentIntentSafely(api, previousPaymentIntentId);
   }
 
-  // Reuse existing Customer or create one — credit packs stack on the
-  // same Customer whether or not a subscription is active, so this path
-  // mirrors create-subscription's lazy-customer logic.
-  let customerId = s.account.stripeCustomerId ?? null;
+  // Reuse the entitlement's Customer — credit packs stack on the same
+  // per-portal Customer whether or not a subscription is active. If the
+  // entitlement doesn't have one yet (user bought credits without ever
+  // subscribing), create and persist.
+  let customerId = entitlement.stripeCustomerId ?? null;
   if (!customerId) {
     const customer = await api.customers.create({
       email: s.account.email,
       name: `${s.account.firstName} ${s.account.lastName}`.trim(),
-      metadata: { dunamisAccountId: s.account.accountId },
+      metadata: {
+        dunamisAccountId: s.account.accountId,
+        product,
+        portalId,
+      },
     });
     customerId = customer.id;
-    await setStripeCustomerId(s.account, customerId);
+    entitlement.stripeCustomerId = customerId;
+    await saveEntitlement(entitlement);
+    await linkStripeCustomerToAccount(s.account.accountId, customerId);
   }
 
   const paymentIntent = await api.paymentIntents.create({
