@@ -42,9 +42,16 @@ export async function POST(req: Request) {
   }
 
   const newPriceId = getPriceId(tier as EntitlementTier);
+  // proration_behavior='always_invoice' tells Stripe to immediately
+  // draft AND finalize a prorated invoice for the mid-cycle change,
+  // charging the delta today. Next month's renewal then bills the new
+  // tier's flat price with no deferred proration line. With
+  // 'create_prorations' (the prior value) the proration would have
+  // ridden next month's invoice, bloating it and obscuring the tier
+  // change in billing history.
   await api.subscriptions.update(entitlement.stripeSubscriptionId, {
     items: [{ id: item.id, price: newPriceId }],
-    proration_behavior: "create_prorations",
+    proration_behavior: "always_invoice",
     payment_behavior: "allow_incomplete",
     metadata: {
       ...(sub.metadata ?? {}),
