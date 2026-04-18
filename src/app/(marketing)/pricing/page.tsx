@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { PRODUCT_META, type Product } from "@/lib/types";
+import { CREDIT_PACKS, CREDIT_COST_TABLE } from "@/lib/pricing";
 
 export const metadata: Metadata = {
   title: "Pricing",
@@ -127,6 +128,7 @@ export default function PricingPage() {
 
       <ProductPricing product="property-pulse" />
       <ProductPricing product="debrief" />
+      <DebriefCreditAddons />
 
       <Section>
         <Container size="md" className="text-center">
@@ -227,6 +229,107 @@ function ProductPricing({ product }: { product: Product }) {
                     Install from HubSpot
                   </a>
                 </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+function DebriefCreditAddons() {
+  return (
+    <Section className="border-t border-[var(--border)]">
+      <Container size="xl">
+        <div className="mb-10 max-w-2xl">
+          <Badge variant="brief">Credit add-ons</Badge>
+          <h2 className="mt-3 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
+            Credit add-ons
+          </h2>
+          <p className="mt-3 text-[var(--fg-muted)] leading-relaxed">
+            Every handoff uses credits. Simple handoffs cost 1 credit. Larger
+            handoffs with deeper history cost more, scaling with the amount of
+            context the brief pulls in. Most portals stay well within their
+            tier&apos;s monthly allotment. Credit packs are an optional top-up
+            for high-volume months or team rollouts, never required, and they
+            never expire.
+          </p>
+        </div>
+
+        <div className="mb-10 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="border-b border-[var(--border)] bg-[var(--bg-subtle)]">
+              <tr className="text-xs uppercase tracking-wider text-[var(--fg-subtle)]">
+                <th className="px-4 py-2.5 text-left font-medium">
+                  Input tokens
+                </th>
+                <th className="px-4 py-2.5 text-left font-medium">
+                  Credit cost
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {CREDIT_COST_TABLE.map((band, i) => (
+                <tr
+                  key={i}
+                  className="border-b border-[var(--border)] last:border-0"
+                >
+                  <td className="px-4 py-2.5 font-mono text-[var(--fg)]">
+                    {band.to === null
+                      ? `${band.from.toLocaleString()}+`
+                      : `${band.from.toLocaleString()} – ${band.to.toLocaleString()}`}
+                  </td>
+                  <td className="px-4 py-2.5 text-[var(--fg)]">
+                    {band.credits === "block" ? (
+                      <>
+                        <span className="font-mono">
+                          +4 credits
+                        </span>{" "}
+                        <span className="text-[var(--fg-muted)]">
+                          per additional {band.blockSize?.toLocaleString()}-token
+                          block, no cap
+                        </span>
+                      </>
+                    ) : (
+                      <span className="font-mono">
+                        {band.credits} credit{band.credits === 1 ? "" : "s"}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {CREDIT_PACKS.map((pack) => (
+            <div
+              key={pack.name}
+              className="relative flex flex-col rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5"
+            >
+              {pack.discountPercent ? (
+                <div className="absolute -top-2.5 left-5">
+                  <Badge variant="brief">
+                    {pack.discountPercent}% off
+                  </Badge>
+                </div>
+              ) : null}
+              <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+                {pack.label}
+              </div>
+              <div className="mt-1 font-[var(--font-display)] text-2xl font-medium tracking-tight">
+                ${pack.dollars}
+              </div>
+              <div className="mt-2 font-mono text-sm text-[var(--fg)]">
+                {pack.credits.toLocaleString()} credits
+              </div>
+              <div className="mt-0.5 text-xs text-[var(--fg-muted)]">
+                ${pack.effectiveRate.toFixed(
+                  pack.effectiveRate < 0.2 ? 3 : 2,
+                )}{" "}
+                / credit
               </div>
             </div>
           ))}
