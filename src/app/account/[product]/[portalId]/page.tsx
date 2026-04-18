@@ -330,19 +330,20 @@ interface BillingRow {
 }
 
 function piInvoiceId(pi: Stripe.PaymentIntent): string | null {
-  // Stripe older API: pi.invoice top-level; newer: sometimes exposed
-  // under latest_charge.invoice. Accept either.
-  const direct = (pi as unknown as { invoice?: string | null }).invoice;
-  if (direct) return direct;
-  const charge = (
+  // Stripe 2026-03-25.dahlia stores the invoice reference on the nested
+  // charge, not on the PaymentIntent top-level. Check nested first,
+  // fall back to legacy top-level. Mirrors invoiceSubscriptionId().
+  const nested = (
     pi as unknown as {
-      latest_charge?: string | { invoice?: string | null } | null;
+      latest_charge?: { invoice?: string | null } | string | null;
     }
   ).latest_charge;
-  if (charge && typeof charge !== "string") {
-    return charge.invoice ?? null;
+  if (nested && typeof nested !== "string") {
+    const invoice = nested.invoice ?? null;
+    if (invoice) return typeof invoice === "string" ? invoice : null;
   }
-  return null;
+  const direct = (pi as unknown as { invoice?: string | null }).invoice;
+  return direct ?? null;
 }
 
 function chargeReceiptUrl(pi: Stripe.PaymentIntent): string | null {
@@ -435,22 +436,35 @@ async function BillingHistorySection({
         label: null,
       }));
 
-    // PaymentIntents → BillingRow. Include only succeeded credit-pack
-    // PIs (no invoice attachment — subscription PIs are represented by
-    // their invoice above). Abandoned / requires_payment_method /
-    // canceled / processing PIs are UI artifacts, not billing events.
+    // PaymentIntents → BillingRow. A PI only renders as a credit pack if
+    // it's succeeded, has no attached invoice (subscription PIs surface
+    // via their invoice above), AND carries the packName/creditAmount
+    // metadata we write in /api/stripe/buy-credits. The metadata check
+    // is the belt-and-suspenders: if piInvoiceId ever returns a false
+    // negative for a subscription PI (Stripe shape drift), the row still
+    // won't misclassify.
+    const isCreditPack = (pi: Stripe.PaymentIntent): boolean => {
+      if (pi.status !== "succeeded") return false;
+      if (piInvoiceId(pi)) return false;
+      const packName =
+        typeof pi.metadata?.packName === "string"
+          ? pi.metadata.packName
+          : null;
+      const creditAmount = Number(pi.metadata?.creditAmount ?? 0);
+      return (
+        !!packName && Number.isFinite(creditAmount) && creditAmount > 0
+      );
+    };
+
     const packRows: BillingRow[] = intents
-      .filter((pi) => pi.status === "succeeded" && !piInvoiceId(pi))
+      .filter(isCreditPack)
       .map((pi) => {
         const packName =
           typeof pi.metadata?.packName === "string"
             ? pi.metadata.packName
-            : null;
+            : "";
         const creditAmount = Number(pi.metadata?.creditAmount ?? 0);
-        const label =
-          packName && Number.isFinite(creditAmount) && creditAmount > 0
-            ? `${creditAmount.toLocaleString()} credits (${packName})`
-            : "Credit pack";
+        const label = `${creditAmount.toLocaleString()} credits (${packName})`;
         return {
           key: `pi:${pi.id}`,
           kind: "pack" as const,
