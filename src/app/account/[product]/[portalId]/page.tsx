@@ -208,6 +208,12 @@ function CreditsSection({
   const c = entitlement.credits;
   const total = (c.monthly ?? 0) + (c.addon ?? 0);
   const isDebrief = entitlement.product === "debrief";
+  // Pre-subscription: no Stripe customer, no subscription. The seeded
+  // monthlyAllotment is aspirational, not a real ceiling — the "0 of 50"
+  // copy would mislead the user into thinking they have 50 credits worth
+  // of headroom on a tier they haven't bought yet.
+  const isPreSubscribe =
+    !entitlement.stripeSubscriptionId && !entitlement.stripeCustomerId;
   return (
     <SectionCard
       title={
@@ -227,14 +233,26 @@ function CreditsSection({
               Monthly
             </div>
             <div className="mt-1 text-[var(--fg)]">
-              <span className="font-mono text-xl font-medium">
-                {(c.monthly ?? 0).toLocaleString()}
-              </span>
-              <span className="text-[var(--fg-muted)]">
-                {" "}
-                of {(c.monthlyAllotment ?? 0).toLocaleString()} remaining · resets{" "}
-                {formatDate(c.currentPeriodEnd)}
-              </span>
+              {isPreSubscribe ? (
+                <>
+                  <span className="font-mono text-xl font-medium">0</span>
+                  <span className="text-[var(--fg-muted)]">
+                    {" "}
+                    credits · subscribe to unlock your monthly allotment
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="font-mono text-xl font-medium">
+                    {(c.monthly ?? 0).toLocaleString()}
+                  </span>
+                  <span className="text-[var(--fg-muted)]">
+                    {" "}
+                    of {(c.monthlyAllotment ?? 0).toLocaleString()} remaining ·
+                    resets {formatDate(c.currentPeriodEnd)}
+                  </span>
+                </>
+              )}
             </div>
           </div>
           <div>
