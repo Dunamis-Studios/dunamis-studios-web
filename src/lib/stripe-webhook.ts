@@ -316,11 +316,26 @@ async function onSubscriptionUpdated(
       ? getTierAllotment(tier)
       : (prior?.monthlyAllotment ?? 0);
 
+    // Tier change detection: the event resolves to a different tier than
+    // what we had stored. Compare against entitlement.tier rather than
+    // prior.monthlyAllotment because the displayed tier can be pinned
+    // by a tier override even while Stripe's tier changes underneath.
+    const priorTier = entitlement.tier;
+    const tierChanged = !!tier && !!priorTier && tier !== priorTier;
+
+    // Decision (see PR "FIX 12"): on any mid-period tier change, reset
+    // monthly credits to the new allotment. Rationale: the user paid
+    // the new tier's price today (proration via always_invoice in
+    // FIX 14); charging them for Enterprise while gating them at Pro's
+    // credit ceiling until period roll-over would be unexpected. The
+    // period-roll-over path below also resets — the two conditions are
+    // unioned, never double-applied.
+    const shouldResetMonthly = periodRolled || tierChanged;
+
     const credits: CreditBuckets = {
-      // On period roll-over, reset monthly to the new allotment.
-      // Otherwise preserve the current monthly balance (mid-period
-      // updates like cancel_at_period_end toggles don't reset credits).
-      monthly: periodRolled ? allotment : (prior?.monthly ?? allotment),
+      monthly: shouldResetMonthly
+        ? allotment
+        : (prior?.monthly ?? allotment),
       monthlyAllotment: allotment,
       addon: prior?.addon ?? 0,
       currentPeriodStart: newPeriodStart,
