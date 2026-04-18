@@ -68,11 +68,11 @@ const TIERS: Record<Product, Tier[]> = {
   debrief: [
     {
       name: "Starter",
-      price: "$29",
-      cadence: "/ user / month",
+      price: "$15",
+      cadence: "/ portal / month",
       description: "Solo reps, auto-linked summaries.",
       features: [
-        "10 meetings / user / month",
+        "25 meetings / portal / month",
         "Auto-linked summaries",
         "HubSpot task write-back",
         "Email support",
@@ -80,8 +80,8 @@ const TIERS: Record<Product, Tier[]> = {
     },
     {
       name: "Pro",
-      price: "$69",
-      cadence: "/ user / month",
+      price: "$30",
+      cadence: "/ portal / month",
       description: "Unlimited meetings, team-wide search.",
       highlighted: true,
       features: [

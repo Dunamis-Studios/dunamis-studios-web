@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HeroGradient } from "@/components/marketing/hero-gradient";
 import { ProductTile } from "@/components/marketing/product-tile";
+import { CustomerLogoStrip } from "@/components/marketing/customer-logo-strip";
 
 export default function LandingPage() {
   return (
@@ -92,30 +93,7 @@ export default function LandingPage() {
       </Section>
 
       {/* ---- SOCIAL PROOF STRIP ---- */}
-      <Section className="!py-12 border-y border-[var(--border)] bg-[var(--bg-subtle)]">
-        <Container size="xl">
-          <p className="text-center text-xs font-medium uppercase tracking-[0.16em] text-[var(--fg-subtle)]">
-            Trusted by teams at
-          </p>
-          <div className="mt-6 grid grid-cols-2 items-center gap-8 sm:grid-cols-3 md:grid-cols-6">
-            {[
-              "North Star",
-              "Fieldworks",
-              "Orbital",
-              "Cascade",
-              "Longitude",
-              "Paperline",
-            ].map((n) => (
-              <div
-                key={n}
-                className="text-center font-[var(--font-display)] text-base font-medium tracking-tight text-[var(--fg-muted)] opacity-70 transition-opacity hover:opacity-100"
-              >
-                {n}
-              </div>
-            ))}
-          </div>
-        </Container>
-      </Section>
+      <CustomerLogoStrip />
 
       {/* ---- PRINCIPLES ---- */}
       <Section>
