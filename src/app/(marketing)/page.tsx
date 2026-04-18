@@ -76,9 +76,9 @@ export default function LandingPage() {
             <ProductTile
               accent="brief"
               name="Debrief"
-              tagline="AI-assisted call summaries inside HubSpot"
+              tagline="Handoff intelligence for HubSpot CRM"
               href="/products/debrief"
-              description="Automatic, structured recaps for every meeting — linked to the right deal, contact, and next steps, no copy-paste required."
+              description="When a record changes hands in HubSpot, Debrief gives the new owner a structured brief — and gives the old owner a message to send with it."
             />
             <ProductTile
               accent="muted"

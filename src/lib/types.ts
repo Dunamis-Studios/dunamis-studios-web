@@ -68,7 +68,7 @@ export const PRODUCT_META: Record<
   },
   debrief: {
     name: "Debrief",
-    tagline: "AI-assisted call summaries inside HubSpot",
+    tagline: "Handoff intelligence for HubSpot CRM",
     accentClass: "text-brief-500",
     marketplaceUrl: "https://ecosystem.hubspot.com/marketplace",
   },
