@@ -9,6 +9,7 @@ import { HintTooltip } from "@/components/ui/tooltip";
 import { SectionCard } from "@/components/account/section-card";
 import { CancelSubscriptionBlock } from "@/components/account/cancel-subscription-block";
 import { UpgradeButton } from "@/components/account/upgrade-button";
+import { BuyCreditsButton } from "@/components/account/buy-credits-button";
 import { getCurrentSession } from "@/lib/session";
 import { getEntitlement } from "@/lib/accounts";
 import { PRODUCT_META, type Entitlement, type EntitlementTier } from "@/lib/types";
@@ -121,7 +122,10 @@ export default async function EntitlementDetailPage({
           entitlement={entitlement}
           accountEmail={s.account.email}
         />
-        <CreditsSection entitlement={entitlement} />
+        <CreditsSection
+          entitlement={entitlement}
+          accountEmail={s.account.email}
+        />
         <BillingHistorySection />
         <CancelSubscriptionBlock />
       </div>
@@ -184,31 +188,64 @@ function CurrentPlanSection({
   );
 }
 
-function CreditsSection({ entitlement }: { entitlement: Entitlement }) {
+function CreditsSection({
+  entitlement,
+  accountEmail,
+}: {
+  entitlement: Entitlement;
+  accountEmail: string;
+}) {
   if (entitlement.credits === null) return null;
   const c = entitlement.credits;
   const total = (c.monthly ?? 0) + (c.addon ?? 0);
+  const isDebrief = entitlement.product === "debrief";
   return (
     <SectionCard
-      title="Credits"
-      description="Usage credits attached to this entitlement."
+      title={
+        <span className="flex items-baseline gap-3">
+          Credits
+          <span className="text-xs font-normal text-[var(--fg-subtle)]">
+            Total: {total.toLocaleString()}
+          </span>
+        </span>
+      }
+      description="Usage credits attached to this entitlement. Monthly resets each billing period; add-on stacks on top and never expires."
     >
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-            Balance
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-col gap-3 text-sm">
+          <div>
+            <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+              Monthly
+            </div>
+            <div className="mt-1 text-[var(--fg)]">
+              <span className="font-mono text-xl font-medium">
+                {(c.monthly ?? 0).toLocaleString()}
+              </span>
+              <span className="text-[var(--fg-muted)]">
+                {" "}
+                of {(c.monthlyAllotment ?? 0).toLocaleString()} remaining · resets{" "}
+                {formatDate(c.currentPeriodEnd)}
+              </span>
+            </div>
           </div>
-          <div className="mt-1 font-mono text-3xl font-medium text-[var(--fg)]">
-            {total.toLocaleString()}
+          <div>
+            <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+              Add-on
+            </div>
+            <div className="mt-1 text-[var(--fg)]">
+              <span className="font-mono text-xl font-medium">
+                {(c.addon ?? 0).toLocaleString()}
+              </span>
+              <span className="text-[var(--fg-muted)]"> credits · never expire</span>
+            </div>
           </div>
         </div>
-        <HintTooltip content="Billing is coming soon. Credit top-ups will be available once Stripe is wired up.">
-          <span tabIndex={0} className="inline-flex">
-            <Button variant="secondary" disabled aria-disabled>
-              Buy credits
-            </Button>
-          </span>
-        </HintTooltip>
+        {isDebrief ? (
+          <BuyCreditsButton
+            entitlement={entitlement}
+            accountEmail={accountEmail}
+          />
+        ) : null}
       </div>
     </SectionCard>
   );

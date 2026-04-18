@@ -2,7 +2,9 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 interface SectionCardProps {
-  title: string;
+  title: React.ReactNode;
+  /** Plain-text label for aria-label when title is rendered as JSX. */
+  ariaLabel?: string;
   description?: string;
   danger?: boolean;
   children: React.ReactNode;
@@ -11,6 +13,7 @@ interface SectionCardProps {
 
 export function SectionCard({
   title,
+  ariaLabel,
   description,
   danger,
   children,
@@ -18,7 +21,9 @@ export function SectionCard({
 }: SectionCardProps) {
   return (
     <section
-      aria-label={title}
+      aria-label={
+        ariaLabel ?? (typeof title === "string" ? title : undefined)
+      }
       className={cn(
         "rounded-xl border bg-[var(--bg-elevated)]",
         danger
