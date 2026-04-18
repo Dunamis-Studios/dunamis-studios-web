@@ -17,7 +17,13 @@
  */
 
 import "dotenv/config";
-import { readFileSync, writeFileSync, mkdirSync, readdirSync } from "node:fs";
+import {
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  readdirSync,
+  statSync,
+} from "node:fs";
 import { join, basename, extname } from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 
@@ -27,40 +33,28 @@ const SIZES = [16, 32, 64, 128, 256, 512, 1024];
 
 mkdirSync(PNG_OUT, { recursive: true });
 
-// Load every Fraunces font variant @fontsource/fraunces ships. resvg
-// handles woff2 decoding internally, so we can pass the compressed
-// files directly without a prior conversion step.
-const fontDir = join(
-  process.cwd(),
-  "node_modules",
-  "@fontsource",
-  "fraunces",
-  "files",
-);
-const FONT_WEIGHT = "500-normal"; // wordmark weight
+// Load Fraunces from the committed variable TTF at brand/fonts/. The
+// font is OFL-1.1 licensed and redistributable; see brand/fonts/OFL.txt.
+// Prior approach used @fontsource/fraunces woff2 buffers — resvg@2.6.2
+// (via fontdb 0.16.x under the hood) doesn't decode woff2, so those
+// files never actually registered and text silently fell back to system
+// serif. TTF works reliably and produces identical output on every
+// build host.
 const fontFiles: string[] = [];
+const frauncesTtf = join(process.cwd(), "brand", "fonts", "Fraunces.ttf");
 try {
-  const fonts = readdirSync(fontDir).filter(
-    (f) => f.endsWith(".woff2") && f.includes(FONT_WEIGHT) && f.includes("latin"),
-  );
-  for (const f of fonts) {
-    fontFiles.push(join(fontDir, f));
-  }
-  if (fontFiles.length === 0) {
-    console.warn(
-      `[brand:build] WARN: no matching Fraunces ${FONT_WEIGHT} woff2 found in ${fontDir}. Text in PNGs will fall back to Georgia / system serif.`,
-    );
-  } else {
-    console.log(
-      `[brand:build] loaded ${fontFiles.length} Fraunces font file(s)`,
-    );
-  }
+  const stat = statSync(frauncesTtf);
+  if (!stat.isFile()) throw new Error("not a file");
+  fontFiles.push(frauncesTtf);
+  console.log(`[brand:build] loaded Fraunces from ${frauncesTtf}`);
 } catch (err) {
-  console.warn(
-    `[brand:build] WARN: couldn't load Fraunces fonts from @fontsource/fraunces. Text will fall back to Georgia / system serif. (${
-      err instanceof Error ? err.message : String(err)
-    })`,
+  console.error(
+    `[brand:build] ERROR: Fraunces TTF missing at ${frauncesTtf}. ` +
+      `Text in PNGs will not render correctly. (${
+        err instanceof Error ? err.message : String(err)
+      })`,
   );
+  process.exit(1);
 }
 
 // Resolve each SVG in brand/ (skip png/ and non-svg).
@@ -107,9 +101,14 @@ for (const svgFile of svgFiles) {
       fitTo: { mode: "width", value: width },
       font: {
         fontFiles,
-        loadSystemFonts: true,
-        defaultFontFamily: "Georgia",
-        serifFamily: "Georgia",
+        // loadSystemFonts: false → deterministic output regardless of
+        // what the build host has installed. The SVG's <text> requests
+        // Fraunces by name; if that family didn't load, the default
+        // family (also Fraunces, from the loaded woff2) is what resvg
+        // substitutes — not a system serif.
+        loadSystemFonts: false,
+        defaultFontFamily: "Fraunces",
+        serifFamily: "Fraunces",
       },
       background: "rgba(0, 0, 0, 0)",
       shapeRendering: 2, // geometricPrecision

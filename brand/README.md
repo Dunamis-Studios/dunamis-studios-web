@@ -105,8 +105,10 @@ highlights), not identity.
 
 The wordmark renders in **Fraunces**, a variable serif display typeface
 by Phaedra Charles, Pooja Saxena, and Nick Sherman (SIL Open Font
-License). Shipped via `next/font/google` in `src/app/layout.tsx` and
-available here via the `@fontsource/fraunces` npm package.
+License 1.1). Shipped via `next/font/google` in `src/app/layout.tsx`
+for the website. The brand build commits the variable TTF at
+`brand/fonts/Fraunces.ttf` (with `brand/fonts/OFL.txt` alongside) so
+PNG rasterization is deterministic on any build host.
 
 | Element             | Font     | Weight | Style  | Size (in header) | Tracking    |
 | ------------------- | -------- | ------ | ------ | ---------------- | ----------- |
@@ -201,9 +203,11 @@ npm run brand:build
 ```
 
 Reads every SVG in `brand/`, rasterizes each to 7 PNG sizes, and writes
-the output under `brand/png/`. Uses `@resvg/resvg-js` with
-`@fontsource/fraunces` woff2 buffers — deterministic output regardless
-of which machine runs the build, no system-level font install required.
+the output under `brand/png/`. Uses `@resvg/resvg-js` with the
+committed Fraunces TTF at `brand/fonts/Fraunces.ttf` — deterministic
+output regardless of which machine runs the build, no system-level
+font install required. `loadSystemFonts: false` in the renderer so
+system fonts can't sneak into the PNGs.
 
 If you change an SVG, commit the SVG + the regenerated PNGs together
 so the checked-in brand/ directory stays internally consistent.
