@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "seed:entitlement": "tsx scripts/seed-test-entitlement.ts",
     "stripe:cleanup-incomplete": "tsx scripts/cleanup-incomplete-subscriptions.ts",
-    "reconcile:entitlement": "tsx scripts/reconcile-entitlement.ts"
+    "reconcile:entitlement": "tsx scripts/reconcile-entitlement.ts",
+    "brand:build": "tsx scripts/build-brand-assets.ts"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.2",
@@ -37,6 +38,9 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@fontsource-variable/fraunces": "^5.2.9",
+    "@fontsource/fraunces": "^5.2.9",
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.10.5",
