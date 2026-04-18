@@ -33,8 +33,21 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "Dunamis Studios",
   },
-  twitter: { card: "summary_large_image" },
+  twitter: {
+    card: "summary_large_image",
+    title: "Dunamis Studios — Precision tools for HubSpot",
+    description:
+      "Focused, reliable apps for the HubSpot marketplace. Home of Property Pulse and Debrief.",
+  },
   robots: { index: true, follow: true },
+  verification: {
+    // Replace with the actual verification strings after adding
+    // dunamisstudios.net as a property in each tool. See deploy notes.
+    google: "REPLACE_ME_GOOGLE",
+    other: {
+      "msvalidate.01": "REPLACE_ME_BING",
+    },
+  },
 };
 
 export const viewport: Viewport = {

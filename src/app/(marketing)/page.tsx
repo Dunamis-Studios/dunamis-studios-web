@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Container, Section } from "@/components/ui/primitives";
@@ -6,6 +7,24 @@ import { Badge } from "@/components/ui/badge";
 import { HeroGradient } from "@/components/marketing/hero-gradient";
 import { ProductTile } from "@/components/marketing/product-tile";
 import { CustomerLogoStrip } from "@/components/marketing/customer-logo-strip";
+
+export const metadata: Metadata = {
+  // Use absolute title here — landing page shouldn't receive the
+  // "%s · Dunamis Studios" template since it IS the studio.
+  title: {
+    absolute: "Dunamis Studios — Precision tools for HubSpot",
+  },
+  description:
+    "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Dunamis Studios — Precision tools for HubSpot",
+    description:
+      "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day.",
+    url: "/",
+    type: "website",
+  },
+};
 
 export default function LandingPage() {
   return (

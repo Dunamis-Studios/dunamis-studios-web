@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Create an account",
   description: "Create your Dunamis Studios account.",
+  robots: { index: false, follow: true },
 };
 
 export default async function SignupPage() {

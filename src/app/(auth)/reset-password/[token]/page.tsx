@@ -6,6 +6,7 @@ import { ResetForm } from "./reset-form";
 export const metadata: Metadata = {
   title: "Set a new password",
   description: "Choose a new password for your Dunamis Studios account.",
+  robots: { index: false, follow: false },
 };
 
 export default async function ResetPasswordPage({

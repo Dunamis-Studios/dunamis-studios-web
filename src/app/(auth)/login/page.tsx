@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Sign in",
   description: "Sign in to your Dunamis Studios account.",
+  robots: { index: false, follow: true },
 };
 
 interface Props {

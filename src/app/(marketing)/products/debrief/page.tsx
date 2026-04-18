@@ -3,9 +3,23 @@ import { ProductPageShell } from "@/components/marketing/product-page-shell";
 import { PRODUCT_META } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Debrief",
+  title: "Debrief — Handoff intelligence for HubSpot CRM",
   description:
-    "Debrief is handoff intelligence for HubSpot CRM. When a record changes owners, the new owner gets a structured brief and the old owner gets a message to send.",
+    "Generate structured briefs and conversational handoff messages the moment a CRM record changes ownership. Built for HubSpot Sales and Service teams.",
+  alternates: { canonical: "/products/debrief" },
+  openGraph: {
+    title: "Debrief — Handoff intelligence for HubSpot CRM",
+    description:
+      "Generate structured briefs and conversational handoff messages the moment a CRM record changes ownership. Built for HubSpot Sales and Service teams.",
+    url: "/products/debrief",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Debrief — Handoff intelligence for HubSpot CRM",
+    description:
+      "Structured briefs and drafted handoff messages for every CRM ownership change.",
+  },
 };
 
 export default function DebriefPage() {

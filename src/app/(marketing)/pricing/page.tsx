@@ -11,7 +11,15 @@ import { CREDIT_PACKS, CREDIT_COST_TABLE } from "@/lib/pricing";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Transparent pricing for Property Pulse and Debrief. Starter, Pro, and Enterprise tiers — no hidden per-seat fees.",
+    "Simple, transparent pricing for Dunamis Studios apps. Per-portal monthly plans with credit-based usage and no annual lock-in.",
+  alternates: { canonical: "/pricing" },
+  openGraph: {
+    title: "Pricing · Dunamis Studios",
+    description:
+      "Simple, transparent pricing for Dunamis Studios apps. Per-portal monthly plans with credit-based usage and no annual lock-in.",
+    url: "/pricing",
+    type: "website",
+  },
 };
 
 type Tier = {

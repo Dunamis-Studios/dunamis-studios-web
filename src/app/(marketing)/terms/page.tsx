@@ -3,7 +3,9 @@ import { Container, Section, PageHeader } from "@/components/ui/primitives";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "Terms of Service for Dunamis Studios — draft placeholder.",
+  description:
+    "Terms of service for Dunamis Studios apps and the dunamisstudios.net website.",
+  alternates: { canonical: "/terms" },
 };
 
 const SECTIONS = [

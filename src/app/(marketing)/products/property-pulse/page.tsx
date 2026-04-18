@@ -3,9 +3,24 @@ import { ProductPageShell } from "@/components/marketing/product-page-shell";
 import { PRODUCT_META } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Property Pulse",
+  title: "Property Pulse — Track property history on any HubSpot object",
   description:
-    "Property Pulse watches every deal property you care about in HubSpot and surfaces drift, staleness, and risk before your next forecast call.",
+    "See exactly when and how any tracked property changed on any HubSpot record. Audit trail and history visualization for HubSpot admins.",
+  alternates: { canonical: "/products/property-pulse" },
+  openGraph: {
+    title:
+      "Property Pulse — Track property history on any HubSpot object",
+    description:
+      "See exactly when and how any tracked property changed on any HubSpot record. Audit trail and history visualization for HubSpot admins.",
+    url: "/products/property-pulse",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Property Pulse — Property history for HubSpot",
+    description:
+      "Audit trail and history visualization for any tracked property on any HubSpot object.",
+  },
 };
 
 export default function PropertyPulsePage() {

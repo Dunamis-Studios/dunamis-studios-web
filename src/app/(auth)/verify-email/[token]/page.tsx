@@ -5,6 +5,7 @@ import { VerifyClient } from "./verify-client";
 export const metadata: Metadata = {
   title: "Verifying email",
   description: "Confirming your email address.",
+  robots: { index: false, follow: false },
 };
 
 export default async function VerifyEmailPage({

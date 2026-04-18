@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
 
 export const metadata: Metadata = {
-  title: "Privacy Notice",
-  description: "Privacy Notice for Dunamis Studios — draft placeholder.",
+  title: "Privacy Policy",
+  description:
+    "How Dunamis Studios collects, uses, and protects your data.",
+  alternates: { canonical: "/privacy" },
 };
 
 const SECTIONS = [
