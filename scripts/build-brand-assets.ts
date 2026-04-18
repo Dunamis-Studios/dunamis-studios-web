@@ -6,7 +6,7 @@
  * the prompt naming convention: {filename-stem}-{size}.png.
  *
  * Uses @resvg/resvg-js instead of sharp because resvg accepts explicit
- * font buffers (fontBuffers), which guarantees "Dunamis Studios"
+ * font buffers (fontFiles), which guarantees "Dunamis Studios"
  * renders in Fraunces on any build machine regardless of system font
  * availability. sharp / libvips / cairo would fall back to the nearest
  * system serif on machines without Fraunces installed, producing
@@ -38,21 +38,21 @@ const fontDir = join(
   "files",
 );
 const FONT_WEIGHT = "500-normal"; // wordmark weight
-const fontBuffers: Buffer[] = [];
+const fontFiles: string[] = [];
 try {
   const fonts = readdirSync(fontDir).filter(
     (f) => f.endsWith(".woff2") && f.includes(FONT_WEIGHT) && f.includes("latin"),
   );
   for (const f of fonts) {
-    fontBuffers.push(readFileSync(join(fontDir, f)));
+    fontFiles.push(join(fontDir, f));
   }
-  if (fontBuffers.length === 0) {
+  if (fontFiles.length === 0) {
     console.warn(
       `[brand:build] WARN: no matching Fraunces ${FONT_WEIGHT} woff2 found in ${fontDir}. Text in PNGs will fall back to Georgia / system serif.`,
     );
   } else {
     console.log(
-      `[brand:build] loaded ${fontBuffers.length} Fraunces font file(s)`,
+      `[brand:build] loaded ${fontFiles.length} Fraunces font file(s)`,
     );
   }
 } catch (err) {
@@ -106,7 +106,7 @@ for (const svgFile of svgFiles) {
     const resvg = new Resvg(sized, {
       fitTo: { mode: "width", value: width },
       font: {
-        fontBuffers,
+        fontFiles,
         loadSystemFonts: true,
         defaultFontFamily: "Georgia",
         serifFamily: "Georgia",
