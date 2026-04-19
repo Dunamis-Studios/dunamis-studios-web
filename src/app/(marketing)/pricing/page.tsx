@@ -9,12 +9,14 @@ import { PRODUCT_META, type Product } from "@/lib/types";
 import { CREDIT_PACKS, CREDIT_COST_TABLE } from "@/lib/pricing";
 
 export const metadata: Metadata = {
-  title: "Pricing",
+  // Override the root template to a distinctive, length-tuned title
+  // instead of the template-generated "Pricing · Dunamis Studios".
+  title: { absolute: "Pricing — Dunamis Studios apps" },
   description:
     "Simple, transparent pricing for Dunamis Studios apps. Per-portal monthly plans with credit-based usage and no annual lock-in.",
   alternates: { canonical: "/pricing" },
   openGraph: {
-    title: "Pricing · Dunamis Studios",
+    title: "Pricing — Dunamis Studios apps",
     description:
       "Simple, transparent pricing for Dunamis Studios apps. Per-portal monthly plans with credit-based usage and no annual lock-in.",
     url: "/pricing",

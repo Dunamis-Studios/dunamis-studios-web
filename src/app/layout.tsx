@@ -46,20 +46,20 @@ const display = Fraunces({
 
 export const metadata: Metadata = {
   title: {
-    default: "Dunamis Studios — Precision tools for HubSpot",
+    default: "Dunamis Studios — Precision tools for the HubSpot marketplace",
     template: "%s · Dunamis Studios",
   },
   description:
-    "Dunamis Studios builds focused, reliable apps for the HubSpot marketplace. Home of Property Pulse and Debrief.",
+    "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
   applicationName: "Dunamis Studios",
   authors: [{ name: "Dunamis Studios" }],
   metadataBase: new URL(
     process.env.APP_URL ?? "https://dunamisstudios.net",
   ),
   openGraph: {
-    title: "Dunamis Studios — Precision tools for HubSpot",
+    title: "Dunamis Studios — Precision tools for the HubSpot marketplace",
     description:
-      "Focused, reliable apps for the HubSpot marketplace. Home of Property Pulse and Debrief.",
+      "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
     type: "website",
     url: "/",
     siteName: "Dunamis Studios",
@@ -78,9 +78,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dunamis Studios — Precision tools for HubSpot",
+    title: "Dunamis Studios — Precision tools for the HubSpot marketplace",
     description:
-      "Focused, reliable apps for the HubSpot marketplace. Home of Property Pulse and Debrief.",
+      "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
     images: [
       {
         url: `${SITE_URL}/twitter-image`,

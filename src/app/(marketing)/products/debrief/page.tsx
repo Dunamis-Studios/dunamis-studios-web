@@ -50,12 +50,12 @@ const debriefSchema = {
 };
 
 export const metadata: Metadata = {
-  title: "Debrief — Handoff intelligence for HubSpot CRM",
+  title: "Debrief — AI handoff briefs for HubSpot CRM ownership changes",
   description:
     "Generate structured briefs and conversational handoff messages the moment a CRM record changes ownership. Built for HubSpot Sales and Service teams.",
   alternates: { canonical: "/products/debrief" },
   openGraph: {
-    title: "Debrief — Handoff intelligence for HubSpot CRM",
+    title: "Debrief — AI handoff briefs for HubSpot CRM ownership changes",
     description:
       "Generate structured briefs and conversational handoff messages the moment a CRM record changes ownership. Built for HubSpot Sales and Service teams.",
     url: "/products/debrief",

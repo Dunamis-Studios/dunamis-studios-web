@@ -12,15 +12,16 @@ export const metadata: Metadata = {
   // Use absolute title here — landing page shouldn't receive the
   // "%s · Dunamis Studios" template since it IS the studio.
   title: {
-    absolute: "Dunamis Studios — Precision tools for HubSpot",
+    absolute:
+      "Dunamis Studios — Precision tools for the HubSpot marketplace",
   },
   description:
-    "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day.",
+    "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Dunamis Studios — Precision tools for HubSpot",
+    title: "Dunamis Studios — Precision tools for the HubSpot marketplace",
     description:
-      "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day.",
+      "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
     url: "/",
     type: "website",
   },
