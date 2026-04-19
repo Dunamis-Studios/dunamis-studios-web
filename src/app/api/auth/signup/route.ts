@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { redis, KEY } from "@/lib/redis";
 import { signupSchema } from "@/lib/validation";
-import { apiError, parseJson } from "@/lib/api";
+import { apiError, fieldsFromZod } from "@/lib/api";
 import { hashPassword } from "@/lib/password";
 import { uuid, randomToken } from "@/lib/tokens";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
@@ -9,10 +9,18 @@ import {
   getAccountByEmail,
   saveAccount,
   getAccountIdByEmail,
+  getEntitlement,
+  linkEntitlementToAccount,
+  saveEntitlement,
 } from "@/lib/accounts";
 import { createSession, setSessionCookie } from "@/lib/session";
 import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
-import type { Account } from "@/lib/types";
+import { verifyClaimState } from "@/lib/claim-state";
+import type { Account, Entitlement } from "@/lib/types";
+
+type ClaimAttempt =
+  | { ok: true; entitlement: Entitlement; redirectTo: string }
+  | { ok: false; error: string };
 
 export async function POST(req: Request) {
   const ip = clientIp(req.headers);
@@ -21,9 +29,37 @@ export async function POST(req: Request) {
     return apiError(429, "rate_limited", "Too many attempts — try again later.");
   }
 
-  const parsed = await parseJson(req, signupSchema);
-  if (!parsed.ok) return parsed.response;
-  const { email, firstName, lastName, password } = parsed.data;
+  // Parse the body once — we need both the signup fields AND the
+  // optional { claim, state } install-handoff context. The
+  // signupSchema is a ZodEffects (after .refine()), so we can't
+  // `.extend()` it; read the extra fields off the raw object with
+  // light runtime validation.
+  let raw: unknown;
+  try {
+    raw = await req.json();
+  } catch {
+    return apiError(400, "invalid_json", "Request body must be JSON");
+  }
+  if (!raw || typeof raw !== "object") {
+    return apiError(400, "invalid_json", "Request body must be a JSON object");
+  }
+  const rawObj = raw as Record<string, unknown>;
+
+  const signupParsed = signupSchema.safeParse(rawObj);
+  if (!signupParsed.success) {
+    return apiError(
+      422,
+      "validation_error",
+      "One or more fields are invalid",
+      fieldsFromZod(signupParsed.error),
+    );
+  }
+  const { email, firstName, lastName, password } = signupParsed.data;
+
+  const rawClaim =
+    typeof rawObj.claim === "string" ? rawObj.claim.trim() : "";
+  const rawState =
+    typeof rawObj.state === "string" ? rawObj.state.trim() : "";
 
   const existing = await getAccountByEmail(email);
   if (existing) {
@@ -33,10 +69,13 @@ export async function POST(req: Request) {
       "An account with that email already exists.",
     );
   }
-  // Double-check via index for race safety
   const idxHit = await getAccountIdByEmail(email);
   if (idxHit) {
-    return apiError(409, "account_exists", "An account with that email already exists.");
+    return apiError(
+      409,
+      "account_exists",
+      "An account with that email already exists.",
+    );
   }
 
   const now = new Date().toISOString();
@@ -56,7 +95,11 @@ export async function POST(req: Request) {
   const token = randomToken(32);
   await redis().set(
     KEY.verifyEmail(token),
-    { accountId: account.accountId, email: account.email, expiresAt: new Date(Date.now() + 24 * 3600 * 1000).toISOString() },
+    {
+      accountId: account.accountId,
+      email: account.email,
+      expiresAt: new Date(Date.now() + 24 * 3600 * 1000).toISOString(),
+    },
     { ex: 60 * 60 * 24 },
   );
 
@@ -76,5 +119,103 @@ export async function POST(req: Request) {
     console.error("[signup] email send failed", err);
   }
 
-  return NextResponse.json({ ok: true });
+  // Additive claim attempt — a claim failure does NOT roll back
+  // account creation. The account exists and the caller can retry
+  // the claim from the Debrief app's CRM card later.
+  let claim: ClaimAttempt | undefined;
+  if (rawClaim && rawState) {
+    claim = await tryLinkClaim(rawClaim, rawState, account);
+  }
+
+  // Response shape:
+  //   { ok: true }                                   — no claim attempted
+  //   { ok: true, claim: { ok: true, ...}}          — linked
+  //   { ok: true, claim: { ok: false, error: "..."}}— account created, link failed
+  return NextResponse.json({
+    ok: true,
+    ...(claim ? { claim } : {}),
+  });
+}
+
+async function tryLinkClaim(
+  rawClaim: string,
+  rawState: string,
+  account: Account,
+): Promise<ClaimAttempt> {
+  // Accept only the exact "debrief:{portalId}" format for now —
+  // Property Pulse will ship its own install flow later.
+  const match = /^debrief:([a-zA-Z0-9_-]{1,64})$/.exec(rawClaim);
+  if (!match) {
+    return {
+      ok: false,
+      error: "Invalid claim format.",
+    };
+  }
+  const portalId = match[1]!;
+
+  const payload = verifyClaimState(rawState);
+  if (!payload) {
+    return {
+      ok: false,
+      error: "Claim link expired or invalid.",
+    };
+  }
+  if (payload.portalId !== portalId) {
+    return {
+      ok: false,
+      error: "Claim link does not match the portal id.",
+    };
+  }
+
+  if (payload.installerEmail !== account.email.toLowerCase()) {
+    return {
+      ok: false,
+      error: `Claim link was issued to ${payload.installerEmail}, but you signed up as ${account.email}. The link will only apply to the installer's account.`,
+    };
+  }
+
+  const entitlement = await getEntitlement("debrief", portalId);
+  if (!entitlement) {
+    return {
+      ok: false,
+      error: "No pending Debrief install found for this portal.",
+    };
+  }
+
+  // Already linked (e.g. the user signed up twice with the same
+  // email somehow, or the Dunamis claim page linked it first).
+  // Idempotent success if it's our account; 409-style rejection if
+  // it's someone else's.
+  if (entitlement.accountId === account.accountId) {
+    return {
+      ok: true,
+      entitlement,
+      redirectTo: `/account/debrief/${encodeURIComponent(portalId)}`,
+    };
+  }
+  if (entitlement.accountId && entitlement.accountId !== account.accountId) {
+    return {
+      ok: false,
+      error: "This Debrief install is already linked to another account.",
+    };
+  }
+
+  entitlement.accountId = account.accountId;
+  try {
+    await linkEntitlementToAccount(entitlement);
+  } catch (err) {
+    console.error("[signup/claim] linkEntitlementToAccount failed", err);
+    entitlement.accountId = null;
+    await saveEntitlement(entitlement).catch(() => {});
+    return {
+      ok: false,
+      error: "Failed to link your Debrief install. You can retry from the app.",
+    };
+  }
+
+  return {
+    ok: true,
+    entitlement,
+    redirectTo: `/account/debrief/${encodeURIComponent(portalId)}`,
+  };
 }

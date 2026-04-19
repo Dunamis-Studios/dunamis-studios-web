@@ -15,12 +15,40 @@ interface Fields {
   confirmPassword?: string;
 }
 
-export function SignupForm() {
+export interface SignupFormProps {
+  /**
+   * Pre-fill the email field — used by the HubSpot install handoff
+   * so the installer doesn't have to retype their address.
+   */
+  initialEmail?: string;
+  /**
+   * Install-handoff claim in "debrief:{portalId}" format. Forwarded
+   * untouched to /api/auth/signup which validates the format and
+   * links the stub entitlement after account creation.
+   */
+  claim?: string;
+  /**
+   * HMAC-signed state token from Debrief. Paired with `claim`.
+   */
+  state?: string;
+}
+
+type ClaimResult =
+  | { ok: true; redirectTo: string }
+  | { ok: false; error: string };
+
+export function SignupForm({
+  initialEmail,
+  claim,
+  state,
+}: SignupFormProps = {}) {
   const router = useRouter();
   const { push } = useToast();
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] = React.useState<Fields>({});
   const [formError, setFormError] = React.useState<string | null>(null);
+
+  const hasClaim = !!(claim && state);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,25 +56,68 @@ export function SignupForm() {
     setErrors({});
     setFormError(null);
     const fd = new FormData(e.currentTarget);
-    const body = {
+    const body: Record<string, string> = {
       firstName: String(fd.get("firstName") ?? ""),
       lastName: String(fd.get("lastName") ?? ""),
       email: String(fd.get("email") ?? ""),
       password: String(fd.get("password") ?? ""),
       confirmPassword: String(fd.get("confirmPassword") ?? ""),
     };
+    if (hasClaim) {
+      body.claim = claim!;
+      body.state = state!;
+    }
     try {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(body),
       });
-      const data = await res.json();
+      const data = (await res.json()) as {
+        ok?: boolean;
+        error?: {
+          code?: string;
+          message?: string;
+          fields?: Fields;
+        };
+        claim?: ClaimResult;
+      };
       if (!res.ok) {
         if (data?.error?.fields) setErrors(data.error.fields);
         setFormError(data?.error?.message ?? "Something went wrong.");
         return;
       }
+
+      // Account creation succeeded.
+      if (hasClaim) {
+        if (data.claim && data.claim.ok) {
+          push({
+            kind: "success",
+            title: "Welcome to Dunamis Studios",
+            description:
+              "Your Debrief install is linked. Check your email to verify your address.",
+          });
+          router.push(data.claim.redirectTo);
+          router.refresh();
+          return;
+        }
+        // Claim failed but account still created — route to /account
+        // and surface the claim error as a non-fatal toast.
+        const claimError =
+          data.claim && !data.claim.ok
+            ? data.claim.error
+            : "Linking failed unexpectedly.";
+        push({
+          kind: "error",
+          title: "Account created — Debrief link failed",
+          description: `${claimError} You can retry from the Debrief app.`,
+        });
+        router.push("/account");
+        router.refresh();
+        return;
+      }
+
+      // No claim context — normal signup.
       push({
         kind: "success",
         title: "Welcome to Dunamis Studios",
@@ -98,10 +169,18 @@ export function SignupForm() {
           type="email"
           autoComplete="email"
           required
+          defaultValue={initialEmail ?? ""}
           className="mt-1.5"
           error={errors.email}
         />
-        <FieldError>{errors.email}</FieldError>
+        {errors.email ? (
+          <FieldError>{errors.email}</FieldError>
+        ) : hasClaim ? (
+          <FieldHint>
+            HubSpot installer email — we&apos;ll link your Debrief install to
+            this Dunamis account.
+          </FieldHint>
+        ) : null}
       </div>
 
       <div>
