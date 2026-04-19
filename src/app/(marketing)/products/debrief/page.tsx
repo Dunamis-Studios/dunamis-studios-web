@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { ProductPageShell } from "@/components/marketing/product-page-shell";
+import { Container } from "@/components/ui/primitives";
 import { JsonLd } from "@/components/seo/json-ld";
 import { PRODUCT_META } from "@/lib/types";
 
@@ -161,6 +164,21 @@ export default function DebriefPage() {
         },
       ]}
       />
+      <div className="border-t border-[var(--border)] bg-[var(--bg-subtle)]">
+        <Container size="md" className="py-8 text-center">
+          <p className="text-sm text-[var(--fg-muted)]">
+            See what&apos;s shipped, what&apos;s in progress, and what&apos;s
+            next.
+          </p>
+          <Link
+            href="/products/debrief/roadmap"
+            className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[var(--color-brief-500)] hover:underline"
+          >
+            Debrief roadmap
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </Link>
+        </Container>
+      </div>
     </>
   );
 }

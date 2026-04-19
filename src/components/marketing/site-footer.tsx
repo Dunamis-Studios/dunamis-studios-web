@@ -33,6 +33,14 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
+              <Link
+                href="/products/debrief/roadmap"
+                className="text-[var(--fg-muted)] hover:text-[var(--fg)]"
+              >
+                Debrief roadmap
+              </Link>
+            </li>
+            <li>
               <span className="text-[var(--fg-subtle)]">More coming soon</span>
             </li>
           </ul>
