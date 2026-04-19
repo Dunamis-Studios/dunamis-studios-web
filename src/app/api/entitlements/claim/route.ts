@@ -44,7 +44,10 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const rawPortalId = url.searchParams.get("portalId");
-  const rawEmail = url.searchParams.get("email");
+  // The `email` query param Debrief passes is informational-only —
+  // we always take installerEmail from the verified state token
+  // (signed, trusted) rather than the URL (spoofable). No need to
+  // read it here.
   const state = url.searchParams.get("state");
 
   const portalIdParsed = portalIdSchema.safeParse(rawPortalId ?? "");

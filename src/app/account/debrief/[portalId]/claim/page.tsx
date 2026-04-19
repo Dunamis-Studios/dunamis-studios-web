@@ -251,8 +251,9 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
         </form>
 
         <p className="mt-4 text-xs text-[var(--fg-subtle)]">
-          After linking, you'll land on your portal page where you can choose
-          a plan. No subscription is created until you explicitly subscribe.
+          After linking, you&apos;ll land on your portal page where you can
+          choose a plan. No subscription is created until you explicitly
+          subscribe.
         </p>
       </SectionCard>
     </div>
@@ -308,11 +309,14 @@ function EmailMismatchCard({
       <div className="flex items-start gap-3 rounded-lg border border-[var(--color-warning)]/40 bg-[color-mix(in_oklch,var(--color-warning)_10%,transparent)] p-4 text-sm">
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-warning)]" aria-hidden />
         <div className="space-y-1">
-          <p className="font-medium text-[var(--fg)]">Emails don't match</p>
+          <p className="font-medium text-[var(--fg)]">
+            Emails don&apos;t match
+          </p>
           <p className="text-[var(--fg-muted)]">
             Debrief was installed by{" "}
-            <span className="font-mono">{installerEmail}</span>, but you're
-            signed in as <span className="font-mono">{sessionEmail}</span>.
+            <span className="font-mono">{installerEmail}</span>, but
+            you&apos;re signed in as{" "}
+            <span className="font-mono">{sessionEmail}</span>.
           </p>
           <p className="text-[var(--fg-muted)]">
             Sign out and sign back in with{" "}
