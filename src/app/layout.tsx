@@ -64,32 +64,19 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName: "Dunamis Studios",
-    // Absolute URLs + explicit dimensions so crawlers that don't resolve
-    // relative URLs against metadataBase (Facebook, WhatsApp, some
-    // LinkedIn/Slack unfurlers) still pick up the preview image.
-    images: [
-      {
-        url: `${SITE_URL}/opengraph-image`,
-        width: 1200,
-        height: 630,
-        alt: "Dunamis Studios — Precision tools for the HubSpot marketplace",
-        type: "image/png",
-      },
-    ],
+    // og:image meta tags are emitted by the file-convention route
+    // src/app/opengraph-image.tsx. Declaring an explicit images array
+    // here caused Next's metadata resolver to drop og:image entirely
+    // while keeping twitter:image (the two merge paths conflicted).
+    // Single source of truth: the file-convention route.
   },
   twitter: {
     card: "summary_large_image",
     title: "Dunamis Studios — Precision tools for the HubSpot marketplace",
     description:
       "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
-    images: [
-      {
-        url: `${SITE_URL}/twitter-image`,
-        width: 1200,
-        height: 630,
-        alt: "Dunamis Studios — Precision tools for the HubSpot marketplace",
-      },
-    ],
+    // twitter:image meta tags come from src/app/twitter-image.tsx's
+    // file convention, same rationale as openGraph above.
   },
   robots: { index: true, follow: true },
   verification: {
