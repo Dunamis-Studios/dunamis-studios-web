@@ -200,9 +200,19 @@ Steps you'll run yourself:
 - **Stripe integration**: every billing CTA is intentionally disabled with
   a tooltip. Wire up subscription checkout, webhooks, and the customer
   portal next.
-- **HubSpot install flow**: creation of stub (account-less) entitlements
-  on HubSpot install lives in the Property Pulse and Debrief app repos,
-  not here. This repo only *claims* entitlements once an account exists.
+- **HubSpot install flow**: stub-entitlement creation on HubSpot install
+  lives in the Property Pulse and Debrief app repos; this site only
+  *claims* the stub once the user signs up or is already signed in.
+  Debrief's side is wired as of 2026-04 — on OAuth callback it writes
+  a stub entitlement to `dunamis:entitlement:debrief:{portalId}` and
+  302-redirects the installer to `/api/entitlements/claim?portalId=
+  &email=&state=` here. The route handler verifies the HMAC-signed
+  state token (15 min TTL, `CLAIM_STATE_SECRET` env), then routes the
+  browser to `/signup?claim=debrief:{portalId}&state=...` (no session)
+  or `/account/debrief/{portalId}/claim?state=...` (has session). The
+  signup flow and the claim page both call `linkEntitlementToAccount`
+  after an email-match check. Property Pulse still needs the
+  equivalent wiring on its side.
 - **Admin panel**: no internal admin view for listing every account /
   entitlement. Spec calls this phase 2.
 - **Docs / blog / changelog**: footer links go nowhere yet.
