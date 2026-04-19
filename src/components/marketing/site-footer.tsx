@@ -64,9 +64,6 @@ export function SiteFooter() {
                 Contact
               </a>
             </li>
-            <li>
-              <span className="text-[var(--fg-subtle)]">Changelog — soon</span>
-            </li>
           </ul>
         </div>
 
