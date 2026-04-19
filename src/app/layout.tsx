@@ -63,12 +63,32 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName: "Dunamis Studios",
+    // Absolute URLs + explicit dimensions so crawlers that don't resolve
+    // relative URLs against metadataBase (Facebook, WhatsApp, some
+    // LinkedIn/Slack unfurlers) still pick up the preview image.
+    images: [
+      {
+        url: `${SITE_URL}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Dunamis Studios — Precision tools for the HubSpot marketplace",
+        type: "image/png",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Dunamis Studios — Precision tools for HubSpot",
     description:
       "Focused, reliable apps for the HubSpot marketplace. Home of Property Pulse and Debrief.",
+    images: [
+      {
+        url: `${SITE_URL}/twitter-image`,
+        width: 1200,
+        height: 630,
+        alt: "Dunamis Studios — Precision tools for the HubSpot marketplace",
+      },
+    ],
   },
   robots: { index: true, follow: true },
   verification: {
