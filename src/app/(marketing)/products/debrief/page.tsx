@@ -60,12 +60,29 @@ export const metadata: Metadata = {
       "Generate structured briefs and conversational handoff messages the moment a CRM record changes ownership. Built for HubSpot Sales and Service teams.",
     url: "/products/debrief",
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Debrief — AI handoff briefs for HubSpot CRM ownership changes",
+        type: "image/png",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Debrief — Handoff intelligence for HubSpot CRM",
+    title: "Debrief — AI handoff briefs for HubSpot CRM ownership changes",
     description:
-      "Structured briefs and drafted handoff messages for every CRM ownership change.",
+      "Generate structured briefs and conversational handoff messages the moment a CRM record changes ownership. Built for HubSpot Sales and Service teams.",
+    images: [
+      {
+        url: "/twitter-image",
+        width: 1200,
+        height: 630,
+        alt: "Debrief — AI handoff briefs for HubSpot CRM ownership changes",
+      },
+    ],
   },
 };
 

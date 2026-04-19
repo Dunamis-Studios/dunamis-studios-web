@@ -21,6 +21,15 @@ export const metadata: Metadata = {
       "Simple, transparent pricing for Dunamis Studios apps. Per-portal monthly plans with credit-based usage and no annual lock-in.",
     url: "/pricing",
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Pricing — Dunamis Studios apps",
+        type: "image/png",
+      },
+    ],
   },
 };
 

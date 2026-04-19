@@ -24,6 +24,19 @@ export const metadata: Metadata = {
       "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
     url: "/",
     type: "website",
+    // Page-level openGraph blocks replace (not merge) the layout's
+    // openGraph, which suppresses the opengraph-image.tsx file-convention
+    // auto-inject. Explicit images array restores og:image* emission.
+    // Relative URL resolves against metadataBase in layout.tsx.
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Dunamis Studios — Precision tools for the HubSpot marketplace",
+        type: "image/png",
+      },
+    ],
   },
 };
 

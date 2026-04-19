@@ -39,12 +39,29 @@ export const metadata: Metadata = {
       "See exactly when and how any tracked property changed on any HubSpot record. Audit trail and history visualization for HubSpot admins.",
     url: "/products/property-pulse",
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Property Pulse — Track property history on any HubSpot object",
+        type: "image/png",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Property Pulse — Property history for HubSpot",
     description:
       "Audit trail and history visualization for any tracked property on any HubSpot object.",
+    images: [
+      {
+        url: "/twitter-image",
+        width: 1200,
+        height: 630,
+        alt: "Property Pulse — Property history for HubSpot",
+      },
+    ],
   },
 };
 
