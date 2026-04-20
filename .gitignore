@@ -42,3 +42,6 @@ yarn-error.log*
 
 .vercel
 .env*.local
+
+# local agent state
+.claude/
