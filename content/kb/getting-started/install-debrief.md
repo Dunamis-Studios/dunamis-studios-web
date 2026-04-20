@@ -17,7 +17,7 @@ Debrief is installed through the HubSpot App Marketplace. The flow takes about t
 ## Before you install
 
 - You need Super Admin or App Marketplace Access permission in the HubSpot portal.
-- The portal must be on HubSpot Starter or above. Debrief uses CRM cards, which are gated to paid tiers.
+- Debrief uses HubSpot CRM UI extension cards. HubSpot will confirm your portal is eligible for these at install time.
 
 ## Install flow
 
@@ -72,5 +72,3 @@ If the card isn't showing up, check both gates.
 ## Your first handoff
 
 Open any record that now has the Debrief card and click **Draft Brief**. You'll see a preview generated against the real record's data. From the preview you can confirm, adjust context, or run Handoff to atomically reassign ownership.
-
-The first month of a new subscription includes a 2x credit bonus. Use it to stress-test Debrief against real handoffs before you commit to ongoing spend.
