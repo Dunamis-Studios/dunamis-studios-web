@@ -18,6 +18,13 @@ export interface Account {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
+  /**
+   * User-controlled session lifetime in days. Applied at session creation
+   * (login / signup / password-change / password-reset). Undefined on
+   * legacy accounts falls back to the DEFAULT_SESSION_LIFETIME_DAYS
+   * constant in src/lib/session.ts.
+   */
+  sessionLifetimeDays?: 1 | 3 | 7;
   // NOTE: stripeCustomerId is NOT stored on the Account. Each entitlement
   // (one per HubSpot portal) owns its own Stripe Customer because billing
   // is per-portal — an account with Debrief on portals A and B has two

@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { getCurrentSession, listSessionsForAccount } from "@/lib/session";
+import {
+  DEFAULT_SESSION_LIFETIME_DAYS,
+  getCurrentSession,
+  listSessionsForAccount,
+} from "@/lib/session";
 import { PageHeader } from "@/components/ui/primitives";
 import { ProfileSection } from "@/components/account/profile-section";
 import { PasswordSection } from "@/components/account/password-section";
@@ -34,6 +38,9 @@ export default async function SettingsPage() {
         <SessionsSection
           currentSessionId={s.session.sessionId}
           initialSessions={sessions}
+          initialSessionLifetimeDays={
+            s.account.sessionLifetimeDays ?? DEFAULT_SESSION_LIFETIME_DAYS
+          }
         />
         <DangerZone />
       </div>

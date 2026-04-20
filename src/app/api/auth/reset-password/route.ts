@@ -51,11 +51,11 @@ export async function POST(req: Request) {
 
   // Invalidate every existing session for safety, then create a fresh one.
   await destroyAllSessionsForAccount(account.accountId);
-  const { jwt } = await createSession(account.accountId, {
+  const { jwt, lifetimeSec } = await createSession(account.accountId, {
     userAgent: req.headers.get("user-agent") ?? "unknown",
     ip,
   });
-  await setSessionCookie(jwt);
+  await setSessionCookie(jwt, lifetimeSec);
 
   return NextResponse.json({ ok: true });
 }

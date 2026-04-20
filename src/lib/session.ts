@@ -4,7 +4,23 @@ import type { Account, Session } from "./types";
 import { signSessionJwt, uuid, verifySessionJwt } from "./tokens";
 import { getAccountById } from "./accounts";
 
-const THIRTY_DAYS_SEC = 60 * 60 * 24 * 30;
+/**
+ * User-controlled session lifetimes. The account's
+ * `sessionLifetimeDays` field picks one of these; an unset field falls
+ * back to DEFAULT_SESSION_LIFETIME_DAYS.
+ */
+export const ALLOWED_SESSION_LIFETIME_DAYS = [1, 3, 7] as const;
+export type SessionLifetimeDays =
+  (typeof ALLOWED_SESSION_LIFETIME_DAYS)[number];
+export const DEFAULT_SESSION_LIFETIME_DAYS: SessionLifetimeDays = 7;
+
+const SECONDS_PER_DAY = 60 * 60 * 24;
+
+function lifetimeSecFor(account: Account): number {
+  const days =
+    account.sessionLifetimeDays ?? DEFAULT_SESSION_LIFETIME_DAYS;
+  return days * SECONDS_PER_DAY;
+}
 
 /**
  * Cookie name: `__Host-` prefix requires Secure + Path=/ + no Domain,
@@ -16,10 +32,21 @@ export const SESSION_COOKIE =
 export async function createSession(
   accountId: string,
   meta: { userAgent: string; ip: string },
-): Promise<{ sessionId: string; jwt: string }> {
+): Promise<{ sessionId: string; jwt: string; lifetimeSec: number }> {
+  const account = await getAccountById(accountId);
+  if (!account) {
+    // Every call path that reaches here has just read or written the
+    // account in the same request (login/signup/password-reset).
+    // Missing account at this point is a real invariant violation, not
+    // an expected branch.
+    throw new Error(
+      `createSession: account ${accountId} not found`,
+    );
+  }
+  const lifetimeSec = lifetimeSecFor(account);
   const sessionId = uuid();
   const now = new Date();
-  const expiresAt = new Date(now.getTime() + THIRTY_DAYS_SEC * 1000);
+  const expiresAt = new Date(now.getTime() + lifetimeSec * 1000);
 
   const session: Session = {
     sessionId,
@@ -31,21 +58,24 @@ export async function createSession(
   };
 
   const r = redis();
-  await r.set(KEY.session(sessionId), session, { ex: THIRTY_DAYS_SEC });
+  await r.set(KEY.session(sessionId), session, { ex: lifetimeSec });
   await r.sadd(KEY.accountSessions(accountId), sessionId);
 
   const jwt = await signSessionJwt(sessionId);
-  return { sessionId, jwt };
+  return { sessionId, jwt, lifetimeSec };
 }
 
-export async function setSessionCookie(jwt: string): Promise<void> {
+export async function setSessionCookie(
+  jwt: string,
+  maxAgeSec: number,
+): Promise<void> {
   const jar = await cookies();
   jar.set(SESSION_COOKIE, jwt, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: THIRTY_DAYS_SEC,
+    maxAge: maxAgeSec,
   });
 }
 
@@ -61,9 +91,16 @@ export async function clearSessionCookie(): Promise<void> {
 }
 
 /**
- * Read session from the incoming cookie, refresh TTL on hit (rolling
- * sessions), and return the account + session record. Returns null for
- * any invalid/expired state.
+ * Read session from the incoming cookie, refresh Redis TTL on hit (to
+ * stay aligned with the session's hard expiresAt), and return the
+ * account + session record. Returns null for any invalid/expired
+ * state.
+ *
+ * Rolling Redis TTL is clamped to the remaining time until expiresAt,
+ * so a preference change never extends or shortens an existing
+ * session past its original lifetime. The user's new preference only
+ * takes effect on the next createSession call (login / signup /
+ * password-reset / password-change).
  */
 export async function getCurrentSession(): Promise<{
   account: Account;
@@ -91,8 +128,13 @@ export async function getCurrentSession(): Promise<{
     return null;
   }
 
-  // Rolling TTL — extend whenever the session is actively used.
-  await r.expire(KEY.session(decoded.sid), THIRTY_DAYS_SEC);
+  const remainingSec = Math.max(
+    1,
+    Math.floor(
+      (new Date(session.expiresAt).getTime() - Date.now()) / 1000,
+    ),
+  );
+  await r.expire(KEY.session(decoded.sid), remainingSec);
 
   return { account, session };
 }

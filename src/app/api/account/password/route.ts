@@ -30,11 +30,14 @@ export async function PATCH(req: Request) {
 
   // Kill all other sessions, keep a fresh one for the current actor.
   await destroyAllSessionsForAccount(current.account.accountId);
-  const { jwt } = await createSession(current.account.accountId, {
-    userAgent: req.headers.get("user-agent") ?? "unknown",
-    ip: clientIp(req.headers),
-  });
-  await setSessionCookie(jwt);
+  const { jwt, lifetimeSec } = await createSession(
+    current.account.accountId,
+    {
+      userAgent: req.headers.get("user-agent") ?? "unknown",
+      ip: clientIp(req.headers),
+    },
+  );
+  await setSessionCookie(jwt, lifetimeSec);
 
   return NextResponse.json({ ok: true });
 }

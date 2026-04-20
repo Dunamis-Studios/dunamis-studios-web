@@ -47,4 +47,12 @@ export const KEY = {
   /** Short-TTL lock used to serialize webhook writes per entitlement. */
   entitlementLock: (product: string, portalId: string) =>
     `dunamis:lock:entitlement:${product}:${portalId}`,
+  // --- Help center (KB) ---
+  // The `articleKey` callers pass is composed as "{category}:{slug}"
+  // so same-slug-different-category articles don't collide. See
+  // src/lib/kb-rating.ts and src/lib/kb-feedback.ts for the helpers
+  // that build it.
+  kbRating: (articleKey: string) => `dunamis:kb:rating:${articleKey}`,
+  kbRated: (articleKey: string) => `dunamis:kb:rated:${articleKey}`,
+  kbFeedback: (articleKey: string) => `dunamis:kb:feedback:${articleKey}`,
 } as const;

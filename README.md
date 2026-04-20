@@ -23,7 +23,12 @@ npm install
 cp .env.example .env.local
 # Then fill in:
 #   KV_REST_API_URL, KV_REST_API_TOKEN  (Upstash REST URL + token)
-#   JWT_SECRET                          (openssl rand -base64 48)
+#   JWT_SECRET                          Session-cookie signing secret
+#   KB_RATING_SALT                      Salts the IP hashes stored
+#                                         against help-center ratings.
+#                                         Required in production; dev
+#                                         falls back to an insecure
+#                                         placeholder.
 #   RESEND_API_KEY, RESEND_FROM_EMAIL   (optional in dev — see below)
 
 # 3. Run
@@ -147,6 +152,9 @@ dunamis:reset-password:{token}              → ResetRecord, 1h TTL
 dunamis:entitlement:{product}:{portalId}    → Entitlement record
 dunamis:account-entitlements:{accountId}    → Set of "product::portalId" compound keys
 dunamis:rate:{bucket}:{key}                 → Rate-limit counter (15-min windows)
+dunamis:kb:rating:{category}:{slug}         → Help-center up/down counters (HSET)
+dunamis:kb:rated:{category}:{slug}          → Hashed IPs that have rated, 180d TTL
+dunamis:kb:feedback:{category}:{slug}       → Free-text feedback entries (LIST, max 100)
 ```
 
 ## Security posture
@@ -187,8 +195,11 @@ Steps you'll run yourself:
 2. Link the existing **dunamis-studios-kv** Upstash integration to this
    project for all environments (prefix `REDIS`). The integration
    auto-populates `KV_REST_API_URL` + `KV_REST_API_TOKEN`.
-3. Add env vars: `JWT_SECRET`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`,
-   `APP_URL=https://dunamisstudios.net`.
+3. Add env vars: `JWT_SECRET`, `KB_RATING_SALT`, `RESEND_API_KEY`,
+   `RESEND_FROM_EMAIL`, `APP_URL=https://dunamisstudios.net`.
+   `KB_RATING_SALT` salts the IP hashes stored against help-center
+   ratings — provision it as a secret following the same convention
+   used for the other secrets in this project.
 4. Add domains `dunamisstudios.net` and `www.dunamisstudios.net` in the
    Vercel project settings (set `www` to redirect to apex). Vercel will
    show the exact A / CNAME records to set at your registrar.
@@ -213,12 +224,42 @@ Steps you'll run yourself:
   signup flow and the claim page both call `linkEntitlementToAccount`
   after an email-match check. Property Pulse still needs the
   equivalent wiring on its side.
-- **Admin panel**: no internal admin view for listing every account /
-  entitlement. Spec calls this phase 2.
 - **Docs / blog / changelog**: footer links go nowhere yet.
 - **i18n**: English only.
 - **Test suite**: none scaffolded. The data-access layer and the zod
   schemas are the right places to add unit tests first.
+
+## Backlog
+
+Larger architectural commitments that are too meaty for a single
+"known gap" bullet. Each entry is written at the detail an engineer
+would need to scope the work before picking it up.
+
+### Account role system
+
+Currently every account in Redis has no `role` field. The admin-gated
+`GET /api/kb/[slug]/rate` fails closed (403) until a role system
+exists. When building:
+
+- Widen the `Account` type in `src/lib/types.ts` to include
+  `role?: "admin" | "member"` (or similar).
+- Decide how roles get assigned (first account on a workspace becomes
+  admin? Manual stamping via a super-admin CLI? Role promotion UI?).
+- Audit every API route and server component for role-gated vs
+  role-open paths. Currently only the KB rating GET uses role checks,
+  but an admin dashboard, email-notification triage surfaces, and
+  cross-portal analytics will all want the same primitive.
+- Decide whether `Account`/`Session` already carries enough context to
+  cache the role decision vs refetching per request.
+
+### Help-center admin dashboard
+
+`/admin/kb/ratings` page showing per-article up/down counts, the
+LPUSH'd feedback stream, and simple aggregates (ratio, total per
+article, articles below a helpful threshold). Gated to `role=admin`
+accounts once the role system above lands. The Redis keys, POST
+endpoints, and admin-gated rating GET are already in place — this is
+front-end + list/filter views only, no new data model.
 
 ## License
 

@@ -103,11 +103,11 @@ export async function POST(req: Request) {
     { ex: 60 * 60 * 24 },
   );
 
-  const { jwt } = await createSession(account.accountId, {
+  const { jwt, lifetimeSec } = await createSession(account.accountId, {
     userAgent: req.headers.get("user-agent") ?? "unknown",
     ip,
   });
-  await setSessionCookie(jwt);
+  await setSessionCookie(jwt, lifetimeSec);
 
   // Best-effort email sends — don't fail signup if email provider is down.
   try {

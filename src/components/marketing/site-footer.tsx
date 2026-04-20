@@ -57,6 +57,11 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
+              <Link href="/help" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
+                Help center
+              </Link>
+            </li>
+            <li>
               <a
                 href="mailto:hello@dunamisstudios.net"
                 className="text-[var(--fg-muted)] hover:text-[var(--fg)]"

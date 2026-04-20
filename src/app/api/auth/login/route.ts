@@ -26,11 +26,11 @@ export async function POST(req: Request) {
     return apiError(401, "invalid_credentials", "Email or password is incorrect.");
   }
 
-  const { jwt } = await createSession(account.accountId, {
+  const { jwt, lifetimeSec } = await createSession(account.accountId, {
     userAgent: req.headers.get("user-agent") ?? "unknown",
     ip,
   });
-  await setSessionCookie(jwt);
+  await setSessionCookie(jwt, lifetimeSec);
 
   return NextResponse.json({ ok: true });
 }
