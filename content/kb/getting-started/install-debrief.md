@@ -36,8 +36,41 @@ After HubSpot approves the install, you land on a Dunamis Studios claim page.
 
 The Dunamis Studios account is separate from your HubSpot account. One Dunamis account can hold entitlements for multiple portals and multiple products.
 
+## Add the Debrief card to your record layouts
+
+Once the entitlement is linked, return to HubSpot. Installing the app registers the Debrief card with your portal, but HubSpot does not automatically place CRM cards onto record pages. You pick which object types show the card and where on the layout it sits. Do this for each object type Debrief should appear on (Deals, Contacts, Companies, Tickets, custom objects).
+
+### Add it to the Deals record page
+
+Deals is the most common first-use surface. Repeat this flow for every other object type you want Debrief on.
+
+1. Click the **Settings** gear icon in the top-right nav.
+2. In the left sidebar, go to **Data Management → Objects → Deals**.
+3. Click the **Record customization** tab at the top of the Deals settings.
+4. Pick the record view you want to edit — either the default view for all users or a team-specific view. You can also create a new view for a specific team.
+5. In the layout editor, click **+ Add a tab** to create a new tab, or select an existing tab to modify.
+6. In the target section, click **+ Add cards**.
+7. In the card picker, find **Debrief** (cards from installed apps appear in this list).
+8. Add the card and drag it into the position you want.
+9. Click **Save** at the top of the layout editor.
+
+The card now appears on every Deal record that uses this layout.
+
+### The same flow works for every object type
+
+Repeat the steps above under **Data Management → Objects → [Contacts | Companies | Tickets | your custom object]**. Each object type has its own record customization tab; card placements are not shared across types.
+
+## Two gates: enabled in Debrief, added in HubSpot
+
+Before the card actually renders on a record, both conditions must be true:
+
+1. The object type is **enabled in Debrief** — Connected Apps → Debrief → Settings → **Enabled object types**. Standard types (Deal, Contact, Company, Ticket) are enabled by default; custom objects need explicit opt-in.
+2. The Debrief card has been **added to the record layout** for that object type (the flow above).
+
+If the card isn't showing up, check both gates.
+
 ## Your first handoff
 
-Once the entitlement is linked, return to HubSpot. The Debrief CRM card is now live on every record type in the portal. Open any deal, click **Draft Brief**, and run a preview against real record data.
+Open any record that now has the Debrief card and click **Draft Brief**. You'll see a preview generated against the real record's data. From the preview you can confirm, adjust context, or run Handoff to atomically reassign ownership.
 
 The first month of a new subscription includes a 2x credit bonus. Use it to stress-test Debrief against real handoffs before you commit to ongoing spend.
