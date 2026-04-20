@@ -12,7 +12,7 @@ tags:
   - briefs
 ---
 
-When you run Brief me or Handoff, one of four things can happen: success, a blocking pre-flight warning, a HubSpot error, or a generation error. This article covers the last three.
+When you run Draft Brief or Handoff, one of four things can happen: success, a blocking pre-flight warning, a HubSpot error, or a generation error. This article covers the last three.
 
 ## Pre-flight warnings
 

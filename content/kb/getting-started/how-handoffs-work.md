@@ -1,6 +1,6 @@
 ---
 title: How a Debrief handoff works
-description: Step by step, from opening a record to the log entry, what happens when you run Brief me or Handoff on a HubSpot CRM record.
+description: Step by step, from opening a record to the log entry, what happens when you run Draft Brief or Handoff on a HubSpot CRM record.
 category: getting-started
 product: debrief
 access: public
@@ -11,14 +11,14 @@ tags:
   - getting-started
 ---
 
-Every Debrief surface exposes the same two actions: **Brief me** and **Handoff**. They share the same generation pipeline. They differ in what they write back to HubSpot.
+Every Debrief surface exposes the same two actions: **Draft Brief** and **Handoff**. They share the same generation pipeline. They differ in what they write back to HubSpot.
 
-## Brief me
+## Draft Brief
 
-Brief me is the read-only action.
+Draft Brief is the read-only action.
 
 1. Open any record with Debrief installed (contact, company, deal, ticket, or custom object).
-2. Open the Debrief CRM card and click **Brief me**.
+2. Open the Debrief CRM card and click **Draft Brief**.
 3. Pick the handoff type you want the brief framed for (BDR → AE, AE → CS, rep → rep, marketing → sales).
 4. Optionally add sender notes. These are your context for the incoming reader, not scraped from HubSpot.
 5. Debrief runs the pre-flight scan (see below), shows a credit cost preview, and waits.
@@ -26,7 +26,7 @@ Brief me is the read-only action.
 
 The owner of the record does not change. No Note is attached. No Handoff Log entry is written. You see the brief, close the card, and it is gone. If you want to keep it, copy the text or start again and run Handoff instead.
 
-Use Brief me before a call, when you inherit a quiet account, or when you need to catch a teammate up without triggering an ownership change.
+Use Draft Brief before a call, when you inherit a quiet account, or when you need to catch a teammate up without triggering an ownership change.
 
 ## Handoff
 

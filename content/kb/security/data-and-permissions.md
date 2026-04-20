@@ -27,7 +27,7 @@ Debrief does not request scopes for workflows, lists, marketing events, or files
 
 ## What Debrief reads on each generation
 
-On a Brief me or Handoff:
+On a Draft Brief or Handoff:
 
 1. The record itself (properties you configured for inclusion).
 2. Associated contacts, companies, deals, tickets, and custom objects (configurable fan-out depth).

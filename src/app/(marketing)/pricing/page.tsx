@@ -94,7 +94,7 @@ const TIERS: Record<Product, Tier[]> = {
       features: [
         "50 credits / month · 100 your first month",
         "Standard objects: contacts, companies, deals, tickets",
-        "Brief me + atomic Handoff modes",
+        "Draft Brief + atomic Handoff modes",
         "30-day Handoff Log and Brief Search",
         "Email support",
       ],

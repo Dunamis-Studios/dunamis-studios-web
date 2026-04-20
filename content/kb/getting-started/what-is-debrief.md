@@ -20,14 +20,14 @@ Debrief is a HubSpot-native app that fixes the handoff layer of your CRM. When a
 
 Debrief attaches as a CRM card on every standard object and every custom object in your portal. Install once, and every record has a handoff surface. No per-object setup, no separate workflow.
 
-## Brief me vs. Handoff
+## Draft Brief vs. Handoff
 
 Every record surface exposes two actions:
 
-- **Brief me.** Generates a preview brief for you without changing ownership. Useful before a call, an internal review, or when you've just inherited a record and need to get up to speed before taking action.
+- **Draft Brief.** Generates a preview brief for you without changing ownership. Useful before a call, an internal review, or when you've just inherited a record and need to get up to speed before taking action.
 - **Handoff.** The atomic operation. It reassigns the record to the new owner, attaches the generated brief as a Note, and writes the event to the Handoff Log.
 
-Brief me is read-only. Debrief never writes to HubSpot unless you explicitly run a Handoff.
+Draft Brief is read-only. Debrief never writes to HubSpot unless you explicitly run a Handoff.
 
 ## What Debrief reads
 

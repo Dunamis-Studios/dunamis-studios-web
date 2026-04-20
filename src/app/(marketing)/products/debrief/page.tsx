@@ -117,7 +117,7 @@ export default function DebriefPage() {
             "Attaches as a CRM card on contacts, companies, deals, tickets, and every custom object in your portal. Install once; every record has a handoff surface.",
         },
         {
-          title: "Brief me, or Handoff",
+          title: "Draft Brief, or Handoff",
           body:
             "Preview a brief for yourself before a call — no ownership change. Or execute an atomic Handoff that reassigns the record, attaches the brief as a Note, and logs the event.",
         },
@@ -151,8 +151,8 @@ export default function DebriefPage() {
           a: "Yes. Admins can rename the six sections to match your team's vocabulary, tune which associations and properties to pull per object type, and add per-handoff-type AI instructions plus message-template guidance. Enterprise adds portal-level custom prompt tuning.",
         },
         {
-          q: "What's the difference between Brief me and Handoff?",
-          a: "Brief me is a preview — it generates a brief for you without changing ownership, useful before a call or internal review. Handoff is the atomic operation: it reassigns ownership to the recipient, attaches the brief as a Note on the record, and writes the event to the Handoff Log.",
+          q: "What's the difference between Draft Brief and Handoff?",
+          a: "Draft Brief is a preview — it generates a brief for you without changing ownership, useful before a call or internal review. Handoff is the atomic operation: it reassigns ownership to the recipient, attaches the brief as a Note on the record, and writes the event to the Handoff Log.",
         },
         {
           q: "Does it work for team-wide handoffs?",

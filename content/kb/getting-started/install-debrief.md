@@ -38,6 +38,6 @@ The Dunamis Studios account is separate from your HubSpot account. One Dunamis a
 
 ## Your first handoff
 
-Once the entitlement is linked, return to HubSpot. The Debrief CRM card is now live on every record type in the portal. Open any deal, click **Brief me**, and run a preview against real record data.
+Once the entitlement is linked, return to HubSpot. The Debrief CRM card is now live on every record type in the portal. Open any deal, click **Draft Brief**, and run a preview against real record data.
 
 The first month of a new subscription includes a 2x credit bonus. Use it to stress-test Debrief against real handoffs before you commit to ongoing spend.
