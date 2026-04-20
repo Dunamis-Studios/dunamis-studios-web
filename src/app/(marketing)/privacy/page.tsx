@@ -397,9 +397,11 @@ const SECTIONS: Sec[] = [
               <tr>
                 <td>Customer CRM Data in transit to Anthropic</td>
                 <td>
-                  Not stored after the API response is returned; Anthropic
-                  retains up to 7 days for abuse monitoring, longer only if
-                  flagged under Trust &amp; Safety
+                  Not stored in Dunamis Studios systems after the API response
+                  is returned. Anthropic retains inputs and outputs for up to
+                  7 days for abuse monitoring per their Commercial Terms, with
+                  longer retention only for content flagged under Trust &amp;
+                  Safety.
                 </td>
               </tr>
               <tr>
@@ -617,17 +619,13 @@ const SECTIONS: Sec[] = [
         <div className="mt-3 rounded-lg border border-[var(--color-warning)]/40 bg-[color-mix(in_oklch,var(--color-warning)_10%,transparent)] px-4 py-3 text-sm">
           <p>
             <strong>Placeholder — pending designation.</strong> Dunamis Studios
-            will designate an EU Representative (e.g., Prighter, VeraSafe, or
-            EDPO) and, if applicable, a UK Representative, before processing
-            personal data of EU or UK data subjects at a scale that triggers
-            Article 27. Until that designation is published here, Dunamis
-            Studios does not solicit EU or UK customers, and EU/UK residents
-            whose data reaches our systems only as part of a US customer&apos;s
-            HubSpot portal may direct requests to{" "}
+            will designate an EU Representative, and if applicable a UK
+            Representative, before the scale of EU/UK processing triggers an
+            Article 27 requirement. EU/UK residents may contact us at{" "}
             <a href="mailto:privacy@dunamisstudios.net" className="underline">
               privacy@dunamisstudios.net
-            </a>
-            .
+            </a>{" "}
+            in the interim.
           </p>
         </div>
       </>
