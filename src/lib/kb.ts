@@ -88,7 +88,11 @@ export interface KbArticle {
 
 async function walkMarkdown(dir: string): Promise<string[]> {
   const out: string[] = [];
-  let entries: Awaited<ReturnType<typeof fs.readdir>> = [];
+  // No explicit annotation: `Awaited<ReturnType<typeof fs.readdir>>`
+  // resolves to the no-args overload's `string[]`, which conflicts
+  // with the Dirent[] returned when `withFileTypes: true` is passed.
+  // Let inference pick the correct overload return instead.
+  let entries;
   try {
     entries = await fs.readdir(dir, { withFileTypes: true });
   } catch (err) {
