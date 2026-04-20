@@ -28,26 +28,26 @@ const SECTIONS: Sec[] = [
     body: (
       <>
         <p>
-          This Data Processing Addendum (the &ldquo;<strong>DPA</strong>&rdquo;)
-          forms part of the agreement between the customer (&ldquo;
-          <strong>Customer</strong>&rdquo; or &ldquo;<strong>Controller</strong>
-          &rdquo;) and <strong>Joshua Robert Bradford</strong>, an individual
+          This Data Processing Addendum (the “<strong>DPA</strong>”)
+          forms part of the agreement between the customer (“
+          <strong>Customer</strong>” or “<strong>Controller</strong>
+          ”) and <strong>Joshua Robert Bradford</strong>, an individual
           resident of the State of Florida, United States, doing business
-          under the name <strong>Dunamis Studios</strong> (&ldquo;
-          <strong>Dunamis Studios</strong>,&rdquo; &ldquo;<strong>Company</strong>
-          ,&rdquo; or &ldquo;<strong>Processor</strong>&rdquo;) for
-          Customer&apos;s use of the Debrief HubSpot application and related
-          services (the &ldquo;<strong>Service</strong>&rdquo;) under the
+          under the name <strong>Dunamis Studios</strong> (“
+          <strong>Dunamis Studios</strong>,” “<strong>Company</strong>
+          ,” or “<strong>Processor</strong>”) for
+          Customer's use of the Debrief HubSpot application and related
+          services (the “<strong>Service</strong>”) under the
           Dunamis Studios{" "}
           <Link href="/terms" className="underline">
             Terms of Service
           </Link>{" "}
-          (the &ldquo;<strong>Master Agreement</strong>&rdquo;). Capitalized
+          (the “<strong>Master Agreement</strong>”). Capitalized
           terms not defined here have the meanings given in the Master
           Agreement.
         </p>
         <p className="mt-3">
-          This DPA applies to Dunamis Studios&apos;s processing of Personal
+          This DPA applies to Dunamis Studios's processing of Personal
           Data on behalf of Customer in connection with the Service. It
           supplements, does not replace, any consent-based data-collection
           terms in the{" "}
@@ -79,38 +79,38 @@ const SECTIONS: Sec[] = [
         </p>
         <ul className="mt-3 list-disc space-y-2 pl-5">
           <li>
-            &ldquo;<strong>Data Protection Laws</strong>&rdquo; means all
+            “<strong>Data Protection Laws</strong>” means all
             laws applicable to the processing of Personal Data under this
             DPA, including the EU General Data Protection Regulation
-            (Regulation 2016/679) (&ldquo;<strong>GDPR</strong>&rdquo;), the
+            (Regulation 2016/679) (“<strong>GDPR</strong>”), the
             UK Data Protection Act 2018 and UK GDPR, the Swiss Federal Act
-            on Data Protection (&ldquo;<strong>FADP</strong>&rdquo;), the
+            on Data Protection (“<strong>FADP</strong>”), the
             California Consumer Privacy Act as amended by the California
-            Privacy Rights Act (&ldquo;<strong>CCPA</strong>&rdquo;), and
+            Privacy Rights Act (“<strong>CCPA</strong>”), and
             other comparable state, federal, or national privacy laws.
           </li>
           <li>
-            &ldquo;<strong>Personal Data</strong>&rdquo; has the meaning
+            “<strong>Personal Data</strong>” has the meaning
             given in GDPR Article 4(1): any information relating to an
             identified or identifiable natural person. Under CCPA, this
-            term is interchangeable with &ldquo;personal information.&rdquo;
+            term is interchangeable with “personal information.”
           </li>
           <li>
-            &ldquo;<strong>Customer Personal Data</strong>&rdquo; means
-            Personal Data that Dunamis Studios processes on Customer&apos;s
+            “<strong>Customer Personal Data</strong>” means
+            Personal Data that Dunamis Studios processes on Customer's
             behalf in providing the Service, including HubSpot Data
             transmitted under the OAuth authorization Customer grants at
             install and any Personal Data embedded in Briefs.
           </li>
           <li>
-            &ldquo;<strong>Processing</strong>,&rdquo; &ldquo;
-            <strong>Controller</strong>,&rdquo; &ldquo;<strong>Processor</strong>
-            ,&rdquo; &ldquo;<strong>Data Subject</strong>,&rdquo; and &ldquo;
-            <strong>Supervisory Authority</strong>&rdquo; have the meanings
+            “<strong>Processing</strong>,” “
+            <strong>Controller</strong>,” “<strong>Processor</strong>
+            ,” “<strong>Data Subject</strong>,” and “
+            <strong>Supervisory Authority</strong>” have the meanings
             given in GDPR Article 4 and UK GDPR Article 4.
           </li>
           <li>
-            &ldquo;<strong>Sub-processor</strong>&rdquo; means any third
+            “<strong>Sub-processor</strong>” means any third
             party engaged by Dunamis Studios to process Customer Personal
             Data, as listed at{" "}
             <Link href="/legal/subprocessors" className="underline">
@@ -119,29 +119,29 @@ const SECTIONS: Sec[] = [
             .
           </li>
           <li>
-            &ldquo;<strong>SCCs</strong>&rdquo; means the Standard
+            “<strong>SCCs</strong>” means the Standard
             Contractual Clauses approved by the European Commission in
             Implementing Decision (EU) 2021/914, as amended from time to
             time.
           </li>
           <li>
-            &ldquo;<strong>UK IDTA</strong>&rdquo; means the International
+            “<strong>UK IDTA</strong>” means the International
             Data Transfer Addendum to the SCCs issued by the UK Information
-            Commissioner&apos;s Office, version B1.0 or any successor.
+            Commissioner's Office, version B1.0 or any successor.
           </li>
           <li>
-            &ldquo;<strong>Swiss Addendum</strong>&rdquo; means an addendum
+            “<strong>Swiss Addendum</strong>” means an addendum
             to the SCCs amending them to cover transfers subject to Swiss
             FADP, consistent with guidance from the Swiss Federal Data
             Protection and Information Commissioner.
           </li>
           <li>
-            &ldquo;<strong>DPF</strong>&rdquo; means the EU–US Data Privacy
+            “<strong>DPF</strong>” means the EU–US Data Privacy
             Framework, including the UK Extension and the Swiss–US Data
             Privacy Framework.
           </li>
           <li>
-            &ldquo;<strong>Personal Data Breach</strong>&rdquo; has the
+            “<strong>Personal Data Breach</strong>” has the
             meaning given in GDPR Article 4(12): a breach of security
             leading to the accidental or unlawful destruction, loss,
             alteration, unauthorized disclosure of, or access to, Personal
@@ -161,7 +161,7 @@ const SECTIONS: Sec[] = [
           As between the parties, <strong>Customer is the Controller</strong>{" "}
           (or Business under CCPA) of Customer Personal Data, and{" "}
           <strong>Dunamis Studios is the Processor</strong> (or Service
-          Provider under CCPA) acting on Customer&apos;s documented
+          Provider under CCPA) acting on Customer's documented
           instructions.
         </p>
         <p className="mt-3">
@@ -187,13 +187,13 @@ const SECTIONS: Sec[] = [
         <ul className="mt-3 list-disc space-y-2 pl-5">
           <li>
             <strong>Documented instructions.</strong> Process Customer
-            Personal Data only on Customer&apos;s documented instructions,
+            Personal Data only on Customer's documented instructions,
             including with regard to international transfers, unless
             required to process for another purpose by Union or Member State
             law to which Dunamis Studios is subject, in which case Dunamis
             Studios will inform Customer of that legal requirement before
             processing, unless that law prohibits the notice on important
-            grounds of public interest. Customer&apos;s instructions are
+            grounds of public interest. Customer's instructions are
             set out in the Master Agreement, this DPA, the Documentation,
             and any subsequent written instructions Customer sends through
             its configured channels.
@@ -219,7 +219,7 @@ const SECTIONS: Sec[] = [
             <strong>Data Subject requests.</strong> Taking into account the
             nature of the processing, assist Customer by appropriate
             technical and organizational measures, insofar as possible,
-            for the fulfilment of Customer&apos;s obligation to respond to
+            for the fulfilment of Customer's obligation to respond to
             requests from Data Subjects to exercise rights under Chapter
             III of the GDPR (see <a href="#dsar" className="underline">§8</a>).
           </li>
@@ -236,7 +236,7 @@ const SECTIONS: Sec[] = [
             information available to Dunamis Studios.
           </li>
           <li>
-            <strong>Return or deletion.</strong> At Customer&apos;s choice,
+            <strong>Return or deletion.</strong> At Customer's choice,
             delete or return all Customer Personal Data after the end of
             the provision of services relating to processing, and delete
             existing copies unless Union or Member State law requires
@@ -252,7 +252,7 @@ const SECTIONS: Sec[] = [
           </li>
           <li>
             <strong>Instructions that infringe.</strong> Immediately inform
-            Customer if, in Dunamis Studios&apos;s opinion, an instruction
+            Customer if, in Dunamis Studios's opinion, an instruction
             from Customer infringes the GDPR or other Data Protection Law.
           </li>
         </ul>
@@ -268,7 +268,7 @@ const SECTIONS: Sec[] = [
         <p>
           <strong>General written authorization.</strong> Customer grants
           Dunamis Studios general written authorization to engage
-          Sub-processors, subject to this Section. Dunamis Studios&apos;s
+          Sub-processors, subject to this Section. Dunamis Studios's
           current Sub-processors are listed at{" "}
           <Link href="/legal/subprocessors" className="underline">
             /legal/subprocessors
@@ -277,7 +277,7 @@ const SECTIONS: Sec[] = [
         </p>
         <p className="mt-3">
           <strong>Notice of new Sub-processors.</strong> Dunamis Studios
-          will provide Customer with at least thirty (30) days&apos; prior
+          will provide Customer with at least thirty (30) days' prior
           written notice (which may be by email to the administrative
           contact or by updating the Sub-processors page with an email-list
           notification) of any intended addition or replacement of a
@@ -285,10 +285,10 @@ const SECTIONS: Sec[] = [
         </p>
         <p className="mt-3">
           <strong>Upstream asymmetry.</strong> Anthropic, the upstream LLM
-          provider, commits to only fifteen (15) days&apos; notice of its
+          provider, commits to only fifteen (15) days' notice of its
           own sub-processor changes. Where Dunamis Studios receives shorter
           upstream notice, Dunamis Studios will pass through the change as
-          soon as practicable, which may mean less than 30 days&apos; notice
+          soon as practicable, which may mean less than 30 days' notice
           to Customer. This is a known asymmetry, not a breach of this
           DPA.
         </p>
@@ -300,7 +300,7 @@ const SECTIONS: Sec[] = [
             legal@dunamisstudios.net
           </a>
           . The parties will discuss the objection in good faith. If the
-          parties cannot resolve it, Customer&apos;s sole remedy is to
+          parties cannot resolve it, Customer's sole remedy is to
           terminate the affected subscription under the Master Agreement,
           with a pro-rata refund of unused prepaid fees.
         </p>
@@ -310,7 +310,7 @@ const SECTIONS: Sec[] = [
           that are substantially the same as those imposed on Dunamis
           Studios under this DPA and that meet the requirements of GDPR
           Article 28(4). Dunamis Studios remains fully liable to Customer
-          for each Sub-processor&apos;s performance of its data-protection
+          for each Sub-processor's performance of its data-protection
           obligations.
         </p>
       </>
@@ -544,7 +544,7 @@ const SECTIONS: Sec[] = [
           Studios will, upon reasonable written request and no more than
           once per calendar year (or more frequently where required by a
           Supervisory Authority or after a confirmed Personal Data Breach
-          materially affecting Customer&apos;s data):
+          materially affecting Customer's data):
         </p>
         <ul className="mt-3 list-disc space-y-2 pl-5">
           <li>
@@ -553,23 +553,23 @@ const SECTIONS: Sec[] = [
           </li>
           <li>
             where the questionnaire does not reasonably resolve
-            Customer&apos;s compliance inquiries, permit, with at least
-            thirty (30) days&apos; advance written notice and at mutually
+            Customer's compliance inquiries, permit, with at least
+            thirty (30) days' advance written notice and at mutually
             agreed times during normal business hours, an on-site audit
             conducted by Customer or by an independent third-party auditor
             (not a competitor of Dunamis Studios) bound by confidentiality
             obligations at least as protective as those in the Master
-            Agreement. On-site audits are conducted at Customer&apos;s
+            Agreement. On-site audits are conducted at Customer's
             expense.
           </li>
         </ul>
         <p className="mt-3">
-          Audits must not unreasonably interfere with Dunamis Studios&apos;s
+          Audits must not unreasonably interfere with Dunamis Studios's
           business, must respect the confidentiality of other
-          customers&apos; data and Dunamis Studios&apos;s own confidential
+          customers' data and Dunamis Studios's own confidential
           information, and must not include access to premises, systems, or
           data of any Sub-processor (for which Dunamis Studios will request
-          Sub-processor audit reports or other evidence on Customer&apos;s
+          Sub-processor audit reports or other evidence on Customer's
           behalf consistent with its Sub-processor contracts).
         </p>
       </>
@@ -583,13 +583,13 @@ const SECTIONS: Sec[] = [
       <>
         <p>
           On termination or expiration of the Master Agreement, or earlier
-          on Customer&apos;s written request:
+          on Customer's written request:
         </p>
         <ul className="mt-3 list-disc space-y-2 pl-5">
           <li>
             Customer has a thirty (30)-day export window (as described in
             Master Agreement §13) to retrieve its Briefs through the
-            Service&apos;s export tooling;
+            Service's export tooling;
           </li>
           <li>
             Dunamis Studios will delete Customer Personal Data from active
@@ -623,9 +623,9 @@ const SECTIONS: Sec[] = [
     body: (
       <>
         <p>
-          Each party&apos;s liability under this DPA is subject to the
+          Each party's liability under this DPA is subject to the
           limitations and exclusions of liability set out in the Master
-          Agreement. This DPA does not expand any party&apos;s liability
+          Agreement. This DPA does not expand any party's liability
           beyond those limitations. To the extent the SCCs require
           otherwise for a particular transfer, the SCCs prevail for that
           transfer only.
@@ -659,7 +659,7 @@ const SECTIONS: Sec[] = [
           <strong>Data Exporter (Controller)</strong> — the customer
           identified on the account that accepted the Master Agreement and
           this DPA, including the account administrative contact, as
-          recorded in Dunamis Studios&apos;s account system.
+          recorded in Dunamis Studios's account system.
         </p>
         <p className="mt-3">
           Activities relevant to the data transferred under this DPA:
@@ -668,7 +668,7 @@ const SECTIONS: Sec[] = [
         </p>
         <p className="mt-3">
           Role: Controller (or, where Customer is itself a processor of its
-          own controllers&apos; data, Processor).
+          own controllers' data, Processor).
         </p>
         <p className="mt-6">
           <strong>Data Importer (Processor)</strong>
@@ -699,7 +699,7 @@ const SECTIONS: Sec[] = [
         <p className="mt-3">
           Activities relevant to the data transferred: operating the
           Debrief HubSpot application, transmitting Customer Personal Data
-          to Anthropic&apos;s Claude API for brief generation, hosting the
+          to Anthropic's Claude API for brief generation, hosting the
           Service on Vercel, caching metadata on Upstash, processing
           billing via Stripe, and sending transactional email via Resend.
         </p>
@@ -727,11 +727,11 @@ const SECTIONS: Sec[] = [
           <a href="#return" className="underline">§11</a>.
         </p>
         <p className="mt-3">
-          <strong>Nature and purpose.</strong> Read Customer&apos;s HubSpot
+          <strong>Nature and purpose.</strong> Read Customer's HubSpot
           CRM records under OAuth authorization, transmit relevant records
-          to Anthropic&apos;s Claude API over encrypted connection, receive
+          to Anthropic's Claude API over encrypted connection, receive
           the generated Brief, store Brief metadata, and return the Brief
-          to Customer within Customer&apos;s HubSpot portal. Related
+          to Customer within Customer's HubSpot portal. Related
           processing includes account administration, authentication,
           billing, support, logging, and security monitoring.
         </p>
@@ -747,22 +747,22 @@ const SECTIONS: Sec[] = [
           data categories as defined in Master Agreement §4.
         </p>
         <p className="mt-3">
-          <strong>Categories of Data Subjects.</strong> Customer&apos;s
+          <strong>Categories of Data Subjects.</strong> Customer's
           own customers, prospects, contacts, and business counterparties
-          whose data is stored in Customer&apos;s HubSpot portal;
-          Customer&apos;s authorized users of the Service; and
-          Customer&apos;s billing representatives.
+          whose data is stored in Customer's HubSpot portal;
+          Customer's authorized users of the Service; and
+          Customer's billing representatives.
         </p>
         <p className="mt-3">
           <strong>Frequency of transfer.</strong> Continuous, on demand as
-          Customer&apos;s users request Briefs.
+          Customer's users request Briefs.
         </p>
         <p className="mt-3">
           <strong>Retention.</strong> As described in the Privacy Policy and{" "}
           <a href="#return" className="underline">§11</a> of this DPA.
         </p>
         <p className="mt-3">
-          <strong>Recipients.</strong> Dunamis Studios&apos;s Sub-processors
+          <strong>Recipients.</strong> Dunamis Studios's Sub-processors
           as listed at{" "}
           <Link href="/legal/subprocessors" className="underline">
             /legal/subprocessors
@@ -782,7 +782,7 @@ const SECTIONS: Sec[] = [
           Dunamis Studios maintains the following technical and
           organizational measures. The measures are updated as the Service
           evolves; the overall level of protection will not be materially
-          diminished without Customer&apos;s consent.
+          diminished without Customer's consent.
         </p>
         <ul className="mt-3 list-disc space-y-2 pl-5">
           <li>

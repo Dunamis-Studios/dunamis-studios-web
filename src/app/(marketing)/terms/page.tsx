@@ -29,20 +29,20 @@ const SECTIONS: Sec[] = [
     body: (
       <>
         <p>
-          These Terms of Service (this &ldquo;<strong>Agreement</strong>&rdquo;)
+          These Terms of Service (this “<strong>Agreement</strong>”)
           govern your access to and use of the services offered by{" "}
           <strong>Joshua Robert Bradford</strong>, an individual resident of
           the State of Florida, United States, doing business under the name{" "}
-          <strong>Dunamis Studios</strong> (&ldquo;<strong>Company</strong>
-          ,&rdquo; &ldquo;<strong>Dunamis Studios</strong>,&rdquo; &ldquo;
-          <strong>we</strong>,&rdquo; &ldquo;<strong>us</strong>,&rdquo; or
-          &ldquo;<strong>our</strong>&rdquo;), including the Debrief HubSpot
+          <strong>Dunamis Studios</strong> (“<strong>Company</strong>
+          ,” “<strong>Dunamis Studios</strong>,” “
+          <strong>we</strong>,” “<strong>us</strong>,” or
+          “<strong>our</strong>”), including the Debrief HubSpot
           app, the dunamisstudios.net website, the Dunamis Studios account
           system, and any related APIs or documentation (collectively, the
-          &ldquo;<strong>Service</strong>&rdquo;).
+          “<strong>Service</strong>”).
         </p>
         <p className="mt-3">
-          By clicking &ldquo;I agree,&rdquo; creating an account, installing
+          By clicking “I agree,” creating an account, installing
           the Debrief HubSpot app, or using the Service, you agree to this
           Agreement, the{" "}
           <Link href="/privacy" className="underline">
@@ -54,8 +54,8 @@ const SECTIONS: Sec[] = [
           </Link>
           , which is incorporated by reference. If you are entering this
           Agreement on behalf of an entity, you represent that you have
-          authority to bind that entity and &ldquo;<strong>Customer</strong>
-          &rdquo; or &ldquo;<strong>you</strong>&rdquo; refers to that entity.
+          authority to bind that entity and “<strong>Customer</strong>
+          ” or “<strong>you</strong>” refers to that entity.
           If you do not have authority, or if you do not agree, do not use the
           Service.
         </p>
@@ -70,23 +70,23 @@ const SECTIONS: Sec[] = [
       <>
         <ul className="list-disc space-y-2 pl-5">
           <li>
-            &ldquo;<strong>Anthropic</strong>&rdquo; means Anthropic, PBC, the
+            “<strong>Anthropic</strong>” means Anthropic, PBC, the
             operator of the Claude large language model API used by the
             Service.
           </li>
           <li>
-            &ldquo;<strong>Brief</strong>&rdquo; or &ldquo;<strong>Output</strong>
-            &rdquo; means the AI-generated written summaries Debrief produces
+            “<strong>Brief</strong>” or “<strong>Output</strong>
+            ” means the AI-generated written summaries Debrief produces
             from Customer Data.
           </li>
           <li>
-            &ldquo;<strong>Customer Data</strong>&rdquo; means the data,
+            “<strong>Customer Data</strong>” means the data,
             including personal data, that Customer or its users cause to be
             transmitted into the Service, including HubSpot Data, prompts,
             configuration, and Output Customer chooses to persist.
           </li>
           <li>
-            &ldquo;<strong>Documentation</strong>&rdquo; means the user-facing
+            “<strong>Documentation</strong>” means the user-facing
             product documentation published at{" "}
             <Link href="/help" className="underline">
               dunamisstudios.net/help
@@ -94,14 +94,14 @@ const SECTIONS: Sec[] = [
             and in the Debrief app, as updated from time to time.
           </li>
           <li>
-            &ldquo;<strong>HubSpot Data</strong>&rdquo; means data retrieved
-            from Customer&apos;s HubSpot portal via the OAuth authorization
+            “<strong>HubSpot Data</strong>” means data retrieved
+            from Customer's HubSpot portal via the OAuth authorization
             Customer grants at install, including contacts, companies, deals,
             tickets, engagements, and associated properties within the scopes
             Customer approved.
           </li>
           <li>
-            &ldquo;<strong>Sub-processor</strong>&rdquo; means a third party
+            “<strong>Sub-processor</strong>” means a third party
             engaged by Dunamis Studios that processes Customer Data as part of
             delivering the Service, as listed at{" "}
             <Link href="/legal/subprocessors" className="underline">
@@ -110,7 +110,7 @@ const SECTIONS: Sec[] = [
             .
           </li>
           <li>
-            &ldquo;<strong>Usage Policy</strong>&rdquo; means Anthropic&apos;s
+            “<strong>Usage Policy</strong>” means Anthropic's
             Usage Policy, currently at{" "}
             <a
               href="https://www.anthropic.com/legal/aup"
@@ -133,16 +133,16 @@ const SECTIONS: Sec[] = [
     body: (
       <>
         <p>
-          The Service reads Customer&apos;s HubSpot Data under the OAuth
+          The Service reads Customer's HubSpot Data under the OAuth
           authorization Customer grants at install, transmits the relevant
-          records to Anthropic&apos;s Claude API over an encrypted connection,
-          and returns Briefs to Customer inside Customer&apos;s HubSpot portal.
+          records to Anthropic's Claude API over an encrypted connection,
+          and returns Briefs to Customer inside Customer's HubSpot portal.
         </p>
         <p className="mt-3">
-          Subject to this Agreement and Customer&apos;s payment of applicable
+          Subject to this Agreement and Customer's payment of applicable
           fees, Dunamis Studios grants Customer a limited, non-exclusive,
           non-transferable, non-sublicensable right during the subscription
-          term to access and use the Service solely for Customer&apos;s
+          term to access and use the Service solely for Customer's
           internal business purposes. All rights not expressly granted are
           reserved.
         </p>
@@ -182,11 +182,11 @@ const SECTIONS: Sec[] = [
           <li>
             <strong>Sensitive-data prohibition.</strong> Customer will not
             submit or cause the Service to process any of the following:
-            (a) &ldquo;special categories of personal data&rdquo; under
+            (a) “special categories of personal data” under
             GDPR Article 9 (health, genetic, biometric, racial or ethnic
             origin, political opinions, religious or philosophical beliefs,
             trade-union membership, sex life or sexual orientation data);
-            (b) &ldquo;sensitive personal information&rdquo; under the CCPA
+            (b) “sensitive personal information” under the CCPA
             as amended by the CPRA (including government-issued
             identifiers, financial account, precise geolocation, genetic,
             biometric identification, health, sex life or sexual
@@ -197,12 +197,12 @@ const SECTIONS: Sec[] = [
             to be under age 16; or (f) any other category of sensitive,
             restricted, or regulated personal data for which Customer
             lacks the legal right to transfer to a US processor under the
-            Service&apos;s described data flow.
+            Service's described data flow.
           </li>
           <li>
             Customer will not use the Service in any HubSpot-restricted
             industry or in a way that would cause Customer or Dunamis
-            Studios to breach HubSpot&apos;s Customer Terms of Service,
+            Studios to breach HubSpot's Customer Terms of Service,
             Acceptable Use Policy, or Data Processing Agreement.
           </li>
           <li>
@@ -258,8 +258,8 @@ const SECTIONS: Sec[] = [
           Studios account dashboard — the cancellation path is at least as
           easy as signup. Dunamis Studios implements this practice to comply
           with ROSCA and applicable state automatic-renewal laws (ARLs),
-          notwithstanding the 8th Circuit&apos;s July 2025 vacatur of the
-          FTC&apos;s &ldquo;Click-to-Cancel&rdquo; rule.
+          notwithstanding the 8th Circuit's July 2025 vacatur of the
+          FTC's “Click-to-Cancel” rule.
         </p>
         <p className="mt-3">
           <strong>Annual plans and reminders.</strong> If annual plans are
@@ -269,7 +269,7 @@ const SECTIONS: Sec[] = [
         </p>
         <p className="mt-3">
           <strong>Price changes.</strong> Dunamis Studios may change fees for
-          a subscription tier on at least thirty (30) days&apos; email notice
+          a subscription tier on at least thirty (30) days' email notice
           to the administrative contact on the account. Price changes take
           effect at the next renewal; if Customer does not agree, Customer may
           cancel before the renewal date.
@@ -283,11 +283,11 @@ const SECTIONS: Sec[] = [
         </p>
         <p className="mt-3">
           <strong>Payment processing and taxes.</strong> Payments are
-          processed by <strong>Stripe, Inc.</strong>; Customer&apos;s payment
-          is subject to Stripe&apos;s terms. Fees are stated exclusive of
+          processed by <strong>Stripe, Inc.</strong>; Customer's payment
+          is subject to Stripe's terms. Fees are stated exclusive of
           applicable taxes. Customer is responsible for all VAT, GST, sales
           tax, use tax, and similar taxes levied on the subscription,
-          excluding taxes on Dunamis Studios&apos;s net income. Dunamis
+          excluding taxes on Dunamis Studios's net income. Dunamis
           Studios uses <strong>Stripe Tax</strong> to calculate and collect
           these amounts where applicable. Business customers in the EU with
           a valid VAT identification number may be subject to the reverse
@@ -310,7 +310,7 @@ const SECTIONS: Sec[] = [
     body: (
       <>
         <p>
-          <strong>Anthropic flow-through.</strong> Anthropic&apos;s Usage
+          <strong>Anthropic flow-through.</strong> Anthropic's Usage
           Policy (available at{" "}
           <a
             href="https://www.anthropic.com/legal/aup"
@@ -352,7 +352,7 @@ const SECTIONS: Sec[] = [
           <li>
             use any Output or data obtained from the Service to develop,
             train, fine-tune, or improve any artificial-intelligence or
-            machine-learning model that competes with Anthropic&apos;s models
+            machine-learning model that competes with Anthropic's models
             or the Service (flow-through of Anthropic Commercial Terms §D.4);
           </li>
           <li>
@@ -405,7 +405,7 @@ const SECTIONS: Sec[] = [
       <>
         <p>
           <strong>Ownership.</strong> As between the parties, and subject to
-          Customer&apos;s payment of applicable fees and compliance with this
+          Customer's payment of applicable fees and compliance with this
           Agreement, Customer owns the Briefs generated for its account.
           Dunamis Studios assigns to Customer all right, title, and interest
           (if any) Dunamis Studios may have in and to the Briefs. Customer
@@ -428,7 +428,7 @@ const SECTIONS: Sec[] = [
           <strong>Copyrightability caveat.</strong> Briefs that lack
           meaningful human creative contribution may not be protectable by
           copyright under <em>Thaler v. Perlmutter</em> (D.C. Cir. 2025) and
-          the US Copyright Office&apos;s January 2025 report on AI-assisted
+          the US Copyright Office's January 2025 report on AI-assisted
           authorship. If Customer wants copyright protection, Customer
           should add human creative editing to the Brief before use.
         </p>
@@ -436,7 +436,7 @@ const SECTIONS: Sec[] = [
           <strong>No training of competing models.</strong> Customer will not
           use the Briefs, or any data obtained from the Service, to develop,
           train, fine-tune, or improve any AI or machine-learning model that
-          competes with Anthropic&apos;s models or the Service. This
+          competes with Anthropic's models or the Service. This
           restriction is a flow-through of Anthropic Commercial Terms §D.4.
         </p>
         <div className="mt-4 rounded-md border border-[var(--fg-subtle)]/40 bg-[color-mix(in_oklch,var(--fg)_4%,transparent)] px-4 py-4 text-sm">
@@ -445,9 +445,9 @@ const SECTIONS: Sec[] = [
           </p>
           <p className="mt-2 uppercase">
             BRIEFS ARE GENERATED BY ARTIFICIAL INTELLIGENCE MODELS (INCLUDING
-            ANTHROPIC&apos;S CLAUDE) BASED ON CRM DATA CUSTOMER PROVIDES. AI
+            ANTHROPIC'S CLAUDE) BASED ON CRM DATA CUSTOMER PROVIDES. AI
             OUTPUTS MAY CONTAIN ERRORS, INACCURACIES, OMISSIONS, OR
-            FABRICATED INFORMATION (&ldquo;HALLUCINATIONS&rdquo;). CUSTOMER
+            FABRICATED INFORMATION (“HALLUCINATIONS”). CUSTOMER
             IS SOLELY RESPONSIBLE FOR REVIEWING, VERIFYING, AND EDITING
             BRIEFS BEFORE RELYING ON OR ACTING UPON THEM. CUSTOMER WILL NOT
             USE BRIEFS AS THE SOLE BASIS FOR ANY LEGALLY BINDING DECISION,
@@ -456,7 +456,7 @@ const SECTIONS: Sec[] = [
             EFFECT ON ANY INDIVIDUAL, WITHOUT QUALIFIED HUMAN REVIEW.
             DUNAMIS EXPRESSLY DISCLAIMS ALL WARRANTIES REGARDING THE
             ACCURACY, COMPLETENESS, RELIABILITY, OR FITNESS FOR PURPOSE OF
-            AI OUTPUTS. DUNAMIS&apos;S LIABILITY FOR ANY CLAIM ARISING FROM
+            AI OUTPUTS. DUNAMIS'S LIABILITY FOR ANY CLAIM ARISING FROM
             INACCURATE OR MISLEADING AI OUTPUT IS LIMITED TO THE LESSER OF
             (A) FEES PAID BY CUSTOMER IN THE THREE MONTHS PRECEDING THE
             CLAIM, OR (B) US$500.
@@ -477,8 +477,8 @@ const SECTIONS: Sec[] = [
           <Link href="/legal/dpa" className="underline">
             Dunamis Studios Data Processing Addendum
           </Link>{" "}
-          (the &ldquo;<strong>DPA</strong>&rdquo;) is incorporated into this
-          Agreement by reference. The DPA governs Dunamis Studios&apos;s
+          (the “<strong>DPA</strong>”) is incorporated into this
+          Agreement by reference. The DPA governs Dunamis Studios's
           processing of personal data as a processor / service provider,
           including international transfer mechanisms (EU Standard
           Contractual Clauses Modules 2 and 3, UK International Data
@@ -490,7 +490,7 @@ const SECTIONS: Sec[] = [
           <Link href="/legal/subprocessors" className="underline">
             /legal/subprocessors
           </Link>{" "}
-          and commits to thirty (30) days&apos; advance notice of new
+          and commits to thirty (30) days' advance notice of new
           Sub-processors that will process Customer Personal Data, subject to
           the upstream asymmetry disclosed on that page.
         </p>
@@ -511,13 +511,13 @@ const SECTIONS: Sec[] = [
     body: (
       <>
         <p>
-          Each party (the &ldquo;<strong>Receiving Party</strong>&rdquo;) may
+          Each party (the “<strong>Receiving Party</strong>”) may
           be exposed to non-public information of the other party (the
-          &ldquo;<strong>Disclosing Party</strong>&rdquo;) that is marked or
+          “<strong>Disclosing Party</strong>”) that is marked or
           identified as confidential, or that a reasonable person would
           understand to be confidential given its nature and the
-          circumstances of disclosure (&ldquo;<strong>Confidential
-          Information</strong>&rdquo;). Confidential Information includes
+          circumstances of disclosure (“<strong>Confidential
+          Information</strong>”). Confidential Information includes
           Customer Data, non-public business and technical information,
           pricing, and roadmap.
         </p>
@@ -539,7 +539,7 @@ const SECTIONS: Sec[] = [
         </p>
         <p className="mt-3">
           Customary exceptions apply: information that is or becomes public
-          without breach; was rightfully in the Receiving Party&apos;s
+          without breach; was rightfully in the Receiving Party's
           possession without obligation of confidentiality; is independently
           developed without use of Confidential Information; or is rightfully
           obtained from a third party without restriction. Either party may
@@ -560,25 +560,25 @@ const SECTIONS: Sec[] = [
         <p>
           <strong>Limited service warranty.</strong> Dunamis Studios warrants
           that the Service will perform in material conformance with the
-          Documentation during the subscription term. Customer&apos;s sole
-          and exclusive remedy, and Dunamis Studios&apos;s entire liability,
-          for breach of this warranty is, at Dunamis Studios&apos;s option,
+          Documentation during the subscription term. Customer's sole
+          and exclusive remedy, and Dunamis Studios's entire liability,
+          for breach of this warranty is, at Dunamis Studios's option,
           (a) re-performance of the non-conforming Service, or (b) refund of
           the pro-rated fees for the non-conformance period. This warranty
-          is void to the extent non-conformance is caused by Customer&apos;s
+          is void to the extent non-conformance is caused by Customer's
           breach, third-party products, force majeure, or use outside the
           Documentation.
         </p>
         <div className="mt-4 rounded-md border border-[var(--fg-subtle)]/40 bg-[color-mix(in_oklch,var(--fg)_4%,transparent)] px-4 py-4 text-sm">
           <p className="uppercase">
             Except for the limited service warranty above, the service is
-            provided &ldquo;as is&rdquo; and &ldquo;as available.&rdquo;
+            provided “as is” and “as available.”
             Dunamis studios disclaims all warranties, express or implied,
             including implied warranties of merchantability, fitness for a
             particular purpose, title, non-infringement, and any warranty
             arising from course of dealing or usage of trade. Dunamis
             studios does not warrant that the service will be uninterrupted
-            or error-free, that it will meet customer&apos;s requirements,
+            or error-free, that it will meet customer's requirements,
             or that defects will be corrected. Dunamis studios does not
             warrant that AI-generated outputs will be accurate, complete,
             reliable, non-infringing, or fit for any particular purpose.
@@ -599,32 +599,32 @@ const SECTIONS: Sec[] = [
           Bradford personally, and their respective affiliates, officers,
           employees, contractors, and agents from and against any third-party
           claim, action, proceeding, or demand, and all resulting damages,
-          fines, judgments, settlements, and reasonable attorneys&apos; fees,
-          arising out of or relating to: (a) Customer&apos;s Customer Data,
+          fines, judgments, settlements, and reasonable attorneys' fees,
+          arising out of or relating to: (a) Customer's Customer Data,
           including claims that such data was collected, used, or shared
-          without legal basis or required consents; (b) Customer&apos;s
+          without legal basis or required consents; (b) Customer's
           breach of <a href="#customer-responsibilities" className="underline">§4</a>{" "}
           or <a href="#aup" className="underline">§6</a>, including any
-          submission of sensitive data categories; (c) Customer&apos;s or its
-          users&apos; reliance on or acting upon AI Output without qualified
-          human review; (d) Customer&apos;s combination of the Service with
+          submission of sensitive data categories; (c) Customer's or its
+          users' reliance on or acting upon AI Output without qualified
+          human review; (d) Customer's combination of the Service with
           any product, service, data, or content not provided by Dunamis
-          Studios; or (e) Customer&apos;s violation of applicable law.
+          Studios; or (e) Customer's violation of applicable law.
         </p>
         <p className="mt-3">
           <strong>Dunamis IP indemnity (narrow).</strong> Dunamis Studios
           will defend Customer from and against any third-party claim that
-          Customer&apos;s authorized use of the Service, strictly in
+          Customer's authorized use of the Service, strictly in
           accordance with this Agreement and the Documentation, infringes
-          that third party&apos;s US patent, copyright, trademark, or trade
+          that third party's US patent, copyright, trademark, or trade
           secret, and will pay resulting damages finally awarded against
           Customer by a court of competent jurisdiction or a settlement
           Dunamis Studios agrees to in writing. This obligation does not
           apply to claims arising from or related to: (i) Customer Data, AI
           Output, or any combination thereof; (ii) use of the Service after
-          notice to discontinue; (iii) Customer&apos;s modifications or use
+          notice to discontinue; (iii) Customer's modifications or use
           not in accordance with the Documentation; (iv) combinations with
-          non-Dunamis products, services, or data; or (v) Customer&apos;s
+          non-Dunamis products, services, or data; or (v) Customer's
           specifications or instructions. <strong>AI Outputs are expressly
           excluded from the Dunamis IP indemnity</strong>; upstream Anthropic
           does not indemnify Dunamis Studios for Output IP claims at this
@@ -633,7 +633,7 @@ const SECTIONS: Sec[] = [
         </p>
         <p className="mt-3">
           <strong>Dunamis options on an IP claim.</strong> If the Service, or
-          any component, is or in Dunamis Studios&apos;s reasonable opinion
+          any component, is or in Dunamis Studios's reasonable opinion
           is likely to become the subject of an IP claim, Dunamis Studios
           may, at its option and expense: (x) procure the right for Customer
           to continue using the Service; (y) modify the Service to be
@@ -641,7 +641,7 @@ const SECTIONS: Sec[] = [
           (z) terminate the affected subscription and refund any unused
           pre-paid fees for the period after termination. The preceding
           options and the defense described in this Section state the entire
-          liability of Dunamis Studios, and Customer&apos;s exclusive remedy,
+          liability of Dunamis Studios, and Customer's exclusive remedy,
           for IP infringement claims.
         </p>
         <p className="mt-3">
@@ -650,7 +650,7 @@ const SECTIONS: Sec[] = [
           party sole control of the defense and settlement (provided the
           settlement does not impose monetary obligations or admissions of
           liability on the indemnified party without its consent), and
-          provide reasonable cooperation at the indemnifying party&apos;s
+          provide reasonable cooperation at the indemnifying party's
           expense.
         </p>
       </>
@@ -675,33 +675,33 @@ const SECTIONS: Sec[] = [
             possibility of such damages.
           </p>
           <p className="mt-3 uppercase">
-            Each party&apos;s aggregate liability arising out of or relating
+            Each party's aggregate liability arising out of or relating
             to this agreement is capped at the greater of (a) US$100, or
             (b) the total fees paid by customer to dunamis studios for the
             service in the twelve (12) months preceding the event giving
-            rise to the liability (the &ldquo;general cap&rdquo;).
+            rise to the liability (the “general cap”).
           </p>
           <p className="mt-3 uppercase">
-            Notwithstanding the general cap, dunamis studios&apos;s
+            Notwithstanding the general cap, dunamis studios's
             aggregate liability for any claim arising out of or relating to
             inaccurate, incomplete, misleading, or fabricated AI output
             (including any brief) is capped at the lesser of (a) the fees
             paid by customer in the three (3) months preceding the claim,
-            or (b) US$500 (the &ldquo;AI output sub-cap&rdquo;). The AI
+            or (b) US$500 (the “AI output sub-cap”). The AI
             output sub-cap is included within, and not in addition to, the
             general cap.
           </p>
         </div>
         <p className="mt-4">
           <strong>Carve-outs from the cap.</strong> The foregoing limits do
-          not apply to: (i) a party&apos;s indemnification obligations under{" "}
+          not apply to: (i) a party's indemnification obligations under{" "}
           <a href="#indemnification" className="underline">§11</a>;
           (ii) breach of <a href="#confidentiality" className="underline">§9</a>{" "}
-          (Confidentiality); (iii) Customer&apos;s failure to pay undisputed
-          fees; (iv) Customer&apos;s breach of <a href="#aup" className="underline">§6</a>{" "}
+          (Confidentiality); (iii) Customer's failure to pay undisputed
+          fees; (iv) Customer's breach of <a href="#aup" className="underline">§6</a>{" "}
           (Acceptable Use Policy) or the sensitive-data prohibition in{" "}
           <a href="#customer-responsibilities" className="underline">§4</a>;
-          (v) infringement or misappropriation of the other party&apos;s
+          (v) infringement or misappropriation of the other party's
           intellectual property; or (vi) liability that, under Florida law
           or other applicable non-waivable law, cannot be limited or
           excluded, including liability for{" "}
@@ -747,30 +747,30 @@ const SECTIONS: Sec[] = [
         <p className="mt-3">
           <strong>Termination by Dunamis Studios.</strong> Dunamis Studios
           may terminate this Agreement or any subscription: (a) for cause on{" "}
-          <strong>fifteen (15) days&apos; notice</strong> of non-payment
+          <strong>fifteen (15) days' notice</strong> of non-payment
           that remains uncured after the notice period; (b) for cause on{" "}
-          <strong>thirty (30) days&apos; notice</strong> of any other
+          <strong>thirty (30) days' notice</strong> of any other
           material breach that remains uncured after the notice period;
-          (c) for convenience on thirty (30) days&apos; notice, with a
+          (c) for convenience on thirty (30) days' notice, with a
           refund of any unused, pre-paid fees for the period after
           termination; or (d) <strong>immediately</strong> on notice for a
           violation of{" "}
           <a href="#aup" className="underline">§6</a>{" "}
           (Acceptable Use Policy), for a security risk presented by
-          Customer&apos;s use, or if required by Anthropic or any other
+          Customer's use, or if required by Anthropic or any other
           Sub-processor or by law.
         </p>
         <p className="mt-3">
           <strong>Effect of termination — data.</strong> On termination or
           expiration, Customer has a <strong>thirty (30)-day export
           window</strong> during which Customer may export its Briefs
-          through the Service&apos;s export tooling. After the export
+          through the Service's export tooling. After the export
           window, Dunamis Studios will delete Customer Data from active
           production systems within sixty (60) days of termination; data
           residing in backups is deleted on its natural backup-rotation
           cycle (generally within 30–90 days). Customer retains ownership
           of Briefs it has previously exported; those exports are outside
-          the Service and are Customer&apos;s responsibility.
+          the Service and are Customer's responsibility.
         </p>
         <p className="mt-3">
           <strong>Survival.</strong> The following Sections survive
@@ -813,13 +813,13 @@ const SECTIONS: Sec[] = [
           <strong>Customer HubSpot obligations.</strong> Customer agrees
           that its use of the Service, including the OAuth authorization
           Customer grants at install, will not cause Customer or Dunamis
-          Studios to breach HubSpot&apos;s Customer Terms of Service,
+          Studios to breach HubSpot's Customer Terms of Service,
           Acceptable Use Policy, or Data Processing Agreement. Customer
           will not use the Service in any industry or manner HubSpot has
           restricted or prohibited.
         </p>
         <p className="mt-3">
-          <strong>OAuth authorization lifecycle.</strong> Customer&apos;s
+          <strong>OAuth authorization lifecycle.</strong> Customer's
           HubSpot Super Admin authorizes Debrief via HubSpot OAuth at
           install and may revoke authorization at any time through the
           HubSpot Connected Apps interface. On uninstall or revocation,
@@ -868,7 +868,7 @@ const SECTIONS: Sec[] = [
           Arbitration Rules</strong>. The seat and legal place of
           arbitration is <strong>Florida, United States</strong>. The
           arbitration will be conducted by one arbitrator selected in
-          accordance with AAA rules. The arbitrator&apos;s award is
+          accordance with AAA rules. The arbitrator's award is
           final and binding, and judgment on the award may be entered in
           any court of competent jurisdiction.
         </p>
@@ -914,14 +914,14 @@ const SECTIONS: Sec[] = [
         <p>
           Customer may not assign this Agreement or any of its rights or
           obligations under it, in whole or in part, by operation of law or
-          otherwise, without Dunamis Studios&apos;s prior written consent.
+          otherwise, without Dunamis Studios's prior written consent.
           Any attempted assignment without that consent is void.
         </p>
         <p className="mt-3">
           <strong>Assignment by Company.</strong>{" "}
           <strong>
             Dunamis Studios (and Joshua Robert Bradford personally) may
-            assign this Agreement, in whole or in part, without Customer&apos;s
+            assign this Agreement, in whole or in part, without Customer's
             consent, to (a) an affiliate; (b) a successor entity formed by
             Company, including upon incorporation of Company as a limited
             liability company or corporation in any US state;
@@ -929,7 +929,7 @@ const SECTIONS: Sec[] = [
             equity, or business relating to the Service.
           </strong>{" "}
           On any such assignment, Dunamis Studios will notify Customer by
-          email, and the assignee will step into Dunamis Studios&apos;s
+          email, and the assignee will step into Dunamis Studios's
           rights and obligations going forward. Subject to the foregoing,
           this Agreement binds and benefits the parties and their permitted
           successors and assigns.
@@ -957,7 +957,7 @@ const SECTIONS: Sec[] = [
           its direct control, including outages, degradations, rate limits,
           or terms changes imposed by HubSpot, Anthropic, Vercel, Upstash,
           Stripe, Resend, or any other Sub-processor; internet,
-          telecommunications, or utility failures; and Customer&apos;s
+          telecommunications, or utility failures; and Customer's
           systems or actions.
         </p>
       </>
@@ -985,7 +985,7 @@ const SECTIONS: Sec[] = [
           is held invalid or unenforceable, the remaining provisions
           continue in full force, and the invalid provision will be
           modified to the minimum extent necessary to be enforceable while
-          preserving the parties&apos; original intent.
+          preserving the parties' original intent.
         </p>
         <p className="mt-3">
           <strong>Entire agreement.</strong> This Agreement, together with
@@ -1024,13 +1024,13 @@ const SECTIONS: Sec[] = [
         </p>
         <p className="mt-3">
           <strong>Headings.</strong> Section headings are for convenience
-          and do not affect interpretation. References to &ldquo;including&rdquo;
-          mean &ldquo;including without limitation.&rdquo;
+          and do not affect interpretation. References to “including”
+          mean “including without limitation.”
         </p>
         <p className="mt-3">
           <strong>Updates to this Agreement.</strong> Dunamis Studios may
           update this Agreement from time to time. For material changes,
-          Dunamis Studios will provide at least thirty (30) days&apos;
+          Dunamis Studios will provide at least thirty (30) days'
           email notice to the administrative contact; the updated Agreement
           takes effect on the stated effective date. If Customer does not
           agree to the update, Customer may cancel under{" "}

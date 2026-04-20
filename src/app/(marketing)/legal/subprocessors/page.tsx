@@ -110,7 +110,7 @@ export default function SubprocessorsPage() {
           </p>
           <p>
             Dunamis Studios commits to at least{" "}
-            <strong>thirty (30) days&apos; advance notice</strong> of any
+            <strong>thirty (30) days' advance notice</strong> of any
             intended addition or replacement of a sub-processor that will
             process Customer Personal Data. To receive notice by email,
             subscribe by sending a one-line message to{" "}
@@ -128,7 +128,7 @@ export default function SubprocessorsPage() {
           <div className="rounded-md border border-[var(--color-warning)]/40 bg-[color-mix(in_oklch,var(--color-warning)_10%,transparent)] px-4 py-3 text-sm">
             <p>
               <strong>Honest upstream asymmetry.</strong> Anthropic, our LLM
-              sub-processor, commits to only <strong>fifteen (15) days&apos;
+              sub-processor, commits to only <strong>fifteen (15) days'
               notice</strong> of changes to its own sub-processors upstream of
               us. Where we receive shorter upstream notice, we pass the change
               through to customers as soon as practicable, which may be
@@ -192,10 +192,10 @@ export default function SubprocessorsPage() {
             <strong>HubSpot, Inc.</strong> Customer has already engaged
             HubSpot as its processor for CRM data independently of Dunamis
             Studios. Debrief is a HubSpot marketplace application that
-            reads Customer&apos;s HubSpot data under the OAuth authorization
+            reads Customer's HubSpot data under the OAuth authorization
             Customer grants at install. HubSpot is listed here for
-            transparency; the flow from Customer&apos;s HubSpot portal into
-            Debrief is governed by Customer&apos;s own agreement with
+            transparency; the flow from Customer's HubSpot portal into
+            Debrief is governed by Customer's own agreement with
             HubSpot and by this Dunamis Studios DPA.
           </p>
         </div>
@@ -208,7 +208,7 @@ export default function SubprocessorsPage() {
         </h2>
         <div className="mt-4 space-y-3 text-[var(--fg-muted)] leading-relaxed">
           <p>
-            The following services support Dunamis Studios&apos;s internal
+            The following services support Dunamis Studios's internal
             operations (collaboration, source control, credential
             management, accounting). They do not receive or process
             Customer Personal Data and are therefore not sub-processors in
