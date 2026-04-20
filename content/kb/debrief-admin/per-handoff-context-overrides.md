@@ -6,7 +6,7 @@ product: debrief
 access: customers
 order: 2
 updated: 2026-04-20
-draft: true
+draft: false
 tags:
   - admin
   - customization

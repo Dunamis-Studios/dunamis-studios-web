@@ -6,7 +6,7 @@ product: debrief
 access: public
 order: 3
 updated: 2026-04-20
-draft: true
+draft: false
 tags:
   - install
   - getting-started
