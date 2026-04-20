@@ -31,6 +31,24 @@ export type KbProduct = (typeof KB_PRODUCTS)[number];
 export const KB_ACCESS = ["public", "customers"] as const;
 export type KbAccess = (typeof KB_ACCESS)[number];
 
+/**
+ * Normalize an `updated` frontmatter value. YAML parses an unquoted
+ * ISO date (`updated: 2026-04-20`) as a Date object rather than a
+ * string, so gray-matter hands us a Date. Coerce to the canonical
+ * YYYY-MM-DD string form here rather than forcing authors to quote
+ * every date. Strings pass through unchanged so existing content and
+ * quoted dates still validate against the regex below.
+ */
+function coerceUpdated(val: unknown): unknown {
+  if (val instanceof Date && !Number.isNaN(val.getTime())) {
+    const y = val.getUTCFullYear();
+    const m = String(val.getUTCMonth() + 1).padStart(2, "0");
+    const d = String(val.getUTCDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+  return val;
+}
+
 export const frontmatterSchema = z.object({
   title: z.string().min(1).max(120),
   description: z.string().min(1).max(160),
@@ -40,9 +58,12 @@ export const frontmatterSchema = z.object({
   product: z.enum(KB_PRODUCTS),
   access: z.enum(KB_ACCESS),
   order: z.number().int().optional(),
-  updated: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
-    message: "updated must be YYYY-MM-DD",
-  }),
+  updated: z.preprocess(
+    coerceUpdated,
+    z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
+      message: "updated must be YYYY-MM-DD",
+    }),
+  ),
   tags: z.array(z.string().min(1)).optional(),
   draft: z.boolean().optional(),
 });
