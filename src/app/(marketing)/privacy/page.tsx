@@ -82,7 +82,7 @@ const SECTIONS: Sec[] = [
           individual resident of the State of Florida, United States, doing
           business under the name Dunamis Studios. See{" "}
           <a href="#contact" className="underline">
-            §15 Contact
+            §14 Contact
           </a>{" "}
           for postal address.
         </p>
@@ -606,33 +606,6 @@ const SECTIONS: Sec[] = [
   },
   {
     n: "14",
-    id: "eu-representative",
-    title: "EU/UK Representative",
-    body: (
-      <>
-        <p>
-          Under GDPR Article 27 and UK GDPR, an EU/UK-based representative is
-          required for controllers and processors outside the EU/UK that offer
-          goods or services to, or monitor, EU/UK data subjects, subject to
-          narrow exemptions.
-        </p>
-        <div className="mt-3 rounded-lg border border-[var(--color-warning)]/40 bg-[color-mix(in_oklch,var(--color-warning)_10%,transparent)] px-4 py-3 text-sm">
-          <p>
-            <strong>Placeholder — pending designation.</strong> Dunamis Studios
-            will designate an EU Representative, and if applicable a UK
-            Representative, before the scale of EU/UK processing triggers an
-            Article 27 requirement. EU/UK residents may contact us at{" "}
-            <a href="mailto:privacy@dunamisstudios.net" className="underline">
-              privacy@dunamisstudios.net
-            </a>{" "}
-            in the interim.
-          </p>
-        </div>
-      </>
-    ),
-  },
-  {
-    n: "15",
     id: "contact",
     title: "Contact",
     body: (
