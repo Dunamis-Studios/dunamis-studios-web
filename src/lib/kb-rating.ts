@@ -50,7 +50,6 @@ if (!RAW_SALT && process.env.NODE_ENV === "production") {
 }
 const SALT = RAW_SALT ?? "dev-only-insecure-kb-rating-salt-do-not-ship";
 if (!RAW_SALT && process.env.NODE_ENV !== "production") {
-  // eslint-disable-next-line no-console
   console.warn(
     "[kb-rating] KB_RATING_SALT is unset — using an insecure dev fallback. Set a real salt before deploying.",
   );

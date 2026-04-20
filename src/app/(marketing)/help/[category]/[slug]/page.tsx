@@ -486,7 +486,9 @@ function titleCaseCategorySlug(slug: string): string {
  * to describe). Pricing offers intentionally omitted here so the
  * product page stays the single source of truth for offer data.
  */
-function productSoftwareSchema(product: KbProduct): object | null {
+function productSoftwareSchema(
+  product: KbProduct,
+): Record<string, unknown> | null {
   if (product === "platform") return null;
   const info: Record<Exclude<KbProduct, "platform">, {
     name: string;
