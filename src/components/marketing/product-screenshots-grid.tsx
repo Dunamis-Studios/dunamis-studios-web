@@ -142,7 +142,7 @@ export function ProductScreenshotsGrid({ items }: Props) {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-2xl"
+            className="relative h-[98vh] w-[98vw] overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-2xl"
           >
             <button
               ref={closeButtonRef}
@@ -153,13 +153,24 @@ export function ProductScreenshotsGrid({ items }: Props) {
             >
               <X className="h-4 w-4" aria-hidden />
             </button>
+            {/*
+              `fill` mode (no width/height props) on a parent explicitly
+              sized to 98vw x 98vh forces the image to scale UP to fill
+              the container while preserving aspect ratio. Without an
+              explicit target size on the parent, next/image's w-auto
+              capped at intrinsic width -- leaving dead space on wide
+              viewports (1479 px caps at ~58% of a 2560 px viewport).
+              Trade-off: upscaling past the source resolution softens
+              detail on ultra-wide displays. Source is 1479 px for the
+              card and 2404 px for the settings screen; above those
+              widths the image is stretched and will look blurry.
+            */}
             <Image
               src={activeItem.src}
               alt={activeItem.alt}
-              width={activeItem.width}
-              height={activeItem.height}
+              fill
               sizes="98vw"
-              className="block h-auto max-h-[98vh] w-auto max-w-[98vw]"
+              className="object-contain"
             />
           </div>
         </div>
