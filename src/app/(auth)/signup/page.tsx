@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { AuthCard } from "@/components/auth/auth-card";
 import { SignupForm } from "./signup-form";
 import { getCurrentSession } from "@/lib/session";
+import { parseClaimToken } from "@/lib/validation";
+import { PRODUCT_META } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -39,9 +41,15 @@ export default async function SignupPage({
     typeof sp.email === "string" ? sp.email.trim() : undefined;
 
   // Only surface the "install handoff" hint when we actually have
-  // both sides of the claim context. A bare ?claim= without state
-  // can't be completed, so we ignore it and render the plain signup.
-  const hasClaim = !!(claim && state);
+  // both sides of the claim context AND the claim parses cleanly
+  // into a known product. A bare ?claim= without state (or with a
+  // garbage product) can't be completed, so we fall back to plain
+  // signup.
+  const parsedClaim = claim ? parseClaimToken(claim) : null;
+  const hasClaim = !!(parsedClaim && state);
+  const productName = parsedClaim
+    ? PRODUCT_META[parsedClaim.product].name
+    : null;
 
   return (
     <AuthCard
@@ -50,7 +58,7 @@ export default async function SignupPage({
       }
       description={
         hasClaim
-          ? "One account links all your Dunamis Studios installs. Sign up to finish connecting Debrief."
+          ? `One account links all your Dunamis Studios installs. Sign up to finish connecting ${productName}.`
           : "One account for every Dunamis Studios app."
       }
       footer={
@@ -59,7 +67,7 @@ export default async function SignupPage({
           <Link
             href={
               hasClaim
-                ? `/login?redirect=${encodeURIComponent(`/api/entitlements/claim?portalId=${claim!.replace(/^debrief:/, "")}&email=${encodeURIComponent(initialEmail ?? "")}&state=${encodeURIComponent(state!)}`)}`
+                ? `/login?redirect=${encodeURIComponent(`/api/entitlements/claim?app=${parsedClaim!.product}&portalId=${parsedClaim!.portalId}&email=${encodeURIComponent(initialEmail ?? "")}&state=${encodeURIComponent(state!)}`)}`
                 : "/login"
             }
             className="text-[var(--accent)] hover:underline"
@@ -73,6 +81,7 @@ export default async function SignupPage({
         initialEmail={initialEmail}
         claim={hasClaim ? claim : undefined}
         state={hasClaim ? state : undefined}
+        productName={productName ?? undefined}
       />
     </AuthCard>
   );

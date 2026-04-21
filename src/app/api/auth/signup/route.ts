@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { redis, KEY } from "@/lib/redis";
-import { signupSchema } from "@/lib/validation";
+import { signupSchema, parseClaimToken } from "@/lib/validation";
 import { apiError, fieldsFromZod } from "@/lib/api";
 import { hashPassword } from "@/lib/password";
 import { uuid, randomToken } from "@/lib/tokens";
@@ -16,7 +16,7 @@ import {
 import { createSession, setSessionCookie } from "@/lib/session";
 import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
 import { verifyClaimState } from "@/lib/claim-state";
-import type { Account, Entitlement } from "@/lib/types";
+import { PRODUCT_META, type Account, type Entitlement } from "@/lib/types";
 
 type ClaimAttempt =
   | { ok: true; entitlement: Entitlement; redirectTo: string }
@@ -121,7 +121,7 @@ export async function POST(req: Request) {
 
   // Additive claim attempt — a claim failure does NOT roll back
   // account creation. The account exists and the caller can retry
-  // the claim from the Debrief app's CRM card later.
+  // the claim from the app's CRM card later.
   let claim: ClaimAttempt | undefined;
   if (rawClaim && rawState) {
     claim = await tryLinkClaim(rawClaim, rawState, account);
@@ -142,16 +142,15 @@ async function tryLinkClaim(
   rawState: string,
   account: Account,
 ): Promise<ClaimAttempt> {
-  // Accept only the exact "debrief:{portalId}" format for now —
-  // Property Pulse will ship its own install flow later.
-  const match = /^debrief:([a-zA-Z0-9_-]{1,64})$/.exec(rawClaim);
-  if (!match) {
+  const parsedClaim = parseClaimToken(rawClaim);
+  if (!parsedClaim) {
     return {
       ok: false,
       error: "Invalid claim format.",
     };
   }
-  const portalId = match[1]!;
+  const { product, portalId } = parsedClaim;
+  const label = PRODUCT_META[product].name;
 
   const payload = verifyClaimState(rawState);
   if (!payload) {
@@ -174,29 +173,27 @@ async function tryLinkClaim(
     };
   }
 
-  const entitlement = await getEntitlement("debrief", portalId);
+  const entitlement = await getEntitlement(product, portalId);
   if (!entitlement) {
     return {
       ok: false,
-      error: "No pending Debrief install found for this portal.",
+      error: `No pending ${label} install found for this portal.`,
     };
   }
+
+  const redirectTo = `/account/${product}/${encodeURIComponent(portalId)}`;
 
   // Already linked (e.g. the user signed up twice with the same
   // email somehow, or the Dunamis claim page linked it first).
   // Idempotent success if it's our account; 409-style rejection if
   // it's someone else's.
   if (entitlement.accountId === account.accountId) {
-    return {
-      ok: true,
-      entitlement,
-      redirectTo: `/account/debrief/${encodeURIComponent(portalId)}`,
-    };
+    return { ok: true, entitlement, redirectTo };
   }
   if (entitlement.accountId && entitlement.accountId !== account.accountId) {
     return {
       ok: false,
-      error: "This Debrief install is already linked to another account.",
+      error: `This ${label} install is already linked to another account.`,
     };
   }
 
@@ -209,13 +206,9 @@ async function tryLinkClaim(
     await saveEntitlement(entitlement).catch(() => {});
     return {
       ok: false,
-      error: "Failed to link your Debrief install. You can retry from the app.",
+      error: `Failed to link your ${label} install. You can retry from the app.`,
     };
   }
 
-  return {
-    ok: true,
-    entitlement,
-    redirectTo: `/account/debrief/${encodeURIComponent(portalId)}`,
-  };
+  return { ok: true, entitlement, redirectTo };
 }

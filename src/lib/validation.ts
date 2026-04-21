@@ -84,5 +84,27 @@ export const portalIdSchema = z
   .max(64)
   .regex(/^[a-zA-Z0-9_-]+$/, "Invalid portal id");
 
+/**
+ * Parse the `{product}:{portalId}` claim token used in the HubSpot-
+ * install → Dunamis-signup handoff. Returns null if the shape or
+ * components don't validate. Both halves are validated with their
+ * respective schemas so callers can trust the result without
+ * re-validating.
+ */
+export function parseClaimToken(
+  raw: string | null | undefined,
+): { product: z.infer<typeof productSlugSchema>; portalId: string } | null {
+  if (!raw || typeof raw !== "string") return null;
+  const idx = raw.indexOf(":");
+  if (idx <= 0 || idx === raw.length - 1) return null;
+  const productCandidate = raw.slice(0, idx);
+  const portalIdCandidate = raw.slice(idx + 1);
+  const productParsed = productSlugSchema.safeParse(productCandidate);
+  if (!productParsed.success) return null;
+  const portalIdParsed = portalIdSchema.safeParse(portalIdCandidate);
+  if (!portalIdParsed.success) return null;
+  return { product: productParsed.data, portalId: portalIdParsed.data };
+}
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;

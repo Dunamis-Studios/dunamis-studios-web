@@ -10,20 +10,27 @@ import {
   linkEntitlementToAccount,
   saveEntitlement,
 } from "@/lib/accounts";
-import { portalIdSchema } from "@/lib/validation";
+import { portalIdSchema, productSlugSchema } from "@/lib/validation";
 import { verifyClaimState } from "@/lib/claim-state";
+import { PRODUCT_META, type Product } from "@/lib/types";
 
 /**
- * /account/debrief/[portalId]/claim
+ * /account/[product]/[portalId]/claim
  *
- * Authenticated-only confirmation UI for the install-handoff flow.
- * Unauthenticated visitors are bounced to /signup by the API route
- * at /api/entitlements/claim (the account layout would redirect
- * them to /login otherwise, so page-level auth-check here is
- * defensive).
+ * Authenticated-only confirmation UI for the HubSpot-install →
+ * Dunamis handoff. Unauthenticated visitors are bounced to /signup
+ * by the API route at /api/entitlements/claim (the account layout
+ * would redirect them to /login otherwise, so page-level auth-check
+ * here is defensive).
+ *
+ * Works for every product in PRODUCT_META. The URL segment
+ * `[product]` carries the app slug; the page looks up a human-
+ * readable name for copy via PRODUCT_META. Replaces the former
+ * Debrief-specific /account/debrief/[portalId]/claim page — the
+ * Debrief URL still resolves here via the dynamic route.
  *
  * Query params:
- *   state — signed claim-state token from Debrief
+ *   state — signed claim-state token from the installing app
  *   email — convenience echo of installerEmail (not trusted;
  *           verifyClaimState is the source of truth)
  *   error — set when the inline server action rejects a link attempt
@@ -32,11 +39,6 @@ import { verifyClaimState } from "@/lib/claim-state";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Link your Debrief install",
-  robots: { index: false, follow: false },
-};
-
 type ClaimSearchParams = {
   state?: string;
   email?: string;
@@ -44,13 +46,41 @@ type ClaimSearchParams = {
 };
 
 type PageProps = {
-  params: Promise<{ portalId: string }>;
+  params: Promise<{ product: string; portalId: string }>;
   searchParams: Promise<ClaimSearchParams>;
 };
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ product: string; portalId: string }>;
+}): Promise<Metadata> {
+  const { product: rawProduct } = await params;
+  const productParsed = productSlugSchema.safeParse(rawProduct);
+  const label = productParsed.success
+    ? PRODUCT_META[productParsed.data].name
+    : "HubSpot app";
+  return {
+    title: `Link your ${label} install`,
+    robots: { index: false, follow: false },
+  };
+}
+
 export default async function ClaimPage({ params, searchParams }: PageProps) {
-  const { portalId: rawPortalId } = await params;
+  const { product: rawProduct, portalId: rawPortalId } = await params;
   const { state, error } = await searchParams;
+
+  const productParsed = productSlugSchema.safeParse(rawProduct);
+  if (!productParsed.success) {
+    return (
+      <ErrorCard
+        title="Unknown app"
+        message="This claim link references an app we don't recognize."
+      />
+    );
+  }
+  const product: Product = productParsed.data;
+  const productName = PRODUCT_META[product].name;
 
   const portalIdParsed = portalIdSchema.safeParse(rawPortalId);
   if (!portalIdParsed.success) {
@@ -62,7 +92,9 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
   // Layout already guarantees this, but a defensive check here
   // protects against layout refactors that might loosen the redirect.
   if (!session) {
-    redirect(`/login?redirect=${encodeURIComponent(`/account/debrief/${portalId}/claim?state=${state ?? ""}`)}`);
+    redirect(
+      `/login?redirect=${encodeURIComponent(`/account/${product}/${portalId}/claim?state=${state ?? ""}`)}`,
+    );
   }
 
   const payload = verifyClaimState(state);
@@ -70,8 +102,8 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
     return (
       <ErrorCard
         title="Link expired"
-        message="This claim link has expired or is invalid. Claim links are valid for 15 minutes after you install Debrief."
-        hint="To generate a fresh link, reinstall Debrief in HubSpot."
+        message={`This claim link has expired or is invalid. Claim links are valid for 15 minutes after you install ${productName}.`}
+        hint={`To generate a fresh link, reinstall ${productName} in HubSpot.`}
       />
     );
   }
@@ -80,25 +112,25 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
       <ErrorCard
         title="Portal mismatch"
         message="The claim link doesn't match this portal. This usually means the URL was edited."
-        hint="Reinstall Debrief in HubSpot to generate a valid link."
+        hint={`Reinstall ${productName} in HubSpot to generate a valid link.`}
       />
     );
   }
 
-  const entitlement = await getEntitlement("debrief", portalId);
+  const entitlement = await getEntitlement(product, portalId);
   if (!entitlement) {
     return (
       <ErrorCard
         title="No pending install found"
         message="We can't find an entitlement record for this portal. The install may have failed to write its stub record."
-        hint="Try reinstalling Debrief in HubSpot. If this persists, contact josh@dunamisstudios.net with your portal id."
+        hint={`Try reinstalling ${productName} in HubSpot. If this persists, contact josh@dunamisstudios.net with your portal id.`}
       />
     );
   }
 
   // Idempotent success: already linked to the current account.
   if (entitlement.accountId === session.account.accountId) {
-    redirect(`/account/debrief/${encodeURIComponent(portalId)}`);
+    redirect(`/account/${product}/${encodeURIComponent(portalId)}`);
   }
 
   // Linked to a DIFFERENT account.
@@ -122,6 +154,7 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
   if (payload.installerEmail !== sessionEmailLower) {
     return (
       <EmailMismatchCard
+        productName={productName}
         installerEmail={payload.installerEmail}
         sessionEmail={session.account.email}
       />
@@ -140,19 +173,19 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
     const payloadForLink = verifyClaimState(submittedState);
     if (!payloadForLink) {
       redirect(
-        `/account/debrief/${encodeURIComponent(portalId)}/claim?error=invalid_state`,
+        `/account/${product}/${encodeURIComponent(portalId)}/claim?error=invalid_state`,
       );
     }
     if (payloadForLink.portalId !== portalId) {
       redirect(
-        `/account/debrief/${encodeURIComponent(portalId)}/claim?error=portal_mismatch`,
+        `/account/${product}/${encodeURIComponent(portalId)}/claim?error=portal_mismatch`,
       );
     }
 
     const freshSession = await getCurrentSession();
     if (!freshSession) {
       redirect(
-        `/login?redirect=${encodeURIComponent(`/account/debrief/${portalId}/claim?state=${submittedState}`)}`,
+        `/login?redirect=${encodeURIComponent(`/account/${product}/${portalId}/claim?state=${submittedState}`)}`,
       );
     }
     if (
@@ -160,14 +193,14 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
       freshSession.account.email.toLowerCase()
     ) {
       redirect(
-        `/account/debrief/${encodeURIComponent(portalId)}/claim?error=email_mismatch`,
+        `/account/${product}/${encodeURIComponent(portalId)}/claim?error=email_mismatch`,
       );
     }
 
-    const ent = await getEntitlement("debrief", portalId);
+    const ent = await getEntitlement(product, portalId);
     if (!ent) {
       redirect(
-        `/account/debrief/${encodeURIComponent(portalId)}/claim?error=entitlement_missing`,
+        `/account/${product}/${encodeURIComponent(portalId)}/claim?error=entitlement_missing`,
       );
     }
     if (
@@ -175,11 +208,11 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
       ent.accountId !== freshSession.account.accountId
     ) {
       redirect(
-        `/account/debrief/${encodeURIComponent(portalId)}/claim?error=already_claimed`,
+        `/account/${product}/${encodeURIComponent(portalId)}/claim?error=already_claimed`,
       );
     }
     if (ent.accountId === freshSession.account.accountId) {
-      redirect(`/account/debrief/${encodeURIComponent(portalId)}`);
+      redirect(`/account/${product}/${encodeURIComponent(portalId)}`);
     }
 
     ent.accountId = freshSession.account.accountId;
@@ -190,20 +223,20 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
       ent.accountId = null;
       await saveEntitlement(ent).catch(() => {});
       redirect(
-        `/account/debrief/${encodeURIComponent(portalId)}/claim?error=link_failed`,
+        `/account/${product}/${encodeURIComponent(portalId)}/claim?error=link_failed`,
       );
     }
 
-    redirect(`/account/debrief/${encodeURIComponent(portalId)}`);
+    redirect(`/account/${product}/${encodeURIComponent(portalId)}`);
   }
 
   return (
     <div className="space-y-6">
       <SectionCard
-        title="Link Debrief to your account"
-        description="You installed Debrief in HubSpot. One click links this install to your Dunamis account so you can subscribe and manage credits here."
+        title={`Link ${productName} to your account`}
+        description={`You installed ${productName} in HubSpot. One click links this install to your Dunamis account so you can subscribe and manage it here.`}
       >
-        {error ? <InlineError code={error} /> : null}
+        {error ? <InlineError code={error} productName={productName} /> : null}
 
         <dl className="grid gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg-subtle)] p-4 text-sm sm:grid-cols-2">
           <div>
@@ -295,9 +328,11 @@ function ErrorCard({
 }
 
 function EmailMismatchCard({
+  productName,
   installerEmail,
   sessionEmail,
 }: {
+  productName: string;
   installerEmail: string;
   sessionEmail: string;
 }) {
@@ -313,7 +348,7 @@ function EmailMismatchCard({
             Emails don&apos;t match
           </p>
           <p className="text-[var(--fg-muted)]">
-            Debrief was installed by{" "}
+            {productName} was installed by{" "}
             <span className="font-mono">{installerEmail}</span>, but
             you&apos;re signed in as{" "}
             <span className="font-mono">{sessionEmail}</span>.
@@ -347,16 +382,20 @@ function EmailMismatchCard({
   );
 }
 
-function InlineError({ code }: { code: string }) {
+function InlineError({
+  code,
+  productName,
+}: {
+  code: string;
+  productName: string;
+}) {
   const copy: Record<string, string> = {
-    invalid_state:
-      "The claim link is expired or invalid. Reinstall Debrief in HubSpot to generate a fresh link.",
+    invalid_state: `The claim link is expired or invalid. Reinstall ${productName} in HubSpot to generate a fresh link.`,
     portal_mismatch:
       "The claim link doesn't match this portal. The URL may have been edited.",
     email_mismatch:
       "The HubSpot installer email doesn't match your Dunamis account. Sign out and sign in with the installer email.",
-    entitlement_missing:
-      "No pending install found. Try reinstalling Debrief in HubSpot.",
+    entitlement_missing: `No pending install found. Try reinstalling ${productName} in HubSpot.`,
     already_claimed:
       "This portal was claimed by another account while you were on this page.",
     link_failed:

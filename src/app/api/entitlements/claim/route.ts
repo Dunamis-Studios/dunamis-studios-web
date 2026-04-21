@@ -9,20 +9,23 @@ import {
 } from "@/lib/accounts";
 import { portalIdSchema, productSlugSchema } from "@/lib/validation";
 import { verifyClaimState } from "@/lib/claim-state";
+import { PRODUCT_META, type Product } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 /**
  * /api/entitlements/claim
  *
- * GET  — entry-point for the Debrief OAuth handoff. Verifies the
- *        signed state token, then routes the browser:
+ * GET  — entry-point for the HubSpot-install → Dunamis handoff.
+ *        Dispatches on the `?app=` query param (any supported
+ *        product slug). Verifies the signed state token, then
+ *        routes the browser:
  *          - invalid / expired state      → 400 HTML error page
- *          - no session                   → 302 /signup?claim=debrief:{portalId}&email=...&state=...
- *          - session + not-yet-linked     → 302 /account/debrief/{portalId}/claim?state=...
- *          - session + already linked to  → 302 /account/debrief/{portalId}
- *            current account
- *          - session + linked elsewhere   → 302 /account/debrief/{portalId}/claim?state=...
+ *          - no session                   → 302 /signup?claim={app}:{portalId}&email=...&state=...
+ *          - session + not-yet-linked     → 302 /account/{app}/{portalId}/claim?state=...
+ *          - session + already linked to  → (the claim page itself
+ *            current account                  redirects to the dashboard)
+ *          - session + linked elsewhere   → 302 /account/{app}/{portalId}/claim?state=...
  *            (page renders the "linked to another account" UI)
  *
  * POST — confirmation action from the /account/.../claim page. Body
@@ -34,7 +37,7 @@ export const dynamic = "force-dynamic";
  * The GET path exists here (not as a page route) because the
  * /account tree's layout.tsx unconditionally redirects
  * unauthenticated visitors to /login, preventing a page component at
- * /account/debrief/{portalId}/claim from doing the "redirect to
+ * /account/{app}/{portalId}/claim from doing the "redirect to
  * /signup instead of /login" branching the install handoff needs.
  * API routes are outside the account layout's reach.
  */
@@ -43,16 +46,25 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
+  const rawApp = url.searchParams.get("app");
   const rawPortalId = url.searchParams.get("portalId");
-  // The `email` query param Debrief passes is informational-only —
-  // we always take installerEmail from the verified state token
+  // The `email` query param apps pass is informational-only — we
+  // always take installerEmail from the verified state token
   // (signed, trusted) rather than the URL (spoofable). No need to
   // read it here.
   const state = url.searchParams.get("state");
 
+  const appParsed = productSlugSchema.safeParse(rawApp ?? "");
+  if (!appParsed.success) {
+    return expiredLinkResponse(
+      "Missing or invalid app. Expected ?app=debrief or ?app=property-pulse.",
+    );
+  }
+  const product = appParsed.data;
+
   const portalIdParsed = portalIdSchema.safeParse(rawPortalId ?? "");
   if (!portalIdParsed.success) {
-    return expiredLinkResponse("Missing or invalid portal id.");
+    return expiredLinkResponse("Missing or invalid portal id.", product);
   }
   const portalId = portalIdParsed.data;
 
@@ -60,6 +72,7 @@ export async function GET(req: Request) {
   if (!payload) {
     return expiredLinkResponse(
       "This claim link has expired or is invalid.",
+      product,
     );
   }
   if (payload.portalId !== portalId) {
@@ -69,6 +82,7 @@ export async function GET(req: Request) {
     // past here.
     return expiredLinkResponse(
       "This claim link's signed state does not match the portal.",
+      product,
     );
   }
 
@@ -82,7 +96,7 @@ export async function GET(req: Request) {
 
   if (!session) {
     const signupUrl = new URL("/signup", baseUrl);
-    signupUrl.searchParams.set("claim", `debrief:${portalId}`);
+    signupUrl.searchParams.set("claim", `${product}:${portalId}`);
     signupUrl.searchParams.set("email", emailForSignup);
     signupUrl.searchParams.set("state", state!);
     return NextResponse.redirect(signupUrl, 302);
@@ -93,7 +107,7 @@ export async function GET(req: Request) {
   // already linked to someone else). Pass the raw state through so
   // the page can re-verify without trusting the URL.
   const claimPageUrl = new URL(
-    `/account/debrief/${encodeURIComponent(portalId)}/claim`,
+    `/account/${product}/${encodeURIComponent(portalId)}/claim`,
     baseUrl,
   );
   claimPageUrl.searchParams.set("state", state!);
@@ -121,23 +135,13 @@ export async function POST(req: Request) {
   if (!parsed.ok) return parsed.response;
   const { portalId, product, state } = parsed.data;
 
-  // Claim flow is Debrief-only today. Property Pulse will land here
-  // when its install flow ships; for now hard-reject with a clear
-  // error rather than silently proceeding.
-  if (product !== "debrief") {
-    return apiError(
-      400,
-      "unsupported_product",
-      "Only Debrief supports claim-style install today.",
-    );
-  }
-
   const payload = verifyClaimState(state);
   if (!payload) {
+    const label = PRODUCT_META[product].name;
     return apiError(
       400,
       "invalid_state",
-      "Claim link has expired or is invalid. Please reinstall Debrief in HubSpot.",
+      `Claim link has expired or is invalid. Please reinstall ${label} in HubSpot.`,
     );
   }
   if (payload.portalId !== portalId) {
@@ -161,14 +165,15 @@ export async function POST(req: Request) {
 
   const entitlement = await getEntitlement(product, portalId);
   if (!entitlement) {
+    const label = PRODUCT_META[product].name;
     return apiError(
       404,
       "entitlement_missing",
-      "No pending entitlement found for this portal. Please reinstall Debrief in HubSpot.",
+      `No pending entitlement found for this portal. Please reinstall ${label} in HubSpot.`,
     );
   }
 
-  const redirectTo = `/account/debrief/${encodeURIComponent(portalId)}`;
+  const redirectTo = `/account/${product}/${encodeURIComponent(portalId)}`;
 
   // Idempotency: already linked to the caller → return success so
   // double-clicks or slow retries don't 409 on the user.
@@ -228,14 +233,15 @@ async function safeGetSession() {
   }
 }
 
-function expiredLinkResponse(detail: string): Response {
+function expiredLinkResponse(detail: string, product?: Product): Response {
   // Plain HTML page so unauthenticated visitors (who would otherwise
   // hit the layout's /login redirect if we routed to a page.tsx) see
   // a real, rendered message explaining what to do.
+  const label = product ? PRODUCT_META[product].name : "HubSpot app";
   const body = `<!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8" />
-<title>Debrief install — link expired</title>
+<title>${escapeHtml(label)} install — link expired</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: #0b0b0c; color: #e9e9ea; margin: 0; padding: 2rem; display: flex; min-height: 100vh; align-items: center; justify-content: center; }
@@ -247,9 +253,9 @@ function expiredLinkResponse(detail: string): Response {
 </style>
 </head><body>
 <div class="card" role="alert">
-  <h1>This Debrief install link has expired</h1>
+  <h1>This ${escapeHtml(label)} install link has expired</h1>
   <p>${escapeHtml(detail)}</p>
-  <p>Links are valid for 15 minutes after you install Debrief. To generate a fresh link, reinstall Debrief in HubSpot.</p>
+  <p>Links are valid for 15 minutes after you install ${escapeHtml(label)}. To generate a fresh link, reinstall ${escapeHtml(label)} in HubSpot.</p>
   <p><a href="https://ecosystem.hubspot.com/marketplace/apps">Open the HubSpot Marketplace</a> or contact <a href="mailto:josh@dunamisstudios.net">josh@dunamisstudios.net</a> for help.</p>
 </div>
 </body></html>`;

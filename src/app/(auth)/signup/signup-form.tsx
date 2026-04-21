@@ -22,15 +22,23 @@ export interface SignupFormProps {
    */
   initialEmail?: string;
   /**
-   * Install-handoff claim in "debrief:{portalId}" format. Forwarded
-   * untouched to /api/auth/signup which validates the format and
-   * links the stub entitlement after account creation.
+   * Install-handoff claim in "{product}:{portalId}" format (e.g.
+   * "debrief:12345" or "property-pulse:12345"). Forwarded untouched
+   * to /api/auth/signup which validates the format and links the
+   * stub entitlement after account creation.
    */
   claim?: string;
   /**
-   * HMAC-signed state token from Debrief. Paired with `claim`.
+   * HMAC-signed state token from the installing app. Paired with
+   * `claim`.
    */
   state?: string;
+  /**
+   * Human-readable product name for the install-handoff copy (e.g.
+   * "Debrief" or "Property Pulse"). Derived from `claim` by the
+   * server component; the form itself doesn't re-parse.
+   */
+  productName?: string;
 }
 
 type ClaimResult =
@@ -41,6 +49,7 @@ export function SignupForm({
   initialEmail,
   claim,
   state,
+  productName,
 }: SignupFormProps = {}) {
   const router = useRouter();
   const { push } = useToast();
@@ -49,6 +58,9 @@ export function SignupForm({
   const [formError, setFormError] = React.useState<string | null>(null);
 
   const hasClaim = !!(claim && state);
+  // Fallback to "your install" so an unexpected missing productName
+  // doesn't leak "undefined" into toasts.
+  const productLabel = productName ?? "your install";
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -94,8 +106,7 @@ export function SignupForm({
           push({
             kind: "success",
             title: "Welcome to Dunamis Studios",
-            description:
-              "Your Debrief install is linked. Check your email to verify your address.",
+            description: `Your ${productLabel} install is linked. Check your email to verify your address.`,
           });
           router.push(data.claim.redirectTo);
           router.refresh();
@@ -109,8 +120,8 @@ export function SignupForm({
             : "Linking failed unexpectedly.";
         push({
           kind: "error",
-          title: "Account created — Debrief link failed",
-          description: `${claimError} You can retry from the Debrief app.`,
+          title: `Account created — ${productLabel} link failed`,
+          description: `${claimError} You can retry from the ${productLabel} app.`,
         });
         router.push("/account");
         router.refresh();
@@ -177,8 +188,8 @@ export function SignupForm({
           <FieldError>{errors.email}</FieldError>
         ) : hasClaim ? (
           <FieldHint>
-            HubSpot installer email — we&apos;ll link your Debrief install to
-            this Dunamis account.
+            HubSpot installer email — we&apos;ll link your {productLabel}{" "}
+            install to this Dunamis account.
           </FieldHint>
         ) : null}
       </div>
