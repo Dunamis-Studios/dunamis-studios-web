@@ -81,6 +81,30 @@ export default function PropertyPulsePage() {
         body:
           "HubSpot tracks property history, but finding it means clicking into individual property timelines one at a time. When a deal amount shifts, a close date slips, or an owner changes, there's no single place to see it in context. By the time something matters, the trail is buried.",
       }}
+      screenshots={{
+        eyebrow: "A look inside",
+        headline: "The card, and what configures it.",
+        items: [
+          {
+            src: "/images/property-pulse/crm_ui_card.png",
+            alt: "Property Pulse card rendered on a HubSpot record, showing tracked properties and their change log.",
+            width: 1479,
+            height: 638,
+            captionEyebrow: "On the record",
+            caption:
+              "Current value, recency, delta, and a filterable change log on every tracked property.",
+          },
+          {
+            src: "/images/property-pulse/settings.png",
+            alt: "Property Pulse settings page with Tracked Properties accordions per object type.",
+            width: 2404,
+            height: 1131,
+            captionEyebrow: "In settings",
+            caption:
+              "Admins pick tracked properties per object type. Users can add their own on top, when admins allow it.",
+          },
+        ],
+      }}
       features={[
         {
           title: "Track what you care about",

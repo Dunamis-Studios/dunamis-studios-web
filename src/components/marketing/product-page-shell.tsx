@@ -1,9 +1,19 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUp, ArrowDown } from "lucide-react";
 import { Container, Section } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+
+export interface ProductScreenshot {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  captionEyebrow: string;
+  caption: string;
+}
 
 export interface ProductPageProps {
   accent: "pulse" | "brief";
@@ -15,6 +25,14 @@ export interface ProductPageProps {
   features: { title: string; body: string }[];
   faq: { q: string; a: string }[];
   marketplaceUrl: string;
+  // Optional screenshot gallery rendered between Problem and Features.
+  // Currently only Property Pulse passes this; Debrief's output is
+  // unchanged when omitted.
+  screenshots?: {
+    eyebrow: string;
+    headline: string;
+    items: ProductScreenshot[];
+  };
 }
 
 const ACCENT_CLASSES: Record<
@@ -92,6 +110,44 @@ export function ProductPageShell(p: ProductPageProps) {
           </p>
         </Container>
       </Section>
+
+      {/* SCREENSHOTS (optional) */}
+      {p.screenshots && p.screenshots.items.length > 0 && (
+        <Section className="border-t border-[var(--border)]">
+          <Container size="xl">
+            <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+              {p.screenshots.eyebrow}
+            </div>
+            <h2 className="mt-3 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
+              {p.screenshots.headline}
+            </h2>
+            <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
+              {p.screenshots.items.map((shot, i) => (
+                <figure key={i} className="flex flex-col gap-4">
+                  <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-3 shadow-sm">
+                    <Image
+                      src={shot.src}
+                      alt={shot.alt}
+                      width={shot.width}
+                      height={shot.height}
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                      className="h-auto w-full rounded-xl"
+                    />
+                  </div>
+                  <figcaption>
+                    <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+                      {shot.captionEyebrow}
+                    </div>
+                    <p className="mt-1.5 text-sm leading-relaxed text-[var(--fg-muted)]">
+                      {shot.caption}
+                    </p>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </Container>
+        </Section>
+      )}
 
       {/* FEATURES */}
       <Section className="border-t border-[var(--border)]">
