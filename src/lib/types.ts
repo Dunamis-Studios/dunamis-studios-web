@@ -115,7 +115,7 @@ export const PRODUCT_META: Record<
 > = {
   "property-pulse": {
     name: "Property Pulse",
-    tagline: "Real-time deal health for HubSpot CRM",
+    tagline: "Change history for every HubSpot record",
     accentClass: "text-pulse-500",
     marketplaceUrl: "https://ecosystem.hubspot.com/marketplace",
   },

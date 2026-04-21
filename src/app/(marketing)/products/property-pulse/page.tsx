@@ -18,7 +18,7 @@ const propertyPulseSchema = {
   applicationSubCategory: "CRM",
   operatingSystem: "Web-based",
   description:
-    "Property history tracking for HubSpot. See exactly when and how any tracked property changed on any HubSpot record — audit trail and history visualization for HubSpot admins.",
+    "Property Pulse adds a change-history card to every HubSpot record so you can see what changed, when, and who did it — without digging through audit logs.",
   url: `${SITE_URL}/products/property-pulse`,
   publisher: {
     "@type": "Organization",
@@ -28,15 +28,15 @@ const propertyPulseSchema = {
 };
 
 export const metadata: Metadata = {
-  title: "Property Pulse — Track property history on any HubSpot object",
+  title: "Property Pulse — See every change on every HubSpot record",
   description:
-    "See exactly when and how any tracked property changed on any HubSpot record. Audit trail and history visualization for HubSpot admins.",
+    "Property Pulse adds a change-history card to every HubSpot record so you can see what changed, when, and who did it — without digging through audit logs.",
   alternates: { canonical: "/products/property-pulse" },
   openGraph: {
     title:
-      "Property Pulse — Track property history on any HubSpot object",
+      "Property Pulse — See every change on every HubSpot record",
     description:
-      "See exactly when and how any tracked property changed on any HubSpot record. Audit trail and history visualization for HubSpot admins.",
+      "Property Pulse adds a change-history card to every HubSpot record so you can see what changed, when, and who did it — without digging through audit logs.",
     url: "/products/property-pulse",
     type: "website",
     images: [
@@ -44,22 +44,22 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Property Pulse — Track property history on any HubSpot object",
+        alt: "Property Pulse — See every change on every HubSpot record",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Property Pulse — Property history for HubSpot",
+    title: "Property Pulse — Change history for HubSpot",
     description:
-      "Audit trail and history visualization for any tracked property on any HubSpot object.",
+      "A change-history card on every HubSpot record. See what changed, when, and who did it.",
     images: [
       {
         url: "/twitter-image",
         width: 1200,
         height: 630,
-        alt: "Property Pulse — Property history for HubSpot",
+        alt: "Property Pulse — Change history for HubSpot",
       },
     ],
   },
@@ -73,56 +73,60 @@ export default function PropertyPulsePage() {
       accent="pulse"
       eyebrow="Property Pulse"
       name="Property Pulse"
-      headline="Real-time deal health for HubSpot CRM."
-      lede="Watch every property that matters across every deal — and get a signal the moment things go off-trend."
+      headline="See every change on every record."
+      lede="Property Pulse adds a change-history card to every HubSpot record so you can see what changed, when, and who did it — without digging through audit logs."
       marketplaceUrl={PRODUCT_META["property-pulse"].marketplaceUrl}
       problem={{
-        title: "You can't forecast what you can't see.",
+        title: "Your CRM data changes constantly. You can't see it.",
         body:
-          "HubSpot reports tell you where deals are — not whether the underlying data still reflects reality. Stale amounts, missing close dates, untouched next steps: they rot quietly and ambush you on Friday.",
+          "HubSpot tracks property history, but finding it means clicking into individual property timelines one at a time. When a deal amount shifts, a close date slips, or an owner changes, there's no single place to see it in context. By the time something matters, the trail is buried.",
       }}
       features={[
         {
-          title: "Drift detection",
-          body: "Define what ‘healthy’ looks like per pipeline. We flag every deal that wandered outside the lines.",
+          title: "Track what you care about",
+          body: "Admins pick which properties to watch on each object type. Contacts, companies, deals, tickets, and any custom object. Users can add their own properties too, if admins allow it.",
         },
         {
-          title: "Staleness alerts",
-          body: "Configurable timers per stage. A deal idle too long surfaces with full context, not a digest.",
+          title: "Current value and recent history",
+          body: "Each tracked property shows its current value, a recency badge, and a numeric delta when relevant. One glance tells you what moved.",
         },
         {
-          title: "Risk scoring",
-          body: "Composite health score per deal, per rep, per pipeline — tuned by you, explained on hover.",
+          title: "Filterable change log",
+          body: "Click any property to see the full history. Filter by date range, source, user, or value. Export to CSV.",
         },
         {
-          title: "Inline remediation",
-          body: "Update fields from the Pulse view. No context-switch, no deep-link trips.",
+          title: "Inline editing",
+          body: "Edit property values directly from the card. Enums, toggles, dates, numbers, text. No jumping to the property editor.",
         },
         {
-          title: "Daily rollups",
-          body: "Opinionated morning email: what changed, what's at risk, what needs a human today.",
+          title: "Source attribution",
+          body: "Every change shows where it came from: a user, a workflow (with a link to the flow), an import, the API, or a third-party integration. Owner IDs resolve to names automatically.",
         },
         {
-          title: "Audit trail",
-          body: "Every Pulse action is logged with who, what, when. Managers see the work, not just the outcome.",
+          title: "Merge-aware",
+          body: "When records get merged, Property Pulse surfaces the history from the merged-from record so you don't lose the trail.",
         },
       ]}
       faq={[
         {
-          q: "Will this slow down my HubSpot?",
-          a: "No. Pulse polls incrementally and batches writes. We never touch the UI thread of your HubSpot portal.",
+          q: "Which objects does it work on?",
+          a: "Contacts, companies, deals, tickets, and any custom object in your portal.",
         },
         {
-          q: "Which plan pipelines are supported?",
-          a: "Any custom pipeline. Pulse reads your schema at install time and adapts — no hardcoded field assumptions.",
+          q: "What permissions does it need?",
+          a: "Read and write on the CRM objects you want to track, plus HubDB (for storing your configuration inside your own portal) and automation (to resolve workflow names in the change log).",
         },
         {
-          q: "What permissions do you need?",
-          a: "Read on deals, companies, contacts, owners, and pipeline metadata. Write only on fields you explicitly enable.",
+          q: "Does it slow down HubSpot?",
+          a: "No. Property Pulse fetches data when the card loads, not continuously. All requests go through retry logic so HubSpot rate limits never break the experience.",
         },
         {
-          q: "How does Pulse handle custom properties?",
-          a: "First-class. Every custom property on the deal object is selectable for health rules — strings, numbers, dates, enumerations.",
+          q: "Where is my configuration stored?",
+          a: "Inside your own HubSpot portal, in a HubDB table. We don't store your CRM data on our servers.",
+        },
+        {
+          q: "Can users customize what they see?",
+          a: "If admins enable it, each user can add their own properties to watch on top of the admin-tracked set. Their additions are private to them.",
         },
       ]}
       />

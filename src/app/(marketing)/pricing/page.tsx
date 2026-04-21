@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 };
 
 type Tier = {
-  name: "Starter" | "Pro" | "Enterprise";
+  name: string;
   price: string;
   cadence?: string;
   description: string;
@@ -42,46 +42,35 @@ type Tier = {
   features: string[];
 };
 
+// Per-product overrides shown under the "<Name> pricing" h2.
+// When absent, falls back to `${meta.tagline}.`.
+const PRICING_SUBHEAD: Partial<Record<Product, string>> = {
+  "property-pulse": "Simple. One price. Install once.",
+};
+
+// Per-product footnote shown below the pricing card(s).
+const PRICING_FOOTNOTE: Partial<Record<Product, string>> = {
+  "property-pulse":
+    "Property Pulse is in open beta. Early installers get locked-in pricing and direct access to the team for feedback.",
+};
+
 const TIERS: Record<Product, Tier[]> = {
   "property-pulse": [
     {
-      name: "Starter",
+      name: "Property Pulse",
       price: "$49",
-      cadence: "/ portal / month",
-      description: "One pipeline, three rules, daily rollup.",
-      features: [
-        "1 pipeline",
-        "Up to 3 health rules",
-        "Daily rollup email",
-        "7-day audit history",
-        "Email support",
-      ],
-    },
-    {
-      name: "Pro",
-      price: "$149",
-      cadence: "/ portal / month",
-      description: "Unlimited pipelines, staleness timers, team rollouts.",
+      cadence: "one-time install fee",
+      description: "Everything included. No tiers, no seats, no monthly bill.",
       highlighted: true,
       features: [
-        "Unlimited pipelines",
-        "Unlimited health rules",
-        "Staleness + drift timers",
-        "Inline remediation",
-        "90-day audit history",
-        "Priority support",
-      ],
-    },
-    {
-      name: "Enterprise",
-      price: "Custom",
-      description: "SSO, data residency, custom SLAs.",
-      features: [
-        "Everything in Pro",
-        "SSO + SCIM",
-        "Data residency",
-        "Custom SLAs",
-        "Dedicated engineer",
+        "All CRM objects (contacts, companies, deals, tickets, custom)",
+        "Admin-configured tracked properties per object",
+        "Per-user property additions",
+        "Filterable change log with CSV export",
+        "Inline property editing",
+        "Source attribution (users, workflows, imports, API, integrations)",
+        "Merge-aware history",
+        "Configuration stored in your own portal",
       ],
     },
   ],
@@ -175,6 +164,9 @@ function ProductPricing({ product }: { product: Product }) {
   const meta = PRODUCT_META[product];
   const tiers = TIERS[product];
   const accent = product === "property-pulse" ? "pulse" : "brief";
+  const subhead = PRICING_SUBHEAD[product] ?? `${meta.tagline}.`;
+  const footnote = PRICING_FOOTNOTE[product];
+  const isSingleTier = tiers.length === 1;
   return (
     <Section className="border-t border-[var(--border)]">
       <Container size="xl">
@@ -184,7 +176,7 @@ function ProductPricing({ product }: { product: Product }) {
             <h2 className="mt-3 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
               {meta.name} pricing
             </h2>
-            <p className="mt-2 text-[var(--fg-muted)]">{meta.tagline}.</p>
+            <p className="mt-2 text-[var(--fg-muted)]">{subhead}</p>
           </div>
           <Button asChild variant="ghost">
             <Link href={`/products/${product}`}>
@@ -194,7 +186,14 @@ function ProductPricing({ product }: { product: Product }) {
           </Button>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div
+          className={cn(
+            "gap-6",
+            isSingleTier
+              ? "mx-auto max-w-md"
+              : "grid md:grid-cols-3",
+          )}
+        >
           {tiers.map((tier) => (
             <div
               key={tier.name}
@@ -252,6 +251,12 @@ function ProductPricing({ product }: { product: Product }) {
             </div>
           ))}
         </div>
+
+        {footnote ? (
+          <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-[var(--fg-muted)]">
+            {footnote}
+          </p>
+        ) : null}
       </Container>
     </Section>
   );
