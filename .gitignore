@@ -45,3 +45,5 @@ yarn-error.log*
 
 # local agent state
 .claude/
+
+.env*.local
