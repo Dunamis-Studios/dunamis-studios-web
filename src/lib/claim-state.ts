@@ -101,14 +101,30 @@ export function signClaimState(input: {
  * wrong version). Callers should treat null as "show the generic
  * expired/invalid error and send the user back to HubSpot to
  * reinstall."
+ *
+ * On failure, we console.error a tagged diagnostic so server logs
+ * reveal *which* of the ~dozen failure modes fired. The HTTP
+ * response stays generic — we don't leak internals to the browser
+ * — but the operator reading Vercel logs can tell a
+ * signature_mismatch from a token_expired without guessing.
  */
 export function verifyClaimState(
   token: string | null | undefined,
 ): ClaimStatePayload | null {
-  if (!token || typeof token !== "string") return null;
+  if (!token || typeof token !== "string") {
+    console.error("[claim-state] verification failed:", {
+      reason: "missing_state",
+    });
+    return null;
+  }
 
   const dot = token.indexOf(".");
-  if (dot <= 0 || dot === token.length - 1) return null;
+  if (dot <= 0 || dot === token.length - 1) {
+    console.error("[claim-state] verification failed:", {
+      reason: "malformed_token",
+    });
+    return null;
+  }
   const payloadB64 = token.slice(0, dot);
   const sigB64 = token.slice(dot + 1);
 
@@ -118,6 +134,9 @@ export function verifyClaimState(
     payloadBuf = base64urlDecode(payloadB64);
     providedSig = base64urlDecode(sigB64);
   } catch {
+    console.error("[claim-state] verification failed:", {
+      reason: "base64_decode_failed",
+    });
     return null;
   }
 
@@ -125,10 +144,10 @@ export function verifyClaimState(
   try {
     expectedSig = hmacSign(payloadBuf);
   } catch {
-    // Secret missing — treat as invalid rather than leaking config
-    // state to the caller. The 503-style misconfiguration surfaces
-    // in server logs via the thrown error from getSecret earlier in
-    // the request lifecycle.
+    // Secret missing or too short — can't even compute an expected
+    // signature. Report as signature_mismatch; the secret-length
+    // diagnostic below disambiguates (length 0 → env var absent).
+    logSignatureMismatch();
     return null;
   }
 
@@ -136,6 +155,7 @@ export function verifyClaimState(
     providedSig.length !== expectedSig.length ||
     !crypto.timingSafeEqual(providedSig, expectedSig)
   ) {
+    logSignatureMismatch();
     return null;
   }
 
@@ -143,20 +163,74 @@ export function verifyClaimState(
   try {
     payload = JSON.parse(payloadBuf.toString("utf8"));
   } catch {
+    console.error("[claim-state] verification failed:", {
+      reason: "payload_not_json",
+    });
     return null;
   }
 
-  if (!payload || typeof payload !== "object") return null;
+  if (!payload || typeof payload !== "object") {
+    console.error("[claim-state] verification failed:", {
+      reason: "payload_not_json",
+      detail: "parsed but not an object",
+    });
+    return null;
+  }
   const p = payload as Record<string, unknown>;
-  if (p.version !== TOKEN_VERSION) return null;
-  if (typeof p.portalId !== "string" || !p.portalId) return null;
-  if (typeof p.installerEmail !== "string" || !p.installerEmail) return null;
-  if (typeof p.issuedAt !== "string") return null;
+  if (p.version !== TOKEN_VERSION) {
+    console.error("[claim-state] verification failed:", {
+      reason: "version_mismatch",
+      got: p.version,
+      expected: TOKEN_VERSION,
+    });
+    return null;
+  }
+  if (typeof p.portalId !== "string" || !p.portalId) {
+    console.error("[claim-state] verification failed:", {
+      reason: "missing_portal_id",
+    });
+    return null;
+  }
+  if (typeof p.installerEmail !== "string" || !p.installerEmail) {
+    console.error("[claim-state] verification failed:", {
+      reason: "missing_installer_email",
+    });
+    return null;
+  }
+  if (typeof p.issuedAt !== "string") {
+    console.error("[claim-state] verification failed:", {
+      reason: "missing_issued_at",
+    });
+    return null;
+  }
 
   const issuedMs = Date.parse(p.issuedAt);
-  if (!Number.isFinite(issuedMs)) return null;
-  if (Date.now() - issuedMs > TTL_MS) return null;
-  if (issuedMs - Date.now() > CLOCK_SKEW_MS) return null;
+  if (!Number.isFinite(issuedMs)) {
+    // Field is present but not a parseable ISO timestamp — same
+    // operational bucket as missing, diagnosed by the issuedAt echo.
+    console.error("[claim-state] verification failed:", {
+      reason: "missing_issued_at",
+      issuedAt: p.issuedAt,
+    });
+    return null;
+  }
+  const now = Date.now();
+  if (now - issuedMs > TTL_MS) {
+    console.error("[claim-state] verification failed:", {
+      reason: "token_expired",
+      ageMs: now - issuedMs,
+      ttlMs: TTL_MS,
+    });
+    return null;
+  }
+  if (issuedMs - now > CLOCK_SKEW_MS) {
+    console.error("[claim-state] verification failed:", {
+      reason: "clock_skew",
+      futureMs: issuedMs - now,
+      skewMs: CLOCK_SKEW_MS,
+    });
+    return null;
+  }
 
   return {
     portalId: p.portalId,
@@ -164,6 +238,16 @@ export function verifyClaimState(
     issuedAt: p.issuedAt,
     version: TOKEN_VERSION,
   };
+}
+
+function logSignatureMismatch(): void {
+  console.error("[claim-state] verification failed:", {
+    reason: "signature_mismatch",
+  });
+  console.error(
+    "[claim-state] signature mismatch, secret length:",
+    process.env.CLAIM_STATE_SECRET?.length ?? 0,
+  );
 }
 
 export { TOKEN_VERSION, TTL_MS };
