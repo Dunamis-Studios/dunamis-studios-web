@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowUp, ArrowDown } from "lucide-react";
 import { Container, Section } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -217,7 +217,6 @@ export function ProductPageShell(p: ProductPageProps) {
 }
 
 function ProductVisualization({ accent }: { accent: ProductPageProps["accent"] }) {
-  const a = ACCENT_CLASSES[accent];
   return (
     <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-8 shadow-sm">
       <div
@@ -233,37 +232,212 @@ function ProductVisualization({ accent }: { accent: ProductPageProps["accent"] }
             "radial-gradient(ellipse at center, black 60%, transparent 100%)",
         }}
       />
-      <div className="relative grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {[0, 1, 2].map((i) => (
+      <div className="relative">
+        {accent === "pulse" ? <PulseGraphic /> : <BriefGraphic />}
+      </div>
+    </div>
+  );
+}
+
+function PulseGraphic() {
+  const accentText = "text-[var(--color-pulse-500)]";
+  const accentBg = "bg-[var(--color-pulse-500)]/14";
+
+  const tiles: {
+    recency: "TODAY" | "THIS WEEK" | "OLDER";
+    delta: "up" | "down" | null;
+    valueW: string;
+  }[] = [
+    { recency: "TODAY", delta: "up", valueW: "w-1/3" },
+    { recency: "TODAY", delta: null, valueW: "w-1/2" },
+    { recency: "THIS WEEK", delta: "down", valueW: "w-2/5" },
+    { recency: "OLDER", delta: null, valueW: "w-1/4" },
+  ];
+
+  const logRows: { t: string; u: string; v: string; highlight: boolean }[] = [
+    { t: "w-12", u: "w-16", v: "w-28", highlight: true },
+    { t: "w-12", u: "w-14", v: "w-20", highlight: false },
+    { t: "w-12", u: "w-20", v: "w-24", highlight: false },
+  ];
+
+  return (
+    <div className="mx-auto max-w-xl rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)] p-5">
+      {/* Card header */}
+      <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+        <div className="flex items-center gap-2">
+          <div className={cn("h-2 w-2 rounded-full", accentBg)} aria-hidden />
+          <div className="h-2 w-24 rounded-full bg-[var(--bg-muted)]" />
+        </div>
+        <div className="h-2 w-8 rounded-full bg-[var(--bg-muted)]" />
+      </div>
+
+      {/* Property tiles */}
+      <div className="mt-4 space-y-2">
+        {tiles.map((tile, i) => (
           <div
             key={i}
-            className="rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)] p-4"
+            className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5"
           >
-            <div className="flex items-center justify-between">
-              <div className={cn("h-2 w-2 rounded-full", a.bg)} aria-hidden />
-              <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--fg-subtle)]">
-                {["healthy", "stale", "at risk"][i]}
-              </span>
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <div className="h-1.5 w-2/5 rounded-full bg-[var(--bg-muted)]" />
+              <div
+                className={cn(
+                  "h-2 rounded-full bg-[var(--bg-muted)]",
+                  tile.valueW,
+                )}
+              />
             </div>
-            <div className="mt-4 space-y-2">
-              <div className="h-2 w-3/4 rounded-full bg-[var(--bg-muted)]" />
-              <div className="h-2 w-1/2 rounded-full bg-[var(--bg-muted)]" />
-              <div className="h-2 w-2/3 rounded-full bg-[var(--bg-muted)]" />
-            </div>
-            <div className="mt-4 flex items-end gap-1">
-              {Array.from({ length: 8 }).map((_, j) => (
-                <div
-                  key={j}
-                  className={cn(
-                    "w-full rounded-sm",
-                    j === 7 ? a.bg : "bg-[var(--bg-muted)]",
-                  )}
-                  style={{ height: `${10 + ((j * 37) % 30)}px` }}
-                />
-              ))}
-            </div>
+            {tile.delta === "up" ? (
+              <ArrowUp
+                className={cn("h-3.5 w-3.5 shrink-0", accentText)}
+                aria-hidden
+              />
+            ) : tile.delta === "down" ? (
+              <ArrowDown
+                className="h-3.5 w-3.5 shrink-0 text-[var(--fg-subtle)]"
+                aria-hidden
+              />
+            ) : null}
+            <span
+              className={cn(
+                "shrink-0 rounded px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-widest",
+                tile.recency === "TODAY"
+                  ? cn(accentBg, accentText)
+                  : "bg-[var(--bg-muted)] text-[var(--fg-subtle)]",
+              )}
+            >
+              {tile.recency}
+            </span>
           </div>
         ))}
+      </div>
+
+      {/* Change log */}
+      <div className="mt-5 border-t border-[var(--border)] pt-4">
+        <div className="mb-3 h-1.5 w-20 rounded-full bg-[var(--bg-muted)]" />
+        <div className="space-y-2">
+          {logRows.map((row, i) => (
+            <div
+              key={i}
+              className="grid grid-cols-[auto_1fr_2fr] items-center gap-3"
+            >
+              <div
+                className={cn(
+                  "h-1.5 rounded-full bg-[var(--bg-muted)]",
+                  row.t,
+                )}
+              />
+              <div
+                className={cn(
+                  "h-1.5 rounded-full bg-[var(--bg-muted)]",
+                  row.u,
+                )}
+              />
+              <div className="flex items-center gap-2">
+                <div
+                  className={cn(
+                    "h-1.5 rounded-full bg-[var(--bg-muted)]",
+                    row.v,
+                  )}
+                />
+                {row.highlight ? (
+                  <div
+                    className={cn("h-1.5 w-3 rounded-full", accentBg)}
+                    aria-hidden
+                  />
+                ) : null}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BriefGraphic() {
+  const accentText = "text-[var(--color-brief-500)]";
+  const accentBg = "bg-[var(--color-brief-500)]/16";
+
+  return (
+    <div className="grid grid-cols-[1fr_auto_1fr] items-stretch gap-4 sm:gap-6">
+      {/* Left: outgoing owner + brief document */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-2">
+          <div className="h-6 w-6 shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-muted)]" />
+          <div className="min-w-0 flex-1 space-y-1">
+            <div className="h-1.5 w-3/4 rounded-full bg-[var(--bg-muted)]" />
+            <div className="h-1.5 w-1/2 rounded-full bg-[var(--bg-muted)]" />
+          </div>
+        </div>
+        <div className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)] p-4">
+          <div className="border-b border-[var(--border)] pb-3">
+            <div className="h-2 w-1/2 rounded-full bg-[var(--bg-muted)]" />
+          </div>
+          <div className="mt-3 space-y-3">
+            {[0, 1, 2].map((sec) => (
+              <div key={sec}>
+                <div className="h-1.5 w-1/3 rounded-full bg-[var(--bg-muted)]" />
+                <div className="mt-2 space-y-1.5 pl-3">
+                  {[0, 1].map((b) => (
+                    <div key={b} className="flex items-center gap-2">
+                      <div className="h-1 w-1 shrink-0 rounded-full bg-[var(--fg-subtle)]" />
+                      <div
+                        className={cn(
+                          "h-1.5 rounded-full bg-[var(--bg-muted)]",
+                          b === 0 ? "w-full" : "w-3/4",
+                        )}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Connector */}
+      <div className="flex items-center justify-center">
+        <ArrowRight className={cn("h-6 w-6", accentText)} aria-hidden />
+      </div>
+
+      {/* Right: incoming owner + message draft */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-2">
+          <div
+            className={cn(
+              "h-6 w-6 shrink-0 rounded-full border border-[var(--border)]",
+              accentBg,
+            )}
+          />
+          <div className="min-w-0 flex-1 space-y-1">
+            <div className="h-1.5 w-3/4 rounded-full bg-[var(--bg-muted)]" />
+            <div className="h-1.5 w-1/2 rounded-full bg-[var(--bg-muted)]" />
+          </div>
+        </div>
+        <div className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)] p-4">
+          <div className="space-y-2 border-b border-[var(--border)] pb-3">
+            <div className="flex items-center gap-2">
+              <div className="h-1.5 w-6 shrink-0 rounded-full bg-[var(--fg-subtle)]" />
+              <div className="h-1.5 flex-1 rounded-full bg-[var(--bg-muted)]" />
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="h-1.5 w-10 shrink-0 rounded-full bg-[var(--fg-subtle)]" />
+              <div className="h-1.5 flex-1 rounded-full bg-[var(--bg-muted)]" />
+            </div>
+          </div>
+          <div className="mt-4 space-y-2">
+            {["w-full", "w-5/6", "w-full", "w-11/12", "w-4/5", "w-2/3"].map(
+              (w, i) => (
+                <div
+                  key={i}
+                  className={cn("h-1.5 rounded-full bg-[var(--bg-muted)]", w)}
+                />
+              ),
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
