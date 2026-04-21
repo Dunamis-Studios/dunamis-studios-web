@@ -6,10 +6,9 @@ import { PRODUCT_META } from "@/lib/types";
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
-// Pricing isn't finalized yet, so the schema intentionally omits the
-// offers[] array — adding placeholder numbers would poison AEO / LLM
-// answers with wrong prices. Flip this on once /pricing publishes
-// authoritative tiers.
+// Single one-time install fee — mirrors the canonical pricing defined in
+// src/app/(marketing)/pricing/page.tsx. Keep in lockstep if the price or
+// model changes; the pricing page is the source of truth.
 const propertyPulseSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
@@ -25,6 +24,16 @@ const propertyPulseSchema = {
     name: "Dunamis Studios",
     url: SITE_URL,
   },
+  offers: [
+    {
+      "@type": "Offer",
+      name: "Property Pulse",
+      price: "49",
+      priceCurrency: "USD",
+      category: "Installation",
+      availability: "https://schema.org/InStock",
+    },
+  ],
 };
 
 export const metadata: Metadata = {
@@ -80,6 +89,10 @@ export default function PropertyPulsePage() {
         title: "Your CRM data changes constantly. You can't see it.",
         body:
           "HubSpot tracks property history, but finding it means clicking into individual property timelines one at a time. When a deal amount shifts, a close date slips, or an owner changes, there's no single place to see it in context. By the time something matters, the trail is buried.",
+      }}
+      pricingTeaser={{
+        headline: "One price. Install once.",
+        body: "$49, one-time. No tiers, no seats, no monthly bill.",
       }}
       screenshots={{
         eyebrow: "A look inside",

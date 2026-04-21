@@ -33,6 +33,16 @@ export interface ProductPageProps {
     headline: string;
     items: ProductScreenshot[];
   };
+  // Optional override for the pricing teaser block. When omitted, falls
+  // back to the legacy three-tier copy (Debrief's shape). Pass explicitly
+  // for products with non-tiered pricing (e.g. Property Pulse's one-time
+  // install fee) so the teaser accurately reflects /pricing.
+  pricingTeaser?: {
+    eyebrow?: string;
+    headline: string;
+    body: string;
+    ctaLabel?: string;
+  };
 }
 
 const ACCENT_CLASSES: Record<
@@ -194,18 +204,18 @@ export function ProductPageShell(p: ProductPageProps) {
           <div className="flex flex-col items-start gap-6 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-8 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-                Pricing
+                {p.pricingTeaser?.eyebrow ?? "Pricing"}
               </div>
               <h3 className="mt-2 font-[var(--font-display)] text-2xl font-medium tracking-tight">
-                Starter, Pro, Enterprise.
+                {p.pricingTeaser?.headline ?? "Starter, Pro, Enterprise."}
               </h3>
               <p className="mt-2 text-[var(--fg-muted)]">
-                Transparent tiers. No hidden per-seat fees.
+                {p.pricingTeaser?.body ?? "Transparent tiers. No hidden per-seat fees."}
               </p>
             </div>
             <Button asChild size="lg">
               <Link href="/pricing">
-                See pricing
+                {p.pricingTeaser?.ctaLabel ?? "See pricing"}
                 <ArrowRight className="ml-0.5 h-4 w-4" />
               </Link>
             </Button>
