@@ -28,6 +28,16 @@ function fromAddress(): string {
   return process.env.RESEND_FROM_EMAIL ?? "hello@dunamisstudios.net";
 }
 
+function appUrl(): string {
+  const url = process.env.APP_URL;
+  if (!url) {
+    throw new Error(
+      "APP_URL environment variable is required for email link generation",
+    );
+  }
+  return url;
+}
+
 async function send({ to, subject, html, text }: SendArgs): Promise<void> {
   if (!process.env.RESEND_API_KEY) {
     // Degrade gracefully in local dev without a real key — log and move on.
@@ -69,7 +79,7 @@ export async function sendVerificationEmail(
   firstName: string,
   token: string,
 ): Promise<void> {
-  const url = `${process.env.APP_URL ?? "http://localhost:3000"}/verify-email/${token}`;
+  const url = `${appUrl()}/verify-email/${token}`;
   const subject = "Verify your Dunamis Studios account";
   const text = `Hi ${firstName},\n\nConfirm your email to finish setting up Dunamis Studios:\n${url}\n\nThis link expires in 24 hours.\n\nQuestions? josh@dunamisstudios.net`;
   const html = layout(
@@ -88,7 +98,7 @@ export async function sendPasswordResetEmail(
   firstName: string,
   token: string,
 ): Promise<void> {
-  const url = `${process.env.APP_URL ?? "http://localhost:3000"}/reset-password/${token}`;
+  const url = `${appUrl()}/reset-password/${token}`;
   const subject = "Reset your Dunamis Studios password";
   const text = `Hi ${firstName},\n\nWe received a request to reset your password. If this was you, use this link (expires in 1 hour):\n${url}\n\nIf not, you can safely ignore this email.\n\nQuestions? josh@dunamisstudios.net`;
   const html = layout(
