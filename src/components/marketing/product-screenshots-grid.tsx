@@ -136,13 +136,13 @@ export function ProductScreenshotsGrid({ items }: Props) {
           aria-label={activeItem.alt}
           onClick={close}
           style={{ transitionDuration: `${FADE_MS}ms` }}
-          className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm transition-opacity ${
+          className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity ${
             isVisible ? "opacity-100" : "opacity-0"
           }`}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative max-h-[90vh] max-w-[90vw] overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-2 shadow-2xl"
+            className="relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-2xl"
           >
             <button
               ref={closeButtonRef}
@@ -158,8 +158,8 @@ export function ProductScreenshotsGrid({ items }: Props) {
               alt={activeItem.alt}
               width={activeItem.width}
               height={activeItem.height}
-              sizes="90vw"
-              className="h-auto max-h-[calc(90vh-1rem)] w-auto max-w-[calc(90vw-1rem)] rounded-lg"
+              sizes="98vw"
+              className="block h-auto max-h-[98vh] w-auto max-w-[98vw]"
             />
           </div>
         </div>
