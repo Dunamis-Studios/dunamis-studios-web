@@ -24,7 +24,7 @@ Property Pulse is installed through the HubSpot App Marketplace. The flow takes 
 1. Find Property Pulse in the HubSpot App Marketplace. Search for "Property Pulse" or navigate to the Dunamis Studios publisher page.
 2. Click **Install app**.
 3. Pick the portal you want to install into. If you manage multiple portals, Property Pulse bills per portal, so pick intentionally.
-4. Approve the OAuth scopes Property Pulse requests. Scopes cover CRM read and write on contacts, companies, deals, tickets, and custom objects — write access is required for inline property editing from the card.
+4. Approve the OAuth scopes Property Pulse requests. Scopes cover read and write on contacts, companies, deals, tickets, and custom objects (writes only fire when you edit a property from the card), plus HubDB for configuration storage and automation for resolving workflow names in the change log.
 5. HubSpot redirects you to Dunamis Studios to finalize the install.
 
 ## Finalizing at Dunamis Studios

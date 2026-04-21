@@ -151,7 +151,7 @@ export default function PropertyPulsePage() {
         },
         {
           q: "What permissions does it need?",
-          a: "Read and write on the CRM objects you want to track, plus HubDB (for storing your configuration inside your own portal) and automation (to resolve workflow names in the change log).",
+          a: "Read and write on contacts, companies, deals, tickets, and custom objects. Writes only fire when you edit a property from the card. Plus HubDB for configuration storage and automation for resolving workflow names.",
         },
         {
           q: "Does it slow down HubSpot?",
