@@ -7,6 +7,7 @@ import {
   getTierByPriceId,
   getTierAllotment,
   getFirstMonthBonus,
+  CREDIT_PACKS,
 } from "./pricing";
 import type {
   CreditBuckets,
@@ -429,14 +430,33 @@ async function onPaymentIntentSucceeded(
 ): Promise<void> {
   const md = pi.metadata ?? {};
   const packName = md.packName;
-  const creditAmount = Number(md.creditAmount ?? 0);
   const product = md.product;
   const portalId = md.portalId;
-  if (!packName || !creditAmount || product !== "debrief" || !portalId) {
+  if (!packName || product !== "debrief" || !portalId) {
     // Either a subscription payment (sub.updated handles state) or an
     // unrelated intent. No-op.
     return;
   }
+  // Cross-check: the pack must exist in the catalog AND the amount Stripe
+  // received must match the pack's catalog price. Never trust
+  // metadata.creditAmount -- an attacker (or a future code path) with any
+  // Stripe write access could stamp arbitrary credit counts onto a
+  // low-dollar PaymentIntent. The catalog is the single source of truth
+  // for how many credits a given pack grants.
+  const pack = CREDIT_PACKS.find((p) => p.name === packName);
+  if (!pack) {
+    console.warn(
+      `[stripe-webhook] unknown packName="${packName}" pi=${pi.id} portal=${portalId} — ignoring`,
+    );
+    return;
+  }
+  if (pi.amount_received !== pack.amountCents) {
+    console.warn(
+      `[stripe-webhook] amount mismatch pi=${pi.id} pack=${packName} expected=${pack.amountCents} got=${pi.amount_received} portal=${portalId} — ignoring`,
+    );
+    return;
+  }
+  const creditAmount = pack.credits; // authoritative — from catalog, not metadata
   await withEntitlementLock("debrief", portalId, async () => {
     const entitlement = await getEntitlement("debrief", portalId);
     if (!entitlement) return;
