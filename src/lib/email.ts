@@ -38,11 +38,22 @@ function appUrl(): string {
   return url;
 }
 
+function redactEmail(addr: string): string {
+  const at = addr.indexOf("@");
+  if (at < 1) return "[redacted]";
+  const local = addr.slice(0, at);
+  const domain = addr.slice(at);
+  const head = local.length > 1 ? local[0] : "";
+  return `${head}***${domain}`;
+}
+
 async function send({ to, subject, html, text }: SendArgs): Promise<void> {
   if (!process.env.RESEND_API_KEY) {
     // Degrade gracefully in local dev without a real key — log and move on.
+    // Subject + body are helpful for debugging; the recipient is PII so we
+    // redact to {initial}***@domain rather than logging it verbatim.
     console.warn(
-      `[email] RESEND_API_KEY missing. Would send to ${to}:\n  ${subject}\n${text}`,
+      `[email] RESEND_API_KEY missing. Would send to ${redactEmail(to)}:\n  ${subject}\n${text}`,
     );
     return;
   }
