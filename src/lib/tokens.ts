@@ -10,13 +10,16 @@ function secret(): Uint8Array {
   return encoder.encode(s);
 }
 
-export async function signSessionJwt(sessionId: string): Promise<string> {
+export async function signSessionJwt(
+  sessionId: string,
+  lifetimeSec: number,
+): Promise<string> {
   return new SignJWT({ sid: sessionId })
     .setProtectedHeader({ alg: "HS256", typ: "JWT" })
     .setIssuedAt()
     .setIssuer("dunamis-studios")
     .setAudience("dunamis-session")
-    .setExpirationTime("30d")
+    .setExpirationTime(Math.floor(Date.now() / 1000) + lifetimeSec)
     .sign(secret());
 }
 

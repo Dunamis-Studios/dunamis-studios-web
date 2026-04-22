@@ -61,7 +61,12 @@ export async function createSession(
   await r.set(KEY.session(sessionId), session, { ex: lifetimeSec });
   await r.sadd(KEY.accountSessions(accountId), sessionId);
 
-  const jwt = await signSessionJwt(sessionId);
+  // Sign the JWT with the same lifetime we just wrote to the Redis
+  // session record. Previously the JWT always carried exp=30d regardless
+  // of the user's sessionLifetimeDays preference, so a shorter-TTL
+  // account's stolen JWT remained verifiable long after the server-side
+  // session had been destroyed.
+  const jwt = await signSessionJwt(sessionId, lifetimeSec);
   return { sessionId, jwt, lifetimeSec };
 }
 
