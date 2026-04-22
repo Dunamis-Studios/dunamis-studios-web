@@ -56,8 +56,11 @@ function isAdminAccount(account: Account): boolean {
  * and the reader-facing badge is derived server-side via
  * getHelpfulBadge() in the article page.
  *
- * Rate limit: 10 requests / 15 min / IP (same bucket as the other
- * auth surfaces; this mainly protects Redis from a runaway bot).
+ * Rate limit: 100 requests / 1h / IP. Large enough that a user who
+ * reads a handful of articles and rates each one won't trip the limit
+ * (especially behind NAT / corporate proxies that aggregate many real
+ * users onto one IP), tight enough to keep a runaway bot from
+ * pounding Redis.
  */
 export async function POST(req: Request, { params }: RouteParams) {
   const { slug } = await params;
@@ -66,7 +69,7 @@ export async function POST(req: Request, { params }: RouteParams) {
   }
 
   const ip = clientIp(req.headers);
-  const rl = await rateLimit("kb-rate", ip, 10, 15 * 60);
+  const rl = await rateLimit("kb-rate", ip, 100, 60 * 60);
   if (!rl.ok) {
     return apiError(
       429,
