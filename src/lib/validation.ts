@@ -91,11 +91,33 @@ export const changePasswordSchema = z
   });
 
 export const productSlugSchema = z.enum(["property-pulse", "debrief"]);
+
+// Reserved tokens that would look like admin / system accounts if they
+// ever ended up in URLs or UI lists. HubSpot portalIds are numeric in
+// production so normal traffic never hits these; the blocklist catches
+// a misuse of the test-stub path that currently accepts arbitrary
+// [a-zA-Z0-9_-]+ so e2e fixtures and local dev scaffolding can seed.
+const RESERVED_PORTAL_IDS = new Set([
+  "admin",
+  "root",
+  "system",
+  "support",
+  "test",
+  "internal",
+  "api",
+  "null",
+  "undefined",
+]);
+
 export const portalIdSchema = z
   .string()
   .min(1)
   .max(64)
-  .regex(/^[a-zA-Z0-9_-]+$/, "Invalid portal id");
+  .regex(/^[a-zA-Z0-9_-]+$/, "Invalid portal id")
+  .refine(
+    (id) => !RESERVED_PORTAL_IDS.has(id.toLowerCase()),
+    "This portal id is reserved",
+  );
 
 /**
  * Parse the `{product}:{portalId}` claim token used in the HubSpot-
