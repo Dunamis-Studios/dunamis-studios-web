@@ -30,7 +30,12 @@ export async function POST(req: Request) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : "invalid signature";
     console.warn(`[stripe-webhook] signature verification failed: ${msg}`);
-    return new NextResponse(`Webhook signature error: ${msg}`, { status: 400 });
+    // Don't reflect the underlying error to the caller — Stripe's own
+    // verification error strings can describe which check failed
+    // (timestamp vs signature vs encoding), giving a scanner actionable
+    // probe feedback. A generic 400 is enough; operator gets the detail
+    // via console.warn above.
+    return new NextResponse("Webhook signature error", { status: 400 });
   }
 
   try {
