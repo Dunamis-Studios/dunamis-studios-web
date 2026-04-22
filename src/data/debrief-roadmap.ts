@@ -28,7 +28,7 @@
  * No voting, no comments, no CMS. Static display of committed data.
  */
 
-export const LAST_UPDATED = "2026-04-19";
+export const LAST_UPDATED = "2026-04-22";
 
 export interface ShippedItem {
   title: string;
@@ -54,6 +54,12 @@ export interface ExploringItem {
 }
 
 export const shipped: ShippedItem[] = [
+  {
+    title: "Slack delivery for generated briefs",
+    description:
+      "DM the new owner in Slack the moment a handoff completes, with the brief inline.",
+    shippedAt: "April 2026",
+  },
   {
     title: "Transparent cost preview",
     description:
@@ -124,11 +130,6 @@ export const exploring: ExploringItem[] = [
     title: "Briefs as first-class HubSpot custom objects",
     description:
       "Native reporting, timeline events, and list views instead of a note attached to a record.",
-  },
-  {
-    title: "Slack delivery for generated briefs",
-    description:
-      "DM the new owner in Slack the moment a handoff completes, with the brief inline.",
   },
   {
     title: "Gong / Chorus / Outreach / Salesloft integrations",
