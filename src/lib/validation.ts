@@ -19,9 +19,22 @@ const passwordSchema = z
 const nameSchema = z
   .string()
   .trim()
-  .min(1, "Required")
-  .max(60, "Too long")
-  .regex(/^[\p{L}\p{M}'\-. ]+$/u, "Only letters, spaces, apostrophes, hyphens");
+  // Normalize to NFC so visually-equivalent names (precomposed é vs
+  // decomposed e + ◌́) round-trip to the same stored bytes. Without
+  // this, two accounts could register names that render identically
+  // but compare unequal, which is a real-world homoglyph attack vector
+  // on human-facing screens (support console, shared workspace lists).
+  .transform((s) => s.normalize("NFC"))
+  .pipe(
+    z
+      .string()
+      .min(1, "Required")
+      .max(60, "Too long")
+      .regex(
+        /^[\p{L}\p{M}'\-. ]+$/u,
+        "Only letters, spaces, apostrophes, hyphens",
+      ),
+  );
 
 export const signupSchema = z
   .object({
