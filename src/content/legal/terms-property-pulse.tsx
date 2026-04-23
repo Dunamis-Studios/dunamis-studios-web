@@ -1,10 +1,9 @@
 import Link from "next/link";
+import { LEGAL_METADATA } from "./metadata";
 import type { LegalDocument } from "./types";
 
 export const termsPropertyPulse: LegalDocument = {
-  title: "Property Pulse Service Addendum",
-  lastUpdated: "April 23, 2026",
-  version: "2.0",
+  ...LEGAL_METADATA.termsPropertyPulse,
   idPrefix: "p-",
   sections: [
     {

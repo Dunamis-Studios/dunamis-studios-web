@@ -1,10 +1,9 @@
 import Link from "next/link";
+import { LEGAL_METADATA } from "./metadata";
 import type { LegalDocument } from "./types";
 
 export const privacyPolicy: LegalDocument = {
-  title: "Privacy Policy",
-  lastUpdated: "April 23, 2026",
-  version: "2.0",
+  ...LEGAL_METADATA.privacy,
   idPrefix: "pp-",
   sections: [
     {

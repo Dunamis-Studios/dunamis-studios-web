@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { DEBRIEF_TIERS } from "@/lib/pricing";
+import { LEGAL_METADATA } from "./metadata";
 import type { LegalDocument } from "./types";
 
 export const termsDebrief: LegalDocument = {
-  title: "Debrief Service Addendum",
-  lastUpdated: "April 23, 2026",
-  version: "2.0",
+  ...LEGAL_METADATA.termsDebrief,
   idPrefix: "d-",
   sections: [
     {
