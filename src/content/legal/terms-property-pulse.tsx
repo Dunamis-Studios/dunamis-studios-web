@@ -18,9 +18,8 @@ export const termsPropertyPulse: LegalDocument = {
             history for HubSpot records (contacts, companies, deals, tickets, and custom
             objects) and enables inline property editing. For each tracked property, Property
             Pulse reads the current value, historical change log, and source attribution
-            (including workflow names, user attribution, and CRM UI source) from
-            Customer&rsquo;s HubSpot portal on demand and displays this information in a card
-            on the HubSpot record.
+            (including user attribution and CRM UI source) from Customer&rsquo;s HubSpot
+            portal on demand and displays this information in a card on the HubSpot record.
           </p>
           <p className="mt-3">Property Pulse features include:</p>
           <ul className="mt-2 list-disc space-y-2 pl-5">
@@ -73,9 +72,9 @@ export const termsPropertyPulse: LegalDocument = {
       body: (
         <>
           <p>
-            Property Pulse reads property values, change history, workflow names (where scope
-            granted), owner/user directory data, property schemas, and pipeline stages from
-            Customer&rsquo;s HubSpot portal on demand, as required to render each view. No
+            Property Pulse reads property values, change history, owner/user directory data,
+            property schemas, and pipeline stages from Customer&rsquo;s HubSpot portal on
+            demand, as required to render each view. No
             Customer CRM Data is cached or persisted in Dunamis Studios infrastructure; all
             HubSpot Data is fetched live per user request and discarded after the response is
             returned.

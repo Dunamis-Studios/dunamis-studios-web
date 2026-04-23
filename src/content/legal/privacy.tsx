@@ -110,7 +110,7 @@ export const privacyPolicy: LegalDocument = {
                     fields, engagement content (emails, notes, call summaries). For Property
                     Pulse: property values and change history for admin-tracked properties
                     across contacts, companies, deals, tickets, and custom objects, plus
-                    owner/user directory data and workflow names for source attribution.
+                    owner/user directory data for source attribution.
                   </td>
                   <td>Customer&rsquo;s HubSpot portal (OAuth)</td>
                   <td>
