@@ -7,8 +7,6 @@ import { ToastProvider } from "@/components/ui/toast";
 import { JsonLd } from "@/components/seo/json-ld";
 import "./globals.css";
 
-const HUBSPOT_PORTAL_ID = process.env.NEXT_PUBLIC_HUBSPOT_PORTAL_ID;
-
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
@@ -129,13 +127,11 @@ export default function RootLayout({
           <ToastProvider>{children}</ToastProvider>
         </ThemeProvider>
         <Analytics />
-        {HUBSPOT_PORTAL_ID ? (
-          <Script
-            id="hs-script-loader"
-            strategy="afterInteractive"
-            src={`//js.hs-scripts.com/${HUBSPOT_PORTAL_ID}.js`}
-          />
-        ) : null}
+        <Script
+          id="hs-script-loader"
+          strategy="afterInteractive"
+          src="//js.hs-scripts.com/20867488.js"
+        />
       </body>
     </html>
   );
