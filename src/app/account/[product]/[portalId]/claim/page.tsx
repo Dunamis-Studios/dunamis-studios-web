@@ -12,7 +12,13 @@ import {
 } from "@/lib/accounts";
 import { portalIdSchema, productSlugSchema } from "@/lib/validation";
 import { verifyClaimState } from "@/lib/claim-state";
-import { PRODUCT_META, type Product } from "@/lib/types";
+import { PRODUCT_META, type Entitlement, type Product } from "@/lib/types";
+import {
+  buildInstallContactPatch,
+  trackEvents,
+  type EventSpec,
+  type ProductAppName,
+} from "@/lib/hubspot";
 
 /**
  * /account/[product]/[portalId]/claim
@@ -227,6 +233,16 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
       );
     }
 
+    // HubSpot app_installed — this Server Action is the actual UI-
+    // triggered confirm path (the <form action={handleLink}> button
+    // on this page). The /api/entitlements/claim POST wire-up is kept
+    // as defense-in-depth for non-UI callers. Must fire BEFORE the
+    // redirect below because redirect() throws a Next.js sentinel
+    // that would abort any work queued after it. await here adds
+    // ~500ms to the form submission, which is acceptable — users
+    // expect a brief processing state on link confirm.
+    await fireAppInstalledFromEntitlement(freshSession.account.email, ent);
+
     redirect(`/account/${product}/${encodeURIComponent(portalId)}`);
   }
 
@@ -291,6 +307,43 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
       </SectionCard>
     </div>
   );
+}
+
+/**
+ * Byte-for-byte twin of the helpers in
+ * src/app/api/auth/signup/route.ts and
+ * src/app/api/entitlements/claim/route.ts — three link sites, three
+ * inline copies. If you add a fourth site or these three ever
+ * diverge, extract to src/lib/hubspot/claim-link.ts and replace
+ * each copy with an import.
+ */
+async function fireAppInstalledFromEntitlement(
+  email: string,
+  entitlement: Entitlement,
+): Promise<void> {
+  const appName: ProductAppName = entitlement.product;
+  if (!entitlement.hubspotUserId || !entitlement.scopesGranted?.length) {
+    console.warn(
+      `[claim/page] entitlement ${entitlement.product}:${entitlement.portalId} is missing hubspotUserId or scopesGranted — app_installed will fire with empty fallbacks; user should reinstall to refresh the stub`,
+    );
+  }
+  const additionalContactPatch = await buildInstallContactPatch({
+    email,
+    appName,
+  });
+  await trackEvents(email, [
+    {
+      type: "app_installed",
+      properties: {
+        app_name: appName,
+        portal_id: entitlement.portalId,
+        dunamis_account_id: entitlement.accountId ?? "",
+        hubspot_user_id: entitlement.hubspotUserId ?? "",
+        scopes_granted: entitlement.scopesGranted ?? [],
+      },
+      additionalContactPatch,
+    } satisfies EventSpec<"app_installed">,
+  ]);
 }
 
 /* ---------------------------- UI sub-components ---------------------------- */
