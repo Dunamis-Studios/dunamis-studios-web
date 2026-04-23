@@ -17,7 +17,7 @@ import { createSession, setSessionCookie } from "@/lib/session";
 import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
 import { verifyClaimState } from "@/lib/claim-state";
 import { PRODUCT_META, type Account, type Entitlement } from "@/lib/types";
-import { trackEvent, type ProductAppName } from "@/lib/hubspot";
+import { trackEvents, type EventSpec, type ProductAppName } from "@/lib/hubspot";
 import { LEGAL_METADATA } from "@/content/legal/metadata";
 
 type ClaimAttempt =
@@ -94,40 +94,52 @@ export async function POST(req: Request) {
   };
   await saveAccount(account);
 
-  // HubSpot tracking: signup + ToS + Privacy acceptance. Runs in
-  // parallel, awaited so Vercel doesn't cut the function before the
-  // events land. trackEvent swallows its own errors — a HubSpot outage
-  // must not break signup. Skips entirely when HUBSPOT_ACCESS_TOKEN
-  // is unset (dev/preview).
+  // HubSpot tracking: signup + ToS + Privacy acceptance. Batched through
+  // trackEvents so the three events share a single contact upsert —
+  // parallel upserts on a not-yet-existing contact race on POST-create
+  // and only one wins, dropping the other two events' property patches.
+  // Event sends still run in parallel inside trackEvents; only the
+  // contact upsert is coordinated. Skips entirely when
+  // HUBSPOT_ACCESS_TOKEN is unset (dev/preview).
   const parsedSignupClaim = rawClaim ? parseClaimToken(rawClaim) : null;
   const signupAppName: ProductAppName | "none" = parsedSignupClaim
     ? parsedSignupClaim.product
     : "none";
   const userAgent = req.headers.get("user-agent") ?? "unknown";
-  await Promise.all([
-    trackEvent("account_created", account.email, {
-      app_name: signupAppName,
-      portal_id: parsedSignupClaim?.portalId,
-      dunamis_account_id: account.accountId,
-      signup_source: parsedSignupClaim ? "hubspot_oauth_install" : "website",
-    }),
-    trackEvent("terms_accepted", account.email, {
-      dunamis_account_id: account.accountId,
-      document_type: "tos",
-      document_version: LEGAL_METADATA.termsMaster.version,
-      accepted_via: "signup_checkbox",
-      ip_address: ip,
-      user_agent: userAgent,
-    }),
-    trackEvent("terms_accepted", account.email, {
-      dunamis_account_id: account.accountId,
-      document_type: "privacy",
-      document_version: LEGAL_METADATA.privacy.version,
-      accepted_via: "signup_checkbox",
-      ip_address: ip,
-      user_agent: userAgent,
-    }),
-  ]);
+  const signupEvents: EventSpec[] = [
+    {
+      type: "account_created",
+      properties: {
+        app_name: signupAppName,
+        portal_id: parsedSignupClaim?.portalId,
+        dunamis_account_id: account.accountId,
+        signup_source: parsedSignupClaim ? "hubspot_oauth_install" : "website",
+      },
+    },
+    {
+      type: "terms_accepted",
+      properties: {
+        dunamis_account_id: account.accountId,
+        document_type: "tos",
+        document_version: LEGAL_METADATA.termsMaster.version,
+        accepted_via: "signup_checkbox",
+        ip_address: ip,
+        user_agent: userAgent,
+      },
+    },
+    {
+      type: "terms_accepted",
+      properties: {
+        dunamis_account_id: account.accountId,
+        document_type: "privacy",
+        document_version: LEGAL_METADATA.privacy.version,
+        accepted_via: "signup_checkbox",
+        ip_address: ip,
+        user_agent: userAgent,
+      },
+    },
+  ];
+  await trackEvents(account.email, signupEvents);
 
   const token = randomToken(32);
   await redis().set(
