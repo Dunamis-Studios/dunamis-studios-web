@@ -240,14 +240,28 @@ function deriveTermsAccepted(
   ts: string,
 ): EventContactUpdates {
   const patch: ContactPatch = { dunamis_account_id: p.dunamis_account_id };
-  if (p.document_type === "tos") {
-    patch.tos_version_accepted = p.document_version;
-    patch.tos_accepted_at = ts;
-  } else if (p.document_type === "privacy") {
-    patch.privacy_version_accepted = p.document_version;
-    patch.privacy_accepted_at = ts;
+  switch (p.document_type) {
+    case "tos":
+      patch.tos_version_accepted = p.document_version;
+      patch.tos_accepted_at = ts;
+      break;
+    case "privacy":
+      patch.privacy_version_accepted = p.document_version;
+      patch.privacy_accepted_at = ts;
+      break;
+    case "dpa":
+      patch.dpa_version_accepted = p.document_version;
+      patch.dpa_accepted_at = ts;
+      break;
+    case "debrief_addendum":
+      patch.debrief_addendum_version_accepted = p.document_version;
+      patch.debrief_addendum_accepted_at = ts;
+      break;
+    case "property_pulse_addendum":
+      patch.property_pulse_addendum_version_accepted = p.document_version;
+      patch.property_pulse_addendum_accepted_at = ts;
+      break;
   }
-  // dpa acceptance has no dedicated contact property yet — event-only.
   return { patch, increments: [] };
 }
 
@@ -303,6 +317,63 @@ export async function applyIncrements(
   for (const { property, delta } of increments) {
     await incrementContactProperty(email, property, delta);
   }
+}
+
+/**
+ * Build an account-level HubSpot contact patch from Account record
+ * fields. Used at every HubSpot sync site — signup, claim-link, and
+ * every Stripe webhook helper — so contact-level state (account id,
+ * created-at, status, consent versions + timestamps) is re-stamped
+ * consistently on every sync, not just at signup. Missing fields are
+ * omitted from the patch (HubSpot keeps whatever it had), so legacy
+ * accounts that pre-date consent persistence don't lose existing
+ * HubSpot data.
+ *
+ * Takes primitives rather than the Account type so src/lib/hubspot/*
+ * stays decoupled from src/lib/types.ts — callers destructure their
+ * local Account instance and pass through.
+ */
+export function buildAccountContactPatch(args: {
+  accountId: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  tosVersion?: string;
+  tosAcceptedAt?: string;
+  privacyVersion?: string;
+  privacyAcceptedAt?: string;
+  dpaVersion?: string;
+  dpaAcceptedAt?: string;
+  debriefAddendumVersion?: string;
+  debriefAddendumAcceptedAt?: string;
+  propertyPulseAddendumVersion?: string;
+  propertyPulseAddendumAcceptedAt?: string;
+}): ContactPatch {
+  const patch: ContactPatch = {
+    dunamis_account_id: args.accountId,
+    account_created_at: args.createdAt,
+    account_status: args.deletedAt ? "Cancelled" : "Active",
+  };
+  if (args.tosVersion) patch.tos_version_accepted = args.tosVersion;
+  if (args.tosAcceptedAt) patch.tos_accepted_at = args.tosAcceptedAt;
+  if (args.privacyVersion) patch.privacy_version_accepted = args.privacyVersion;
+  if (args.privacyAcceptedAt) patch.privacy_accepted_at = args.privacyAcceptedAt;
+  if (args.dpaVersion) patch.dpa_version_accepted = args.dpaVersion;
+  if (args.dpaAcceptedAt) patch.dpa_accepted_at = args.dpaAcceptedAt;
+  if (args.debriefAddendumVersion) {
+    patch.debrief_addendum_version_accepted = args.debriefAddendumVersion;
+  }
+  if (args.debriefAddendumAcceptedAt) {
+    patch.debrief_addendum_accepted_at = args.debriefAddendumAcceptedAt;
+  }
+  if (args.propertyPulseAddendumVersion) {
+    patch.property_pulse_addendum_version_accepted =
+      args.propertyPulseAddendumVersion;
+  }
+  if (args.propertyPulseAddendumAcceptedAt) {
+    patch.property_pulse_addendum_accepted_at =
+      args.propertyPulseAddendumAcceptedAt;
+  }
+  return patch;
 }
 
 /**

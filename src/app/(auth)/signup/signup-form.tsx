@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,6 +62,13 @@ export function SignupForm({
   // Fallback to "your install" so an unexpected missing productName
   // doesn't leak "undefined" into toasts.
   const productLabel = productName ?? "your install";
+  // Addendum anchor on the stacked /terms page. Defaults to the
+  // Debrief anchor when claim is present but product can't be parsed;
+  // harmless because hasClaim also gates whether this link renders.
+  const addendumAnchor =
+    claim?.startsWith("property-pulse:")
+      ? "/terms#addendum-property-pulse"
+      : "/terms#addendum-debrief";
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -240,7 +248,45 @@ export function SignupForm({
       </Button>
 
       <p className="text-center text-xs text-[var(--fg-subtle)]">
-        By creating an account, you agree to our Terms and Privacy Notice.
+        {hasClaim ? (
+          <>
+            By creating an account and linking this portal, you agree to our{" "}
+            <Link href="/terms" className="underline hover:text-[var(--fg)]">
+              Terms of Service
+            </Link>
+            ,{" "}
+            <Link href="/privacy" className="underline hover:text-[var(--fg)]">
+              Privacy Policy
+            </Link>
+            ,{" "}
+            <Link
+              href="/legal/dpa"
+              className="underline hover:text-[var(--fg)]"
+            >
+              Data Processing Addendum
+            </Link>
+            , and the{" "}
+            <Link
+              href={addendumAnchor}
+              className="underline hover:text-[var(--fg)]"
+            >
+              {productLabel} Service Addendum
+            </Link>
+            .
+          </>
+        ) : (
+          <>
+            By creating an account, you agree to our{" "}
+            <Link href="/terms" className="underline hover:text-[var(--fg)]">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" className="underline hover:text-[var(--fg)]">
+              Privacy Policy
+            </Link>
+            .
+          </>
+        )}
       </p>
     </form>
   );

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
+import { LEGAL_METADATA } from "@/content/legal/metadata";
 
 export const metadata: Metadata = {
   title: "Data Processing Addendum",
@@ -10,8 +11,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/legal/dpa" },
 };
 
-const LAST_UPDATED = "April 20, 2026";
-const VERSION = "1.0";
+const LAST_UPDATED = LEGAL_METADATA.dpa.lastUpdated;
+const VERSION = LEGAL_METADATA.dpa.version;
 
 interface Sec {
   n: string;

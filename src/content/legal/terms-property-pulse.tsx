@@ -3,7 +3,7 @@ import { LEGAL_METADATA } from "./metadata";
 import type { LegalDocument } from "./types";
 
 export const termsPropertyPulse: LegalDocument = {
-  ...LEGAL_METADATA.termsPropertyPulse,
+  ...LEGAL_METADATA.propertyPulseAddendum,
   idPrefix: "p-",
   sections: [
     {

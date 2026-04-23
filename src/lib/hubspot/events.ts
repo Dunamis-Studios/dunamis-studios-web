@@ -50,7 +50,12 @@ export type UninstallReason =
   | "account_deleted"
   | "unknown";
 
-export type TermsDocumentType = "tos" | "privacy" | "dpa";
+export type TermsDocumentType =
+  | "tos"
+  | "privacy"
+  | "dpa"
+  | "debrief_addendum"
+  | "property_pulse_addendum";
 
 export type TermsAcceptedVia =
   | "signup_checkbox"
@@ -90,7 +95,6 @@ export interface AppInstalledProperties {
   portal_id: string;
   dunamis_account_id: string;
   hubspot_user_id: string;
-  scopes_granted: string[];
 }
 
 export interface AppUninstalledProperties {

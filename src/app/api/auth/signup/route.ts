@@ -18,12 +18,17 @@ import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
 import { verifyClaimState } from "@/lib/claim-state";
 import { PRODUCT_META, type Account, type Entitlement } from "@/lib/types";
 import {
-  buildInstallContactPatch,
+  buildAccountContactPatch,
   trackEvents,
   type EventSpec,
   type ProductAppName,
 } from "@/lib/hubspot";
 import { LEGAL_METADATA } from "@/content/legal/metadata";
+import {
+  accountConsentArgs,
+  computePendingConsentStamps,
+} from "@/lib/account-consent";
+import { fireClaimAcceptance } from "@/lib/claim-link";
 
 type ClaimAttempt =
   | { ok: true; entitlement: Entitlement; redirectTo: string }
@@ -96,6 +101,20 @@ export async function POST(req: Request) {
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
+    // ToS + Privacy acceptance is implicit-by-signup per the disclosure
+    // line on the signup form. Stamped here so HubSpot sync at any
+    // future point can re-read the true acceptance version + date
+    // instead of falling back to "now" (which would lie about timing
+    // on re-syncs) or LEGAL_METADATA.current (which would lie about
+    // version if the docs bump later).
+    tosVersionAccepted: LEGAL_METADATA.termsMaster.version,
+    tosAcceptedAt: now,
+    privacyVersionAccepted: LEGAL_METADATA.privacy.version,
+    privacyAcceptedAt: now,
+    // DPA + Service Addendum acceptance only if this signup carries a
+    // claim that succeeds — stamped below in tryLinkClaim after the
+    // entitlement link succeeds so we don't stamp consent for an
+    // install we couldn't complete.
   };
   await saveAccount(account);
 
@@ -111,6 +130,10 @@ export async function POST(req: Request) {
     ? parsedSignupClaim.product
     : "none";
   const userAgent = req.headers.get("user-agent") ?? "unknown";
+  // Account-level patch is the same on every event in the batch — the
+  // merged patch in trackEvents de-dupes property writes, so putting
+  // it on the first spec alone is sufficient.
+  const accountPatch = buildAccountContactPatch(accountConsentArgs(account));
   const signupEvents: EventSpec[] = [
     {
       type: "account_created",
@@ -120,6 +143,7 @@ export async function POST(req: Request) {
         dunamis_account_id: account.accountId,
         signup_source: parsedSignupClaim ? "hubspot_oauth_install" : "website",
       },
+      additionalContactPatch: accountPatch,
     },
     {
       type: "terms_accepted",
@@ -178,7 +202,7 @@ export async function POST(req: Request) {
   // the claim from the app's CRM card later.
   let claim: ClaimAttempt | undefined;
   if (rawClaim && rawState) {
-    claim = await tryLinkClaim(rawClaim, rawState, account);
+    claim = await tryLinkClaim(rawClaim, rawState, account, ip, userAgent);
   }
 
   // Response shape:
@@ -195,6 +219,8 @@ async function tryLinkClaim(
   rawClaim: string,
   rawState: string,
   account: Account,
+  ip: string,
+  userAgent: string,
 ): Promise<ClaimAttempt> {
   const parsedClaim = parseClaimToken(rawClaim);
   if (!parsedClaim) {
@@ -264,51 +290,40 @@ async function tryLinkClaim(
     };
   }
 
-  // HubSpot app_installed — separate trackEvents call from the main
-  // signup batch so it fires only when the claim link succeeds, and
-  // independently of account_created / terms_accepted. The claim link
-  // establishes "this Dunamis account owns this HubSpot portal
-  // install"; that's the moment to stamp debrief_installed /
-  // property_pulse_installed and increment the install counter.
-  await fireAppInstalledFromEntitlement(account.email, entitlement);
+  // Compute + persist DPA + addendum consent on the Account now that
+  // the link succeeded. For a brand-new-user signup, the account has
+  // zero consent for dpa/addendum so both will be pending. For a
+  // claim arriving at a pre-existing account (shouldn't happen via
+  // signup but defensive), we respect prior acceptances and only
+  // stamp versions that are missing or behind current LEGAL_METADATA.
+  const claimAcceptedAt = new Date().toISOString();
+  const pendingConsent = computePendingConsentStamps(
+    account,
+    product,
+    claimAcceptedAt,
+  );
+  const needsDpa = pendingConsent.dpaVersionAccepted !== undefined;
+  const needsAddendum =
+    pendingConsent.debriefAddendumVersionAccepted !== undefined ||
+    pendingConsent.propertyPulseAddendumVersionAccepted !== undefined;
+  if (needsDpa || needsAddendum) {
+    Object.assign(account, pendingConsent, { updatedAt: claimAcceptedAt });
+    await saveAccount(account);
+  }
+
+  // Fire the consolidated claim-link HubSpot batch (terms_accepted for
+  // dpa + addendum when newly stamped, plus app_installed always, all
+  // merged into one contact upsert that re-stamps every account-level
+  // field from the just-updated Account).
+  await fireClaimAcceptance({
+    email: account.email,
+    account,
+    entitlement,
+    needsDpa,
+    needsAddendum,
+    ip,
+    userAgent,
+  });
 
   return { ok: true, entitlement, redirectTo };
-}
-
-/**
- * Fire app_installed for a freshly-linked entitlement. Shared pattern
- * between the signup tryLinkClaim path and the /api/entitlements/claim
- * POST path — both land on a linked entitlement and need the same
- * HubSpot event. Inlined rather than extracted to a shared lib because
- * both call sites already live in the Next API layer and the helper
- * is a single file-local function in each route file. Mirror this
- * function byte-for-byte if you add a third link site.
- */
-async function fireAppInstalledFromEntitlement(
-  email: string,
-  entitlement: Entitlement,
-): Promise<void> {
-  const appName: ProductAppName = entitlement.product;
-  if (!entitlement.hubspotUserId || !entitlement.scopesGranted?.length) {
-    console.warn(
-      `[signup/claim] entitlement ${entitlement.product}:${entitlement.portalId} is missing hubspotUserId or scopesGranted — app_installed will fire with empty fallbacks; user should reinstall to refresh the stub`,
-    );
-  }
-  const additionalContactPatch = await buildInstallContactPatch({
-    email,
-    appName,
-  });
-  await trackEvents(email, [
-    {
-      type: "app_installed",
-      properties: {
-        app_name: appName,
-        portal_id: entitlement.portalId,
-        dunamis_account_id: entitlement.accountId ?? "",
-        hubspot_user_id: entitlement.hubspotUserId ?? "",
-        scopes_granted: entitlement.scopesGranted ?? [],
-      },
-      additionalContactPatch,
-    } satisfies EventSpec<"app_installed">,
-  ]);
 }

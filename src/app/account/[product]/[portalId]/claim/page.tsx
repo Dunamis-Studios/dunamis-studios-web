@@ -1,24 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { SectionCard } from "@/components/account/section-card";
 import { Button } from "@/components/ui/button";
 import { getCurrentSession } from "@/lib/session";
 import {
+  getAccountById,
   getEntitlement,
   linkEntitlementToAccount,
+  saveAccount,
   saveEntitlement,
 } from "@/lib/accounts";
 import { portalIdSchema, productSlugSchema } from "@/lib/validation";
 import { verifyClaimState } from "@/lib/claim-state";
-import { PRODUCT_META, type Entitlement, type Product } from "@/lib/types";
+import { PRODUCT_META, type Product } from "@/lib/types";
 import {
-  buildInstallContactPatch,
-  trackEvents,
-  type EventSpec,
-  type ProductAppName,
-} from "@/lib/hubspot";
+  computePendingConsentStamps,
+  needsConsent,
+} from "@/lib/account-consent";
+import { fireClaimAcceptance } from "@/lib/claim-link";
+import { clientIp } from "@/lib/rate-limit";
 
 /**
  * /account/[product]/[portalId]/claim
@@ -233,15 +236,54 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
       );
     }
 
-    // HubSpot app_installed — this Server Action is the actual UI-
-    // triggered confirm path (the <form action={handleLink}> button
-    // on this page). The /api/entitlements/claim POST wire-up is kept
-    // as defense-in-depth for non-UI callers. Must fire BEFORE the
-    // redirect below because redirect() throws a Next.js sentinel
-    // that would abort any work queued after it. await here adds
-    // ~500ms to the form submission, which is acceptable — users
-    // expect a brief processing state on link confirm.
-    await fireAppInstalledFromEntitlement(freshSession.account.email, ent);
+    // Re-read the account fresh, stamp DPA + Service Addendum consent
+    // per version-check rules in computePendingConsentStamps, save
+    // the updated account. Done AFTER linkEntitlementToAccount so a
+    // link failure never writes consent for an install that didn't
+    // complete, and BEFORE fireClaimAcceptance so the HubSpot sync
+    // sees the post-stamp versions.
+    const accountForStamp =
+      (await getAccountById(freshSession.account.accountId)) ??
+      freshSession.account;
+    const claimAcceptedAt = new Date().toISOString();
+    const pending = computePendingConsentStamps(
+      accountForStamp,
+      product,
+      claimAcceptedAt,
+    );
+    const needsDpaNow = pending.dpaVersionAccepted !== undefined;
+    const needsAddendumNow =
+      pending.debriefAddendumVersionAccepted !== undefined ||
+      pending.propertyPulseAddendumVersionAccepted !== undefined;
+    if (needsDpaNow || needsAddendumNow) {
+      Object.assign(accountForStamp, pending, { updatedAt: claimAcceptedAt });
+      await saveAccount(accountForStamp);
+    }
+
+    // fireClaimAcceptance dispatches the HubSpot events (terms_accepted
+    // for DPA and/or addendum when newly stamped, plus app_installed
+    // always) and merges the full account + install contact patch
+    // into one upsert. Must fire BEFORE redirect() since redirect()
+    // throws a Next.js sentinel that aborts queued async work. await
+    // here adds ~500ms to the form submission — acceptable given the
+    // "processing" state users expect on link confirm.
+    //
+    // Server Actions expose request headers via next/headers, so the
+    // consent-acceptance audit trail (ip + user_agent on the
+    // terms_accepted events) captures real values here — matching the
+    // /api/entitlements/claim POST path.
+    const h = await headers();
+    const ip = clientIp(h);
+    const userAgent = h.get("user-agent") ?? "";
+    await fireClaimAcceptance({
+      email: accountForStamp.email,
+      account: accountForStamp,
+      entitlement: ent,
+      needsDpa: needsDpaNow,
+      needsAddendum: needsAddendumNow,
+      ip,
+      userAgent,
+    });
 
     redirect(`/account/${product}/${encodeURIComponent(portalId)}`);
   }
@@ -285,6 +327,12 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
           </div>
         </dl>
 
+        <ClaimConsentDisclosure
+          product={product}
+          productName={productName}
+          pending={needsConsent(session.account, product)}
+        />
+
         <form action={handleLink} className="mt-6 flex items-center gap-3">
           <input type="hidden" name="state" value={state ?? ""} />
           <Button type="submit" variant="primary" size="md">
@@ -310,40 +358,75 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
 }
 
 /**
- * Byte-for-byte twin of the helpers in
- * src/app/api/auth/signup/route.ts and
- * src/app/api/entitlements/claim/route.ts — three link sites, three
- * inline copies. If you add a fourth site or these three ever
- * diverge, extract to src/lib/hubspot/claim-link.ts and replace
- * each copy with an import.
+ * Disclosure line above the Link button. Copy varies based on what
+ * still needs acceptance per version-check logic in needsConsent.
+ * All four possible cases:
+ *   needsDpa + needsAddendum → DPA + [App] Addendum
+ *   needsAddendum only       → [App] Addendum only
+ *   needsDpa only            → DPA only (edge: addendum already at
+ *                              current but DPA bumped — treat as
+ *                              "DPA only" with just the DPA link)
+ *   neither                  → render nothing (already accepted at
+ *                              current versions)
  */
-async function fireAppInstalledFromEntitlement(
-  email: string,
-  entitlement: Entitlement,
-): Promise<void> {
-  const appName: ProductAppName = entitlement.product;
-  if (!entitlement.hubspotUserId || !entitlement.scopesGranted?.length) {
-    console.warn(
-      `[claim/page] entitlement ${entitlement.product}:${entitlement.portalId} is missing hubspotUserId or scopesGranted — app_installed will fire with empty fallbacks; user should reinstall to refresh the stub`,
+function ClaimConsentDisclosure({
+  product,
+  productName,
+  pending,
+}: {
+  product: Product;
+  productName: string;
+  pending: { needsDpa: boolean; needsAddendum: boolean };
+}) {
+  const { needsDpa, needsAddendum } = pending;
+  if (!needsDpa && !needsAddendum) return null;
+
+  const addendumHref =
+    product === "debrief"
+      ? "/terms#addendum-debrief"
+      : "/terms#addendum-property-pulse";
+
+  let body: React.ReactNode;
+  if (needsDpa && needsAddendum) {
+    body = (
+      <>
+        By linking this portal, you agree to our{" "}
+        <Link href="/legal/dpa" className="underline hover:text-[var(--fg)]">
+          Data Processing Addendum
+        </Link>{" "}
+        and the{" "}
+        <Link href={addendumHref} className="underline hover:text-[var(--fg)]">
+          {productName} Service Addendum
+        </Link>
+        .
+      </>
+    );
+  } else if (needsAddendum) {
+    body = (
+      <>
+        By linking this portal, you agree to the{" "}
+        <Link href={addendumHref} className="underline hover:text-[var(--fg)]">
+          {productName} Service Addendum
+        </Link>
+        .
+      </>
+    );
+  } else {
+    // needsDpa only
+    body = (
+      <>
+        By linking this portal, you agree to our updated{" "}
+        <Link href="/legal/dpa" className="underline hover:text-[var(--fg)]">
+          Data Processing Addendum
+        </Link>
+        .
+      </>
     );
   }
-  const additionalContactPatch = await buildInstallContactPatch({
-    email,
-    appName,
-  });
-  await trackEvents(email, [
-    {
-      type: "app_installed",
-      properties: {
-        app_name: appName,
-        portal_id: entitlement.portalId,
-        dunamis_account_id: entitlement.accountId ?? "",
-        hubspot_user_id: entitlement.hubspotUserId ?? "",
-        scopes_granted: entitlement.scopesGranted ?? [],
-      },
-      additionalContactPatch,
-    } satisfies EventSpec<"app_installed">,
-  ]);
+
+  return (
+    <p className="mt-4 text-sm text-[var(--fg-muted)]">{body}</p>
+  );
 }
 
 /* ---------------------------- UI sub-components ---------------------------- */

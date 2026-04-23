@@ -6,6 +6,7 @@ import {
   saveEntitlement,
   getEntitlement,
 } from "./accounts";
+import { accountConsentArgs } from "./account-consent";
 import { withEntitlementLock } from "./entitlement-lock";
 import { stripe } from "./stripe";
 import {
@@ -21,9 +22,11 @@ import type {
   EntitlementTier,
 } from "./types";
 import {
+  buildAccountContactPatch,
   buildInstallContactPatch,
   toHubspotTier,
   trackEvents,
+  type ContactPatch,
   type EventSpec,
   type HubspotTier,
   type ProductAppName,
@@ -527,6 +530,23 @@ async function onPaymentIntentSucceeded(
 // ---------------------------------------------------------------------------
 
 /**
+ * Fetch the Account by id and return the corresponding account-level
+ * HubSpot contact patch. Used by every fire-* helper so account-level
+ * state (id, created-at, status, every consent version + timestamp)
+ * re-stamps on every Stripe sync, not just at signup / claim-link.
+ * Returns an empty patch on a missing account — the event still fires
+ * and the install-specific fields still land; the account-level fields
+ * just don't get re-stamped for that one event.
+ */
+async function buildAccountPatchForContext(
+  accountId: string,
+): Promise<ContactPatch> {
+  const account = await getAccountById(accountId);
+  if (!account) return {};
+  return buildAccountContactPatch(accountConsentArgs(account));
+}
+
+/**
  * Resolve the HubSpot contact identity (email + Dunamis account id) for
  * a Stripe-originated event. Prefers the dunamisAccountId attached to
  * Stripe metadata (cheapest path — Redis lookup only), falls back to
@@ -637,6 +657,9 @@ async function firePurchaseCompletedForSubscription(
     customerId,
   });
 
+  const accountPatch = await buildAccountPatchForContext(hsCtx.accountId);
+  const mergedPatch: ContactPatch = { ...accountPatch, ...additionalContactPatch };
+
   await trackEvents(hsCtx.email, [
     {
       type: "purchase_completed",
@@ -650,7 +673,7 @@ async function firePurchaseCompletedForSubscription(
         tier,
         stripe_payment_intent_id,
       },
-      additionalContactPatch,
+      additionalContactPatch: mergedPatch,
     } satisfies EventSpec<"purchase_completed">,
   ]);
 }
@@ -704,6 +727,7 @@ async function fireSubscriptionRenewedForInvoice(
   const tierInternal = resolveTier(sub);
   const hsTier: HubspotTier = toHubspotTier(tierInternal) ?? "None";
   const credits_granted = tierInternal ? getTierAllotment(tierInternal) : 0;
+  const accountPatch = await buildAccountPatchForContext(hsCtx.accountId);
 
   await trackEvents(hsCtx.email, [
     {
@@ -717,6 +741,7 @@ async function fireSubscriptionRenewedForInvoice(
         credits_granted,
         stripe_subscription_id: sub.id,
       },
+      additionalContactPatch: accountPatch,
     } satisfies EventSpec<"subscription_renewed">,
   ]);
 }
@@ -771,6 +796,7 @@ async function fireSubscriptionPaymentFailedForInvoice(
 
   const tierInternal = resolveTier(sub);
   const hsTier: HubspotTier = toHubspotTier(tierInternal) ?? "None";
+  const accountPatch = await buildAccountPatchForContext(hsCtx.accountId);
 
   await trackEvents(hsCtx.email, [
     {
@@ -785,6 +811,7 @@ async function fireSubscriptionPaymentFailedForInvoice(
         retry_attempt: invoice.attempt_count ?? 0,
         stripe_invoice_id: invoice.id ?? "",
       },
+      additionalContactPatch: accountPatch,
     } satisfies EventSpec<"subscription_payment_failed">,
   ]);
 }
@@ -833,6 +860,7 @@ async function fireLicenseRefundedForCharge(
   // days_since_install = floor((now - metadata.purchaseDate) / 86_400_000)
   // and pass it through here. Same pattern would extend to Debrief if
   // subscription metadata gains a firstInstallAt field.
+  const accountPatch = await buildAccountPatchForContext(hsCtx.accountId);
   await trackEvents(hsCtx.email, [
     {
       type: "license_refunded",
@@ -844,6 +872,7 @@ async function fireLicenseRefundedForCharge(
         refund_reason,
         stripe_refund_id,
       },
+      additionalContactPatch: accountPatch,
     } satisfies EventSpec<"license_refunded">,
   ]);
 }

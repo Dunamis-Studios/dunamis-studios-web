@@ -3,19 +3,18 @@ import { z } from "zod";
 import { apiError, parseJson } from "@/lib/api";
 import { getCurrentSession } from "@/lib/session";
 import {
+  getAccountById,
   getEntitlement,
   linkEntitlementToAccount,
+  saveAccount,
   saveEntitlement,
 } from "@/lib/accounts";
 import { portalIdSchema, productSlugSchema } from "@/lib/validation";
 import { verifyClaimState } from "@/lib/claim-state";
-import { PRODUCT_META, type Entitlement, type Product } from "@/lib/types";
-import {
-  buildInstallContactPatch,
-  trackEvents,
-  type EventSpec,
-  type ProductAppName,
-} from "@/lib/hubspot";
+import { PRODUCT_META, type Product } from "@/lib/types";
+import { clientIp } from "@/lib/rate-limit";
+import { computePendingConsentStamps } from "@/lib/account-consent";
+import { fireClaimAcceptance } from "@/lib/claim-link";
 
 export const dynamic = "force-dynamic";
 
@@ -225,43 +224,39 @@ export async function POST(req: Request) {
     );
   }
 
-  // HubSpot app_installed — fires on the existing-user claim path.
-  // The new-user path fires its own app_installed from signup's
-  // tryLinkClaim. Both paths land on linkEntitlementToAccount success,
-  // both use the same helper shape (see byte-for-byte twin in
-  // src/app/api/auth/signup/route.ts).
-  await fireAppInstalledFromEntitlement(session.account.email, entitlement);
+  // Re-read the account fresh from Redis so consent-stamping logic
+  // operates on the latest state (not a stale session snapshot), then
+  // stamp DPA + Service Addendum as-needed based on version-bump
+  // logic in computePendingConsentStamps.
+  const account =
+    (await getAccountById(session.account.accountId)) ?? session.account;
+  const claimAcceptedAt = new Date().toISOString();
+  const pending = computePendingConsentStamps(account, product, claimAcceptedAt);
+  const needsDpa = pending.dpaVersionAccepted !== undefined;
+  const needsAddendum =
+    pending.debriefAddendumVersionAccepted !== undefined ||
+    pending.propertyPulseAddendumVersionAccepted !== undefined;
+  if (needsDpa || needsAddendum) {
+    Object.assign(account, pending, { updatedAt: claimAcceptedAt });
+    await saveAccount(account);
+  }
+
+  // Non-UI claim flow — capture whatever request metadata we can.
+  // clientIp is the standard helper used by rate-limit; user-agent
+  // may be absent on server-to-server calls, default to "unknown".
+  const ip = clientIp(req.headers);
+  const userAgent = req.headers.get("user-agent") ?? "unknown";
+  await fireClaimAcceptance({
+    email: account.email,
+    account,
+    entitlement,
+    needsDpa,
+    needsAddendum,
+    ip,
+    userAgent,
+  });
 
   return NextResponse.json({ ok: true, entitlement, redirectTo });
-}
-
-async function fireAppInstalledFromEntitlement(
-  email: string,
-  entitlement: Entitlement,
-): Promise<void> {
-  const appName: ProductAppName = entitlement.product;
-  if (!entitlement.hubspotUserId || !entitlement.scopesGranted?.length) {
-    console.warn(
-      `[claim] entitlement ${entitlement.product}:${entitlement.portalId} is missing hubspotUserId or scopesGranted — app_installed will fire with empty fallbacks; user should reinstall to refresh the stub`,
-    );
-  }
-  const additionalContactPatch = await buildInstallContactPatch({
-    email,
-    appName,
-  });
-  await trackEvents(email, [
-    {
-      type: "app_installed",
-      properties: {
-        app_name: appName,
-        portal_id: entitlement.portalId,
-        dunamis_account_id: entitlement.accountId ?? "",
-        hubspot_user_id: entitlement.hubspotUserId ?? "",
-        scopes_granted: entitlement.scopesGranted ?? [],
-      },
-      additionalContactPatch,
-    } satisfies EventSpec<"app_installed">,
-  ]);
 }
 
 // ---- helpers -------------------------------------------------------------

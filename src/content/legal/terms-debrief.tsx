@@ -4,7 +4,7 @@ import { LEGAL_METADATA } from "./metadata";
 import type { LegalDocument } from "./types";
 
 export const termsDebrief: LegalDocument = {
-  ...LEGAL_METADATA.termsDebrief,
+  ...LEGAL_METADATA.debriefAddendum,
   idPrefix: "d-",
   sections: [
     {

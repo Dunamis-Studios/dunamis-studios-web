@@ -27,12 +27,12 @@ export const LEGAL_METADATA = {
     lastUpdated: "April 23, 2026",
     version: "2.0",
   },
-  termsDebrief: {
+  debriefAddendum: {
     title: "Debrief Service Addendum",
     lastUpdated: "April 23, 2026",
     version: "2.0",
   },
-  termsPropertyPulse: {
+  propertyPulseAddendum: {
     title: "Property Pulse Service Addendum",
     lastUpdated: "April 23, 2026",
     version: "2.0",
@@ -41,6 +41,11 @@ export const LEGAL_METADATA = {
     title: "Privacy Policy",
     lastUpdated: "April 23, 2026",
     version: "2.0",
+  },
+  dpa: {
+    title: "Data Processing Addendum",
+    lastUpdated: "April 20, 2026",
+    version: "1.0",
   },
 } as const satisfies Record<string, LegalDocumentMetadata>;
 

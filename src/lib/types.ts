@@ -25,6 +25,29 @@ export interface Account {
    * constant in src/lib/session.ts.
    */
   sessionLifetimeDays?: 1 | 3 | 7;
+  /**
+   * Versioned consent state — stamped at the moment the user accepts
+   * each document (signup for ToS + Privacy, claim-link for DPA +
+   * Service Addendum). Optional because each field only gets set at
+   * its corresponding acceptance surface; HubSpot sync sites include
+   * these in contact patches only when set, so missing values don't
+   * clobber existing HubSpot contact state.
+   *
+   * Version-bump re-acceptance: a doc is considered "already accepted"
+   * only when the stamped version matches the current LEGAL_METADATA
+   * version. If the version bumps after acceptance, the next claim/
+   * install surface treats it as not-yet-accepted and re-stamps.
+   */
+  tosVersionAccepted?: string;
+  tosAcceptedAt?: string;
+  privacyVersionAccepted?: string;
+  privacyAcceptedAt?: string;
+  dpaVersionAccepted?: string;
+  dpaAcceptedAt?: string;
+  debriefAddendumVersionAccepted?: string;
+  debriefAddendumAcceptedAt?: string;
+  propertyPulseAddendumVersionAccepted?: string;
+  propertyPulseAddendumAcceptedAt?: string;
   // NOTE: stripeCustomerId is NOT stored on the Account. Each entitlement
   // (one per HubSpot portal) owns its own Stripe Customer because billing
   // is per-portal — an account with Debrief on portals A and B has two
@@ -80,7 +103,7 @@ export interface Entitlement {
    * HubSpot user id of the installer — captured by PP/Debrief server
    * at OAuth callback time from /oauth/v1/access-tokens/{token}.user_id
    * and stamped on the stub. Carried through to the claim-time
-   * app_installed HubSpot event.
+   * app_installed HubSpot event for attribution.
    *
    * Optional because stubs written before this field was introduced
    * won't have it; readers handle that case by either waiting for a
@@ -88,13 +111,6 @@ export interface Entitlement {
    * sending the event with the value absent.
    */
   hubspotUserId?: string | null;
-  /**
-   * OAuth scopes the installer granted — captured at OAuth callback
-   * time from /oauth/v1/access-tokens/{token}.scopes. Refreshed on
-   * reinstall if the user re-consents with a different scope set.
-   * Same legacy-optional treatment as hubspotUserId.
-   */
-  scopesGranted?: string[];
   status: EntitlementStatus;
   tier: EntitlementTier | null;
   /** null only when the entitlement has never been activated. */
