@@ -21,7 +21,7 @@ import type {
   EntitlementTier,
 } from "./types";
 import {
-  getContactByEmail,
+  buildInstallContactPatch,
   toHubspotTier,
   trackEvents,
   type EventSpec,
@@ -924,39 +924,3 @@ async function resolveRefundedChargeOrigin(
   };
 }
 
-/**
- * Build the additionalContactPatch for install events (purchase_completed
- * Debrief/PP paths). Sets stripe_customer_id unconditionally, and sets
- * *_first_install_at only if the contact doesn't already have it —
- * read-before-write so re-subscribes or re-installs don't overwrite
- * the original install date.
- */
-async function buildInstallContactPatch({
-  email,
-  appName,
-  customerId,
-}: {
-  email: string;
-  appName: ProductAppName;
-  customerId: string | null;
-}): Promise<Record<string, string>> {
-  const firstInstallProp =
-    appName === "debrief"
-      ? "debrief_first_install_at"
-      : "property_pulse_first_install_at";
-  const patch: Record<string, string> = {};
-  if (customerId) patch.stripe_customer_id = customerId;
-  try {
-    const existing = await getContactByEmail(email, [firstInstallProp]);
-    if (!existing?.properties?.[firstInstallProp]) {
-      patch[firstInstallProp] = new Date().toISOString();
-    }
-  } catch {
-    // If the lookup fails (network blip, etc.) prefer to stamp the
-    // first-install date over skipping it — a too-fresh date is a
-    // better failure mode than a blank property the analyst has to
-    // chase down. Subsequent successful lookups won't overwrite.
-    patch[firstInstallProp] = new Date().toISOString();
-  }
-  return patch;
-}

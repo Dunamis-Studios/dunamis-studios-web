@@ -9,7 +9,13 @@ import {
 } from "@/lib/accounts";
 import { portalIdSchema, productSlugSchema } from "@/lib/validation";
 import { verifyClaimState } from "@/lib/claim-state";
-import { PRODUCT_META, type Product } from "@/lib/types";
+import { PRODUCT_META, type Entitlement, type Product } from "@/lib/types";
+import {
+  buildInstallContactPatch,
+  trackEvents,
+  type EventSpec,
+  type ProductAppName,
+} from "@/lib/hubspot";
 
 export const dynamic = "force-dynamic";
 
@@ -219,7 +225,43 @@ export async function POST(req: Request) {
     );
   }
 
+  // HubSpot app_installed — fires on the existing-user claim path.
+  // The new-user path fires its own app_installed from signup's
+  // tryLinkClaim. Both paths land on linkEntitlementToAccount success,
+  // both use the same helper shape (see byte-for-byte twin in
+  // src/app/api/auth/signup/route.ts).
+  await fireAppInstalledFromEntitlement(session.account.email, entitlement);
+
   return NextResponse.json({ ok: true, entitlement, redirectTo });
+}
+
+async function fireAppInstalledFromEntitlement(
+  email: string,
+  entitlement: Entitlement,
+): Promise<void> {
+  const appName: ProductAppName = entitlement.product;
+  if (!entitlement.hubspotUserId || !entitlement.scopesGranted?.length) {
+    console.warn(
+      `[claim] entitlement ${entitlement.product}:${entitlement.portalId} is missing hubspotUserId or scopesGranted — app_installed will fire with empty fallbacks; user should reinstall to refresh the stub`,
+    );
+  }
+  const additionalContactPatch = await buildInstallContactPatch({
+    email,
+    appName,
+  });
+  await trackEvents(email, [
+    {
+      type: "app_installed",
+      properties: {
+        app_name: appName,
+        portal_id: entitlement.portalId,
+        dunamis_account_id: entitlement.accountId ?? "",
+        hubspot_user_id: entitlement.hubspotUserId ?? "",
+        scopes_granted: entitlement.scopesGranted ?? [],
+      },
+      additionalContactPatch,
+    } satisfies EventSpec<"app_installed">,
+  ]);
 }
 
 // ---- helpers -------------------------------------------------------------

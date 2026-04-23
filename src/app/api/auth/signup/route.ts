@@ -17,7 +17,12 @@ import { createSession, setSessionCookie } from "@/lib/session";
 import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
 import { verifyClaimState } from "@/lib/claim-state";
 import { PRODUCT_META, type Account, type Entitlement } from "@/lib/types";
-import { trackEvents, type EventSpec, type ProductAppName } from "@/lib/hubspot";
+import {
+  buildInstallContactPatch,
+  trackEvents,
+  type EventSpec,
+  type ProductAppName,
+} from "@/lib/hubspot";
 import { LEGAL_METADATA } from "@/content/legal/metadata";
 
 type ClaimAttempt =
@@ -259,5 +264,51 @@ async function tryLinkClaim(
     };
   }
 
+  // HubSpot app_installed — separate trackEvents call from the main
+  // signup batch so it fires only when the claim link succeeds, and
+  // independently of account_created / terms_accepted. The claim link
+  // establishes "this Dunamis account owns this HubSpot portal
+  // install"; that's the moment to stamp debrief_installed /
+  // property_pulse_installed and increment the install counter.
+  await fireAppInstalledFromEntitlement(account.email, entitlement);
+
   return { ok: true, entitlement, redirectTo };
+}
+
+/**
+ * Fire app_installed for a freshly-linked entitlement. Shared pattern
+ * between the signup tryLinkClaim path and the /api/entitlements/claim
+ * POST path — both land on a linked entitlement and need the same
+ * HubSpot event. Inlined rather than extracted to a shared lib because
+ * both call sites already live in the Next API layer and the helper
+ * is a single file-local function in each route file. Mirror this
+ * function byte-for-byte if you add a third link site.
+ */
+async function fireAppInstalledFromEntitlement(
+  email: string,
+  entitlement: Entitlement,
+): Promise<void> {
+  const appName: ProductAppName = entitlement.product;
+  if (!entitlement.hubspotUserId || !entitlement.scopesGranted?.length) {
+    console.warn(
+      `[signup/claim] entitlement ${entitlement.product}:${entitlement.portalId} is missing hubspotUserId or scopesGranted — app_installed will fire with empty fallbacks; user should reinstall to refresh the stub`,
+    );
+  }
+  const additionalContactPatch = await buildInstallContactPatch({
+    email,
+    appName,
+  });
+  await trackEvents(email, [
+    {
+      type: "app_installed",
+      properties: {
+        app_name: appName,
+        portal_id: entitlement.portalId,
+        dunamis_account_id: entitlement.accountId ?? "",
+        hubspot_user_id: entitlement.hubspotUserId ?? "",
+        scopes_granted: entitlement.scopesGranted ?? [],
+      },
+      additionalContactPatch,
+    } satisfies EventSpec<"app_installed">,
+  ]);
 }

@@ -76,6 +76,25 @@ export interface Entitlement {
   portalId: string;
   portalDomain: string;
   installerEmail: string;
+  /**
+   * HubSpot user id of the installer — captured by PP/Debrief server
+   * at OAuth callback time from /oauth/v1/access-tokens/{token}.user_id
+   * and stamped on the stub. Carried through to the claim-time
+   * app_installed HubSpot event.
+   *
+   * Optional because stubs written before this field was introduced
+   * won't have it; readers handle that case by either waiting for a
+   * reinstall (the OAuth callback refreshes install-context fields) or
+   * sending the event with the value absent.
+   */
+  hubspotUserId?: string | null;
+  /**
+   * OAuth scopes the installer granted — captured at OAuth callback
+   * time from /oauth/v1/access-tokens/{token}.scopes. Refreshed on
+   * reinstall if the user re-consents with a different scope set.
+   * Same legacy-optional treatment as hubspotUserId.
+   */
+  scopesGranted?: string[];
   status: EntitlementStatus;
   tier: EntitlementTier | null;
   /** null only when the entitlement has never been activated. */

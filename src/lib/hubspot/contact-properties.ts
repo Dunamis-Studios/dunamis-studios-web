@@ -7,13 +7,18 @@ import type {
   EventPayloads,
   HubspotTier,
   LicenseRefundedProperties,
+  ProductAppName,
   PurchaseCompletedProperties,
   SubscriptionPaymentFailedProperties,
   SubscriptionRenewedProperties,
   TermsAcceptedProperties,
   TrackingEventType,
 } from "./events";
-import { ContactPatch, incrementContactProperty } from "./client";
+import {
+  ContactPatch,
+  getContactByEmail,
+  incrementContactProperty,
+} from "./client";
 
 /**
  * Convert an internal tier string (any case — e.g., the lowercase
@@ -298,4 +303,45 @@ export async function applyIncrements(
   for (const { property, delta } of increments) {
     await incrementContactProperty(email, property, delta);
   }
+}
+
+/**
+ * Build the additionalContactPatch for install-surfacing events
+ * (app_installed from the claim link path, purchase_completed from
+ * the Stripe webhook path). Sets stripe_customer_id when one is
+ * available, and sets *_first_install_at only if the contact doesn't
+ * already have it — read-before-write so re-subscribes or re-installs
+ * don't overwrite the original install date.
+ *
+ * Shared across every install-surfacing wire-up so the first-install
+ * semantics are defined once. If the lookup against HubSpot fails
+ * (network blip, rate limit), the timestamp is stamped anyway — a
+ * too-fresh date is a better failure mode than a blank field an
+ * analyst has to chase. Subsequent successful wire-ups won't overwrite
+ * the existing value.
+ */
+export async function buildInstallContactPatch({
+  email,
+  appName,
+  customerId,
+}: {
+  email: string;
+  appName: ProductAppName;
+  customerId?: string | null;
+}): Promise<ContactPatch> {
+  const firstInstallProp =
+    appName === "debrief"
+      ? "debrief_first_install_at"
+      : "property_pulse_first_install_at";
+  const patch: ContactPatch = {};
+  if (customerId) patch.stripe_customer_id = customerId;
+  try {
+    const existing = await getContactByEmail(email, [firstInstallProp]);
+    if (!existing?.properties?.[firstInstallProp]) {
+      patch[firstInstallProp] = new Date().toISOString();
+    }
+  } catch {
+    patch[firstInstallProp] = new Date().toISOString();
+  }
+  return patch;
 }
