@@ -122,13 +122,37 @@ export const termsDebrief: LegalDocument = {
       id: "d-credits",
       title: "Credit usage and rollover",
       body: (
-        <p>
-          Unused credits do not roll over between billing periods. On the first day of each new
-          billing period, Customer&rsquo;s credit balance is reset to the tier&rsquo;s monthly
-          allotment (plus any active bonus credits). Credits are consumed only when a Brief is
-          successfully generated; failed generations caused by upstream Sub-processor errors
-          (including Anthropic API failures) do not consume credits.
-        </p>
+        <>
+          <p>
+            <strong>Monthly allotment credits do not roll over.</strong> On the first day of
+            each new billing period, Customer&rsquo;s monthly-allotment balance is reset to the
+            tier&rsquo;s monthly allotment (plus any active first-month bonus credits). Any
+            unused portion of the prior period&rsquo;s monthly allotment is forfeited.
+          </p>
+          <p className="mt-3">
+            <strong>Add-on credits do not expire.</strong> Credits Customer purchases as
+            one-time add-on top-ups, separate from the monthly allotment, remain in
+            Customer&rsquo;s balance until consumed or until the Debrief subscription is
+            terminated. Add-on credits are not pro-rated or refundable except as required by
+            law or as set forth in the Master Agreement{" "}
+            <a className="underline" href="#m-warranties">§10</a> (limited service warranty
+            remedy) or <a className="underline" href="#m-term">§13</a> (termination for
+            convenience remedy). On termination, any unused add-on credits expire with the
+            subscription and are not refunded.
+          </p>
+          <p className="mt-3">
+            <strong>Consumption order.</strong> When Customer generates a Brief, Dunamis
+            Studios consumes monthly-allotment and bonus credits first, and draws from add-on
+            credits only after the monthly allotment for the current period is exhausted. This
+            protects the non-expiring add-on balance from being drawn down while unused
+            allotment credits would otherwise be forfeited at period reset.
+          </p>
+          <p className="mt-3">
+            <strong>What counts as consumption.</strong> Credits are consumed only when a Brief
+            is successfully generated; failed generations caused by upstream Sub-processor
+            errors (including Anthropic API failures) do not consume credits.
+          </p>
+        </>
       ),
     },
     {
