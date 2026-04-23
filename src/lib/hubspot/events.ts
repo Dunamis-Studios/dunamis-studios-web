@@ -17,6 +17,31 @@ export type ProductAppName = Extract<AppName, "debrief" | "property-pulse">;
 
 export type LicenseType = "subscription" | "one_time" | "credit_pack";
 
+/**
+ * HubSpot dropdown property values. Do NOT snake_case or lowercase —
+ * HubSpot dropdown option internal values are the exact label string
+ * as entered in the portal UI. Sending "active" to a property that
+ * HubSpot has defined with option "Active" returns HTTP 400. See the
+ * parent CLAUDE.md section "HubSpot property internal name behavior"
+ * for the underlying rule.
+ *
+ * Source of truth: HubSpot portal 20867488 → Settings → Properties →
+ * Contact properties → (property) → Edit. These unions must mirror
+ * what is defined there.
+ */
+export type HubspotTier = "None" | "Starter" | "Pro" | "Enterprise";
+
+export type HubspotSubscriptionStatus =
+  | "None"
+  | "Trial"
+  | "Active"
+  | "Past Due"
+  | "Cancelled";
+
+export type HubspotAccountStatus = "Active" | "Suspended" | "Cancelled";
+
+export type HubspotLicenseStatus = "None" | "Beta" | "Paid" | "Refunded";
+
 export type SignupSource = "website" | "hubspot_oauth_install";
 
 export type UninstallReason =
@@ -83,7 +108,7 @@ export interface PurchaseCompletedProperties {
   amount_cents: number;
   currency: string;
   license_type: LicenseType;
-  tier: string | null;
+  tier: HubspotTier | null;
   stripe_payment_intent_id: string;
 }
 
@@ -91,7 +116,7 @@ export interface SubscriptionRenewedProperties {
   app_name: ProductAppName;
   portal_id: string;
   dunamis_account_id: string;
-  tier: string;
+  tier: HubspotTier;
   amount_cents: number;
   credits_granted: number;
   stripe_subscription_id: string;
@@ -101,7 +126,7 @@ export interface SubscriptionPaymentFailedProperties {
   app_name: ProductAppName;
   portal_id: string;
   dunamis_account_id: string;
-  tier: string;
+  tier: HubspotTier;
   amount_cents: number;
   failure_reason: string;
   retry_attempt: number;

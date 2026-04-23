@@ -5,6 +5,7 @@ import type {
   AppInstalledProperties,
   AppUninstalledProperties,
   EventPayloads,
+  HubspotTier,
   LicenseRefundedProperties,
   PurchaseCompletedProperties,
   SubscriptionPaymentFailedProperties,
@@ -13,6 +14,35 @@ import type {
   TrackingEventType,
 } from "./events";
 import { ContactPatch, incrementContactProperty } from "./client";
+
+/**
+ * Convert an internal tier string (any case — e.g., the lowercase
+ * EntitlementTier used in src/lib/types.ts) into the HubSpot dropdown
+ * option value HubSpot stores. Returns null for empty/unknown input so
+ * the caller can omit the property from the patch and leave HubSpot's
+ * current value unchanged.
+ *
+ * Use this at every wire-up site that takes an internal tier and hands
+ * it to trackEvent — it keeps the "HubSpot dropdown values are the
+ * literal label" rule (see parent CLAUDE.md) in one place.
+ */
+export function toHubspotTier(
+  internal: string | null | undefined,
+): HubspotTier | null {
+  if (!internal) return null;
+  switch (internal.toLowerCase()) {
+    case "none":
+      return "None";
+    case "starter":
+      return "Starter";
+    case "pro":
+      return "Pro";
+    case "enterprise":
+      return "Enterprise";
+    default:
+      return null;
+  }
+}
 
 /**
  * Canonical list of the 23 custom contact properties in HubSpot portal
@@ -76,7 +106,7 @@ function deriveAccountCreated(
     patch: {
       dunamis_account_id: p.dunamis_account_id,
       account_created_at: ts,
-      account_status: "active",
+      account_status: "Active",
     },
     increments: [],
   };
@@ -123,11 +153,11 @@ function derivePurchaseCompleted(
     last_payment_at: ts,
   };
   if (p.license_type === "one_time" && p.app_name === "property-pulse") {
-    patch.property_pulse_license_status = "paid";
+    patch.property_pulse_license_status = "Paid";
     patch.property_pulse_purchase_date = ts;
   }
   if (p.license_type === "subscription" && p.app_name === "debrief") {
-    patch.debrief_subscription_status = "active";
+    patch.debrief_subscription_status = "Active";
     if (p.tier) patch.debrief_tier = p.tier;
   }
   return {
@@ -145,7 +175,7 @@ function deriveSubscriptionRenewed(
     last_payment_at: ts,
   };
   if (p.app_name === "debrief") {
-    patch.debrief_subscription_status = "active";
+    patch.debrief_subscription_status = "Active";
     patch.debrief_tier = p.tier;
   }
   return {
@@ -163,7 +193,7 @@ function deriveSubscriptionPaymentFailed(
     last_payment_failed_at: ts,
   };
   if (p.app_name === "debrief") {
-    patch.debrief_subscription_status = "past_due";
+    patch.debrief_subscription_status = "Past Due";
   }
   return { patch, increments: [] };
 }
@@ -173,10 +203,10 @@ function deriveLicenseRefunded(
 ): EventContactUpdates {
   const patch: ContactPatch = { dunamis_account_id: p.dunamis_account_id };
   if (p.app_name === "property-pulse") {
-    patch.property_pulse_license_status = "refunded";
+    patch.property_pulse_license_status = "Refunded";
   }
   if (p.app_name === "debrief") {
-    patch.debrief_subscription_status = "canceled";
+    patch.debrief_subscription_status = "Cancelled";
   }
   return {
     patch,

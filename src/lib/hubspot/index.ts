@@ -8,8 +8,16 @@ import {
   type TrackingEventType,
 } from "./events";
 
-export type { AppName, ProductAppName, TrackingEventType } from "./events";
-export type { EventPayloads } from "./events";
+export type {
+  AppName,
+  EventPayloads,
+  HubspotAccountStatus,
+  HubspotLicenseStatus,
+  HubspotSubscriptionStatus,
+  HubspotTier,
+  ProductAppName,
+  TrackingEventType,
+} from "./events";
 export * from "./client";
 export * from "./contact-properties";
 
