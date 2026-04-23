@@ -138,7 +138,15 @@ export interface LicenseRefundedProperties {
   portal_id: string;
   dunamis_account_id: string;
   refund_amount_cents: number;
-  days_since_install: number;
+  /**
+   * Days between original purchase and refund. Optional because the
+   * Stripe charge object doesn't carry a reliable purchase date —
+   * omit rather than send a lying 0 / null. Callers that have a
+   * trustworthy purchase date (e.g. from their own metadata) compute
+   * and supply this; callers that don't leave it undefined and the
+   * flattenProperties step drops it from the event payload.
+   */
+  days_since_install?: number;
   refund_reason: string;
   stripe_refund_id: string;
 }

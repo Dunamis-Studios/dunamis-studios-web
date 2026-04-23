@@ -152,18 +152,22 @@ function derivePurchaseCompleted(
     dunamis_account_id: p.dunamis_account_id,
     last_payment_at: ts,
   };
+  const increments: Increments[] = [
+    { property: "lifetime_value_cents", delta: p.amount_cents },
+  ];
   if (p.license_type === "one_time" && p.app_name === "property-pulse") {
+    patch.property_pulse_installed = "true";
     patch.property_pulse_license_status = "Paid";
     patch.property_pulse_purchase_date = ts;
+    increments.push({ property: "property_pulse_install_count", delta: 1 });
   }
   if (p.license_type === "subscription" && p.app_name === "debrief") {
+    patch.debrief_installed = "true";
     patch.debrief_subscription_status = "Active";
     if (p.tier) patch.debrief_tier = p.tier;
+    increments.push({ property: "debrief_install_count", delta: 1 });
   }
-  return {
-    patch,
-    increments: [{ property: "lifetime_value_cents", delta: p.amount_cents }],
-  };
+  return { patch, increments };
 }
 
 function deriveSubscriptionRenewed(
@@ -177,6 +181,10 @@ function deriveSubscriptionRenewed(
   if (p.app_name === "debrief") {
     patch.debrief_subscription_status = "Active";
     patch.debrief_tier = p.tier;
+    // Renewal = new billing period starts = monthly allotment resets.
+    // Absolute value (not increment) because the allotment is the new
+    // ceiling, not a delta on the prior month's remaining balance.
+    patch.debrief_credits_remaining = p.credits_granted;
   }
   return {
     patch,
@@ -204,6 +212,10 @@ function deriveLicenseRefunded(
   const patch: ContactPatch = { dunamis_account_id: p.dunamis_account_id };
   if (p.app_name === "property-pulse") {
     patch.property_pulse_license_status = "Refunded";
+    // One-time license refund revokes the install. If the admin
+    // reinstalls after a refund dispute, the next purchase_completed
+    // flips this back to "true".
+    patch.property_pulse_installed = "false";
   }
   if (p.app_name === "debrief") {
     patch.debrief_subscription_status = "Cancelled";

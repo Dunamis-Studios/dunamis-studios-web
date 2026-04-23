@@ -45,11 +45,19 @@ let loggedMissingToken = false;
  * Describes one event to track. Generic over K so `properties` is
  * narrowed to the payload shape for `type` — callers can't build a
  * spec with a mismatched payload.
+ *
+ * `additionalContactPatch` lets a wire-up site contribute contact-only
+ * properties that shouldn't live in the event payload (e.g.
+ * stripe_customer_id, or a conditionally-set first_install_at computed
+ * from a prior getContactByEmail). Merged alongside the deriver output
+ * in trackEvents; collisions are resolved last-write-wins so the
+ * additional patch overrides the deriver if the wire-up knows better.
  */
 export interface EventSpec<K extends TrackingEventType = TrackingEventType> {
   type: K;
   properties: EventPayloads[K];
   occurredAt?: Date;
+  additionalContactPatch?: ContactPatch;
 }
 
 /**
@@ -101,6 +109,9 @@ export async function trackEvents(
       ev.occurredAt ?? new Date(),
     );
     Object.assign(mergedPatch, patch);
+    if (ev.additionalContactPatch) {
+      Object.assign(mergedPatch, ev.additionalContactPatch);
+    }
     for (const { property, delta } of increments) {
       mergedIncrements.set(
         property,
