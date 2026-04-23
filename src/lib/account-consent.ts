@@ -79,16 +79,34 @@ export function computePendingConsentStamps(
  * buildAccountContactPatch(). Keeps hubspot lib decoupled from the
  * Account type while every HubSpot sync site can still produce a full
  * account-level patch in one call: buildAccountContactPatch(accountConsentArgs(account)).
+ *
+ * ToS + Privacy fallback policy (intentional, see doc below):
+ * creating a Dunamis account is implicit acceptance of the then-current
+ * ToS and Privacy Policy per the signup-form disclosure line. If an
+ * Account record lacks an explicit stamp (pre-consent-fields legacy
+ * data, or a race where signup succeeded but the consent write failed),
+ * fall back to account.createdAt for the timestamp and the current
+ * LEGAL_METADATA version for the version string. Never send blank
+ * ToS/Privacy fields to HubSpot — the user obviously accepted these
+ * by the act of signing up, and reporting shouldn't show blanks that
+ * contradict that.
+ *
+ * DPA + Service Addendum do NOT get this fallback. Those are
+ * install-scoped consents collected at the claim-link surface; if no
+ * claim ever happened, no DPA / addendum acceptance exists, and the
+ * fields correctly stay absent from the patch.
  */
 export function accountConsentArgs(account: Account) {
   return {
     accountId: account.accountId,
     createdAt: account.createdAt,
     deletedAt: account.deletedAt ?? null,
-    tosVersion: account.tosVersionAccepted,
-    tosAcceptedAt: account.tosAcceptedAt,
-    privacyVersion: account.privacyVersionAccepted,
-    privacyAcceptedAt: account.privacyAcceptedAt,
+    tosVersion:
+      account.tosVersionAccepted ?? LEGAL_METADATA.termsMaster.version,
+    tosAcceptedAt: account.tosAcceptedAt ?? account.createdAt,
+    privacyVersion:
+      account.privacyVersionAccepted ?? LEGAL_METADATA.privacy.version,
+    privacyAcceptedAt: account.privacyAcceptedAt ?? account.createdAt,
     dpaVersion: account.dpaVersionAccepted,
     dpaAcceptedAt: account.dpaAcceptedAt,
     debriefAddendumVersion: account.debriefAddendumVersionAccepted,

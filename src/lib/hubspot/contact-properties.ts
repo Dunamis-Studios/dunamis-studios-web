@@ -324,23 +324,33 @@ export async function applyIncrements(
  * fields. Used at every HubSpot sync site — signup, claim-link, and
  * every Stripe webhook helper — so contact-level state (account id,
  * created-at, status, consent versions + timestamps) is re-stamped
- * consistently on every sync, not just at signup. Missing fields are
- * omitted from the patch (HubSpot keeps whatever it had), so legacy
- * accounts that pre-date consent persistence don't lose existing
- * HubSpot data.
+ * consistently on every sync, not just at signup.
+ *
+ * ToS + Privacy are ALWAYS included in the patch because creating a
+ * Dunamis account is implicit acceptance of the then-current docs
+ * (signup-form disclosure line). Callers resolve any missing
+ * timestamp/version to a sensible fallback BEFORE calling this
+ * helper — see accountConsentArgs() in src/lib/account-consent.ts.
+ * This keeps the hubspot lib decoupled from LEGAL_METADATA (layer
+ * boundary) while still guaranteeing HubSpot never shows blank ToS /
+ * Privacy fields for accounts that obviously accepted by action.
+ *
+ * DPA + Service Addendum remain conditional — those are install-
+ * scoped consents stamped at the claim-link surface; an account
+ * without a claim has no honest DPA / addendum acceptance to stamp,
+ * so we omit rather than invent one.
  *
  * Takes primitives rather than the Account type so src/lib/hubspot/*
- * stays decoupled from src/lib/types.ts — callers destructure their
- * local Account instance and pass through.
+ * stays decoupled from src/lib/types.ts.
  */
 export function buildAccountContactPatch(args: {
   accountId: string;
   createdAt: string;
   deletedAt?: string | null;
-  tosVersion?: string;
-  tosAcceptedAt?: string;
-  privacyVersion?: string;
-  privacyAcceptedAt?: string;
+  tosVersion: string;
+  tosAcceptedAt: string;
+  privacyVersion: string;
+  privacyAcceptedAt: string;
   dpaVersion?: string;
   dpaAcceptedAt?: string;
   debriefAddendumVersion?: string;
@@ -352,11 +362,11 @@ export function buildAccountContactPatch(args: {
     dunamis_account_id: args.accountId,
     account_created_at: args.createdAt,
     account_status: args.deletedAt ? "Cancelled" : "Active",
+    tos_version_accepted: args.tosVersion,
+    tos_accepted_at: args.tosAcceptedAt,
+    privacy_version_accepted: args.privacyVersion,
+    privacy_accepted_at: args.privacyAcceptedAt,
   };
-  if (args.tosVersion) patch.tos_version_accepted = args.tosVersion;
-  if (args.tosAcceptedAt) patch.tos_accepted_at = args.tosAcceptedAt;
-  if (args.privacyVersion) patch.privacy_version_accepted = args.privacyVersion;
-  if (args.privacyAcceptedAt) patch.privacy_accepted_at = args.privacyAcceptedAt;
   if (args.dpaVersion) patch.dpa_version_accepted = args.dpaVersion;
   if (args.dpaAcceptedAt) patch.dpa_accepted_at = args.dpaAcceptedAt;
   if (args.debriefAddendumVersion) {
