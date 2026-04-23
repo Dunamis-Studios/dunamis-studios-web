@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
@@ -118,6 +117,15 @@ export default function RootLayout({
           }}
         />
         <JsonLd id="jsonld-organization" schema={organizationSchema} />
+        {/* Start of HubSpot Embed Code */}
+        <script
+          type="text/javascript"
+          id="hs-script-loader"
+          async
+          defer
+          src="//js.hs-scripts.com/20867488.js"
+        ></script>
+        {/* End of HubSpot Embed Code */}
       </head>
       <body>
         <a href="#main" className="skip-link">
@@ -127,11 +135,6 @@ export default function RootLayout({
           <ToastProvider>{children}</ToastProvider>
         </ThemeProvider>
         <Analytics />
-        <Script
-          id="hs-script-loader"
-          strategy="afterInteractive"
-          src="//js.hs-scripts.com/20867488.js"
-        />
       </body>
     </html>
   );
