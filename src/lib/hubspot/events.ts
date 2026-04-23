@@ -44,12 +44,6 @@ export type HubspotLicenseStatus = "None" | "Beta" | "Paid" | "Refunded";
 
 export type SignupSource = "website" | "hubspot_oauth_install";
 
-export type UninstallReason =
-  | "user_revoked_oauth"
-  | "app_uninstalled_from_hubspot"
-  | "account_deleted"
-  | "unknown";
-
 export type TermsDocumentType =
   | "tos"
   | "privacy"
@@ -101,7 +95,13 @@ export interface AppUninstalledProperties {
   app_name: ProductAppName;
   portal_id: string;
   dunamis_account_id: string;
-  uninstall_reason: UninstallReason;
+  /**
+   * uninstall_reason intentionally omitted — HubSpot's lifecycle
+   * event payload doesn't carry a reason, and free-text fields on
+   * events propagate into CSV export with formula-injection risk.
+   * Uninstall reason is captured separately via a HubSpot workflow-
+   * triggered survey email post-uninstall.
+   */
   days_since_install: number;
 }
 
