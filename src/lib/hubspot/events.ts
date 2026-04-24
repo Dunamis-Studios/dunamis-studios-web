@@ -103,6 +103,15 @@ export interface AppUninstalledProperties {
    * triggered survey email post-uninstall.
    */
   days_since_install: number;
+  /**
+   * UTC ISO timestamp of the uninstall, sourced from the journal
+   * event's `occurredAt`. Optional because the field is omitted when
+   * the source value is missing or unparseable — we never fall back
+   * to `Date.now()` at detection time; a missing stamp is more
+   * truthful than a wrong one. Mirrored onto the contact as
+   * {app}_last_uninstalled_at by the uninstall handler.
+   */
+  uninstalled_at?: string;
 }
 
 export interface PurchaseCompletedProperties {
