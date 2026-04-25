@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 const NAV_LINKS = [
   { href: "/products/property-pulse", label: "Property Pulse" },
   { href: "/products/debrief", label: "Debrief" },
+  { href: "/custom-development", label: "Custom Development" },
   { href: "/pricing", label: "Pricing" },
 ];
 

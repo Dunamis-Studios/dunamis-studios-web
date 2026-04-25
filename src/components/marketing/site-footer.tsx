@@ -57,6 +57,14 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
+              <Link
+                href="/custom-development"
+                className="text-[var(--fg-muted)] hover:text-[var(--fg)]"
+              >
+                Custom Development
+              </Link>
+            </li>
+            <li>
               <Link href="/help" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
                 Help center
               </Link>
