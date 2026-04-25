@@ -76,6 +76,10 @@ export async function handleStripeEvent(event: Stripe.Event): Promise<void> {
       await onPaymentIntentSucceeded(event.data.object);
       break;
     }
+    case "checkout.session.completed": {
+      await onCheckoutSessionCompleted(event.data.object);
+      break;
+    }
     case "charge.refunded": {
       await onChargeRefunded(event.data.object);
       break;
@@ -470,7 +474,80 @@ async function onInvoicePaymentFailed(
 }
 
 async function onChargeRefunded(charge: Stripe.Charge): Promise<void> {
+  // Flip Property Pulse entitlement state to "Refunded" so the account
+  // detail page reflects the revocation. Debrief charges pass through
+  // the subscription event path and leave entitlement state to
+  // subscription.updated / .deleted — we skip state mutation for them
+  // here to avoid racing those handlers.
+  const origin = await resolveRefundedChargeOrigin(charge);
+  if (origin && origin.product === "property-pulse") {
+    await withEntitlementLock(origin.product, origin.portalId, async () => {
+      const entitlement = await getEntitlement(origin.product, origin.portalId);
+      if (!entitlement) return;
+      entitlement.licenseStatus = "Refunded";
+      await saveEntitlement(entitlement);
+    });
+  }
   await fireLicenseRefundedForCharge(charge);
+}
+
+/**
+ * Handle checkout.session.completed for the Property Pulse one-time
+ * license flow. Debrief subscriptions don't use Stripe Checkout, so
+ * sessions without a PP product metadata tag are ignored. Stamps the
+ * entitlement as Paid inside the lock, then fires the
+ * purchase_completed HubSpot event (license_type=one_time) outside it.
+ */
+async function onCheckoutSessionCompleted(
+  session: Stripe.Checkout.Session,
+): Promise<void> {
+  const md = session.metadata ?? {};
+  const product = productFromMetadata(md);
+  const portalId = md.portalId;
+  if (product !== "property-pulse" || !portalId) {
+    console.log(
+      `[stripe-webhook] checkout.session.completed ${session.id}: not a PP session, skipping`,
+    );
+    return;
+  }
+  if (session.payment_status !== "paid") {
+    console.warn(
+      `[stripe-webhook] checkout.session.completed ${session.id}: payment_status=${session.payment_status}, not paid — skipping`,
+    );
+    return;
+  }
+
+  let purchaseCtx: { currency: string; amountCents: number } | null = null;
+  await withEntitlementLock(product, portalId, async () => {
+    const entitlement = await getEntitlement(product, portalId);
+    if (!entitlement) {
+      console.warn(
+        `[stripe-webhook] no entitlement for ${product}:${portalId} on session ${session.id} — skipping`,
+      );
+      return;
+    }
+    const customerId =
+      typeof session.customer === "string"
+        ? session.customer
+        : (session.customer?.id ?? null);
+    entitlement.licenseStatus = "Paid";
+    entitlement.status = "active";
+    entitlement.purchasedAt = new Date().toISOString();
+    if (customerId) entitlement.stripeCustomerId = customerId;
+    await saveEntitlement(entitlement);
+    purchaseCtx = {
+      currency: session.currency ?? "usd",
+      amountCents: session.amount_total ?? 0,
+    };
+  });
+
+  if (purchaseCtx) {
+    await firePurchaseCompletedForCheckoutSession(
+      { product, portalId },
+      session,
+      purchaseCtx,
+    );
+  }
 }
 
 async function onPaymentIntentSucceeded(
@@ -672,6 +749,69 @@ async function firePurchaseCompletedForSubscription(
         license_type: "subscription",
         tier,
         stripe_payment_intent_id,
+      },
+      additionalContactPatch: mergedPatch,
+    } satisfies EventSpec<"purchase_completed">,
+  ]);
+}
+
+/**
+ * Fire purchase_completed for a Property Pulse one-time Checkout. The
+ * HubSpot deriver auto-stamps property_pulse_license_status="Paid" +
+ * property_pulse_purchase_date on the contact when
+ * license_type="one_time" and app_name="property-pulse" — see
+ * derivePurchaseCompleted in src/lib/hubspot/contact-properties.ts.
+ */
+async function firePurchaseCompletedForCheckoutSession(
+  ref: { product: "property-pulse"; portalId: string },
+  session: Stripe.Checkout.Session,
+  ctx: { currency: string; amountCents: number },
+): Promise<void> {
+  const customerId =
+    typeof session.customer === "string"
+      ? session.customer
+      : (session.customer?.id ?? null);
+  const accountIdMeta =
+    session.metadata?.dunamisAccountId ?? session.metadata?.dunamisaccountid;
+  const hsCtx = await resolveHubspotContext({
+    accountIdFromMetadata: accountIdMeta,
+    customerId,
+  });
+  if (!hsCtx) {
+    console.warn(
+      `[stripe-webhook] skipping purchase_completed for session ${session.id}: no HubSpot context`,
+    );
+    return;
+  }
+
+  const paymentIntentId =
+    typeof session.payment_intent === "string"
+      ? session.payment_intent
+      : (session.payment_intent?.id ?? "");
+
+  const additionalContactPatch = await buildInstallContactPatch({
+    email: hsCtx.email,
+    appName: "property-pulse",
+    customerId,
+  });
+  const accountPatch = await buildAccountPatchForContext(hsCtx.accountId);
+  const mergedPatch: ContactPatch = {
+    ...accountPatch,
+    ...additionalContactPatch,
+  };
+
+  await trackEvents(hsCtx.email, [
+    {
+      type: "purchase_completed",
+      properties: {
+        app_name: "property-pulse",
+        portal_id: ref.portalId,
+        dunamis_account_id: hsCtx.accountId,
+        amount_cents: ctx.amountCents,
+        currency: ctx.currency,
+        license_type: "one_time",
+        tier: null,
+        stripe_payment_intent_id: paymentIntentId,
       },
       additionalContactPatch: mergedPatch,
     } satisfies EventSpec<"purchase_completed">,

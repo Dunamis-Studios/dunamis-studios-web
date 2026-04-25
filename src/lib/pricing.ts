@@ -199,6 +199,24 @@ export function getCreditPackPriceId(name: CreditPackName): string {
 }
 
 // ---------------------------------------------------------------------------
+// Property Pulse — flat one-time license
+// ---------------------------------------------------------------------------
+
+export const PROPERTY_PULSE_LICENSE_CENTS = 4900;
+export const PROPERTY_PULSE_LICENSE_DOLLARS = 49;
+
+/** Stripe Price ID for the Property Pulse one-time license ($49 per portal). */
+export function getPropertyPulseLicensePriceId(): string {
+  const id = process.env.STRIPE_PRICE_PROPERTY_PULSE_LICENSE;
+  if (!id) {
+    throw new Error(
+      "Missing env var STRIPE_PRICE_PROPERTY_PULSE_LICENSE for PP license price.",
+    );
+  }
+  return id;
+}
+
+// ---------------------------------------------------------------------------
 // Credit cost table (per handoff, by input tokens)
 //
 // Source: the Credit Model spec in the Stripe wiring prompt. Consumption

@@ -3,17 +3,16 @@ import { notFound } from "next/navigation";
 import { Check, ChevronDown, Receipt } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Badge, StatusBadge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
-import { HintTooltip } from "@/components/ui/tooltip";
 import { SectionCard } from "@/components/account/section-card";
 import { CancelSubscriptionBlock } from "@/components/account/cancel-subscription-block";
 import { UpgradeButton } from "@/components/account/upgrade-button";
 import { BuyCreditsButton } from "@/components/account/buy-credits-button";
+import { BuyPropertyPulseButton } from "@/components/account/buy-property-pulse-button";
 import { ManageBillingButton } from "@/components/account/manage-billing-button";
 import { getCurrentSession } from "@/lib/session";
 import { getEntitlement } from "@/lib/accounts";
-import { PRODUCT_META, type Entitlement, type EntitlementTier } from "@/lib/types";
+import { PRODUCT_META, type Entitlement } from "@/lib/types";
 import { stripe } from "@/lib/stripe";
 import type Stripe from "stripe";
 import { getTierFeatures } from "@/lib/pricing";
@@ -34,40 +33,15 @@ export async function generateMetadata({
   return { title: `${PRODUCT_META[prod.data].name} · ${portalId}` };
 }
 
-/**
- * Property Pulse has no canonical pricing source yet (out of scope), so
- * we keep a stub feature list here. Debrief reads from pricing.ts via
- * getTierFeatures so it matches the pricing page and subscribe modal.
- */
-const PROPERTY_PULSE_TIER_FEATURES: Record<EntitlementTier, string[]> = {
-  starter: [
-    "1 pipeline",
-    "Up to 3 health rules",
-    "Daily rollup email",
-    "7-day audit history",
-    "Email support",
-  ],
-  pro: [
-    "Unlimited pipelines",
-    "Unlimited health rules",
-    "Staleness + drift timers",
-    "Inline remediation",
-    "90-day audit history",
-    "Priority support",
-  ],
-  enterprise: [
-    "Everything in Pro",
-    "SSO + SCIM",
-    "Data residency",
-    "Custom SLAs",
-    "Dedicated engineer",
-  ],
-};
-
 export default async function EntitlementDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ product: string; portalId: string }>;
+  searchParams?: Promise<{
+    purchase?: string;
+    session_id?: string;
+  }>;
 }) {
   const s = await getCurrentSession();
   if (!s) return null;
@@ -80,6 +54,14 @@ export default async function EntitlementDetailPage({
   if (!entitlement || entitlement.accountId !== s.account.accountId) {
     notFound();
   }
+
+  const sp = (await searchParams) ?? {};
+  const purchaseSignal: "success" | "cancelled" | null =
+    sp.purchase === "success"
+      ? "success"
+      : sp.purchase === "cancelled"
+        ? "cancelled"
+        : null;
 
   const meta = PRODUCT_META[entitlement.product];
 
@@ -140,6 +122,13 @@ export default async function EntitlementDetailPage({
         </div>
       </header>
 
+      {purchaseSignal ? (
+        <PurchaseBanner
+          signal={purchaseSignal}
+          licenseStatus={entitlement.licenseStatus}
+        />
+      ) : null}
+
       <div className="mt-10 space-y-8">
         <CurrentPlanSection
           entitlement={entitlement}
@@ -157,19 +146,55 @@ export default async function EntitlementDetailPage({
   );
 }
 
-function CurrentPlanSection({
+function PurchaseBanner({
+  signal,
+  licenseStatus,
+}: {
+  signal: "success" | "cancelled";
+  licenseStatus?: Entitlement["licenseStatus"];
+}) {
+  if (signal === "success") {
+    // Webhook may not have landed yet if the user returns fast — the
+    // banner says "processing" until licenseStatus flips to "Paid".
+    const paid = licenseStatus === "Paid";
+    return (
+      <div
+        role="status"
+        className="mt-6 rounded-lg border border-[var(--color-success)]/30 bg-[var(--color-success)]/10 px-4 py-3 text-sm"
+      >
+        <span className="font-medium text-[var(--fg)]">
+          {paid ? "Payment complete." : "Payment received."}
+        </span>{" "}
+        <span className="text-[var(--fg-muted)]">
+          {paid
+            ? "Your Property Pulse license is active on this portal."
+            : "Your license will activate as soon as Stripe confirms — usually a few seconds. Refresh if you don't see it."}
+        </span>
+      </div>
+    );
+  }
+  return (
+    <div
+      role="status"
+      className="mt-6 rounded-lg border border-[var(--border)] bg-[var(--bg-subtle)] px-4 py-3 text-sm text-[var(--fg-muted)]"
+    >
+      Checkout cancelled. No charge was made. You can retry below.
+    </div>
+  );
+}
+
+async function CurrentPlanSection({
   entitlement,
   accountEmail,
 }: {
   entitlement: Entitlement;
   accountEmail: string;
 }) {
-  const isDebrief = entitlement.product === "debrief";
-  const features = entitlement.tier
-    ? isDebrief
-      ? getTierFeatures(entitlement.tier)
-      : PROPERTY_PULSE_TIER_FEATURES[entitlement.tier]
-    : [];
+  if (entitlement.product === "property-pulse") {
+    return <PropertyPulseLicenseSection entitlement={entitlement} />;
+  }
+
+  const features = entitlement.tier ? getTierFeatures(entitlement.tier) : [];
 
   return (
     <SectionCard title="Current plan" description="Your tier and what's included.">
@@ -196,23 +221,138 @@ function CurrentPlanSection({
             </p>
           )}
         </div>
-        {isDebrief ? (
-          <UpgradeButton
-            entitlement={entitlement}
-            accountEmail={accountEmail}
-          />
-        ) : (
-          <HintTooltip content="Billing is coming soon. Plan changes will be available once Stripe is wired up.">
-            <span tabIndex={0} className="inline-flex">
-              <Button variant="secondary" disabled aria-disabled>
-                Upgrade plan
-              </Button>
-            </span>
-          </HintTooltip>
-        )}
+        <UpgradeButton
+          entitlement={entitlement}
+          accountEmail={accountEmail}
+        />
       </div>
     </SectionCard>
   );
+}
+
+/**
+ * Property Pulse has one SKU — flat $49 per portal, one-time. The card
+ * either shows the Buy button (pre-purchase) or "License: Paid" with
+ * the purchase date and a receipt link (post-purchase). No tier,
+ * features, or subscription framing — PP is not a subscription.
+ */
+async function PropertyPulseLicenseSection({
+  entitlement,
+}: {
+  entitlement: Entitlement;
+}) {
+  const isPaid = entitlement.licenseStatus === "Paid";
+  const isRefunded = entitlement.licenseStatus === "Refunded";
+
+  let receiptUrl: string | null = null;
+  if (isPaid && entitlement.stripeCustomerId) {
+    receiptUrl = await fetchLatestPpReceiptUrl(
+      entitlement.stripeCustomerId,
+      entitlement.portalId,
+    );
+  }
+
+  return (
+    <SectionCard
+      title="License"
+      description="Property Pulse is licensed per portal. One-time $49, no subscription."
+    >
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2.5">
+            {isPaid ? (
+              <Badge variant="success">Paid</Badge>
+            ) : isRefunded ? (
+              <Badge variant="danger">Refunded</Badge>
+            ) : (
+              <Badge variant="neutral">Not purchased</Badge>
+            )}
+            {isPaid && entitlement.purchasedAt ? (
+              <span className="text-sm text-[var(--fg-muted)]">
+                Purchased {formatDate(entitlement.purchasedAt)}
+              </span>
+            ) : null}
+          </div>
+          {!isPaid && !isRefunded ? (
+            <p className="text-sm text-[var(--fg-muted)]">
+              Buy a license to unlock full access on this portal.
+            </p>
+          ) : null}
+          {isRefunded ? (
+            <p className="text-sm text-[var(--fg-muted)]">
+              Your license was refunded. Reach out at{" "}
+              <a
+                href="mailto:hello@dunamisstudios.net"
+                className="text-[var(--accent)] hover:underline"
+              >
+                hello@dunamisstudios.net
+              </a>{" "}
+              if you&apos;d like to reinstate it.
+            </p>
+          ) : null}
+        </div>
+        <div className="flex items-center gap-3">
+          {isPaid && receiptUrl ? (
+            <a
+              href={receiptUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm text-[var(--accent)] hover:underline"
+            >
+              View receipt
+            </a>
+          ) : null}
+          {!isPaid && !isRefunded ? (
+            <BuyPropertyPulseButton portalId={entitlement.portalId} />
+          ) : null}
+        </div>
+      </div>
+    </SectionCard>
+  );
+}
+
+/**
+ * Pull the receipt URL for the latest Property Pulse Checkout charge
+ * on this customer. Filters by product metadata so the lookup doesn't
+ * pick up e.g. a credit-pack receipt if the customer was ever shared
+ * across products (shouldn't happen per the per-entitlement-Customer
+ * model, but defense-in-depth). Returns null on any failure — the
+ * "View receipt" link is nice-to-have, not load-bearing.
+ */
+async function fetchLatestPpReceiptUrl(
+  customerId: string,
+  portalId: string,
+): Promise<string | null> {
+  try {
+    const api = stripe();
+    const resp = await api.paymentIntents.list({
+      customer: customerId,
+      limit: 20,
+      expand: ["data.latest_charge"],
+    });
+    const match = resp.data.find(
+      (pi) =>
+        pi.status === "succeeded" &&
+        pi.metadata?.product === "property-pulse" &&
+        pi.metadata?.portalId === portalId,
+    );
+    if (!match) return null;
+    const charge = (
+      match as unknown as {
+        latest_charge?: { receipt_url?: string | null } | string | null;
+      }
+    ).latest_charge;
+    if (charge && typeof charge !== "string") {
+      return charge.receipt_url ?? null;
+    }
+    return null;
+  } catch (err) {
+    console.warn(
+      "[pp-license] receipt lookup failed:",
+      err instanceof Error ? err.message : err,
+    );
+    return null;
+  }
 }
 
 function CreditsSection({

@@ -129,7 +129,7 @@ export default function PricingPage() {
           <PageHeader
             eyebrow="Pricing"
             title="Transparent tiers. No surprise line items."
-            description="Each product is priced on its own. Upgrade and downgrade anytime. Billing integration is coming soon — for now, install from the HubSpot marketplace and pricing will apply on your next renewal."
+            description="Each product is priced on its own. Install from the HubSpot marketplace, then pay from your account dashboard — one-time for Property Pulse, monthly for Debrief. Upgrade or downgrade Debrief tiers anytime."
           />
         </Container>
       </Section>

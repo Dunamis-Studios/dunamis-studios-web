@@ -130,6 +130,16 @@ export interface Entitlement {
   subscriptionHistory: string[];
   /** Set true when Stripe has scheduled cancellation at period end. */
   cancelAtPeriodEnd?: boolean;
+  /**
+   * One-time license state, Property Pulse only. Mirrors the HubSpot
+   * `property_pulse_license_status` dropdown on the contact. Debrief
+   * entitlements leave this undefined — subscription state lives on
+   * `status` / `tier` / `stripeSubscriptionId`. Values match the
+   * HubSpot option labels verbatim (see CLAUDE.md §15).
+   */
+  licenseStatus?: "None" | "Beta" | "Paid" | "Refunded";
+  /** ISO timestamp of the PP one-time purchase. Unset pre-purchase. */
+  purchasedAt?: string;
 }
 
 export function sumCredits(c: CreditBuckets | null): number {
