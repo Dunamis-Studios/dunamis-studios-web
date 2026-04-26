@@ -27,16 +27,7 @@ function buildHubspotPayload(data: ContactSubmitInput, hutk: string | undefined)
       { objectTypeId: "0-1", name: "firstname", value: data.firstname },
       { objectTypeId: "0-1", name: "lastname", value: data.lastname },
       { objectTypeId: "0-1", name: "email", value: data.email },
-      // Company name is written to BOTH places intentionally: the Contact
-      // object's own `company` property (so the Company column on contact
-      // lists/views is populated for reporting and segmentation) and the
-      // Company object's `name` property (which the HubSpot form requires
-      // and which drives the contact-to-company association). Without
-      // 0-2/name, the Submissions API returns 400 "Required field
-      // '0-2/name' is missing"; without 0-1/company, the contact's own
-      // Company Name property stays blank.
       { objectTypeId: "0-1", name: "company", value: data.company },
-      { objectTypeId: "0-2", name: "name", value: data.company },
       {
         objectTypeId: "0-1",
         name: "what_are_you_trying_to_solve",
