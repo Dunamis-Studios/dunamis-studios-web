@@ -213,6 +213,9 @@ export function CustomDevelopmentContactForm() {
 
         <div>
           <Label htmlFor="cd-solve">What are you trying to solve?</Label>
+          <FieldHint>
+            A few sentences is enough, we&apos;ll follow up with questions.
+          </FieldHint>
           <textarea
             id="cd-solve"
             name="what_are_you_trying_to_solve"
@@ -225,14 +228,15 @@ export function CustomDevelopmentContactForm() {
             aria-invalid={fieldErrors.what_are_you_trying_to_solve ? true : undefined}
             className={cn(FIELD_CHROME, "mt-1.5 min-h-28 py-2.5 leading-relaxed resize-y")}
           />
-          <FieldHint>
-            A few sentences is enough, we&apos;ll follow up with questions.
-          </FieldHint>
           <FieldError>{fieldErrors.what_are_you_trying_to_solve}</FieldError>
         </div>
 
         <div>
           <Label htmlFor="cd-budget">What&apos;s your budget range?</Label>
+          <FieldHint>
+            A rough range is fine. We&apos;ll quote a real number after scoping
+            the work together.
+          </FieldHint>
           <SelectField
             id="cd-budget"
             name="custom_dev_budget_range"
@@ -249,10 +253,6 @@ export function CustomDevelopmentContactForm() {
             options={BUDGET_OPTIONS}
             placeholder="Select a range"
           />
-          <FieldHint>
-            A rough range is fine. We&apos;ll quote a real number after scoping
-            the work together.
-          </FieldHint>
           <FieldError>{fieldErrors.custom_dev_budget_range}</FieldError>
         </div>
 
