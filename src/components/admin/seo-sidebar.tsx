@@ -50,7 +50,7 @@ export function SEOSidebar({
     <div className="space-y-4">
       {/* Target keyword input */}
       <div>
-        <label className="block text-xs font-medium text-[var(--fg-muted)] mb-1">Target keyword</label>
+        <label className="block text-xs font-medium text-[var(--fg-muted)] mb-1">Target search</label>
         <input
           type="text"
           value={targetKeyword}
