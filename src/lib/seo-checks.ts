@@ -52,9 +52,9 @@ export function runAllChecks(input: SEOInput): CheckResult[] {
 
   checks.push({
     id: "title-keyword",
-    label: "Title contains keyword",
+    label: "Title contains target search",
     ...!kw
-      ? { status: "skip", message: "No target keyword set" }
+      ? { status: "skip", message: "No target search set" }
       : containsKeyword(title, kw)
         ? { status: "pass", message: `Contains "${kw}"` }
         : { status: "fail", message: `Missing "${kw}" in title` },
@@ -72,9 +72,9 @@ export function runAllChecks(input: SEOInput): CheckResult[] {
 
   checks.push({
     id: "slug-keyword",
-    label: "Slug contains keyword",
+    label: "Slug contains target search",
     ...!kw
-      ? { status: "skip", message: "No target keyword set" }
+      ? { status: "skip", message: "No target search set" }
       : containsKeyword(slug, kw)
         ? { status: "pass", message: `Contains "${kw}"` }
         : { status: "warn", message: `"${kw}" not in slug` },
@@ -102,9 +102,9 @@ export function runAllChecks(input: SEOInput): CheckResult[] {
 
   checks.push({
     id: "desc-keyword",
-    label: "Description contains keyword",
+    label: "Description contains target search",
     ...!kw
-      ? { status: "skip", message: "No target keyword set" }
+      ? { status: "skip", message: "No target search set" }
       : containsKeyword(description, kw)
         ? { status: "pass", message: `Contains "${kw}"` }
         : { status: "warn", message: `"${kw}" not in description` },
@@ -199,22 +199,22 @@ export function runAllChecks(input: SEOInput): CheckResult[] {
     });
   }
 
-  // Keyword in first paragraph
+  // Target search in first paragraph
   const firstPMatch = contentHtml.match(/<p[^>]*>([\s\S]*?)<\/p>/i);
   const firstPText = firstPMatch ? stripHtml(firstPMatch[1]) : "";
   checks.push({
     id: "keyword-first-para",
-    label: "Keyword in first paragraph",
+    label: "Target search in first paragraph",
     ...!kw
-      ? { status: "skip", message: "No target keyword set" }
+      ? { status: "skip", message: "No target search set" }
       : containsKeyword(firstPText, kw)
         ? { status: "pass", message: `"${kw}" found in first paragraph` }
         : { status: "warn", message: `"${kw}" not in first paragraph` },
   });
 
-  // Keyword density
+  // Target search density
   if (!kw) {
-    checks.push({ id: "keyword-density", label: "Keyword density", status: "skip", message: "No target keyword set" });
+    checks.push({ id: "keyword-density", label: "Target search density", status: "skip", message: "No target search set" });
   } else {
     const bodyText = stripHtml(contentHtml).toLowerCase();
     const kwLower = kw.toLowerCase();
@@ -227,9 +227,9 @@ export function runAllChecks(input: SEOInput): CheckResult[] {
     const density = wc > 0 ? (count / wc) * 100 : 0;
     checks.push({
       id: "keyword-density",
-      label: "Keyword density",
+      label: "Target search density",
       ...density > 3
-        ? { status: "warn", message: `${density.toFixed(1)}% — possible keyword stuffing (>3%)` }
+        ? { status: "warn", message: `${density.toFixed(1)}% — possible stuffing (>3%)` }
         : { status: "pass", message: `${density.toFixed(1)}%` },
     });
   }
