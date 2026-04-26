@@ -36,8 +36,10 @@ export function PostEditor({ type, initial }: PostEditorProps) {
   const [contentHtml, setContentHtml] = React.useState(initial?.contentHtml ?? "");
   const [coverImageUrl, setCoverImageUrl] = React.useState(initial?.coverImageUrl ?? "");
   const [targetKeyword, setTargetKeyword] = React.useState(initial?.targetKeyword ?? "");
+  const [currentStatus, setCurrentStatus] = React.useState<"draft" | "published">(initial?.status ?? "draft");
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState("");
+  const [toast, setToast] = React.useState("");
 
   const [slugTouched, setSlugTouched] = React.useState(isEdit);
 
@@ -46,6 +48,11 @@ export function PostEditor({ type, initial }: PostEditorProps) {
     if (!slugTouched) {
       setSlug(slugify(value));
     }
+  }
+
+  function showToast(message: string) {
+    setToast(message);
+    setTimeout(() => setToast(""), 3000);
   }
 
   async function save(status: "draft" | "published") {
@@ -81,6 +88,14 @@ export function PostEditor({ type, initial }: PostEditorProps) {
       if (!isEdit && data.post?.slug) {
         router.push(`/admin/content/${type}s/${data.post.slug}/edit`);
       } else {
+        setCurrentStatus(status);
+        if (status === "published") {
+          showToast("Published just now");
+        } else if (currentStatus === "published" && status === "draft") {
+          showToast("Unpublished");
+        } else {
+          showToast("Draft saved");
+        }
         router.refresh();
       }
     } catch {
@@ -90,6 +105,8 @@ export function PostEditor({ type, initial }: PostEditorProps) {
     }
   }
 
+  const isPublished = currentStatus === "published";
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -97,6 +114,11 @@ export function PostEditor({ type, initial }: PostEditorProps) {
           {isEdit ? "Edit" : "New"} {type === "guide" ? "Guide" : "Article"}
         </h1>
         <div className="flex items-center gap-2">
+          {toast && (
+            <span className="text-sm text-[var(--color-success)] animate-fade-in">
+              {toast}
+            </span>
+          )}
           <button
             type="button"
             disabled={saving}
@@ -105,14 +127,25 @@ export function PostEditor({ type, initial }: PostEditorProps) {
           >
             Save Draft
           </button>
-          <button
-            type="button"
-            disabled={saving}
-            onClick={() => save("published")}
-            className="rounded-md bg-[var(--accent)] px-3 py-1.5 text-sm font-medium text-[var(--accent-fg)] hover:opacity-90 disabled:opacity-50"
-          >
-            Publish
-          </button>
+          {isPublished ? (
+            <button
+              type="button"
+              disabled={saving}
+              onClick={() => save("draft")}
+              className="rounded-md border border-[var(--border)] px-3 py-1.5 text-sm font-medium text-[var(--fg-muted)] hover:bg-[var(--bg-subtle)] disabled:opacity-50"
+            >
+              Unpublish
+            </button>
+          ) : (
+            <button
+              type="button"
+              disabled={saving}
+              onClick={() => save("published")}
+              className="rounded-md bg-[var(--accent)] px-3 py-1.5 text-sm font-medium text-[var(--accent-fg)] hover:opacity-90 disabled:opacity-50"
+            >
+              Publish
+            </button>
+          )}
           {isEdit && (
             <a
               href={`/admin/content/${type}s/${slug}/preview`}
