@@ -183,3 +183,40 @@ export async function requireSession() {
   if (!s) throw new Response("Unauthorized", { status: 401 });
   return s;
 }
+
+// ---------------------------------------------------------------------------
+// Admin gate — env-var-as-ACL, no role field on Account
+// ---------------------------------------------------------------------------
+
+function getAdminEmails(): string[] {
+  return (process.env.ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+/**
+ * Returns the current session if the logged-in user is an admin, else null.
+ * Use in server components / layouts where you want to redirect rather than 403.
+ */
+export async function getCurrentAdminSession() {
+  const s = await getCurrentSession();
+  if (!s) return null;
+  const admins = getAdminEmails();
+  if (!admins.includes(s.account.email.toLowerCase())) return null;
+  return s;
+}
+
+/**
+ * Requires a valid session whose email is in ADMIN_EMAILS.
+ * Throws 401 if not logged in, 403 if logged in but not admin.
+ */
+export async function requireAdmin() {
+  const s = await getCurrentSession();
+  if (!s) throw new Response("Unauthorized", { status: 401 });
+  const admins = getAdminEmails();
+  if (!admins.includes(s.account.email.toLowerCase())) {
+    throw new Response("Forbidden", { status: 403 });
+  }
+  return s;
+}

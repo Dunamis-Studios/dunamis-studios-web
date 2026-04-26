@@ -13,6 +13,8 @@ const NAV_LINKS = [
   { href: "/products/property-pulse", label: "Property Pulse" },
   { href: "/products/debrief", label: "Debrief" },
   { href: "/custom-development", label: "Custom Development" },
+  { href: "/guides", label: "Guides" },
+  { href: "/articles", label: "Articles" },
   { href: "/pricing", label: "Pricing" },
 ];
 

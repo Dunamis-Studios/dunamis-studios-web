@@ -4,6 +4,7 @@ import {
   getPublishedArticles,
   getRecentArticles,
 } from "@/lib/kb";
+import { listPosts } from "@/lib/content";
 
 /**
  * Last-modified timestamp bumped per deploy for static marketing
@@ -128,7 +129,48 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  return [...staticEntries, ...helpEntries];
+  // Guides & Articles from Redis
+  const [publishedGuides, publishedArticles] = await Promise.all([
+    listPosts("guide", { includeDrafts: false }),
+    listPosts("article", { includeDrafts: false }),
+  ]);
+
+  const contentEntries: MetadataRoute.Sitemap = [
+    ...(publishedGuides.length > 0
+      ? [
+          {
+            url: `${base}/guides`,
+            lastModified: new Date(publishedGuides[0].updatedAt),
+            changeFrequency: "weekly" as const,
+            priority: 0.7,
+          },
+        ]
+      : []),
+    ...publishedGuides.map((p) => ({
+      url: `${base}/guides/${p.slug}`,
+      lastModified: new Date(p.updatedAt),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...(publishedArticles.length > 0
+      ? [
+          {
+            url: `${base}/articles`,
+            lastModified: new Date(publishedArticles[0].updatedAt),
+            changeFrequency: "weekly" as const,
+            priority: 0.7,
+          },
+        ]
+      : []),
+    ...publishedArticles.map((p) => ({
+      url: `${base}/articles/${p.slug}`,
+      lastModified: new Date(p.updatedAt),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+  ];
+
+  return [...staticEntries, ...helpEntries, ...contentEntries];
 }
 
 function categoryLastModified(

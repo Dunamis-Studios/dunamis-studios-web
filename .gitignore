@@ -13,3 +13,6 @@ next-env.d.ts.backup
 # PEM / certs — Next's default scaffold ignores these; keeping project-local
 # since PEMs aren't universal ignore-territory.
 *.pem
+
+.vercel
+.env*.local

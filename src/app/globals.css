@@ -460,3 +460,61 @@
   font-size: 0.85em;
   color: var(--fg);
 }
+
+/* -----------------------------------------------------------------------
+   Tiptap editor content — mirrors kb-prose for WYSIWYG fidelity
+   ------------------------------------------------------------------- */
+
+.tiptap-content .tiptap {
+  outline: none;
+  min-height: 380px;
+}
+.tiptap-content .tiptap > *:first-child { margin-top: 0; }
+.tiptap-content .tiptap p { margin: 0.8em 0; }
+.tiptap-content .tiptap h2 { font-size: 1.5rem; margin: 1.6em 0 0.5em; }
+.tiptap-content .tiptap h3 { font-size: 1.2rem; margin: 1.4em 0 0.4em; }
+.tiptap-content .tiptap ul { list-style: disc; padding-left: 1.5em; margin: 0.8em 0; }
+.tiptap-content .tiptap ol { list-style: decimal; padding-left: 1.5em; margin: 0.8em 0; }
+.tiptap-content .tiptap li { margin: 0.3em 0; }
+.tiptap-content .tiptap blockquote {
+  border-left: 3px solid var(--border-strong);
+  padding-left: 1em;
+  margin: 1em 0;
+  color: var(--fg-muted);
+  font-style: italic;
+}
+.tiptap-content .tiptap code {
+  background: var(--bg-muted);
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-xs);
+  font-size: 0.9em;
+}
+.tiptap-content .tiptap pre {
+  background: var(--color-ink-950);
+  color: var(--color-ink-100);
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin: 1em 0;
+  font-size: 0.88rem;
+}
+.tiptap-content .tiptap pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+.tiptap-content .tiptap a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.tiptap-content .tiptap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  margin: 1em 0;
+}
+.tiptap-content .tiptap hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 1.5em 0;
+}

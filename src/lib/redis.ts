@@ -55,4 +55,10 @@ export const KEY = {
   kbRating: (articleKey: string) => `dunamis:kb:rating:${articleKey}`,
   kbRated: (articleKey: string) => `dunamis:kb:rated:${articleKey}`,
   kbFeedback: (articleKey: string) => `dunamis:kb:feedback:${articleKey}`,
+  // --- Guides & Articles ---
+  guide: (slug: string) => `dunamis:guide:${slug}`,
+  article: (slug: string) => `dunamis:article:${slug}`,
+  guidesIndex: "dunamis:guides:index",
+  articlesIndex: "dunamis:articles:index",
+  image: (id: string) => `dunamis:image:${id}`,
 } as const;
