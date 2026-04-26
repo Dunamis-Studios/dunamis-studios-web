@@ -170,10 +170,10 @@ export default function CustomDevelopmentPage() {
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg">
-                <a href="mailto:josh@dunamisstudios.net">
+                <Link href="#contact">
                   <Mail className="h-4 w-4" />
                   Start a conversation
-                </a>
+                </Link>
               </Button>
               <Button asChild size="lg" variant="secondary">
                 <Link href="#what-we-build">
@@ -303,7 +303,7 @@ export default function CustomDevelopmentPage() {
       </Section>
 
       {/* ---- CTA ---- */}
-      <Section className="border-t border-[var(--border)]">
+      <Section id="contact" className="border-t border-[var(--border)]">
         <Container size="md">
           <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] px-8 py-16 text-center sm:px-16">
             <div
