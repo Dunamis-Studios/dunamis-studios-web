@@ -9,6 +9,7 @@ export interface Post {
   contentHtml: string;
   status: "draft" | "published";
   coverImageUrl?: string;
+  targetKeyword?: string;
   createdAt: number;
   updatedAt: number;
   publishedAt?: number;

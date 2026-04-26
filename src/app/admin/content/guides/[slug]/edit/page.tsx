@@ -21,6 +21,7 @@ export default async function EditGuidePage({ params }: Props) {
         contentHtml: post.contentHtml,
         status: post.status,
         coverImageUrl: post.coverImageUrl,
+        targetKeyword: post.targetKeyword,
       }}
     />
   );

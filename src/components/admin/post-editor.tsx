@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { TiptapEditor } from "./tiptap-editor";
+import { SEOSidebar } from "./seo-sidebar";
 
 interface PostEditorProps {
   type: "guide" | "article";
@@ -13,6 +14,7 @@ interface PostEditorProps {
     contentHtml: string;
     status: "draft" | "published";
     coverImageUrl?: string;
+    targetKeyword?: string;
   };
 }
 
@@ -33,6 +35,7 @@ export function PostEditor({ type, initial }: PostEditorProps) {
   const [description, setDescription] = React.useState(initial?.description ?? "");
   const [contentHtml, setContentHtml] = React.useState(initial?.contentHtml ?? "");
   const [coverImageUrl, setCoverImageUrl] = React.useState(initial?.coverImageUrl ?? "");
+  const [targetKeyword, setTargetKeyword] = React.useState(initial?.targetKeyword ?? "");
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState("");
 
@@ -57,6 +60,7 @@ export function PostEditor({ type, initial }: PostEditorProps) {
       contentHtml,
       status,
       coverImageUrl: coverImageUrl || undefined,
+      targetKeyword: targetKeyword || undefined,
     };
 
     try {
@@ -128,8 +132,22 @@ export function PostEditor({ type, initial }: PostEditorProps) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="space-y-4 lg:col-span-2">
+      {/* Mobile SEO sidebar toggle */}
+      <div className="lg:hidden">
+        <SEOSidebar
+          title={title}
+          slug={slug}
+          description={description}
+          contentHtml={contentHtml}
+          coverImageUrl={coverImageUrl}
+          targetKeyword={targetKeyword}
+          onTargetKeywordChange={setTargetKeyword}
+        />
+      </div>
+
+      <div className="flex gap-6">
+        {/* Left column: editor fields */}
+        <div className="min-w-0 flex-1 space-y-4">
           <div>
             <label className="block text-sm font-medium text-[var(--fg-muted)] mb-1">Title</label>
             <input
@@ -167,13 +185,6 @@ export function PostEditor({ type, initial }: PostEditorProps) {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-[var(--fg-muted)] mb-1">Content</label>
-            <TiptapEditor content={contentHtml} onChange={setContentHtml} />
-          </div>
-        </div>
-
-        <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-[var(--fg-muted)] mb-1">Cover Image</label>
             <div className="flex gap-2">
@@ -220,6 +231,24 @@ export function PostEditor({ type, initial }: PostEditorProps) {
               />
             )}
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-[var(--fg-muted)] mb-1">Content</label>
+            <TiptapEditor content={contentHtml} onChange={setContentHtml} />
+          </div>
+        </div>
+
+        {/* Right column: SEO sidebar (desktop) */}
+        <div className="hidden lg:block w-80 shrink-0">
+          <SEOSidebar
+            title={title}
+            slug={slug}
+            description={description}
+            contentHtml={contentHtml}
+            coverImageUrl={coverImageUrl}
+            targetKeyword={targetKeyword}
+            onTargetKeywordChange={setTargetKeyword}
+          />
         </div>
       </div>
     </div>

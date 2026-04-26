@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   const session = await requireAdmin();
 
   const body = await req.json();
-  const { type, title, slug, description, contentHtml, status, coverImageUrl } = body as {
+  const { type, title, slug, description, contentHtml, status, coverImageUrl, targetKeyword } = body as {
     type: ContentType;
     title: string;
     slug?: string;
@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
     contentHtml: string;
     status: "draft" | "published";
     coverImageUrl?: string;
+    targetKeyword?: string;
   };
 
   if (!type || !title || !description) {
@@ -44,6 +45,7 @@ export async function POST(req: NextRequest) {
     contentHtml: contentHtml || "",
     status,
     coverImageUrl: coverImageUrl || undefined,
+    targetKeyword: targetKeyword || undefined,
     createdAt: now,
     updatedAt: now,
     publishedAt: status === "published" ? now : undefined,
@@ -58,7 +60,7 @@ export async function PUT(req: NextRequest) {
   await requireAdmin();
 
   const body = await req.json();
-  const { type, slug, title, description, contentHtml, status, coverImageUrl } = body as {
+  const { type, slug, title, description, contentHtml, status, coverImageUrl, targetKeyword } = body as {
     type: ContentType;
     slug: string;
     title: string;
@@ -66,6 +68,7 @@ export async function PUT(req: NextRequest) {
     contentHtml: string;
     status: "draft" | "published";
     coverImageUrl?: string;
+    targetKeyword?: string;
   };
 
   if (!type || !slug || !title) {
@@ -85,6 +88,7 @@ export async function PUT(req: NextRequest) {
     contentHtml: contentHtml || "",
     status,
     coverImageUrl: coverImageUrl || undefined,
+    targetKeyword: targetKeyword || undefined,
     updatedAt: now,
     publishedAt:
       status === "published" && !existing.publishedAt

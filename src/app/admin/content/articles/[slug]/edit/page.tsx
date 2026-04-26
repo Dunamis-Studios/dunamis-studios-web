@@ -21,6 +21,7 @@ export default async function EditArticlePage({ params }: Props) {
         contentHtml: post.contentHtml,
         status: post.status,
         coverImageUrl: post.coverImageUrl,
+        targetKeyword: post.targetKeyword,
       }}
     />
   );
