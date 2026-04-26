@@ -143,7 +143,10 @@ export function CustomDevelopmentContactForm() {
       >
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <Label htmlFor="cd-firstname">First Name</Label>
+            <Label htmlFor="cd-firstname">
+              First Name
+              <span aria-hidden className="ml-0.5 text-[var(--color-danger)]">*</span>
+            </Label>
             <Input
               id="cd-firstname"
               name="firstname"
@@ -159,7 +162,10 @@ export function CustomDevelopmentContactForm() {
             <FieldError>{fieldErrors.firstname}</FieldError>
           </div>
           <div>
-            <Label htmlFor="cd-lastname">Last Name</Label>
+            <Label htmlFor="cd-lastname">
+              Last Name
+              <span aria-hidden className="ml-0.5 text-[var(--color-danger)]">*</span>
+            </Label>
             <Input
               id="cd-lastname"
               name="lastname"
@@ -177,7 +183,10 @@ export function CustomDevelopmentContactForm() {
         </div>
 
         <div>
-          <Label htmlFor="cd-email">Email</Label>
+          <Label htmlFor="cd-email">
+            Email
+            <span aria-hidden className="ml-0.5 text-[var(--color-danger)]">*</span>
+          </Label>
           <Input
             id="cd-email"
             name="email"
@@ -195,7 +204,10 @@ export function CustomDevelopmentContactForm() {
         </div>
 
         <div>
-          <Label htmlFor="cd-company">Company name</Label>
+          <Label htmlFor="cd-company">
+            Company name
+            <span aria-hidden className="ml-0.5 text-[var(--color-danger)]">*</span>
+          </Label>
           <Input
             id="cd-company"
             name="company"
@@ -212,7 +224,10 @@ export function CustomDevelopmentContactForm() {
         </div>
 
         <div>
-          <Label htmlFor="cd-solve">What are you trying to solve?</Label>
+          <Label htmlFor="cd-solve">
+            What are you trying to solve?
+            <span aria-hidden className="ml-0.5 text-[var(--color-danger)]">*</span>
+          </Label>
           <FieldHint>
             A few sentences is enough, we&apos;ll follow up with questions.
           </FieldHint>
@@ -232,7 +247,10 @@ export function CustomDevelopmentContactForm() {
         </div>
 
         <div>
-          <Label htmlFor="cd-budget">What&apos;s your budget range?</Label>
+          <Label htmlFor="cd-budget">
+            What&apos;s your budget range?
+            <span aria-hidden className="ml-0.5 text-[var(--color-danger)]">*</span>
+          </Label>
           <FieldHint>
             A rough range is fine. We&apos;ll quote a real number after scoping
             the work together.
@@ -257,7 +275,10 @@ export function CustomDevelopmentContactForm() {
         </div>
 
         <div>
-          <Label htmlFor="cd-timeline">When do you need this?</Label>
+          <Label htmlFor="cd-timeline">
+            When do you need this?
+            <span aria-hidden className="ml-0.5 text-[var(--color-danger)]">*</span>
+          </Label>
           <SelectField
             id="cd-timeline"
             name="custom_dev_timeline"
