@@ -79,7 +79,7 @@ export function PostEditor({ type, initial }: PostEditorProps) {
       } else {
         router.refresh();
       }
-    } catch (err) {
+    } catch {
       setError("Network error");
     } finally {
       setSaving(false);
@@ -212,6 +212,7 @@ export function PostEditor({ type, initial }: PostEditorProps) {
               </button>
             </div>
             {coverImageUrl && (
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={coverImageUrl}
                 alt="Cover preview"

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
 import { listPosts } from "@/lib/content";
@@ -34,9 +35,11 @@ export default async function ArticlesPage() {
                 className="group rounded-lg border border-[var(--border)] p-5 transition-colors hover:border-[var(--fg-muted)]"
               >
                 {post.coverImageUrl && (
-                  <img
+                  <Image
                     src={post.coverImageUrl}
                     alt=""
+                    width={600}
+                    height={338}
                     className="mb-4 aspect-video w-full rounded-md object-cover"
                   />
                 )}

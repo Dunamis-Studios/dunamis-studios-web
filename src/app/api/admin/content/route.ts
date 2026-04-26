@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  const session = await requireAdmin();
+  await requireAdmin();
 
   const body = await req.json();
   const { type, slug, title, description, contentHtml, status, coverImageUrl } = body as {

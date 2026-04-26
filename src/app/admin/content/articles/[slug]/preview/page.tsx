@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Container, Section } from "@/components/ui/primitives";
 import { getPost } from "@/lib/content";
@@ -21,9 +22,11 @@ export default async function PreviewArticlePage({ params }: Props) {
           </Badge>
         </div>
         {post.coverImageUrl && (
-          <img
+          <Image
             src={post.coverImageUrl}
             alt=""
+            width={800}
+            height={450}
             className="mb-8 aspect-video w-full rounded-lg object-cover"
           />
         )}

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentSession, getCurrentAdminSession } from "@/lib/session";
 
@@ -39,24 +40,24 @@ export default async function AdminLayout({
       <header className="border-b border-[var(--border)] bg-[var(--bg-elevated)]">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
-            <a href="/admin/content" className="text-sm font-medium text-[var(--fg)]">
+            <Link href="/admin/content" className="text-sm font-medium text-[var(--fg)]">
               Admin
-            </a>
+            </Link>
             <nav className="flex items-center gap-1">
-              <a
+              <Link
                 href="/admin/content"
                 className="rounded-md px-3 py-1.5 text-sm text-[var(--fg-muted)] hover:text-[var(--fg)]"
               >
                 Content
-              </a>
+              </Link>
             </nav>
           </div>
-          <a
+          <Link
             href="/"
             className="text-sm text-[var(--fg-muted)] hover:text-[var(--fg)]"
           >
             Back to site
-          </a>
+          </Link>
         </div>
       </header>
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">

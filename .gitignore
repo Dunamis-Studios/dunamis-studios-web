@@ -3,6 +3,9 @@
 # .vercel, coverage, generic build outputs) live in ~/.gitignore_global —
 # see Hubspot Development - Personal/CLAUDE.md §12.
 
+# Dependencies
+node_modules/
+
 # Next.js
 .next/
 next-env.d.ts.backup
