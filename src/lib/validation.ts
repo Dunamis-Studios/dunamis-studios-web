@@ -143,3 +143,63 @@ export function parseClaimToken(
 
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+
+/**
+ * Custom-development contact form. Mirrors the field-name contract of the
+ * HubSpot form `cfda52bd-4573-4e7e-9057-68d2aea2a10a` in portal 20867488,
+ * so values can be POSTed straight through to the Submissions API without
+ * a translation layer. Dropdown values are the literal HubSpot option
+ * strings (label === value); see CLAUDE.md §15 on dropdown internal-value
+ * casing rules.
+ */
+export const BUDGET_OPTIONS = [
+  "Under $5K",
+  "$5K-$15K",
+  "$15K-$50K",
+  "$50K+",
+] as const;
+
+export const TIMELINE_OPTIONS = [
+  "ASAP",
+  "This quarter",
+  "Next quarter",
+  "Just exploring",
+] as const;
+
+export const contactSubmitSchema = z.object({
+  firstname: z
+    .string()
+    .trim()
+    .min(1, "First name is required")
+    .max(80, "First name is too long"),
+  lastname: z
+    .string()
+    .trim()
+    .min(1, "Last name is required")
+    .max(80, "Last name is too long"),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(3, "Email is required")
+    .max(254, "Email is too long")
+    .email("Enter a valid email address"),
+  company: z
+    .string()
+    .trim()
+    .min(1, "Company is required")
+    .max(120, "Company is too long"),
+  what_are_you_trying_to_solve: z
+    .string()
+    .trim()
+    .min(1, "Required")
+    .max(5000, "Too long"),
+  custom_dev_budget_range: z.enum(BUDGET_OPTIONS, {
+    errorMap: () => ({ message: "Choose a budget range" }),
+  }),
+  custom_dev_timeline: z.enum(TIMELINE_OPTIONS, {
+    errorMap: () => ({ message: "Choose a timeline" }),
+  }),
+});
+
+export type ContactSubmitInput = z.infer<typeof contactSubmitSchema>;

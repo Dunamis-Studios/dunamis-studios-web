@@ -11,6 +11,7 @@ import { Container, Section } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HeroGradient } from "@/components/marketing/hero-gradient";
+import { CustomDevelopmentContactForm } from "@/components/marketing/custom-development-contact-form";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -313,27 +314,7 @@ export default function CustomDevelopmentPage() {
                   "radial-gradient(ellipse at bottom, color-mix(in oklch, var(--color-brand-500) 30%, transparent) 0%, transparent 60%)",
               }}
             />
-            <h2 className="font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
-              Let&apos;s Talk
-            </h2>
-            <p className="mx-auto mt-4 max-w-lg text-[var(--fg-muted)]">
-              Tell us what you&apos;re working on. We&apos;ll respond within
-              two business days with whether it&apos;s something we can help
-              with and a rough sense of scope.
-            </p>
-            {/* TODO: Replace this mailto button with an embedded HubSpot
-                contact form once the form is built in the Dunamis portal. */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Button asChild size="lg">
-                <a href="mailto:josh@dunamisstudios.net">
-                  <Mail className="h-4 w-4" />
-                  josh@dunamisstudios.net
-                </a>
-              </Button>
-            </div>
-            <p className="mx-auto mt-6 max-w-md text-sm text-[var(--fg-subtle)]">
-              Pricing scoped per project. Contact for quote.
-            </p>
+            <CustomDevelopmentContactForm />
           </div>
         </Container>
       </Section>
