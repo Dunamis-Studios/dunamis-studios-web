@@ -76,24 +76,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "yearly",
       priority: 0.3,
     },
-    {
-      url: `${base}/login`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    {
-      url: `${base}/signup`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${base}/forgot-password`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "yearly",
-      priority: 0.2,
-    },
   ];
 
   // Help-center surfaces. /help/search is deliberately excluded:
