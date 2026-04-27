@@ -117,6 +117,10 @@ export default function RootLayout({
           }}
         />
         <JsonLd id="jsonld-organization" schema={organizationSchema} />
+        <meta
+          name="p:domain_verify"
+          content="530ebe035dc8f3e8ae2cfc6b43aa2f96"
+        />
         {/* Start of HubSpot Embed Code */}
         <script
           type="text/javascript"
