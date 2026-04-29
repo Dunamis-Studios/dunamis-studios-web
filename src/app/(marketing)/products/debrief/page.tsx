@@ -52,15 +52,74 @@ const debriefSchema = {
   ],
 };
 
+// Single source of truth for the buyer-intent FAQ. Used twice on the
+// page: rendered as <details> accordions inside ProductPageShell, and
+// emitted as schema.org FAQPage JSON-LD for AEO extraction (so answer
+// engines can cite individual Q/A pairs verbatim). Edits here flow to
+// both surfaces; do not maintain a parallel list.
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "What is Debrief?",
+    a: "Debrief is a HubSpot marketplace app from Dunamis Studios that generates structured handoff briefs and conversational handoff messages whenever ownership of a CRM record changes. It reads the record's properties, history, associations, and engagement to produce a concise brief for the new owner and a personalized message the previous owner can send to the contact. The goal is to preserve context across handoffs instead of restarting it from scratch.",
+  },
+  {
+    q: "How is Debrief different from AI meeting summary tools?",
+    a: "AI meeting summary tools (Otter, Fireflies, Gong, Fathom, and similar) turn a single recorded conversation into notes, action items, and sometimes a follow-up email. Debrief is triggered by a different event: a CRM record changing ownership in HubSpot. It reads the entire record (properties, change history, associations, engagement timeline) rather than one meeting, and produces a brief for the new owner plus a draft message the previous owner can send to the contact. The two solve adjacent but different problems.",
+  },
+  {
+    q: "When does Debrief generate a handoff?",
+    a: "Debrief runs at the moment of ownership transfer on a HubSpot record. The Handoff operation is initiated from the Debrief CRM card on the record: it reassigns ownership to the recipient, attaches the generated brief as a Note, and writes the event to the Handoff Log. Debrief also offers a Draft Brief mode that produces a brief without changing ownership, useful for call prep or internal review.",
+  },
+  {
+    q: "What's in a Debrief handoff brief?",
+    a: "Each brief is structured into six sections by default: Why (the strategic why behind the relationship), People (the contacts and stakeholders), Timeline (the relevant chronology), Next Steps (what the new owner should do first), Risk Flags (where the relationship is fragile), and Promises (commitments the previous owner made). Admins can rename the six section labels to match team vocabulary. Alongside the brief, Debrief drafts a conversational message tuned to the handoff type (for example, BDR to AE, AE to CS, or CS to CS).",
+  },
+  {
+    q: "How much does Debrief cost?",
+    a: "Debrief is a subscription billed per HubSpot portal per month, with three tiers: Starter at $19, Pro at $49, and Enterprise at $149. Each tier includes a monthly credit allotment (50, 250, and 1,000 respectively, doubled in the first month). Each brief consumes one to three credits depending on depth. Credit packs can be purchased on top of the subscription and stack in an addon bucket that does not expire.",
+  },
+  {
+    q: "Which HubSpot objects does Debrief work with?",
+    a: "Debrief renders as a CRM card on contacts, companies, deals, tickets, and every custom object in the portal. Each object type can be configured separately for which associations Debrief reads, how many records per association, whether to fan out to engagements, and how brief sections are labeled. Once Debrief is installed, every record across these object types has a handoff surface.",
+  },
+  {
+    q: "Does Debrief use AI, and where does the data go?",
+    a: "Debrief uses a large language model to generate the brief and the message; today the LLM provider is Anthropic, via the Claude API. Customer CRM data is read from HubSpot at handoff time, scoped to only the record context Debrief needs (properties, change history, associations, engagement timeline configured by admins), and sent to the LLM provider for generation. The resulting brief is written back to HubSpot as a Note on the record. Per our LLM provider agreement, your portal's data is not used to train the model. Dunamis Studios servers do not maintain a separate copy of customer CRM data.",
+  },
+  {
+    q: "Can we customize the brief and message Debrief generates?",
+    a: "Yes. Admins can rename the six brief section labels to match team vocabulary (Why, People, Timeline, Next Steps, Risk Flags, Promises by default). Per-object-type, admins control which associations Debrief reads, how many records per association, and whether to fan out to engagements. Per-handoff-type, admins can add AI instructions and message-template guidance so a BDR-to-AE brief reads differently from a CS-to-CS brief. The Enterprise tier adds portal-level custom prompt tuning.",
+  },
+];
+
+// FAQPage schema sourced from the FAQ constant above. Sits next to the
+// SoftwareApplication schema because the two cover different intents:
+// SoftwareApplication establishes the entity (name, category, pricing
+// tiers); FAQPage exposes per-question answers that ChatGPT,
+// Perplexity, Claude, and Google AI Overviews can lift directly into
+// citations.
+const faqPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: a,
+    },
+  })),
+};
+
 export const metadata: Metadata = {
-  title: "Debrief — AI handoff briefs for HubSpot CRM ownership changes",
+  title: "Debrief: AI-powered CRM handoffs for HubSpot",
   description:
-    "Generate structured briefs and conversational handoff messages the moment a CRM record changes ownership. Built for HubSpot Sales and Service teams.",
+    "Debrief is a HubSpot marketplace app that generates structured handoff briefs and draft messages when a CRM record changes ownership. Not a meeting tool.",
   alternates: { canonical: "/products/debrief" },
   openGraph: {
-    title: "Debrief — AI handoff briefs for HubSpot CRM ownership changes",
+    title: "Debrief: AI-powered CRM handoffs for HubSpot",
     description:
-      "Generate structured briefs and conversational handoff messages the moment a CRM record changes ownership. Built for HubSpot Sales and Service teams.",
+      "Debrief is a HubSpot marketplace app that generates structured handoff briefs and draft messages when a CRM record changes ownership. Not a meeting tool.",
     url: "/products/debrief",
     type: "website",
     images: [
@@ -68,22 +127,22 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Debrief — AI handoff briefs for HubSpot CRM ownership changes",
+        alt: "Debrief: AI-powered CRM handoffs for HubSpot",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Debrief — AI handoff briefs for HubSpot CRM ownership changes",
+    title: "Debrief: AI-powered CRM handoffs for HubSpot",
     description:
-      "Generate structured briefs and conversational handoff messages the moment a CRM record changes ownership. Built for HubSpot Sales and Service teams.",
+      "Debrief is a HubSpot marketplace app that generates structured handoff briefs and draft messages when a CRM record changes ownership. Not a meeting tool.",
     images: [
       {
         url: "/twitter-image",
         width: 1200,
         height: 630,
-        alt: "Debrief — AI handoff briefs for HubSpot CRM ownership changes",
+        alt: "Debrief: AI-powered CRM handoffs for HubSpot",
       },
     ],
   },
@@ -92,77 +151,95 @@ export const metadata: Metadata = {
 export default function DebriefPage() {
   return (
     <>
+      {/*
+        Two JSON-LD blocks side by side: the SoftwareApplication block
+        carries entity + offer signals (what the app is, who publishes
+        it, what the tiers cost); the FAQPage block carries per-question
+        answers for AEO extraction. They serve complementary intents
+        and are both needed for full search-engine and answer-engine
+        coverage.
+      */}
       <JsonLd id="jsonld-debrief" schema={debriefSchema} />
+      <JsonLd id="jsonld-debrief-faq" schema={faqPageSchema} />
       <ProductPageShell
       accent="brief"
       eyebrow="Debrief"
       name="Debrief"
       headline="Handoff intelligence for HubSpot CRM."
-      lede="When a record changes hands, Debrief produces a structured brief for the new owner and drafts the conversational message the old one sends. No knowledge loss, no awkward start."
+      lede="When a HubSpot record changes ownership, Debrief generates a structured handoff brief for the new owner and drafts the message the previous owner sends to the contact."
       marketplaceUrl={PRODUCT_META.debrief.marketplaceUrl}
+      answerBlock="Debrief is a HubSpot marketplace app from Dunamis Studios that generates structured handoff briefs and conversational handoff messages whenever ownership of a CRM record changes. It reads the record's history, properties, and engagement to produce a concise brief for the new owner and a personalized message they can send to the contact, so handoffs preserve context instead of restarting it."
       problem={{
-        title: "Handoffs are where knowledge goes to die.",
+        title: "Handoffs are where CRM context goes to die.",
         body:
-          "When a deal, contact, company, ticket, or custom object switches owners in HubSpot, everything the outgoing rep knew — why the customer bought, who the real champion is, what was promised, what's at risk — lives in their head or scattered notes. The new owner inherits the record, not the context. Debrief fixes the handoff layer.",
+          "When a HubSpot record changes hands, the outgoing owner's mental model goes with them: why the customer bought, who the real champion is, what was promised, and what is at risk. Most teams paper this over with a manual handoff note that nobody reads, or skip it entirely and hope the new owner figures it out from the record itself. The result is a quiet, recurring loss of context that shows up as missed renewals, slow ramps, and rework with the customer.",
       }}
       features={[
         {
-          title: "Structured brief, drafted message",
+          title: "Two-stage brief and message generation",
           body:
-            "Two-stage AI pipeline on every handoff: a structured brief (Why / People / Timeline / Next Steps / Risk Flags / Promises) followed by a conversational message tuned to the handoff type — BDR→AE, AE→CS, CS→CS, rep→rep, or marketing→sales.",
+            "Each handoff produces two artifacts. A structured brief for the new owner with sections for Why, People, Timeline, Next Steps, Risk Flags, and Promises, followed by a conversational message tuned to the handoff type (BDR to AE, AE to CS, CS to CS, rep to rep, or marketing to sales).",
         },
         {
-          title: "Every CRM object",
+          title: "Coverage on every CRM object type",
           body:
-            "Attaches as a CRM card on contacts, companies, deals, tickets, and every custom object in your portal. Install once; every record has a handoff surface.",
+            "Debrief renders as a CRM card on contacts, companies, deals, tickets, and every custom object in the portal. One install puts a handoff surface on every record.",
         },
         {
-          title: "Draft Brief, or Handoff",
+          title: "Draft Brief preview vs. atomic Handoff",
           body:
-            "Preview a brief for yourself before a call — no ownership change. Or execute an atomic Handoff that reassigns the record, attaches the brief as a Note, and logs the event.",
+            "Draft Brief generates a brief for the current owner without changing ownership, useful for prep before a call or internal review. Handoff is the atomic operation: it reassigns ownership to the recipient, attaches the brief as a Note on the record, and writes the event to the Handoff Log.",
         },
         {
           title: "Pre-flight data-gap scanner",
           body:
-            "Before it generates, Debrief scans the record for missing owner, low engagement, staleness, and sender-notes gaps — so no brief ships on bad data.",
+            "Before generation, Debrief scans the record for missing owner, low engagement signal, record staleness, and missing sender notes. Briefs are held back when the inputs are too thin to produce a useful one.",
         },
         {
-          title: "Handoff Log and Briefs for me",
+          title: "Handoff Log and per-rep brief inbox",
           body:
-            "Every handoff logged with who→who, when, and why. Each rep gets a ‘Briefs for me’ inbox of incoming handoffs, filtered by role and record type.",
+            "Every Debrief handoff is logged with the previous owner, the new owner, the timestamp, and the reason. Each rep has a Briefs for me inbox of incoming handoffs, filterable by role and record type.",
         },
         {
-          title: "Admin-tunable depth",
+          title: "Admin-tunable depth and rollout controls",
           body:
-            "Per-object-type controls for which associations to include, how many records per type, whether to fan out to engagements, and configurable section labels. Dry-run enforcement mode for safe rollout.",
+            "Per-object-type controls govern which associations to include, how many records per association, whether to fan out to engagements, and how the brief sections are labeled. A dry-run enforcement mode lets admins stage rollout safely without changing record ownership.",
         },
       ]}
-      faq={[
-        {
-          q: "Which HubSpot objects does it work on?",
-          a: "Contacts, companies, deals, tickets, and every custom object in your portal. Debrief attaches as a CRM card on every record surface.",
-        },
-        {
-          q: "How does the credit system work?",
-          a: "Each brief costs one to three credits depending on depth — custom objects and engagement fan-out raise the cost. Your portal has a monthly allotment from your plan (50 / 250 / 1,000 for Starter / Pro / Enterprise, 2x in the first month). Credit packs stack in an addon bucket that never expires.",
-        },
-        {
-          q: "Can I customize what the brief says?",
-          a: "Yes. Admins can rename the six sections to match your team's vocabulary, tune which associations and properties to pull per object type, and add per-handoff-type AI instructions plus message-template guidance. Enterprise adds portal-level custom prompt tuning.",
-        },
-        {
-          q: "What's the difference between Draft Brief and Handoff?",
-          a: "Draft Brief is a preview — it generates a brief for you without changing ownership, useful before a call or internal review. Handoff is the atomic operation: it reassigns ownership to the recipient, attaches the brief as a Note on the record, and writes the event to the Handoff Log.",
-        },
-        {
-          q: "Does it work for team-wide handoffs?",
-          a: "Today, a Debrief handoff is a single-user transfer — outgoing owner to incoming owner, with the log visible to both. Multi-user team sharing and role permissions are on the roadmap, not shipped yet.",
-        },
-        {
-          q: "What permissions does Debrief need?",
-          a: "Read on the record plus its associated contacts, companies, deals, tickets, custom objects, and recent engagements. Write permission only for the atomic Handoff flow — to reassign owner and attach the brief Note.",
-        },
-      ]}
+      comparison={{
+        headline: "Debrief vs. AI meeting summary tools",
+        themLabel: "Meeting summary tools",
+        intro:
+          "Debrief is often grouped with meeting summary tools because both involve AI and CRM. The two solve different problems. Meeting summary tools turn one conversation into notes. Debrief turns a record's entire history into a handoff that the next owner can act on.",
+        rows: [
+          {
+            dimension: "What triggers it",
+            us: "A change in CRM record ownership inside HubSpot.",
+            them: "A meeting ending on Zoom, Google Meet, Teams, or a similar platform.",
+          },
+          {
+            dimension: "Input it reads",
+            us: "The full record: properties, change history, associations, engagement timeline, prior owner notes.",
+            them: "Audio or transcript of a single meeting.",
+          },
+          {
+            dimension: "What it produces",
+            us: "A structured brief for the new owner and a conversational message they can send to the contact.",
+            them: "A summary, action items, and sometimes a draft follow-up email tied to the meeting.",
+          },
+          {
+            dimension: "When it runs",
+            us: "At ownership transfer, which is exactly when context is most likely to be lost.",
+            them: "After every meeting, regardless of whether handoff is involved.",
+          },
+          {
+            dimension: "Where it lives",
+            us: "Inside the HubSpot record. The brief and message are surfaced where handoffs actually happen.",
+            them: "Inside the meeting platform's interface or a separate notes app, often disconnected from the CRM.",
+          },
+        ],
+      }}
+      faq={FAQ}
       />
       <div className="border-t border-[var(--border)] bg-[var(--bg-subtle)]">
         <Container size="md" className="py-8 text-center">
