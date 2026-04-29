@@ -1,6 +1,34 @@
 import { redis, KEY } from "./redis";
+import type { Product } from "./types";
 
 export type ContentType = "guide" | "article";
+
+/**
+ * Optional structured content blocks for AEO-grade listicle articles.
+ * Each block is rendered as a dedicated section below the article body
+ * when the corresponding field is populated, and articles without these
+ * fields render identically to before they were introduced.
+ */
+export interface PostFaqItem {
+  q: string;
+  a: string;
+}
+
+export interface PostComparisonTable {
+  /**
+   * Column headers for the comparison table. headers[0] labels the row
+   * dimension column (e.g., "Capability"); headers[1..n] are the
+   * comparison subjects (e.g., "Property Pulse", "Audit Fox").
+   * Each row's cells.length must equal headers.length minus one.
+   */
+  headers: string[];
+  rows: PostComparisonRow[];
+}
+
+export interface PostComparisonRow {
+  dimension: string;
+  cells: string[];
+}
 
 export interface Post {
   slug: string;
@@ -14,6 +42,24 @@ export interface Post {
   updatedAt: number;
   publishedAt?: number;
   authorAccountId: string;
+  /**
+   * Optional FAQ block rendered as <details> accordions below the body
+   * and emitted as schema.org FAQPage JSON-LD for AEO extraction.
+   */
+  faq?: PostFaqItem[];
+  /**
+   * Optional N-column comparison table rendered below the body. Useful
+   * for listicle articles that compare multiple products on a shared
+   * set of capabilities.
+   */
+  comparisonTable?: PostComparisonTable;
+  /**
+   * Optional set of Dunamis Studios product slugs the article links to.
+   * Drives the "Related products" cards rendered below the body. The
+   * union mirrors src/lib/types.ts so adding a marketplace product is
+   * the only place new slugs are introduced.
+   */
+  relatedProducts?: Product[];
 }
 
 function keyFor(type: ContentType, slug: string): string {
