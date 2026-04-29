@@ -58,6 +58,13 @@ export interface ProductPageProps {
     themLabel: string;
     rows: { dimension: string; us: string; them: string }[];
   };
+  // Optional override for the install CTA button label, applied to
+  // both the hero CTA and the final CTA. Defaults to "Install from
+  // HubSpot". Useful for products not yet on the marketplace
+  // ("Coming Soon") or in a beta phase ("In Beta") so the button
+  // reflects current availability. The href is unchanged; only the
+  // visible label switches.
+  installCtaLabel?: string;
 }
 
 const ACCENT_CLASSES: Record<
@@ -104,7 +111,7 @@ export function ProductPageShell(p: ProductPageProps) {
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg">
                 <a href={p.marketplaceUrl} target="_blank" rel="noreferrer">
-                  Install from HubSpot
+                  {p.installCtaLabel ?? "Install from HubSpot"}
                   <ArrowRight className="ml-0.5 h-4 w-4" />
                 </a>
               </Button>

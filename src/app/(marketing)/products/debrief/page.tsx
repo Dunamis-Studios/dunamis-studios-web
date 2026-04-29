@@ -168,6 +168,7 @@ export default function DebriefPage() {
       headline="Handoff intelligence for HubSpot CRM."
       lede="When a HubSpot user initiates a handoff from the Debrief CRM card, Debrief generates a structured brief for the incoming owner and drafts the message the outgoing owner sends to the contact."
       marketplaceUrl={PRODUCT_META.debrief.marketplaceUrl}
+      installCtaLabel="Coming Soon"
       answerBlock="Debrief is a HubSpot marketplace app from Dunamis Studios that generates structured handoff briefs and conversational handoff messages whenever ownership of a CRM record changes. It reads the record's history, properties, and engagement to produce a concise brief for the new owner and a personalized message they can send to the contact, so handoffs preserve context instead of restarting it."
       problem={{
         title: "Handoffs are where CRM context goes to die.",

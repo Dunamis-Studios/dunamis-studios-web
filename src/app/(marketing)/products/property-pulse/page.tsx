@@ -151,6 +151,7 @@ export default function PropertyPulsePage() {
       headline="See every change on every record."
       lede="Property Pulse adds a change-history card to every HubSpot record so you can see what changed, when, and who did it, without digging through audit logs."
       marketplaceUrl={PRODUCT_META["property-pulse"].marketplaceUrl}
+      installCtaLabel="In Beta"
       answerBlock="Property Pulse is a HubSpot marketplace app from Dunamis Studios that surfaces property change history directly on every CRM record. Admins choose which properties to track per object type, including custom objects, and users see the full change log, prior values, current values, and source in a single CRM card with inline editing and filtering."
       problem={{
         title: "CRM property changes are scattered across one-property-at-a-time history panels.",
