@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Container, Section } from "@/components/ui/primitives";
+import { JsonLd } from "@/components/seo/json-ld";
 import { getPost } from "@/lib/content";
 import { buildArticleJsonLd, getOgImageUrl, computeReadingTime } from "@/lib/post-seo";
 
@@ -39,10 +40,7 @@ export default async function GuidePage({ params }: Props) {
   return (
     <Section>
       <Container size="sm">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <JsonLd id={`jsonld-guide-${slug}`} schema={jsonLd} />
         {post.coverImageUrl && (
           <Image
             src={post.coverImageUrl}
