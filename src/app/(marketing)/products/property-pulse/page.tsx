@@ -95,15 +95,14 @@ const faqPageSchema = {
 };
 
 export const metadata: Metadata = {
-  title: "Property Pulse — See every change on every HubSpot record",
+  title: "Property Pulse: Property change history for HubSpot CRM",
   description:
-    "Property Pulse adds a change-history card to every HubSpot record so you can see what changed, when, and who did it — without digging through audit logs.",
+    "Property Pulse is a HubSpot marketplace app that surfaces every tracked property's full change history on one CRM card, filterable and exportable to CSV.",
   alternates: { canonical: "/products/property-pulse" },
   openGraph: {
-    title:
-      "Property Pulse — See every change on every HubSpot record",
+    title: "Property Pulse: Property change history for HubSpot CRM",
     description:
-      "Property Pulse adds a change-history card to every HubSpot record so you can see what changed, when, and who did it — without digging through audit logs.",
+      "Property Pulse is a HubSpot marketplace app that surfaces every tracked property's full change history on one CRM card, filterable and exportable to CSV.",
     url: "/products/property-pulse",
     type: "website",
     images: [
@@ -111,22 +110,22 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Property Pulse — See every change on every HubSpot record",
+        alt: "Property Pulse: Property change history for HubSpot CRM",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Property Pulse — Change history for HubSpot",
+    title: "Property Pulse: Property change history for HubSpot CRM",
     description:
-      "A change-history card on every HubSpot record. See what changed, when, and who did it.",
+      "Property Pulse is a HubSpot marketplace app that surfaces every tracked property's full change history on one CRM card, filterable and exportable to CSV.",
     images: [
       {
         url: "/twitter-image",
         width: 1200,
         height: 630,
-        alt: "Property Pulse — Change history for HubSpot",
+        alt: "Property Pulse: Property change history for HubSpot CRM",
       },
     ],
   },
