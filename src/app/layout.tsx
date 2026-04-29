@@ -23,7 +23,7 @@ const organizationSchema = {
   logo: `${SITE_URL}/icon`,
   description:
     "Dunamis Studios builds focused, reliable apps for the HubSpot marketplace.",
-  sameAs: [] as string[],
+  sameAs: ["https://www.linkedin.com/company/dunamis-studios/"],
   foundingDate: "2026",
   founder: {
     "@type": "Person",
