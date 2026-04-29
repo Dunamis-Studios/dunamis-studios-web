@@ -64,11 +64,11 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "How is Debrief different from AI meeting summary tools?",
-    a: "AI meeting summary tools (Otter, Fireflies, Gong, Fathom, and similar) turn a single recorded conversation into notes, action items, and sometimes a follow-up email. Debrief is triggered by a different event: a CRM record changing ownership in HubSpot. It reads the entire record (properties, change history, associations, engagement timeline) rather than one meeting, and produces a brief for the new owner plus a draft message the previous owner can send to the contact. The two solve adjacent but different problems.",
+    a: "AI meeting summary tools (Otter, Fireflies, Gong, Fathom, and similar) turn a single recorded conversation into notes, action items, and sometimes a follow-up email. Debrief is triggered differently: a HubSpot user initiates a handoff from the Debrief CRM card on a record. It reads the entire record (properties, change history, associations, engagement timeline) rather than one meeting, and produces a brief for the incoming owner plus a draft message the outgoing owner can send to the contact. The two solve adjacent but different problems.",
   },
   {
     q: "When does Debrief generate a handoff?",
-    a: "Debrief runs at the moment of ownership transfer on a HubSpot record. The Handoff operation is initiated from the Debrief CRM card on the record: it reassigns ownership to the recipient, attaches the generated brief as a Note, and writes the event to the Handoff Log. Debrief also offers a Draft Brief mode that produces a brief without changing ownership, useful for call prep or internal review.",
+    a: "Debrief runs on demand, when a HubSpot user initiates one from the Debrief CRM card on a record. The Handoff operation is the atomic action: it reassigns ownership to the recipient, attaches the generated brief as a Note, and writes the event to the Handoff Log. Debrief also offers a Draft Brief mode that produces a brief without changing ownership, useful for call prep or internal review.",
   },
   {
     q: "What's in a Debrief handoff brief?",
@@ -166,7 +166,7 @@ export default function DebriefPage() {
       eyebrow="Debrief"
       name="Debrief"
       headline="Handoff intelligence for HubSpot CRM."
-      lede="When a HubSpot record changes ownership, Debrief generates a structured handoff brief for the new owner and drafts the message the previous owner sends to the contact."
+      lede="When a HubSpot user initiates a handoff from the Debrief CRM card, Debrief generates a structured brief for the incoming owner and drafts the message the outgoing owner sends to the contact."
       marketplaceUrl={PRODUCT_META.debrief.marketplaceUrl}
       answerBlock="Debrief is a HubSpot marketplace app from Dunamis Studios that generates structured handoff briefs and conversational handoff messages whenever ownership of a CRM record changes. It reads the record's history, properties, and engagement to produce a concise brief for the new owner and a personalized message they can send to the contact, so handoffs preserve context instead of restarting it."
       problem={{
@@ -214,7 +214,7 @@ export default function DebriefPage() {
         rows: [
           {
             dimension: "What triggers it",
-            us: "A change in CRM record ownership inside HubSpot.",
+            us: "A user clicking Handoff or Draft Brief on the Debrief CRM card on a HubSpot record.",
             them: "A meeting ending on Zoom, Google Meet, Teams, or a similar platform.",
           },
           {
@@ -229,7 +229,7 @@ export default function DebriefPage() {
           },
           {
             dimension: "When it runs",
-            us: "At ownership transfer, which is exactly when context is most likely to be lost.",
+            us: "On demand, when the outgoing owner is preparing to hand off the record. Generation is user-initiated, not automatic on every owner change.",
             them: "After every meeting, regardless of whether handoff is involved.",
           },
           {
