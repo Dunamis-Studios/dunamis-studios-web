@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container, Section } from "@/components/ui/primitives";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
@@ -11,6 +12,9 @@ import {
 } from "@/components/marketing/article-extras";
 import { getPost } from "@/lib/content";
 import { buildArticleJsonLd, getOgImageUrl, computeReadingTime } from "@/lib/post-seo";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -43,28 +47,60 @@ export default async function ArticlePage({ params }: Props) {
   const articleSchema = buildArticleJsonLd(post, "article");
   const faqPageSchema =
     post.faq && post.faq.length > 0 ? buildFaqPageSchema(post.faq) : null;
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Articles",
+        item: `${SITE_URL}/articles`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: post.title,
+        item: `${SITE_URL}/articles/${slug}`,
+      },
+    ],
+  };
   const readingTime = computeReadingTime(post.contentHtml);
 
   return (
     <Section>
       <Container size="sm">
         {/*
-          Two JSON-LD blocks may render here. The Article block always
-          renders and carries entity and provenance signals (headline,
-          publisher, dates). The FAQPage block renders only when
-          post.faq is populated and exposes per-question answers for
-          AEO extraction by ChatGPT, Perplexity, Claude, and Google AI
-          Overviews. Both are emitted via the safe JsonLd helper so a
-          stray closing-script tag inside structured data cannot escape
-          the script element.
+          Three JSON-LD blocks may render here. The Article block
+          always renders and carries entity and provenance signals
+          (headline, publisher, dates). BreadcrumbList renders the
+          Home > Articles > {title} hierarchy for sitelinks and AEO
+          breadcrumb extraction. FAQPage renders only when post.faq
+          is populated and exposes per-question answers for citation
+          by ChatGPT, Perplexity, Claude, and Google AI Overviews.
+          All emitted via the safe JsonLd helper so a stray closing-
+          script tag inside structured data cannot escape.
         */}
         <JsonLd id={`jsonld-article-${slug}`} schema={articleSchema} />
+        <JsonLd
+          id={`jsonld-article-${slug}-breadcrumb`}
+          schema={breadcrumbSchema}
+        />
         {faqPageSchema ? (
           <JsonLd
             id={`jsonld-article-${slug}-faq`}
             schema={faqPageSchema}
           />
         ) : null}
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Articles", href: "/articles" },
+            { label: post.title },
+          ]}
+          className="mb-5"
+        />
         {post.coverImageUrl && (
           <Image
             src={post.coverImageUrl}

@@ -1,10 +1,27 @@
 import type { Metadata } from "next";
 import { ProductPageShell } from "@/components/marketing/product-page-shell";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { Container } from "@/components/ui/primitives";
 import { JsonLd } from "@/components/seo/json-ld";
 import { PRODUCT_META } from "@/lib/types";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+    { "@type": "ListItem", position: 2, name: "Products", item: `${SITE_URL}/` },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "Property Pulse",
+      item: `${SITE_URL}/products/property-pulse`,
+    },
+  ],
+};
 
 // Single one-time install fee. Mirrors the canonical pricing defined
 // in src/app/(marketing)/pricing/page.tsx. Keep in lockstep if the
@@ -144,6 +161,19 @@ export default function PropertyPulsePage() {
       */}
       <JsonLd id="jsonld-property-pulse" schema={propertyPulseSchema} />
       <JsonLd id="jsonld-property-pulse-faq" schema={faqPageSchema} />
+      <JsonLd
+        id="jsonld-property-pulse-breadcrumb"
+        schema={breadcrumbSchema}
+      />
+      <Container size="xl" className="pt-6">
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Products", href: "/" },
+            { label: "Property Pulse" },
+          ]}
+        />
+      </Container>
       <ProductPageShell
       accent="pulse"
       eyebrow="Property Pulse"

@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container, Section } from "@/components/ui/primitives";
 import { JsonLd } from "@/components/seo/json-ld";
 import { getPost } from "@/lib/content";
 import { buildArticleJsonLd, getOgImageUrl, computeReadingTime } from "@/lib/post-seo";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -35,12 +39,43 @@ export default async function GuidePage({ params }: Props) {
   if (!post || post.status !== "published") notFound();
 
   const jsonLd = buildArticleJsonLd(post, "guide");
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Guides",
+        item: `${SITE_URL}/guides`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: post.title,
+        item: `${SITE_URL}/guides/${slug}`,
+      },
+    ],
+  };
   const readingTime = computeReadingTime(post.contentHtml);
 
   return (
     <Section>
       <Container size="sm">
         <JsonLd id={`jsonld-guide-${slug}`} schema={jsonLd} />
+        <JsonLd
+          id={`jsonld-guide-${slug}-breadcrumb`}
+          schema={breadcrumbSchema}
+        />
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Guides", href: "/guides" },
+            { label: post.title },
+          ]}
+          className="mb-5"
+        />
         {post.coverImageUrl && (
           <Image
             src={post.coverImageUrl}

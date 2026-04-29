@@ -2,12 +2,28 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ProductPageShell } from "@/components/marketing/product-page-shell";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/primitives";
 import { JsonLd } from "@/components/seo/json-ld";
 import { PRODUCT_META } from "@/lib/types";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+    { "@type": "ListItem", position: 2, name: "Products", item: `${SITE_URL}/` },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "Debrief",
+      item: `${SITE_URL}/products/debrief`,
+    },
+  ],
+};
 
 const debriefSchema = {
   "@context": "https://schema.org",
@@ -161,6 +177,16 @@ export default function DebriefPage() {
       */}
       <JsonLd id="jsonld-debrief" schema={debriefSchema} />
       <JsonLd id="jsonld-debrief-faq" schema={faqPageSchema} />
+      <JsonLd id="jsonld-debrief-breadcrumb" schema={breadcrumbSchema} />
+      <Container size="xl" className="pt-6">
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Products", href: "/" },
+            { label: "Debrief" },
+          ]}
+        />
+      </Container>
       <ProductPageShell
       accent="brief"
       eyebrow="Debrief"
