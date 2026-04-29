@@ -6,9 +6,9 @@ import { PRODUCT_META } from "@/lib/types";
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
-// Single one-time install fee — mirrors the canonical pricing defined in
-// src/app/(marketing)/pricing/page.tsx. Keep in lockstep if the price or
-// model changes; the pricing page is the source of truth.
+// Single one-time install fee. Mirrors the canonical pricing defined
+// in src/app/(marketing)/pricing/page.tsx. Keep in lockstep if the
+// price or model changes; the pricing page is the source of truth.
 const propertyPulseSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
@@ -17,7 +17,7 @@ const propertyPulseSchema = {
   applicationSubCategory: "CRM",
   operatingSystem: "Web-based",
   description:
-    "Property Pulse adds a change-history card to every HubSpot record so you can see what changed, when, and who did it — without digging through audit logs.",
+    "Property Pulse adds a change-history card to every HubSpot record so you can see what changed, when, and who did it, without digging through audit logs.",
   url: `${SITE_URL}/products/property-pulse`,
   publisher: {
     "@type": "Organization",
@@ -149,7 +149,7 @@ export default function PropertyPulsePage() {
       eyebrow="Property Pulse"
       name="Property Pulse"
       headline="See every change on every record."
-      lede="Property Pulse adds a change-history card to every HubSpot record so you can see what changed, when, and who did it — without digging through audit logs."
+      lede="Property Pulse adds a change-history card to every HubSpot record so you can see what changed, when, and who did it, without digging through audit logs."
       marketplaceUrl={PRODUCT_META["property-pulse"].marketplaceUrl}
       answerBlock="Property Pulse is a HubSpot marketplace app from Dunamis Studios that surfaces property change history directly on every CRM record. Admins choose which properties to track per object type, including custom objects, and users see the full change log, prior values, current values, and source in a single CRM card with inline editing and filtering."
       problem={{
