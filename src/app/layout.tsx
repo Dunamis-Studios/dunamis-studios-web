@@ -10,7 +10,7 @@ const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
 /**
- * Organization schema — emitted into <head> on every page so search
+ * Organization schema, emitted into <head> on every page so search
  * engines and LLM crawlers can attach entity signals (founder, support
  * contact, logo) to the Dunamis Studios brand regardless of which URL
  * is crawled first.
@@ -51,7 +51,7 @@ const display = Fraunces({
 
 export const metadata: Metadata = {
   title: {
-    default: "Dunamis Studios — Precision tools for the HubSpot marketplace",
+    default: "Dunamis Studios: Precision tools for the HubSpot marketplace",
     template: "%s · Dunamis Studios",
   },
   description:
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     process.env.APP_URL ?? "https://dunamisstudios.net",
   ),
   openGraph: {
-    title: "Dunamis Studios — Precision tools for the HubSpot marketplace",
+    title: "Dunamis Studios: Precision tools for the HubSpot marketplace",
     description:
       "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
     type: "website",
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dunamis Studios — Precision tools for the HubSpot marketplace",
+    title: "Dunamis Studios: Precision tools for the HubSpot marketplace",
     description:
       "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
     // twitter:image meta tags come from src/app/twitter-image.tsx's

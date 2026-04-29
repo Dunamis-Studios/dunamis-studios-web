@@ -43,17 +43,17 @@ const websiteSchema = {
 };
 
 export const metadata: Metadata = {
-  // Use absolute title here — landing page shouldn't receive the
+  // Use absolute title here, landing page shouldn't receive the
   // "%s · Dunamis Studios" template since it IS the studio.
   title: {
     absolute:
-      "Dunamis Studios — Precision tools for the HubSpot marketplace",
+      "Dunamis Studios: Precision tools for the HubSpot marketplace",
   },
   description:
     "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Dunamis Studios — Precision tools for the HubSpot marketplace",
+    title: "Dunamis Studios: Precision tools for the HubSpot marketplace",
     description:
       "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
     url: "/",
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Dunamis Studios — Precision tools for the HubSpot marketplace",
+        alt: "Dunamis Studios: Precision tools for the HubSpot marketplace",
         type: "image/png",
       },
     ],
@@ -146,7 +146,7 @@ export default function LandingPage() {
               name="Debrief"
               tagline="Handoff intelligence for HubSpot CRM"
               href="/products/debrief"
-              description="When a record changes hands in HubSpot, Debrief gives the new owner a structured brief — and gives the old owner a message to send with it."
+              description="When a record changes hands in HubSpot, Debrief gives the new owner a structured brief, and gives the old owner a message to send with it."
             />
             <ProductTile
               accent="muted"
@@ -180,7 +180,7 @@ export default function LandingPage() {
             <Principle
               index="03"
               title="Quietly powerful"
-              body="Dunamis — δύναμις — is Greek for power, capability, potential. The work should feel obvious, never loud."
+              body="Dunamis (δύναμις) is Greek for power, capability, potential. The work should feel obvious, never loud."
             />
           </div>
         </Container>
@@ -202,7 +202,7 @@ export default function LandingPage() {
               One account. Every app. Every portal.
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-[var(--fg-muted)]">
-              Create your Dunamis Studios account today — your entitlements
+              Create your Dunamis Studios account today. Your entitlements
               appear here automatically as you install apps from HubSpot.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
