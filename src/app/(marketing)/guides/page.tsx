@@ -2,24 +2,64 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
-import { listPosts } from "@/lib/content";
+import { JsonLd } from "@/components/seo/json-ld";
+import { listPosts, type Post } from "@/lib/content";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+const PAGE_DESCRIPTION =
+  "In-depth guides for getting the most out of your HubSpot portal with Dunamis Studios apps.";
 
 export const metadata: Metadata = {
   title: "Guides",
-  description:
-    "In-depth guides for getting the most out of your HubSpot portal with Dunamis Studios apps.",
+  description: PAGE_DESCRIPTION,
   alternates: { canonical: "/guides" },
 };
 
+/**
+ * Build Blog schema for the guides index. Same shape as the articles
+ * index, scoped to /guides. Crossreferences the Organization entity
+ * by @id from layout.tsx.
+ */
+function buildBlogSchema(posts: Post[]) {
+  const recent = posts.slice(0, 10);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "Dunamis Studios guides",
+    description: PAGE_DESCRIPTION,
+    url: `${SITE_URL}/guides`,
+    publisher: {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+    },
+    blogPost: recent.map((p) => ({
+      "@type": "BlogPosting",
+      headline: p.title,
+      description: p.description,
+      url: `${SITE_URL}/guides/${p.slug}`,
+      datePublished: p.publishedAt
+        ? new Date(p.publishedAt).toISOString()
+        : new Date(p.updatedAt).toISOString(),
+      dateModified: new Date(p.updatedAt).toISOString(),
+    })),
+  };
+}
+
 export default async function GuidesPage() {
   const posts = await listPosts("guide", { includeDrafts: false });
+  const blogSchema = buildBlogSchema(posts);
 
   return (
     <Section>
       <Container>
+        {posts.length > 0 ? (
+          <JsonLd id="jsonld-guides-index" schema={blogSchema} />
+        ) : null}
         <PageHeader
           title="Guides"
-          description="In-depth guides for getting the most out of your HubSpot portal with Dunamis Studios apps."
+          description={PAGE_DESCRIPTION}
         />
 
         {posts.length === 0 ? (
