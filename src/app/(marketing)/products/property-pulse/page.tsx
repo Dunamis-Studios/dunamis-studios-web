@@ -36,6 +36,64 @@ const propertyPulseSchema = {
   ],
 };
 
+// Single source of truth for the buyer-intent FAQ. Used twice on the
+// page: rendered as <details> accordions inside ProductPageShell, and
+// emitted as schema.org FAQPage JSON-LD for AEO extraction (so answer
+// engines can cite individual Q/A pairs verbatim). Edits here flow to
+// both surfaces; do not maintain a parallel list.
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "What is Property Pulse?",
+    a: "Property Pulse is a HubSpot marketplace app from Dunamis Studios that adds a change-history CRM card to every record. The card shows the tracked properties for that object type, their current values with recency and delta, and a filterable log of who changed each one, when, from what value to what value, and through what source. Admins choose which properties to track per object type, including custom objects, and users can add their own additions on top when admins allow it.",
+  },
+  {
+    q: "How is Property Pulse different from HubSpot's native property history panel?",
+    a: "HubSpot's built-in property history is a side panel scoped to one property at a time, opened by hovering and clicking into that property. Property Pulse is a CRM card on the record itself that shows the recent change history for every tracked property at once, with filters that span all of those properties by property, source, user, value, and date range, plus CSV export and inline editing. The two surfaces solve different shapes of the same problem: HubSpot answers what changed on this one property, and Property Pulse answers what has been moving on this record overall.",
+  },
+  {
+    q: "Which HubSpot objects does Property Pulse work with?",
+    a: "Property Pulse supports contacts, companies, deals, tickets, and every custom object in your portal. Each object type has its own tracked-property configuration. The Property Pulse card is added to a record layout per object type in HubSpot record customization settings, so you choose which objects show the card and where it sits on the layout.",
+  },
+  {
+    q: "How much does Property Pulse cost?",
+    a: "Property Pulse is $49 as a one-time install fee per HubSpot portal. There are no tiers, no per-seat charges, and no monthly subscription. Once it is installed in a portal, every user in that portal can use it.",
+  },
+  {
+    q: "Can Property Pulse track custom properties and custom objects?",
+    a: "Yes. Property Pulse tracks any HubSpot property, including custom properties you have added, on any object type, including custom objects. Admins configure the tracked properties per object type in Property Pulse settings, and the card on each record surfaces only the properties configured for that object type.",
+  },
+  {
+    q: "Who can see Property Pulse data inside HubSpot?",
+    a: "Property Pulse renders as a CRM card inside HubSpot, so card visibility follows HubSpot's existing record permissions: any user who can view a record sees the Property Pulse card on that record. There is no separate Property Pulse role or per-user permission system. Configuring tracked properties happens in HubSpot Settings → Connected Apps → Property Pulse, which inherits HubSpot's own settings-area access controls.",
+  },
+  {
+    q: "Does Property Pulse store any of our data outside HubSpot?",
+    a: "Customer CRM data stays in HubSpot. The tracked-property configuration lives inside your own HubSpot portal in a HubDB table, not on Dunamis Studios servers. Property Pulse does not maintain a separate copy of your property values or change history; the change log is read from HubSpot's property-history API at card render time. Dunamis-side infrastructure holds OAuth tokens and app metadata only.",
+  },
+  {
+    q: "How do we configure which properties Property Pulse tracks?",
+    a: "Configuration lives inside HubSpot, in Settings → Connected Apps → Property Pulse. The page is titled Property Pulse · Tracked Properties and has one accordion per object type (Contacts, Companies, Deals, Tickets, plus any custom objects in your portal). Open the accordion for an object type and pick the properties Property Pulse should track for that type. Each accordion includes an Allow users to add their own properties toggle that lets individual users add personal additions on top of the admin set. A Week start day selector at the top tunes how the card's recency badges bucket recent activity.",
+  },
+];
+
+// FAQPage schema sourced from the FAQ constant above. Sits next to the
+// SoftwareApplication schema because the two cover different intents:
+// SoftwareApplication establishes the entity (name, category, price);
+// FAQPage exposes per-question answers that ChatGPT, Perplexity,
+// Claude, and Google AI Overviews can lift directly into citations.
+const faqPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: a,
+    },
+  })),
+};
+
 export const metadata: Metadata = {
   title: "Property Pulse — See every change on every HubSpot record",
   description:
@@ -77,7 +135,16 @@ export const metadata: Metadata = {
 export default function PropertyPulsePage() {
   return (
     <>
+      {/*
+        Two JSON-LD blocks side by side: the SoftwareApplication block
+        carries entity + offer signals (what the app is, who publishes
+        it, what it costs); the FAQPage block carries per-question
+        answers for AEO extraction. They serve complementary intents
+        and are both needed for full search-engine and answer-engine
+        coverage.
+      */}
       <JsonLd id="jsonld-property-pulse" schema={propertyPulseSchema} />
+      <JsonLd id="jsonld-property-pulse-faq" schema={faqPageSchema} />
       <ProductPageShell
       accent="pulse"
       eyebrow="Property Pulse"
@@ -178,40 +245,7 @@ export default function PropertyPulsePage() {
           },
         ],
       }}
-      faq={[
-        {
-          q: "What is Property Pulse?",
-          a: "Property Pulse is a HubSpot marketplace app from Dunamis Studios that adds a change-history CRM card to every record. The card shows the tracked properties for that object type, their current values with recency and delta, and a filterable log of who changed each one, when, from what value to what value, and through what source. Admins choose which properties to track per object type, including custom objects, and users can add their own additions on top when admins allow it.",
-        },
-        {
-          q: "How is Property Pulse different from HubSpot's native property history panel?",
-          a: "HubSpot's built-in property history is a side panel scoped to one property at a time, opened by hovering and clicking into that property. Property Pulse is a CRM card on the record itself that shows the recent change history for every tracked property at once, with filters that span all of those properties by property, source, user, value, and date range, plus CSV export and inline editing. The two surfaces solve different shapes of the same problem: HubSpot answers what changed on this one property, and Property Pulse answers what has been moving on this record overall.",
-        },
-        {
-          q: "Which HubSpot objects does Property Pulse work with?",
-          a: "Property Pulse supports contacts, companies, deals, tickets, and every custom object in your portal. Each object type has its own tracked-property configuration. The Property Pulse card is added to a record layout per object type in HubSpot record customization settings, so you choose which objects show the card and where it sits on the layout.",
-        },
-        {
-          q: "How much does Property Pulse cost?",
-          a: "Property Pulse is $49 as a one-time install fee per HubSpot portal. There are no tiers, no per-seat charges, and no monthly subscription. Once it is installed in a portal, every user in that portal can use it.",
-        },
-        {
-          q: "Can Property Pulse track custom properties and custom objects?",
-          a: "Yes. Property Pulse tracks any HubSpot property, including custom properties you have added, on any object type, including custom objects. Admins configure the tracked properties per object type in Property Pulse settings, and the card on each record surfaces only the properties configured for that object type.",
-        },
-        {
-          q: "Who can see Property Pulse data inside HubSpot?",
-          a: "Property Pulse renders as a CRM card inside HubSpot, so card visibility follows HubSpot's existing record permissions: any user who can view a record sees the Property Pulse card on that record. There is no separate Property Pulse role or per-user permission system. Configuring tracked properties happens in HubSpot Settings → Connected Apps → Property Pulse, which inherits HubSpot's own settings-area access controls.",
-        },
-        {
-          q: "Does Property Pulse store any of our data outside HubSpot?",
-          a: "Customer CRM data stays in HubSpot. The tracked-property configuration lives inside your own HubSpot portal in a HubDB table, not on Dunamis Studios servers. Property Pulse does not maintain a separate copy of your property values or change history; the change log is read from HubSpot's property-history API at card render time. Dunamis-side infrastructure holds OAuth tokens and app metadata only.",
-        },
-        {
-          q: "How do we configure which properties Property Pulse tracks?",
-          a: "Configuration lives inside HubSpot, in Settings → Connected Apps → Property Pulse. The page is titled Property Pulse · Tracked Properties and has one accordion per object type (Contacts, Companies, Deals, Tickets, plus any custom objects in your portal). Open the accordion for an object type and pick the properties Property Pulse should track for that type. Each accordion includes an Allow users to add their own properties toggle that lets individual users add personal additions on top of the admin set. A Week start day selector at the top tunes how the card's recency badges bucket recent activity.",
-        },
-      ]}
+      faq={FAQ}
       />
     </>
   );
