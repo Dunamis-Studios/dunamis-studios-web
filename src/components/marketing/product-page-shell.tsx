@@ -43,6 +43,21 @@ export interface ProductPageProps {
     body: string;
     ctaLabel?: string;
   };
+  // Optional declarative passage rendered between the hero and the
+  // Problem section. Renders as a single centered paragraph in a
+  // tighter slab so it reads as an authoritative one-line answer
+  // for AEO extraction. Currently only Property Pulse uses this.
+  answerBlock?: string;
+  // Optional comparison block rendered between Features and the
+  // pricing teaser. Three columns on desktop (Dimension, this
+  // product, the comparator); a card-per-dimension stack on mobile.
+  // themLabel is the column header for the comparator.
+  comparison?: {
+    headline: string;
+    intro: string;
+    themLabel: string;
+    rows: { dimension: string; us: string; them: string }[];
+  };
 }
 
 const ACCENT_CLASSES: Record<
@@ -105,6 +120,17 @@ export function ProductPageShell(p: ProductPageProps) {
           </div>
         </Container>
       </div>
+
+      {/* ANSWER BLOCK (optional) */}
+      {p.answerBlock ? (
+        <Section className="border-y border-[var(--border)] bg-[var(--bg-subtle)] py-12 sm:py-14 lg:py-16">
+          <Container size="md">
+            <p className="mx-auto max-w-3xl text-center font-[var(--font-display)] text-xl font-normal leading-relaxed text-[var(--fg)] sm:text-2xl">
+              {p.answerBlock}
+            </p>
+          </Container>
+        </Section>
+      ) : null}
 
       {/* PROBLEM */}
       <Section className="border-t border-[var(--border)]">
@@ -174,6 +200,88 @@ export function ProductPageShell(p: ProductPageProps) {
           </div>
         </Container>
       </Section>
+
+      {/* COMPARISON (optional) */}
+      {p.comparison && p.comparison.rows.length > 0 ? (
+        <Section className="border-t border-[var(--border)]">
+          <Container size="xl">
+            <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+              How we compare
+            </div>
+            <h2 className="mt-3 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
+              {p.comparison.headline}
+            </h2>
+            <p className="mt-5 max-w-3xl leading-relaxed text-[var(--fg-muted)]">
+              {p.comparison.intro}
+            </p>
+
+            {/* Desktop table */}
+            <div className="mt-12 hidden overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] sm:block">
+              <div className="grid grid-cols-[1.2fr_1fr_1fr] border-b border-[var(--border)] bg-[var(--bg-subtle)] text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+                <div className="p-4">Dimension</div>
+                <div className={cn("border-l border-[var(--border)] p-4", a.text)}>
+                  {p.name}
+                </div>
+                <div className="border-l border-[var(--border)] p-4">
+                  {p.comparison.themLabel}
+                </div>
+              </div>
+              <div className="divide-y divide-[var(--border)]">
+                {p.comparison.rows.map((row, i) => (
+                  <div key={i} className="grid grid-cols-[1.2fr_1fr_1fr]">
+                    <div className="p-4 text-sm font-medium text-[var(--fg)]">
+                      {row.dimension}
+                    </div>
+                    <div className="border-l border-[var(--border)] p-4 text-sm leading-relaxed text-[var(--fg-muted)]">
+                      {row.us}
+                    </div>
+                    <div className="border-l border-[var(--border)] p-4 text-sm leading-relaxed text-[var(--fg-muted)]">
+                      {row.them}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Mobile cards */}
+            <div className="mt-10 space-y-4 sm:hidden">
+              {p.comparison.rows.map((row, i) => (
+                <div
+                  key={i}
+                  className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5"
+                >
+                  <h3 className="font-[var(--font-display)] text-base font-medium tracking-tight">
+                    {row.dimension}
+                  </h3>
+                  <div className="mt-4 space-y-3">
+                    <div>
+                      <div
+                        className={cn(
+                          "text-xs font-medium uppercase tracking-[0.14em]",
+                          a.text,
+                        )}
+                      >
+                        {p.name}
+                      </div>
+                      <p className="mt-1 text-sm leading-relaxed text-[var(--fg-muted)]">
+                        {row.us}
+                      </p>
+                    </div>
+                    <div>
+                      <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+                        {p.comparison!.themLabel}
+                      </div>
+                      <p className="mt-1 text-sm leading-relaxed text-[var(--fg-muted)]">
+                        {row.them}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </Section>
+      ) : null}
 
       {/* PRICING TEASER */}
       <Section className="border-t border-[var(--border)]">
