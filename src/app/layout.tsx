@@ -18,6 +18,10 @@ const SITE_URL =
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
+  // Stable @id so other schema blocks (e.g., the WebSite block on /
+  // and the Article publisher field) can cross-reference this entity
+  // by URI fragment instead of repeating its full definition.
+  "@id": `${SITE_URL}/#organization`,
   name: "Dunamis Studios",
   url: SITE_URL,
   logo: `${SITE_URL}/icon`,

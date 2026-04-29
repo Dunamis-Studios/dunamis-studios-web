@@ -7,6 +7,40 @@ import { Badge } from "@/components/ui/badge";
 import { HeroGradient } from "@/components/marketing/hero-gradient";
 import { ProductTile } from "@/components/marketing/product-tile";
 import { CustomerLogoStrip } from "@/components/marketing/customer-logo-strip";
+import { JsonLd } from "@/components/seo/json-ld";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+/**
+ * WebSite schema with SearchAction. Mirrors the help-center pattern
+ * but at the site root: declares Dunamis Studios as the site entity
+ * and tells Google the URL template for the on-site search box,
+ * which is currently scoped to the help center. The publisher field
+ * cross-references the Organization schema in layout.tsx by @id so
+ * the two blocks resolve to the same entity instead of duplicating
+ * Organization metadata.
+ */
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Dunamis Studios",
+  url: SITE_URL,
+  description:
+    "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
+  publisher: {
+    "@type": "Organization",
+    "@id": `${SITE_URL}/#organization`,
+  },
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${SITE_URL}/help/search?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
+};
 
 export const metadata: Metadata = {
   // Use absolute title here — landing page shouldn't receive the
@@ -43,6 +77,7 @@ export const metadata: Metadata = {
 export default function LandingPage() {
   return (
     <>
+      <JsonLd id="jsonld-home-website" schema={websiteSchema} />
       {/* ---- HERO ---- */}
       <div className="relative overflow-hidden">
         <HeroGradient />
