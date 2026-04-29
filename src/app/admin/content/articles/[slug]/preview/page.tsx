@@ -1,6 +1,13 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Container, Section } from "@/components/ui/primitives";
+import { JsonLd } from "@/components/seo/json-ld";
+import {
+  ComparisonTableSection,
+  FaqSection,
+  RelatedProductsSection,
+  buildFaqPageSchema,
+} from "@/components/marketing/article-extras";
 import { getPost } from "@/lib/content";
 import { Badge } from "@/components/ui/badge";
 
@@ -13,12 +20,25 @@ export default async function PreviewArticlePage({ params }: Props) {
   const post = await getPost("article", slug);
   if (!post) notFound();
 
+  // The admin preview is a faithful representation of what the public
+  // /articles/[slug] page will render once published. Keep section
+  // ordering and FAQPage JSON-LD output identical to that route so
+  // editors can verify everything that ships to production from here.
+  const faqPageSchema =
+    post.faq && post.faq.length > 0 ? buildFaqPageSchema(post.faq) : null;
+
   return (
     <Section>
       <Container size="sm">
+        {faqPageSchema ? (
+          <JsonLd
+            id={`jsonld-article-${slug}-faq`}
+            schema={faqPageSchema}
+          />
+        ) : null}
         <div className="mb-4">
           <Badge variant={post.status === "published" ? "success" : "neutral"}>
-            {post.status} — admin preview
+            {post.status} - admin preview
           </Badge>
         </div>
         {post.coverImageUrl && (
@@ -38,6 +58,15 @@ export default async function PreviewArticlePage({ params }: Props) {
           className="kb-prose mt-10"
           dangerouslySetInnerHTML={{ __html: post.contentHtml }}
         />
+        {post.comparisonTable && post.comparisonTable.rows.length > 0 ? (
+          <ComparisonTableSection table={post.comparisonTable} />
+        ) : null}
+        {post.faq && post.faq.length > 0 ? (
+          <FaqSection faq={post.faq} />
+        ) : null}
+        {post.relatedProducts && post.relatedProducts.length > 0 ? (
+          <RelatedProductsSection slugs={post.relatedProducts} />
+        ) : null}
       </Container>
     </Section>
   );
