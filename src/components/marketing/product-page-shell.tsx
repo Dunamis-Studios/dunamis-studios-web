@@ -59,11 +59,14 @@ export interface ProductPageProps {
     rows: { dimension: string; us: string; them: string }[];
   };
   // Optional override for the install CTA button label, applied to
-  // both the hero CTA and the final CTA. Defaults to "Install from
-  // HubSpot". Useful for products not yet on the marketplace
-  // ("Coming Soon") or in a beta phase ("In Beta") so the button
-  // reflects current availability. The href is unchanged; only the
-  // visible label switches.
+  // both the hero CTA and the final CTA. When set, the button is
+  // also rendered non-interactive: no marketplace link, no arrow
+  // icon, disabled visual state. The override exists for products
+  // that are not yet a direct install path ("Coming Soon" before a
+  // marketplace listing exists, "In Beta" while access is gated),
+  // and a label that does not lead to install should not pretend
+  // to. When unset, the button defaults to "Install from HubSpot"
+  // with an active link to PRODUCT_META.marketplaceUrl.
   installCtaLabel?: string;
 }
 
@@ -109,12 +112,18 @@ export function ProductPageShell(p: ProductPageProps) {
             </p>
             <p className="mx-auto mt-6 max-w-xl text-[var(--fg-muted)]">{p.lede}</p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-              <Button asChild size="lg">
-                <a href={p.marketplaceUrl} target="_blank" rel="noreferrer">
-                  {p.installCtaLabel ?? "Install from HubSpot"}
-                  <ArrowRight className="ml-0.5 h-4 w-4" />
-                </a>
-              </Button>
+              {p.installCtaLabel ? (
+                <Button size="lg" disabled>
+                  {p.installCtaLabel}
+                </Button>
+              ) : (
+                <Button asChild size="lg">
+                  <a href={p.marketplaceUrl} target="_blank" rel="noreferrer">
+                    Install from HubSpot
+                    <ArrowRight className="ml-0.5 h-4 w-4" />
+                  </a>
+                </Button>
+              )}
               <Button asChild size="lg" variant="secondary">
                 <Link href="/pricing">See pricing</Link>
               </Button>
@@ -358,12 +367,18 @@ export function ProductPageShell(p: ProductPageProps) {
             every other Dunamis app in one dashboard.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Button asChild size="lg">
-              <a href={p.marketplaceUrl} target="_blank" rel="noreferrer">
-                Install from HubSpot
-                <ArrowRight className="ml-0.5 h-4 w-4" />
-              </a>
-            </Button>
+            {p.installCtaLabel ? (
+              <Button size="lg" disabled>
+                {p.installCtaLabel}
+              </Button>
+            ) : (
+              <Button asChild size="lg">
+                <a href={p.marketplaceUrl} target="_blank" rel="noreferrer">
+                  Install from HubSpot
+                  <ArrowRight className="ml-0.5 h-4 w-4" />
+                </a>
+              </Button>
+            )}
             <Button asChild size="lg" variant="ghost">
               <Link href="/signup">Create a Dunamis account</Link>
             </Button>
