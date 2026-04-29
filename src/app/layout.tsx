@@ -79,14 +79,6 @@ export const metadata: Metadata = {
     // file convention, same rationale as openGraph above.
   },
   robots: { index: true, follow: true },
-  verification: {
-    // Replace with the actual verification strings after adding
-    // dunamisstudios.net as a property in each tool. See deploy notes.
-    google: "REPLACE_ME_GOOGLE",
-    other: {
-      "msvalidate.01": "REPLACE_ME_BING",
-    },
-  },
 };
 
 export const viewport: Viewport = {
