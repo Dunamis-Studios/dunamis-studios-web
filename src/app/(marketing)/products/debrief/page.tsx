@@ -17,7 +17,7 @@ const debriefSchema = {
   applicationSubCategory: "CRM",
   operatingSystem: "Web-based",
   description:
-    "Handoff intelligence for HubSpot CRM. Generates structured briefs and conversational handoff messages when a CRM record changes ownership.",
+    "Debrief is a HubSpot marketplace app from Dunamis Studios that generates structured handoff briefs and conversational handoff messages whenever ownership of a CRM record changes. It reads the record's history, properties, and engagement to produce a concise brief for the new owner and a personalized message they can send to the contact, so handoffs preserve context instead of restarting it.",
   url: `${SITE_URL}/products/debrief`,
   publisher: {
     "@type": "Organization",
