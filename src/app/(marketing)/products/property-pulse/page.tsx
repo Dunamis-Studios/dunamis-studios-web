@@ -17,7 +17,7 @@ const propertyPulseSchema = {
   applicationSubCategory: "CRM",
   operatingSystem: "Web-based",
   description:
-    "Property Pulse adds a change-history card to every HubSpot record so you can see what changed, when, and who did it, without digging through audit logs.",
+    "Property Pulse is a HubSpot marketplace app from Dunamis Studios that surfaces property change history directly on every CRM record. Admins choose which properties to track per object type, including custom objects, and users see the full change log, prior values, current values, and source in a single CRM card with inline editing and filtering.",
   url: `${SITE_URL}/products/property-pulse`,
   publisher: {
     "@type": "Organization",
