@@ -1,9 +1,32 @@
+import { execSync } from "node:child_process";
 import type { NextConfig } from "next";
+
+/**
+ * Derive the current commit's author date at build time. Vercel does
+ * not expose a commit-timestamp env var (only SHA, REF, MESSAGE,
+ * AUTHOR_LOGIN, AUTHOR_NAME), so we compute it from git directly. The
+ * value is injected into process.env via Next's `env` field so server
+ * routes (sitemap.ts) can read it as GIT_COMMIT_AUTHOR_DATE. Falls
+ * back to empty string if git is unavailable; sitemap.ts handles that.
+ */
+function gitCommitAuthorDate(): string {
+  try {
+    return execSync("git log -1 --format=%aI HEAD", {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return "";
+  }
+}
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   typedRoutes: false,
+  env: {
+    GIT_COMMIT_AUTHOR_DATE: gitCommitAuthorDate(),
+  },
   images: {
     remotePatterns: [
       {

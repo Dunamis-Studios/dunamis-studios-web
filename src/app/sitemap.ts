@@ -12,9 +12,11 @@ import { listPosts } from "@/lib/content";
  * frontmatter, since those change independently of site deploys.
  *
  * Derivation order:
- *   1. VERCEL_GIT_COMMIT_AUTHOR_DATE (the commit's author date) when
- *      Vercel exposes it. This is the most accurate signal: it ties
- *      the lastmod to the commit that triggered the deploy.
+ *   1. GIT_COMMIT_AUTHOR_DATE, injected at build time by
+ *      next.config.ts (which runs `git log -1 --format=%aI`). Vercel
+ *      does not expose a commit-timestamp env var of its own, so we
+ *      derive it ourselves. This ties the lastmod to the commit that
+ *      triggered the deploy, not just the build time.
  *   2. new Date() at module load. Next.js evaluates this once per
  *      cold start, and Vercel cold-starts the function on every
  *      deploy, so this approximates the deploy time within minutes.
@@ -22,7 +24,7 @@ import { listPosts } from "@/lib/content";
  * Either way, the value is computed at deploy time, never hardcoded.
  */
 const LAST_MODIFIED = (() => {
-  const fromGit = process.env.VERCEL_GIT_COMMIT_AUTHOR_DATE;
+  const fromGit = process.env.GIT_COMMIT_AUTHOR_DATE;
   if (fromGit) {
     const parsed = new Date(fromGit);
     if (!Number.isNaN(parsed.getTime())) return parsed;
