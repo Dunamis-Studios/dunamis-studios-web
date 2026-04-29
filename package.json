@@ -13,7 +13,8 @@
     "stripe:cleanup-incomplete": "tsx scripts/cleanup-incomplete-subscriptions.ts",
     "reconcile:entitlement": "tsx scripts/reconcile-entitlement.ts",
     "brand:build": "tsx scripts/build-brand-assets.ts",
-    "kb:index": "tsx scripts/build-kb-index.ts"
+    "kb:index": "tsx scripts/build-kb-index.ts",
+    "smoke:listicle-fields": "tsx scripts/smoke-listicle-fields.ts"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.2",
