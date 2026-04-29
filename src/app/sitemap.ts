@@ -10,8 +10,25 @@ import { listPosts } from "@/lib/content";
  * Last-modified timestamp bumped per deploy for static marketing
  * surfaces. Help-center entries read their own `updated` date from
  * frontmatter, since those change independently of site deploys.
+ *
+ * Derivation order:
+ *   1. VERCEL_GIT_COMMIT_AUTHOR_DATE (the commit's author date) when
+ *      Vercel exposes it. This is the most accurate signal: it ties
+ *      the lastmod to the commit that triggered the deploy.
+ *   2. new Date() at module load. Next.js evaluates this once per
+ *      cold start, and Vercel cold-starts the function on every
+ *      deploy, so this approximates the deploy time within minutes.
+ *
+ * Either way, the value is computed at deploy time, never hardcoded.
  */
-const LAST_MODIFIED = new Date("2026-04-20T00:00:00.000Z");
+const LAST_MODIFIED = (() => {
+  const fromGit = process.env.VERCEL_GIT_COMMIT_AUTHOR_DATE;
+  if (fromGit) {
+    const parsed = new Date(fromGit);
+    if (!Number.isNaN(parsed.getTime())) return parsed;
+  }
+  return new Date();
+})();
 
 function baseUrl(): string {
   return (
@@ -72,6 +89,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       url: `${base}/privacy`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${base}/legal/dpa`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${base}/legal/subprocessors`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "yearly",
       priority: 0.3,
