@@ -1,0 +1,11 @@
+/* TEAM */
+Founder, developer: Joshua Bradford
+Site: https://www.dunamisstudios.net
+LinkedIn: https://www.linkedin.com/company/dunamis-studios/
+Location: St. Augustine, Florida, USA
+
+/* SITE */
+Last update: 2026-04-29
+Standards: HTML5, CSS3, ES2024
+Components: Next.js, React, TypeScript, Tailwind CSS, Vercel, Upstash Redis
+Software: Built with Claude Code
