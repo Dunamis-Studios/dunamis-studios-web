@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/session";
-import { getPost, savePost, deletePost, generateUniqueSlug } from "@/lib/content";
+import {
+  getPost,
+  savePost,
+  deletePost,
+  generateUniqueSlug,
+  normalizeFaq,
+  normalizeComparisonTable,
+  normalizeRelatedProducts,
+} from "@/lib/content";
 import type { ContentType, Post } from "@/lib/content";
 
 function slugify(text: string): string {
@@ -15,7 +23,7 @@ export async function POST(req: NextRequest) {
   const session = await requireAdmin();
 
   const body = await req.json();
-  const { type, title, slug, description, contentHtml, status, coverImageUrl, targetKeyword } = body as {
+  const { type, title, slug, description, contentHtml, status, coverImageUrl, targetKeyword, faq, comparisonTable, relatedProducts } = body as {
     type: ContentType;
     title: string;
     slug?: string;
@@ -24,6 +32,9 @@ export async function POST(req: NextRequest) {
     status: "draft" | "published";
     coverImageUrl?: string;
     targetKeyword?: string;
+    faq?: unknown;
+    comparisonTable?: unknown;
+    relatedProducts?: unknown;
   };
 
   if (!type || !title || !description) {
@@ -50,6 +61,9 @@ export async function POST(req: NextRequest) {
     updatedAt: now,
     publishedAt: status === "published" ? now : undefined,
     authorAccountId: session.account.accountId,
+    faq: normalizeFaq(faq),
+    comparisonTable: normalizeComparisonTable(comparisonTable),
+    relatedProducts: normalizeRelatedProducts(relatedProducts),
   };
 
   await savePost(type, post);
@@ -60,7 +74,7 @@ export async function PUT(req: NextRequest) {
   await requireAdmin();
 
   const body = await req.json();
-  const { type, slug, title, description, contentHtml, status, coverImageUrl, targetKeyword } = body as {
+  const { type, slug, title, description, contentHtml, status, coverImageUrl, targetKeyword, faq, comparisonTable, relatedProducts } = body as {
     type: ContentType;
     slug: string;
     title: string;
@@ -69,6 +83,9 @@ export async function PUT(req: NextRequest) {
     status: "draft" | "published";
     coverImageUrl?: string;
     targetKeyword?: string;
+    faq?: unknown;
+    comparisonTable?: unknown;
+    relatedProducts?: unknown;
   };
 
   if (!type || !slug || !title) {
@@ -95,6 +112,9 @@ export async function PUT(req: NextRequest) {
         ? now
         : existing.publishedAt,
     authorAccountId: existing.authorAccountId,
+    faq: normalizeFaq(faq),
+    comparisonTable: normalizeComparisonTable(comparisonTable),
+    relatedProducts: normalizeRelatedProducts(relatedProducts),
   };
 
   await savePost(type, post);

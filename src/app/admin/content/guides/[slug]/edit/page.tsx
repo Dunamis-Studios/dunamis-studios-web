@@ -22,6 +22,9 @@ export default async function EditGuidePage({ params }: Props) {
         status: post.status,
         coverImageUrl: post.coverImageUrl,
         targetKeyword: post.targetKeyword,
+        faq: post.faq,
+        comparisonTable: post.comparisonTable,
+        relatedProducts: post.relatedProducts,
       }}
     />
   );

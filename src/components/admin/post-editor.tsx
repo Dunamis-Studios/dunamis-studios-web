@@ -4,6 +4,16 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { TiptapEditor } from "./tiptap-editor";
 import { SEOSidebar } from "./seo-sidebar";
+import {
+  ListicleFaqEditor,
+  ListicleComparisonEditor,
+  ListicleRelatedProductsEditor,
+} from "./listicle-editors";
+import type {
+  PostFaqItem,
+  PostComparisonTable,
+} from "@/lib/content";
+import type { Product } from "@/lib/types";
 
 interface PostEditorProps {
   type: "guide" | "article";
@@ -15,6 +25,9 @@ interface PostEditorProps {
     status: "draft" | "published";
     coverImageUrl?: string;
     targetKeyword?: string;
+    faq?: PostFaqItem[];
+    comparisonTable?: PostComparisonTable;
+    relatedProducts?: Product[];
   };
 }
 
@@ -40,6 +53,19 @@ export function PostEditor({ type, initial }: PostEditorProps) {
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState("");
   const [toast, setToast] = React.useState("");
+
+  // Optional structured fields for AEO listicle articles. Each is the
+  // single source of truth for both the rendered section below the
+  // article body and (for faq) the FAQPage JSON-LD emitted in the
+  // <head>. Defaults are empty so existing articles open with the new
+  // collapsible sections in their empty state and the saved Post is
+  // unchanged.
+  const [faq, setFaq] = React.useState<PostFaqItem[]>(initial?.faq ?? []);
+  const [comparisonTable, setComparisonTable] =
+    React.useState<PostComparisonTable | null>(initial?.comparisonTable ?? null);
+  const [relatedProducts, setRelatedProducts] = React.useState<Product[]>(
+    initial?.relatedProducts ?? [],
+  );
 
   const [slugTouched, setSlugTouched] = React.useState(isEdit);
 
@@ -68,6 +94,12 @@ export function PostEditor({ type, initial }: PostEditorProps) {
       status,
       coverImageUrl: coverImageUrl || undefined,
       targetKeyword: targetKeyword || undefined,
+      // Optional structured fields. The API normalizes these on the
+      // server side, so it is safe to send empty arrays / null here;
+      // they round-trip back as undefined on the saved Post.
+      faq: faq.length > 0 ? faq : undefined,
+      comparisonTable: comparisonTable ?? undefined,
+      relatedProducts: relatedProducts.length > 0 ? relatedProducts : undefined,
     };
 
     try {
@@ -268,6 +300,25 @@ export function PostEditor({ type, initial }: PostEditorProps) {
           <div>
             <label className="block text-sm font-medium text-[var(--fg-muted)] mb-1">Content</label>
             <TiptapEditor content={contentHtml} onChange={setContentHtml} />
+          </div>
+
+          {/*
+            Optional listicle fields. Each editor is collapsible and
+            defaults to closed when empty, so the editor surface for
+            existing articles looks the same as before. When populated,
+            the corresponding section renders below the article body
+            and (for faq) drives FAQPage JSON-LD on the public page.
+          */}
+          <div className="space-y-3">
+            <ListicleFaqEditor value={faq} onChange={setFaq} />
+            <ListicleComparisonEditor
+              value={comparisonTable}
+              onChange={setComparisonTable}
+            />
+            <ListicleRelatedProductsEditor
+              value={relatedProducts}
+              onChange={setRelatedProducts}
+            />
           </div>
         </div>
 

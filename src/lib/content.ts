@@ -1,5 +1,5 @@
 import { redis, KEY } from "./redis";
-import type { Product } from "./types";
+import { PRODUCTS, type Product } from "./types";
 
 export type ContentType = "guide" | "article";
 
@@ -111,6 +111,79 @@ export async function listPosts(
     posts.push(post);
   }
   return posts;
+}
+
+// -----------------------------------------------------------------
+// Normalization helpers for the optional listicle fields. The admin
+// API handlers run these on every write to keep Redis records well-
+// shaped: empty strings are trimmed away, malformed entries are
+// dropped, and a row whose cell count drifts from headers.length - 1
+// is padded or truncated rather than rejecting the whole save.
+// Each helper returns undefined when the input would land empty, so
+// callers can pass the result straight into the Post object and
+// existing articles continue to round-trip with no new fields set.
+// -----------------------------------------------------------------
+
+export function normalizeFaq(input: unknown): PostFaqItem[] | undefined {
+  if (!Array.isArray(input)) return undefined;
+  const cleaned: PostFaqItem[] = [];
+  for (const item of input) {
+    if (!item || typeof item !== "object") continue;
+    const record = item as Record<string, unknown>;
+    if (typeof record.q !== "string" || typeof record.a !== "string") continue;
+    const q = record.q.trim();
+    const a = record.a.trim();
+    if (!q || !a) continue;
+    cleaned.push({ q, a });
+  }
+  return cleaned.length > 0 ? cleaned : undefined;
+}
+
+export function normalizeComparisonTable(
+  input: unknown,
+): PostComparisonTable | undefined {
+  if (!input || typeof input !== "object") return undefined;
+  const record = input as Record<string, unknown>;
+  if (!Array.isArray(record.headers) || !Array.isArray(record.rows)) {
+    return undefined;
+  }
+  const headers = (record.headers as unknown[])
+    .filter((h): h is string => typeof h === "string")
+    .map((h) => h.trim());
+  if (headers.length < 2) return undefined; // need dimension + at least one subject
+  const expectedCells = headers.length - 1;
+  const rows: PostComparisonRow[] = [];
+  for (const row of record.rows as unknown[]) {
+    if (!row || typeof row !== "object") continue;
+    const r = row as Record<string, unknown>;
+    if (typeof r.dimension !== "string" || !Array.isArray(r.cells)) continue;
+    const dimension = r.dimension.trim();
+    if (!dimension) continue;
+    const cells = (r.cells as unknown[])
+      .filter((c): c is string => typeof c === "string")
+      .map((c) => c.trim());
+    // Pad short rows and truncate long rows so the row width always
+    // matches the header count. This keeps the table grid consistent
+    // even if the editor and API drift on column-count edits.
+    while (cells.length < expectedCells) cells.push("");
+    if (cells.length > expectedCells) cells.length = expectedCells;
+    rows.push({ dimension, cells });
+  }
+  if (rows.length === 0) return undefined;
+  return { headers, rows };
+}
+
+export function normalizeRelatedProducts(input: unknown): Product[] | undefined {
+  if (!Array.isArray(input)) return undefined;
+  const valid = new Set<string>(PRODUCTS);
+  const cleaned: Product[] = [];
+  for (const slug of input) {
+    if (typeof slug !== "string") continue;
+    if (!valid.has(slug)) continue;
+    if (cleaned.includes(slug as Product)) continue; // dedupe while preserving order
+    cleaned.push(slug as Product);
+  }
+  return cleaned.length > 0 ? cleaned : undefined;
 }
 
 export async function generateUniqueSlug(
