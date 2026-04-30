@@ -1,0 +1,118 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createHash } from "node:crypto";
+import { redis, KEY } from "@/lib/redis";
+import { sendNotifySignupEmail } from "@/lib/email-notify";
+import {
+  PRODUCT_CATALOG_SLUGS,
+  PRODUCT_META,
+  type ProductCatalogSlug,
+} from "@/lib/types";
+
+/**
+ * POST /api/notify
+ *
+ * Records a "notify me when this ships" signup for one of the unshipped
+ * Dunamis Studios products. The frontend on each /products/<slug> page
+ * for an unshipped product calls this with the visitor's email and the
+ * product slug. Stored in Redis under a deterministic per-(product,
+ * email) key so re-submits dedupe quietly. A confirmation email is
+ * dispatched via Resend when RESEND_API_KEY is configured; in local dev
+ * without a key, the signup is still persisted and the email is logged
+ * with a redacted recipient.
+ */
+
+interface SignupRecord {
+  email: string;
+  product: ProductCatalogSlug;
+  signedUpAt: string;
+  ip: string;
+  userAgent: string;
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function hashEmail(email: string): string {
+  return createHash("sha256")
+    .update(email.toLowerCase().trim())
+    .digest("hex")
+    .slice(0, 32);
+}
+
+function clientIp(req: NextRequest): string {
+  const forwarded = req.headers.get("x-forwarded-for");
+  if (forwarded) return forwarded.split(",")[0]?.trim() ?? "unknown";
+  return req.headers.get("x-real-ip") ?? "unknown";
+}
+
+export async function POST(req: NextRequest) {
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  const { email, product } = (body ?? {}) as {
+    email?: unknown;
+    product?: unknown;
+  };
+
+  if (typeof email !== "string" || !EMAIL_RE.test(email.trim())) {
+    return NextResponse.json(
+      { error: "Please enter a valid email address." },
+      { status: 400 },
+    );
+  }
+  if (typeof product !== "string") {
+    return NextResponse.json(
+      { error: "Missing product slug." },
+      { status: 400 },
+    );
+  }
+  if (
+    !(PRODUCT_CATALOG_SLUGS as readonly string[]).includes(product)
+  ) {
+    return NextResponse.json(
+      { error: "Unknown product." },
+      { status: 400 },
+    );
+  }
+
+  const slug = product as ProductCatalogSlug;
+  const cleanEmail = email.trim();
+  const record: SignupRecord = {
+    email: cleanEmail,
+    product: slug,
+    signedUpAt: new Date().toISOString(),
+    ip: clientIp(req),
+    userAgent: req.headers.get("user-agent") ?? "unknown",
+  };
+
+  try {
+    const r = redis();
+    const key = KEY.notifySignup(slug, hashEmail(cleanEmail));
+    // SET with no TTL: notify-list entries persist until we drain them
+    // when the product ships. Idempotent on repeat submits because the
+    // key is deterministic from (product, email).
+    await r.set(key, record);
+  } catch (err) {
+    console.error("[notify] redis write failed", err);
+    return NextResponse.json(
+      { error: "Could not record signup. Please try again." },
+      { status: 500 },
+    );
+  }
+
+  // Best-effort confirmation email. We do not fail the signup if Resend
+  // errors, since the visitor's intent is already captured in Redis.
+  try {
+    await sendNotifySignupEmail({
+      to: cleanEmail,
+      productName: PRODUCT_META[slug].name,
+    });
+  } catch (err) {
+    console.error("[notify] confirmation email failed", err);
+  }
+
+  return NextResponse.json({ ok: true });
+}

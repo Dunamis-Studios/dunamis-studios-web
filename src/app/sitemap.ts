@@ -72,6 +72,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${base}/products/carbon-copy`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${base}/products/traverse-and-update`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${base}/products/association-visualizer`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
       url: `${base}/products/debrief/roadmap`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",

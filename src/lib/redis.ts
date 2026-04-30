@@ -61,4 +61,14 @@ export const KEY = {
   guidesIndex: "dunamis:guides:index",
   articlesIndex: "dunamis:articles:index",
   image: (id: string) => `dunamis:image:${id}`,
+  /**
+   * Notify-on-launch signups for unshipped products. The key uses an
+   * SHA-256 hash of the lowercased email so storage is dedup-safe per
+   * (product, email) pair without persisting the raw address in the key
+   * namespace. The value is a small JSON record holding the raw email,
+   * an ISO timestamp, and the source slug; admin tooling that drains
+   * the list resolves the raw email from the value, not the key.
+   */
+  notifySignup: (productSlug: string, emailHash: string) =>
+    `dunamis:notify:${productSlug}:${emailHash}`,
 } as const;
