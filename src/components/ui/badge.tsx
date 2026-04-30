@@ -17,6 +17,8 @@ const badgeVariants = cva(
           "border-transparent bg-[color-mix(in_oklch,var(--color-warning)_15%,transparent)] text-[var(--color-warning)]",
         danger:
           "border-transparent bg-[color-mix(in_oklch,var(--color-danger)_15%,transparent)] text-[var(--color-danger)]",
+        info:
+          "border-transparent bg-[color-mix(in_oklch,var(--color-info)_15%,transparent)] text-[var(--color-info)]",
         pulse:
           "border-transparent bg-[color-mix(in_oklch,var(--color-pulse-500)_15%,transparent)] text-[var(--color-pulse-500)]",
         brief:
