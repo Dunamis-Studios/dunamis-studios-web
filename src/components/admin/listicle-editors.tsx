@@ -6,7 +6,11 @@ import type {
   PostComparisonTable,
   PostComparisonRow,
 } from "@/lib/content";
-import { PRODUCTS, PRODUCT_META, type Product } from "@/lib/types";
+import {
+  PRODUCT_CATALOG_SLUGS,
+  PRODUCT_META,
+  type ProductCatalogSlug,
+} from "@/lib/types";
 
 /**
  * Three optional structured-content editors that appear below the
@@ -541,8 +545,8 @@ function ComparisonEditorBody({
 // -----------------------------------------------------------------
 
 interface RelatedProductsEditorProps {
-  value: Product[];
-  onChange: (next: Product[]) => void;
+  value: ProductCatalogSlug[];
+  onChange: (next: ProductCatalogSlug[]) => void;
 }
 
 export function ListicleRelatedProductsEditor({
@@ -551,7 +555,7 @@ export function ListicleRelatedProductsEditor({
 }: RelatedProductsEditorProps) {
   const [open, setOpen] = React.useState(value.length > 0);
 
-  function toggle(slug: Product) {
+  function toggle(slug: ProductCatalogSlug) {
     if (value.includes(slug)) {
       onChange(value.filter((s) => s !== slug));
     } else {
@@ -573,7 +577,7 @@ export function ListicleRelatedProductsEditor({
       onToggle={() => setOpen((v) => !v)}
     >
       <div className="space-y-2">
-        {PRODUCTS.map((slug) => {
+        {PRODUCT_CATALOG_SLUGS.map((slug) => {
           const meta = PRODUCT_META[slug];
           const checked = value.includes(slug);
           return (

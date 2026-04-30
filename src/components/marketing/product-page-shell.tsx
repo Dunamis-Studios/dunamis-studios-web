@@ -24,7 +24,14 @@ export interface ProductPageProps {
   problem: { title: string; body: string };
   features: { title: string; body: string }[];
   faq: { q: string; a: string }[];
-  marketplaceUrl: string;
+  /**
+   * HubSpot marketplace listing URL. Optional because not every product
+   * has a listing yet (building/exploring stages are pre-listing). When
+   * absent, the install button defaults to disabled with a placeholder
+   * label; consumers should pair an absent marketplaceUrl with an
+   * explicit installCtaLabel.
+   */
+  marketplaceUrl?: string;
   // Optional screenshot gallery rendered between Problem and Features.
   // Currently only Property Pulse passes this; Debrief's output is
   // unchanged when omitted.
@@ -112,9 +119,9 @@ export function ProductPageShell(p: ProductPageProps) {
             </p>
             <p className="mx-auto mt-6 max-w-xl text-[var(--fg-muted)]">{p.lede}</p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-              {p.installCtaLabel ? (
+              {p.installCtaLabel || !p.marketplaceUrl ? (
                 <Button size="lg" disabled>
-                  {p.installCtaLabel}
+                  {p.installCtaLabel ?? "Coming Soon"}
                 </Button>
               ) : (
                 <Button asChild size="lg">

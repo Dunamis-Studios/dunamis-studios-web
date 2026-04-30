@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { PostComparisonTable, PostFaqItem } from "@/lib/content";
-import { PRODUCT_META, type Product } from "@/lib/types";
+import { PRODUCT_META, type ProductCatalogSlug } from "@/lib/types";
 
 /**
  * Shared section components for listicle-grade articles. Both the
@@ -124,7 +124,11 @@ export function FaqSection({ faq }: { faq: PostFaqItem[] }) {
  * lockstep with the canonical product registry; adding a new product
  * to PRODUCT_META automatically makes it eligible to appear here.
  */
-export function RelatedProductsSection({ slugs }: { slugs: Product[] }) {
+export function RelatedProductsSection({
+  slugs,
+}: {
+  slugs: ProductCatalogSlug[];
+}) {
   return (
     <section className="mt-12 sm:mt-16">
       <h2 className="text-2xl font-medium tracking-tight text-[var(--fg)] sm:text-[1.6rem]">

@@ -13,7 +13,7 @@ import type {
   PostFaqItem,
   PostComparisonTable,
 } from "@/lib/content";
-import type { Product } from "@/lib/types";
+import type { ProductCatalogSlug } from "@/lib/types";
 
 interface PostEditorProps {
   type: "guide" | "article";
@@ -27,7 +27,7 @@ interface PostEditorProps {
     targetKeyword?: string;
     faq?: PostFaqItem[];
     comparisonTable?: PostComparisonTable;
-    relatedProducts?: Product[];
+    relatedProducts?: ProductCatalogSlug[];
   };
 }
 
@@ -63,9 +63,9 @@ export function PostEditor({ type, initial }: PostEditorProps) {
   const [faq, setFaq] = React.useState<PostFaqItem[]>(initial?.faq ?? []);
   const [comparisonTable, setComparisonTable] =
     React.useState<PostComparisonTable | null>(initial?.comparisonTable ?? null);
-  const [relatedProducts, setRelatedProducts] = React.useState<Product[]>(
-    initial?.relatedProducts ?? [],
-  );
+  const [relatedProducts, setRelatedProducts] = React.useState<
+    ProductCatalogSlug[]
+  >(initial?.relatedProducts ?? []);
 
   const [slugTouched, setSlugTouched] = React.useState(isEdit);
 

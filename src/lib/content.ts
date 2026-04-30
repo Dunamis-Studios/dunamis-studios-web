@@ -1,5 +1,8 @@
 import { redis, KEY } from "./redis";
-import { PRODUCTS, type Product } from "./types";
+import {
+  PRODUCT_CATALOG_SLUGS,
+  type ProductCatalogSlug,
+} from "./types";
 
 export type ContentType = "guide" | "article";
 
@@ -55,11 +58,13 @@ export interface Post {
   comparisonTable?: PostComparisonTable;
   /**
    * Optional set of Dunamis Studios product slugs the article links to.
-   * Drives the "Related products" cards rendered below the body. The
-   * union mirrors src/lib/types.ts so adding a marketplace product is
-   * the only place new slugs are introduced.
+   * Drives the "Related products" cards rendered below the body. Keyed
+   * off the broader catalog union (ProductCatalogSlug) so unshipped
+   * products in the catalog are also eligible for cross linking. Adding
+   * a new product to PRODUCT_META in src/lib/types.ts is the only place
+   * new slugs are introduced.
    */
-  relatedProducts?: Product[];
+  relatedProducts?: ProductCatalogSlug[];
 }
 
 function keyFor(type: ContentType, slug: string): string {
@@ -173,15 +178,17 @@ export function normalizeComparisonTable(
   return { headers, rows };
 }
 
-export function normalizeRelatedProducts(input: unknown): Product[] | undefined {
+export function normalizeRelatedProducts(
+  input: unknown,
+): ProductCatalogSlug[] | undefined {
   if (!Array.isArray(input)) return undefined;
-  const valid = new Set<string>(PRODUCTS);
-  const cleaned: Product[] = [];
+  const valid = new Set<string>(PRODUCT_CATALOG_SLUGS);
+  const cleaned: ProductCatalogSlug[] = [];
   for (const slug of input) {
     if (typeof slug !== "string") continue;
     if (!valid.has(slug)) continue;
-    if (cleaned.includes(slug as Product)) continue; // dedupe while preserving order
-    cleaned.push(slug as Product);
+    if (cleaned.includes(slug as ProductCatalogSlug)) continue; // dedupe while preserving order
+    cleaned.push(slug as ProductCatalogSlug);
   }
   return cleaned.length > 0 ? cleaned : undefined;
 }
