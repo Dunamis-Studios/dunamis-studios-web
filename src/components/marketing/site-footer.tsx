@@ -23,34 +23,10 @@ export function SiteFooter() {
           </h4>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li>
-              <Link href="/products/property-pulse" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
-                Property Pulse
+              <Link href="/products" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
+                Products
               </Link>
             </li>
-            <li>
-              <Link href="/products/debrief" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
-                Debrief
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/products/debrief/roadmap"
-                className="text-[var(--fg-muted)] hover:text-[var(--fg)]"
-              >
-                Debrief roadmap
-              </Link>
-            </li>
-            <li>
-              <span className="text-[var(--fg-subtle)]">More coming soon</span>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-            Company
-          </h4>
-          <ul className="mt-4 space-y-2.5 text-sm">
             <li>
               <Link href="/pricing" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
                 Pricing
@@ -62,6 +38,24 @@ export function SiteFooter() {
                 className="text-[var(--fg-muted)] hover:text-[var(--fg)]"
               >
                 Custom Development
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+            Resources
+          </h4>
+          <ul className="mt-4 space-y-2.5 text-sm">
+            <li>
+              <Link href="/articles" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
+                Articles
+              </Link>
+            </li>
+            <li>
+              <Link href="/guides" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
+                Guides
               </Link>
             </li>
             <li>
@@ -103,7 +97,7 @@ export function SiteFooter() {
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-xs text-[var(--fg-subtle)] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <div>© {new Date().getFullYear()} Dunamis Studios. All rights reserved.</div>
           <div className="font-mono tracking-tight">
-            δύναμις — <span className="text-[var(--fg-muted)]">power, capability, potential</span>
+            δύναμις · <span className="text-[var(--fg-muted)]">power, capability, potential</span>
           </div>
         </div>
       </div>

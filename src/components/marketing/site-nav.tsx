@@ -10,8 +10,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { href: "/products/property-pulse", label: "Property Pulse" },
-  { href: "/products/debrief", label: "Debrief" },
+  { href: "/products", label: "Products" },
   { href: "/custom-development", label: "Custom Development" },
   { href: "/guides", label: "Guides" },
   { href: "/articles", label: "Articles" },
