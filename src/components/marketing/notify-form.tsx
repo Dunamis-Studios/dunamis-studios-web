@@ -16,11 +16,25 @@ interface NotifyFormProps {
 
 /**
  * Email capture form rendered at the bottom of unshipped product pages.
- * POSTs to /api/notify with { email, product }. Shows an inline success
- * state on 200 and an inline error message otherwise. The visitor's
- * email is persisted to Redis even if the confirmation email fails on
- * the server side.
+ * POSTs to /api/notify with { email, product, hubspotutk? }. The
+ * hubspotutk value is the HubSpot tracking cookie; including it in the
+ * payload lets HubSpot link the form submission back to the visitor's
+ * existing tracking session for source attribution and page journey
+ * data. The cookie is missing for visitors with tracking blocked, in
+ * which case the field is omitted and HubSpot still creates the
+ * contact, just without session linkage. Shows an inline success state
+ * on 200 and an inline error message otherwise. The visitor's email is
+ * persisted to Redis even if the HubSpot mirror or the confirmation
+ * email fails server side.
  */
+
+function readHubspotUtk(): string {
+  if (typeof document === "undefined") return "";
+  const match = document.cookie.match(
+    /(?:^|;\s*)hubspotutk=([^;]+)/,
+  );
+  return match ? decodeURIComponent(match[1]) : "";
+}
 export function NotifyForm({
   product,
   productName,
@@ -36,10 +50,15 @@ export function NotifyForm({
     setStatus("submitting");
     setErrorMessage(null);
     try {
+      const hubspotutk = readHubspotUtk();
       const res = await fetch("/api/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, product }),
+        body: JSON.stringify(
+          hubspotutk
+            ? { email, product, hubspotutk }
+            : { email, product },
+        ),
       });
       if (!res.ok) {
         let message = "Something went wrong. Please try again.";

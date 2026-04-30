@@ -62,9 +62,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { email, product } = (body ?? {}) as {
+  const { email, product, hubspotutk } = (body ?? {}) as {
     email?: unknown;
     product?: unknown;
+    hubspotutk?: unknown;
   };
 
   if (typeof email !== "string" || !EMAIL_RE.test(email.trim())) {
@@ -90,11 +91,12 @@ export async function POST(req: NextRequest) {
 
   const slug = product as ProductCatalogSlug;
   const cleanEmail = email.trim();
+  const ipAddress = clientIp(req);
   const record: SignupRecord = {
     email: cleanEmail,
     product: slug,
     signedUpAt: new Date().toISOString(),
-    ip: clientIp(req),
+    ip: ipAddress,
     userAgent: req.headers.get("user-agent") ?? "unknown",
   };
 
@@ -114,14 +116,24 @@ export async function POST(req: NextRequest) {
   }
 
   const productName = PRODUCT_META[slug].name;
+  const hubspotutkValue =
+    typeof hubspotutk === "string" && hubspotutk.length > 0
+      ? hubspotutk
+      : undefined;
 
   // Best-effort HubSpot mirror. Logs and swallows on any HubSpot
-  // failure; the visitor's intent is already captured in Redis.
+  // failure; the visitor's intent is already captured in Redis. The
+  // hubspotutk cookie value (when the visitor has tracking enabled)
+  // and the visitor IP are forwarded to HubSpot's form submission
+  // context so the contact is linked to the visitor's existing
+  // tracking session and source attribution populates correctly.
   try {
     await submitToHubSpotNotifyForm({
       email: cleanEmail,
       slug,
       productName,
+      hubspotutk: hubspotutkValue,
+      ipAddress: ipAddress !== "unknown" ? ipAddress : undefined,
     });
   } catch (err) {
     console.error("[notify] hubspot submission threw", err);

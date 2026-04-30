@@ -27,6 +27,24 @@ interface SubmitArgs {
   email: string;
   slug: string;
   productName: string;
+  /**
+   * Visitor's HubSpot tracking cookie (hubspotutk) value. When present,
+   * HubSpot links the form submission to the visitor's existing
+   * tracking session so source attribution and page journey data
+   * populate on the contact. Omit when the cookie is not available
+   * (visitor with tracking blocked, ad blocker, server-to-server
+   * smoke test): HubSpot will still create the contact, just without
+   * session linkage.
+   */
+  hubspotutk?: string;
+  /**
+   * Visitor's IP address as derived from the request headers. When
+   * present, HubSpot uses it for geolocation and for the IP fields on
+   * the form submission record. Omit when unavailable (the route
+   * passes undefined when the IP would be the literal "unknown"
+   * fallback) so HubSpot does not record a sentinel value.
+   */
+  ipAddress?: string;
 }
 
 const HUBSPOT_API_BASE = "https://api.hubapi.com";
@@ -41,6 +59,8 @@ export async function submitToHubSpotNotifyForm({
   email,
   slug,
   productName,
+  hubspotutk,
+  ipAddress,
 }: SubmitArgs): Promise<void> {
   const accessToken = process.env.HUBSPOT_ACCESS_TOKEN;
   const portalId = process.env.HUBSPOT_PORTAL_ID;
@@ -98,8 +118,20 @@ export async function submitToHubSpotNotifyForm({
   // the contact, applies any list memberships configured on the form,
   // and sets the multi-select notify_interests property to the merged
   // semicolon-joined value. No Authorization header.
+  //
+  // hutk and ipAddress are added to the context only when present.
+  // HubSpot expects either a real value or no field at all; passing
+  // an empty string for hutk produces the same "missing cookie"
+  // warning we are trying to fix, and an empty ipAddress would log
+  // a sentinel value on the contact.
   try {
     const submitUrl = `${HUBSPOT_FORMS_BASE}/submissions/v3/integration/submit/${portalId}/${formGuid}`;
+    const context: Record<string, string> = {
+      pageUri: `${PUBLIC_PAGE_BASE}/products/${slug}`,
+      pageName: `${productName} notify signup`,
+    };
+    if (hubspotutk) context.hutk = hubspotutk;
+    if (ipAddress) context.ipAddress = ipAddress;
     const res = await fetch(submitUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -108,10 +140,7 @@ export async function submitToHubSpotNotifyForm({
           { name: "email", value: email },
           { name: "notify_interests", value: merged },
         ],
-        context: {
-          pageUri: `${PUBLIC_PAGE_BASE}/products/${slug}`,
-          pageName: `${productName} notify signup`,
-        },
+        context,
       }),
     });
     if (!res.ok) {
