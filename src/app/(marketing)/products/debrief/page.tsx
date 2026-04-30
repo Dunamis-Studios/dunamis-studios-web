@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ProductPageShell } from "@/components/marketing/product-page-shell";
+import { NotifyForm } from "@/components/marketing/notify-form";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { Container } from "@/components/ui/primitives";
+import { Container, Section } from "@/components/ui/primitives";
 import { JsonLd } from "@/components/seo/json-ld";
 import { PRODUCT_META } from "@/lib/types";
 
@@ -33,7 +34,7 @@ const debriefSchema = {
   applicationSubCategory: "CRM",
   operatingSystem: "Web-based",
   description:
-    "Debrief is a HubSpot marketplace app from Dunamis Studios that generates structured handoff briefs and conversational handoff messages whenever ownership of a CRM record changes. It reads the record's history, properties, and engagement to produce a concise brief for the new owner and a personalized message they can send to the contact, so handoffs preserve context instead of restarting it.",
+    "Debrief is a HubSpot marketplace app from Dunamis Studios that generates structured handoff briefs and conversational handoff messages on demand, when a HubSpot user starts a handoff from the Debrief CRM card on a record. It reads the record's history, properties, and engagement to produce a concise brief for the new owner and a personalized message they can send to the contact, so handoffs preserve context instead of restarting it.",
   url: `${SITE_URL}/products/debrief`,
   publisher: {
     "@type": "Organization",
@@ -76,7 +77,7 @@ const debriefSchema = {
 const FAQ: { q: string; a: string }[] = [
   {
     q: "What is Debrief?",
-    a: "Debrief is a HubSpot marketplace app from Dunamis Studios that generates structured handoff briefs and conversational handoff messages whenever ownership of a CRM record changes. It reads the record's properties, history, associations, and engagement to produce a concise brief for the new owner and a personalized message the previous owner can send to the contact. The goal is to preserve context across handoffs instead of restarting it from scratch.",
+    a: "Debrief is a HubSpot marketplace app from Dunamis Studios that generates structured handoff briefs and conversational handoff messages on demand, when a HubSpot user starts a handoff from the Debrief CRM card on a record. It reads the record's properties, history, associations, and engagement to produce a concise brief for the new owner and a personalized message the previous owner can send to the contact. Briefs are user-initiated, not automatically triggered by ownership changes. The goal is to preserve context across handoffs instead of restarting it from scratch.",
   },
   {
     q: "How is Debrief different from AI meeting summary tools?",
@@ -130,12 +131,12 @@ const faqPageSchema = {
 export const metadata: Metadata = {
   title: "Debrief: AI-powered CRM handoffs for HubSpot",
   description:
-    "Debrief is a HubSpot marketplace app that generates structured handoff briefs and draft messages when a CRM record changes ownership. Not a meeting tool.",
+    "Debrief is a HubSpot marketplace app that generates structured handoff briefs and draft messages when a HubSpot user starts a CRM record handoff. User-initiated, not auto-triggered. Not a meeting tool.",
   alternates: { canonical: "/products/debrief" },
   openGraph: {
     title: "Debrief: AI-powered CRM handoffs for HubSpot",
     description:
-      "Debrief is a HubSpot marketplace app that generates structured handoff briefs and draft messages when a CRM record changes ownership. Not a meeting tool.",
+      "Debrief is a HubSpot marketplace app that generates structured handoff briefs and draft messages when a HubSpot user starts a CRM record handoff. User-initiated, not auto-triggered. Not a meeting tool.",
     url: "/products/debrief",
     type: "website",
     images: [
@@ -152,7 +153,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Debrief: AI-powered CRM handoffs for HubSpot",
     description:
-      "Debrief is a HubSpot marketplace app that generates structured handoff briefs and draft messages when a CRM record changes ownership. Not a meeting tool.",
+      "Debrief is a HubSpot marketplace app that generates structured handoff briefs and draft messages when a HubSpot user starts a CRM record handoff. User-initiated, not auto-triggered. Not a meeting tool.",
     images: [
       {
         url: "/twitter-image",
@@ -194,8 +195,9 @@ export default function DebriefPage() {
       headline="Handoff intelligence for HubSpot CRM."
       lede="When a HubSpot user initiates a handoff from the Debrief CRM card, Debrief generates a structured brief for the incoming owner and drafts the message the outgoing owner sends to the contact."
       marketplaceUrl={PRODUCT_META.debrief.marketplaceUrl}
-      installCtaLabel="Coming Soon"
-      answerBlock="Debrief is a HubSpot marketplace app from Dunamis Studios that generates structured handoff briefs and conversational handoff messages whenever ownership of a CRM record changes. It reads the record's history, properties, and engagement to produce a concise brief for the new owner and a personalized message they can send to the contact, so handoffs preserve context instead of restarting it."
+      installCtaLabel="Get notified when Debrief ships"
+      installCtaHref="#notify-debrief"
+      answerBlock="Debrief is a HubSpot marketplace app from Dunamis Studios that generates structured handoff briefs and conversational handoff messages on demand, when a HubSpot user starts a handoff from the Debrief CRM card on a record. It reads the record's history, properties, and engagement to produce a concise brief for the new owner and a personalized message they can send to the contact, so handoffs preserve context instead of restarting it."
       problem={{
         title: "Handoffs are where CRM context goes to die.",
         body:
@@ -268,6 +270,25 @@ export default function DebriefPage() {
       }}
       faq={FAQ}
       />
+      <Section
+        id="notify-debrief"
+        className="border-t border-[var(--border)] py-14 sm:py-20 scroll-mt-24"
+      >
+        <Container size="sm">
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-8 text-center sm:p-10">
+            <h2 className="font-[var(--font-display)] text-2xl font-medium tracking-tight sm:text-3xl">
+              Get notified when Debrief ships.
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-[var(--fg-muted)]">
+              One email when the marketplace listing goes live. No newsletter,
+              no drip.
+            </p>
+            <div className="mx-auto mt-7 max-w-md text-left">
+              <NotifyForm product="debrief" productName="Debrief" />
+            </div>
+          </div>
+        </Container>
+      </Section>
       <div className="border-t border-[var(--border)] bg-[var(--bg-subtle)]">
         <Container size="md" className="py-8 text-center">
           <p className="text-sm text-[var(--fg-muted)]">

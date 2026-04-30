@@ -66,15 +66,22 @@ export interface ProductPageProps {
     rows: { dimension: string; us: string; them: string }[];
   };
   // Optional override for the install CTA button label, applied to
-  // both the hero CTA and the final CTA. When set, the button is
-  // also rendered non-interactive: no marketplace link, no arrow
-  // icon, disabled visual state. The override exists for products
-  // that are not yet a direct install path ("Coming Soon" before a
-  // marketplace listing exists, "In Beta" while access is gated),
-  // and a label that does not lead to install should not pretend
-  // to. When unset, the button defaults to "Install from HubSpot"
-  // with an active link to PRODUCT_META.marketplaceUrl.
+  // both the hero CTA and the final CTA. When set without
+  // installCtaHref, the button is rendered non-interactive (no
+  // marketplace link, no arrow icon, disabled visual state). The
+  // override exists for products that are not yet a direct install
+  // path ("Coming Soon" before a marketplace listing exists, "In
+  // Beta" while access is gated), and a label that does not lead to
+  // install should not pretend to. When unset, the button defaults
+  // to "Install from HubSpot" with an active link to
+  // PRODUCT_META.marketplaceUrl.
   installCtaLabel?: string;
+  // Optional href used together with installCtaLabel to keep the
+  // CTA active even when the button is not pointed at a marketplace
+  // listing. Common pattern: scroll-to-anchor for an in-page notify
+  // form on Coming Soon products. When set, the button becomes a
+  // styled <Link> and renders the standard arrow icon.
+  installCtaHref?: string;
 }
 
 const ACCENT_CLASSES: Record<
@@ -119,7 +126,14 @@ export function ProductPageShell(p: ProductPageProps) {
             </p>
             <p className="mx-auto mt-6 max-w-xl text-[var(--fg-muted)]">{p.lede}</p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-              {p.installCtaLabel || !p.marketplaceUrl ? (
+              {p.installCtaLabel && p.installCtaHref ? (
+                <Button asChild size="lg">
+                  <Link href={p.installCtaHref}>
+                    {p.installCtaLabel}
+                    <ArrowRight className="ml-0.5 h-4 w-4" />
+                  </Link>
+                </Button>
+              ) : p.installCtaLabel || !p.marketplaceUrl ? (
                 <Button size="lg" disabled>
                   {p.installCtaLabel ?? "Coming Soon"}
                 </Button>
@@ -370,13 +384,21 @@ export function ProductPageShell(p: ProductPageProps) {
             Ready when you are.
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-[var(--fg-muted)]">
-            Install from the HubSpot marketplace and manage {p.name} alongside
-            every other Dunamis app in one dashboard.
+            {p.installCtaLabel && p.installCtaHref
+              ? `${p.name} is on the way. Drop your email and we'll send a single note when it ships.`
+              : `Install from the HubSpot marketplace and manage ${p.name} alongside every other Dunamis app in one dashboard.`}
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            {p.installCtaLabel ? (
+            {p.installCtaLabel && p.installCtaHref ? (
+              <Button asChild size="lg">
+                <Link href={p.installCtaHref}>
+                  {p.installCtaLabel}
+                  <ArrowRight className="ml-0.5 h-4 w-4" />
+                </Link>
+              </Button>
+            ) : p.installCtaLabel || !p.marketplaceUrl ? (
               <Button size="lg" disabled>
-                {p.installCtaLabel}
+                {p.installCtaLabel ?? "Coming Soon"}
               </Button>
             ) : (
               <Button asChild size="lg">
