@@ -78,11 +78,22 @@ export interface ProductPageProps {
   installCtaLabel?: string;
   // Optional href used together with installCtaLabel to keep the
   // CTA active even when the button is not pointed at a marketplace
-  // listing. Common pattern: scroll-to-anchor for an in-page notify
-  // form on Coming Soon products. When set, the button becomes a
-  // styled <Link> and renders the standard arrow icon.
+  // listing. Two shapes are supported and dispatched on the value:
+  //   - relative href (e.g. "#notify-debrief") renders a Next.js
+  //     <Link> for in-page or in-app navigation. Used by Coming
+  //     Soon products that scroll to an embedded notify form.
+  //   - absolute http(s) URL renders a plain <a target="_blank"
+  //     rel="noopener noreferrer">. Used for products whose install
+  //     path is a HubSpot OAuth authorize URL rather than a public
+  //     marketplace listing (e.g. Property Pulse during beta).
   installCtaHref?: string;
 }
+
+// Treat any string starting with http:// or https:// as external,
+// which forces a new-tab anchor with security rels rather than a
+// Next.js client-side <Link>. Anchors and relative paths fall
+// through to the internal-nav branch.
+const EXTERNAL_HREF_RE = /^https?:\/\//;
 
 const ACCENT_CLASSES: Record<
   ProductPageProps["accent"],
@@ -127,12 +138,25 @@ export function ProductPageShell(p: ProductPageProps) {
             <p className="mx-auto mt-6 max-w-xl text-[var(--fg-muted)]">{p.lede}</p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
               {p.installCtaLabel && p.installCtaHref ? (
-                <Button asChild size="lg">
-                  <Link href={p.installCtaHref}>
-                    {p.installCtaLabel}
-                    <ArrowRight className="ml-0.5 h-4 w-4" />
-                  </Link>
-                </Button>
+                EXTERNAL_HREF_RE.test(p.installCtaHref) ? (
+                  <Button asChild size="lg">
+                    <a
+                      href={p.installCtaHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {p.installCtaLabel}
+                      <ArrowRight className="ml-0.5 h-4 w-4" />
+                    </a>
+                  </Button>
+                ) : (
+                  <Button asChild size="lg">
+                    <Link href={p.installCtaHref}>
+                      {p.installCtaLabel}
+                      <ArrowRight className="ml-0.5 h-4 w-4" />
+                    </Link>
+                  </Button>
+                )
               ) : p.installCtaLabel || !p.marketplaceUrl ? (
                 <Button size="lg" disabled>
                   {p.installCtaLabel ?? "Coming Soon"}
@@ -384,18 +408,33 @@ export function ProductPageShell(p: ProductPageProps) {
             Ready when you are.
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-[var(--fg-muted)]">
-            {p.installCtaLabel && p.installCtaHref
+            {p.installCtaLabel &&
+            p.installCtaHref &&
+            !EXTERNAL_HREF_RE.test(p.installCtaHref)
               ? `${p.name} is on the way. Drop your email and we'll send a single note when it ships.`
               : `Install from the HubSpot marketplace and manage ${p.name} alongside every other Dunamis app in one dashboard.`}
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             {p.installCtaLabel && p.installCtaHref ? (
-              <Button asChild size="lg">
-                <Link href={p.installCtaHref}>
-                  {p.installCtaLabel}
-                  <ArrowRight className="ml-0.5 h-4 w-4" />
-                </Link>
-              </Button>
+              EXTERNAL_HREF_RE.test(p.installCtaHref) ? (
+                <Button asChild size="lg">
+                  <a
+                    href={p.installCtaHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {p.installCtaLabel}
+                    <ArrowRight className="ml-0.5 h-4 w-4" />
+                  </a>
+                </Button>
+              ) : (
+                <Button asChild size="lg">
+                  <Link href={p.installCtaHref}>
+                    {p.installCtaLabel}
+                    <ArrowRight className="ml-0.5 h-4 w-4" />
+                  </Link>
+                </Button>
+              )
             ) : p.installCtaLabel || !p.marketplaceUrl ? (
               <Button size="lg" disabled>
                 {p.installCtaLabel ?? "Coming Soon"}
