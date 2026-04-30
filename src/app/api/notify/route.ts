@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { redis, KEY } from "@/lib/redis";
 import { sendNotifySignupEmail } from "@/lib/email-notify";
+import { submitToHubSpotNotifyForm } from "@/lib/hubspot-notify";
 import {
   PRODUCT_CATALOG_SLUGS,
   PRODUCT_META,
@@ -14,11 +15,20 @@ import {
  * Records a "notify me when this ships" signup for one of the unshipped
  * Dunamis Studios products. The frontend on each /products/<slug> page
  * for an unshipped product calls this with the visitor's email and the
- * product slug. Stored in Redis under a deterministic per-(product,
- * email) key so re-submits dedupe quietly. A confirmation email is
- * dispatched via Resend when RESEND_API_KEY is configured; in local dev
- * without a key, the signup is still persisted and the email is logged
- * with a redacted recipient.
+ * product slug.
+ *
+ * Three side effects, in order, all best-effort after the Redis write:
+ *
+ *   1. Redis is the source of truth. SET dunamis:notify:{slug}:{hash}
+ *      to a SignupRecord. If this fails, the request fails with 500.
+ *   2. HubSpot Notify Interests form. The visitor's signup is mirrored
+ *      into a HubSpot contact (created or upserted) with the product
+ *      display name appended to a multi-select notify_interests
+ *      property. See src/lib/hubspot-notify.ts for the merge semantics.
+ *      Failures are logged but do not affect the user-facing response.
+ *   3. Resend confirmation email. Sent when RESEND_API_KEY is set; in
+ *      local dev without a key, the signup is still persisted and the
+ *      email is logged with a redacted recipient.
  */
 
 interface SignupRecord {
@@ -103,12 +113,26 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const productName = PRODUCT_META[slug].name;
+
+  // Best-effort HubSpot mirror. Logs and swallows on any HubSpot
+  // failure; the visitor's intent is already captured in Redis.
+  try {
+    await submitToHubSpotNotifyForm({
+      email: cleanEmail,
+      slug,
+      productName,
+    });
+  } catch (err) {
+    console.error("[notify] hubspot submission threw", err);
+  }
+
   // Best-effort confirmation email. We do not fail the signup if Resend
   // errors, since the visitor's intent is already captured in Redis.
   try {
     await sendNotifySignupEmail({
       to: cleanEmail,
-      productName: PRODUCT_META[slug].name,
+      productName,
     });
   } catch (err) {
     console.error("[notify] confirmation email failed", err);
