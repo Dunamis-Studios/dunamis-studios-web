@@ -13,7 +13,12 @@ const breadcrumbSchema = {
   "@type": "BreadcrumbList",
   itemListElement: [
     { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
-    { "@type": "ListItem", position: 2, name: "Products", item: `${SITE_URL}/` },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Products",
+      item: `${SITE_URL}/products`,
+    },
     {
       "@type": "ListItem",
       position: 3,
@@ -169,7 +174,7 @@ export default function PropertyPulsePage() {
         <Breadcrumbs
           items={[
             { label: "Home", href: "/" },
-            { label: "Products", href: "/" },
+            { label: "Products", href: "/products" },
             { label: "Property Pulse" },
           ]}
         />
