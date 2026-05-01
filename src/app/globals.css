@@ -105,7 +105,9 @@
   --bg-elevated: var(--color-ink-950);
   --fg: var(--color-ink-50);
   --fg-muted: var(--color-ink-400);
-  --fg-subtle: var(--color-ink-500);
+  /* WCAG AA: #8a8a8a hits 6.08:1 against #000 and 6.01:1 against #020202.
+     ink-500 (oklch 52% / ~#717171) failed 4.5:1 on dark surfaces. */
+  --fg-subtle: #8a8a8a;
   --border: color-mix(in oklch, var(--color-ink-700) 60%, transparent);
   --border-strong: var(--color-ink-700);
   --ring: var(--color-brand-400);
