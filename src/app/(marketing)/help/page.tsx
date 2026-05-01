@@ -150,7 +150,7 @@ export default async function HelpIndexPage() {
             Can&apos;t find what you need? Email{" "}
             <a
               href="mailto:support@dunamisstudios.net"
-              className="text-[var(--fg)] underline-offset-4 hover:underline"
+              className="text-[var(--fg)] underline underline-offset-4"
             >
               support@dunamisstudios.net
             </a>
