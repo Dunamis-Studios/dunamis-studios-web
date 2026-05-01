@@ -127,6 +127,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://js.hubspot.com" />
         <link rel="preconnect" href="https://js.hs-banner.com" />
         <link rel="preconnect" href="https://js.hs-analytics.net" />
+        {/* Preload the webmanifest so it doesn't end up the longest
+            chain in Lighthouse's network-dependency-tree audit. Chrome
+            requests it late by default, which made it the slowest leaf
+            in the tree (~1.3 s in the prior audit). */}
+        <link rel="preload" href="/manifest.webmanifest" as="manifest" />
       </head>
       <body>
         <a href="#main" className="skip-link">
