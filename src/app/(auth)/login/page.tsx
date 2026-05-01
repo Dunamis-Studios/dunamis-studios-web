@@ -33,7 +33,7 @@ export default async function LoginPage({ searchParams }: Props) {
       footer={
         <>
           New here?{" "}
-          <Link href="/signup" className="text-[var(--accent)] hover:underline">
+          <Link href="/signup" className="text-[var(--accent)] underline">
             Create an account
           </Link>
         </>

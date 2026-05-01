@@ -70,7 +70,7 @@ export default async function SignupPage({
                 ? `/login?redirect=${encodeURIComponent(`/api/entitlements/claim?app=${parsedClaim!.product}&portalId=${parsedClaim!.portalId}&email=${encodeURIComponent(initialEmail ?? "")}&state=${encodeURIComponent(state!)}`)}`
                 : "/login"
             }
-            className="text-[var(--accent)] hover:underline"
+            className="text-[var(--accent)] underline"
           >
             Sign in
           </Link>

@@ -22,7 +22,7 @@ export default async function ResetPasswordPage({
       footer={
         <>
           Changed your mind?{" "}
-          <Link href="/login" className="text-[var(--accent)] hover:underline">
+          <Link href="/login" className="text-[var(--accent)] underline">
             Sign in
           </Link>
         </>

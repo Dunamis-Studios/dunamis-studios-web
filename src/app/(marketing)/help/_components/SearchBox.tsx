@@ -218,7 +218,7 @@ function ResultsPanel({
         <div className="mt-4">
           <Link
             href={`/help/search?q=${encodeURIComponent(query)}`}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent)] hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent)] underline"
           >
             View all {results.length + hiddenCount} results
             <ArrowRight className="h-3.5 w-3.5" aria-hidden />
