@@ -12,6 +12,7 @@ import {
 } from "@/components/marketing/article-extras";
 import { getPost, listPosts } from "@/lib/content";
 import { buildArticleJsonLd, getOgImageUrl, computeReadingTime } from "@/lib/post-seo";
+import { DEFAULT_IMAGE_BLUR } from "@/lib/image-placeholder";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -126,6 +127,10 @@ export default async function ArticlePage({ params }: Props) {
             alt={`Cover image for ${post.title}`}
             width={800}
             height={450}
+            sizes="(min-width: 768px) 800px, 100vw"
+            placeholder="blur"
+            blurDataURL={DEFAULT_IMAGE_BLUR}
+            priority
             className="mb-8 aspect-video w-full rounded-lg object-cover"
           />
         )}

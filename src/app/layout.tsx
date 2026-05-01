@@ -41,13 +41,27 @@ const organizationSchema = {
   },
 };
 
-const sans = Geist({ subsets: ["latin"], variable: "--font-sans-src" });
-const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono-src" });
+const sans = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans-src",
+  display: "swap",
+});
+const mono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono-src",
+  display: "swap",
+});
 const display = Fraunces({
   subsets: ["latin"],
   variable: "--font-display-src",
   style: ["normal", "italic"],
   axes: ["opsz"],
+  // Explicit swap so the AuthCard heading and other display-font
+  // headings paint immediately in the fallback face on auth and
+  // article routes, instead of being held back by Fraunces fetching.
+  // next/font/google defaults to swap, but stating it inline keeps the
+  // LCP intent visible at the call site.
+  display: "swap",
 });
 
 export const metadata: Metadata = {

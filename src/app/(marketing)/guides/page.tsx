@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
 import { JsonLd } from "@/components/seo/json-ld";
 import { listPosts, type Post } from "@/lib/content";
+import { DEFAULT_IMAGE_BLUR } from "@/lib/image-placeholder";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -103,7 +104,7 @@ export default async function GuidesPage() {
           </p>
         ) : (
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => (
+            {posts.map((post, index) => (
               <Link
                 key={post.slug}
                 href={`/guides/${post.slug}`}
@@ -115,6 +116,10 @@ export default async function GuidesPage() {
                     alt={`Cover image for ${post.title}`}
                     width={600}
                     height={338}
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    placeholder="blur"
+                    blurDataURL={DEFAULT_IMAGE_BLUR}
+                    priority={index === 0}
                     className="mb-4 aspect-video w-full rounded-md object-cover"
                   />
                 )}
