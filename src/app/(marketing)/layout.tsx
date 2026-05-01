@@ -1,30 +1,21 @@
 import { SiteNav } from "@/components/marketing/site-nav";
 import { SiteFooter } from "@/components/marketing/site-footer";
-import { getCurrentSession } from "@/lib/session";
 
-// Layout probes the session cookie for signed-in nav state, which means
-// every page inside this group is dynamic.
-export const dynamic = "force-dynamic";
-
-export default async function MarketingLayout({
+/**
+ * Marketing layout is a plain server component now. SiteNav fetches
+ * /api/auth/me from the client to render the signed-in / signed-out
+ * affordance, which used to require this layout to be force-dynamic.
+ * Removing the dynamic flag lets every static-buildable page in the
+ * group emit real Cache-Control headers and pass bf-cache.
+ */
+export default function MarketingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  let signedIn = false;
-  let firstName: string | undefined;
-  try {
-    const s = await getCurrentSession();
-    if (s) {
-      signedIn = true;
-      firstName = s.account.firstName;
-    }
-  } catch {
-    // Redis may not be configured in local dev — nav falls back to signed-out.
-  }
   return (
     <>
-      <SiteNav signedIn={signedIn} firstName={firstName} />
+      <SiteNav />
       <main id="main">{children}</main>
       <SiteFooter />
     </>

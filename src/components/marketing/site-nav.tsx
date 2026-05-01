@@ -17,16 +17,46 @@ const NAV_LINKS = [
   { href: "/pricing", label: "Pricing" },
 ];
 
-export function SiteNav({
-  signedIn = false,
-  firstName,
-}: {
-  signedIn?: boolean;
-  firstName?: string;
-}) {
+type AuthState =
+  | { status: "loading" }
+  | { status: "signed-out" }
+  | { status: "signed-in"; firstName?: string };
+
+/**
+ * Fetches /api/auth/me on mount. Defaulting to "loading" lets us render a
+ * placeholder slot of fixed width on the right side of the nav so the
+ * signed-in / signed-out swap does not cause layout shift. The marketing
+ * layout used to fetch the session server-side, but doing so forced
+ * every page in the group to render dynamically and blocked bf-cache.
+ */
+export function SiteNav() {
   const [scrolled, setScrolled] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [auth, setAuth] = React.useState<AuthState>({ status: "loading" });
   const pathname = usePathname();
+
+  React.useEffect(() => {
+    let cancelled = false;
+    fetch("/api/auth/me", { credentials: "same-origin" })
+      .then((r) => (r.ok ? r.json() : { account: null }))
+      .then((data: { account: { firstName?: string } | null }) => {
+        if (cancelled) return;
+        if (data.account) {
+          setAuth({ status: "signed-in", firstName: data.account.firstName });
+        } else {
+          setAuth({ status: "signed-out" });
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setAuth({ status: "signed-out" });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const signedIn = auth.status === "signed-in";
+  const firstName = auth.status === "signed-in" ? auth.firstName : undefined;
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 6);
