@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import { JsonLd } from "@/components/seo/json-ld";
+import { HubspotLoader } from "@/components/hubspot-loader";
 import "./globals.css";
 
 const SITE_URL =
@@ -119,19 +120,13 @@ export default function RootLayout({
         />
         {/* Preconnect to HubSpot tracking origins so the TLS / DNS / TCP
             handshake overlaps with HTML parse instead of blocking LCP.
-            Lighthouse measured ~320 ms LCP savings per page. */}
+            The actual <script> injection is deferred to idle by
+            HubspotLoader (rendered in body) so the embed does not
+            compete with LCP. Preconnect still warms the connection. */}
+        <link rel="preconnect" href="https://js.hs-scripts.com" />
         <link rel="preconnect" href="https://js.hubspot.com" />
         <link rel="preconnect" href="https://js.hs-banner.com" />
         <link rel="preconnect" href="https://js.hs-analytics.net" />
-        {/* Start of HubSpot Embed Code */}
-        <script
-          type="text/javascript"
-          id="hs-script-loader"
-          async
-          defer
-          src="//js.hs-scripts.com/20867488.js"
-        ></script>
-        {/* End of HubSpot Embed Code */}
       </head>
       <body>
         <a href="#main" className="skip-link">
@@ -141,6 +136,7 @@ export default function RootLayout({
           <ToastProvider>{children}</ToastProvider>
         </ThemeProvider>
         <Analytics />
+        <HubspotLoader />
       </body>
     </html>
   );
