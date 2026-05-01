@@ -8,11 +8,21 @@ import {
   FaqSection,
   buildFaqPageSchema,
 } from "@/components/marketing/article-extras";
-import { getPost } from "@/lib/content";
+import { getPost, listPosts } from "@/lib/content";
 import { buildArticleJsonLd, getOgImageUrl, computeReadingTime } from "@/lib/post-seo";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+/**
+ * ISR. Same shape as /articles/[slug].
+ */
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const posts = await listPosts("guide", { includeDrafts: false });
+  return posts.map((p) => ({ slug: p.slug }));
+}
 
 interface Props {
   params: Promise<{ slug: string }>;

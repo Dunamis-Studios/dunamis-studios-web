@@ -8,6 +8,16 @@ import { listPosts, type Post } from "@/lib/content";
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
+/**
+ * ISR: render statically at build with re-fetch every 60 s. listPosts
+ * reads Redis at build and at revalidation time, so newly-published
+ * posts surface within a minute without a redeploy. force-static
+ * disables Next.js's automatic dynamic-rendering opt-in for routes
+ * that read non-fetch data sources (Upstash REST in this case).
+ */
+export const revalidate = 60;
+export const dynamic = "force-static";
+
 const PAGE_DESCRIPTION =
   "News, updates, and insights from the Dunamis Studios team.";
 

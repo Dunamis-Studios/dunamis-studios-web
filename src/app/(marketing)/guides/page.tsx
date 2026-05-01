@@ -8,6 +8,13 @@ import { listPosts, type Post } from "@/lib/content";
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
+/**
+ * ISR: render statically at build with re-fetch every 60 s.
+ * Same shape as /articles.
+ */
+export const revalidate = 60;
+export const dynamic = "force-static";
+
 const PAGE_DESCRIPTION =
   "In-depth guides for getting the most out of your HubSpot portal with Dunamis Studios apps.";
 

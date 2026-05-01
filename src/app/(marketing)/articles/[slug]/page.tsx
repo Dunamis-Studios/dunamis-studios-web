@@ -10,11 +10,24 @@ import {
   RelatedProductsSection,
   buildFaqPageSchema,
 } from "@/components/marketing/article-extras";
-import { getPost } from "@/lib/content";
+import { getPost, listPosts } from "@/lib/content";
 import { buildArticleJsonLd, getOgImageUrl, computeReadingTime } from "@/lib/post-seo";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+/**
+ * ISR. Pre-render every published article slug at build, refresh the
+ * cache every 60 s. New slugs published between deploys render
+ * dynamically on first hit (default dynamicParams = true) and are
+ * cached from then on.
+ */
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const posts = await listPosts("article", { includeDrafts: false });
+  return posts.map((p) => ({ slug: p.slug }));
+}
 
 interface Props {
   params: Promise<{ slug: string }>;

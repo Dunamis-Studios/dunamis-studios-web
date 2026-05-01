@@ -27,6 +27,22 @@ const SITE_URL =
 
 const TEASER_WORDS = 100;
 
+/**
+ * ISR for the public-access subset of KB articles. Customer-only
+ * slugs are intentionally NOT in generateStaticParams so they keep
+ * rendering dynamically (the page reads session and entitlements to
+ * decide between the full body and the teaser, which cannot be
+ * pre-baked). Unknown slugs fall through to dynamic and notFound().
+ */
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const articles = await getPublishedArticles();
+  return articles
+    .filter((a) => a.frontmatter.access === "public")
+    .map((a) => ({ category: a.category, slug: a.slug }));
+}
+
 interface ArticlePageProps {
   params: Promise<{ category: string; slug: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -95,22 +111,27 @@ export default async function ArticlePage({
   searchParams,
 }: ArticlePageProps) {
   const { category, slug } = await params;
-  const sp = await searchParams;
   const article = await getArticleBySlug(category, slug);
   if (!article) notFound();
 
-  const fullPath = buildFullPath(category, slug, sp);
-  const viewer = await getViewerContext();
-
-  // Access gate: customer-gated + unauth is the only branch that
-  // short-circuits with a server redirect. All other combinations
-  // render a page (possibly a teaser).
-  if (article.frontmatter.access === "customers" && !viewer.signedIn) {
-    redirect(`/login?redirect=${encodeURIComponent(fullPath)}`);
+  // Public articles render without touching cookies or query params,
+  // which lets generateStaticParams pre-render them. Customer-gated
+  // articles fall through to the dynamic branch where session and
+  // entitlements are looked up to decide between teaser and full body.
+  let viewerLevel: ViewerLevel = "public-only";
+  let fullPath = article.href;
+  if (article.frontmatter.access === "customers") {
+    const sp = await searchParams;
+    fullPath = buildFullPath(category, slug, sp);
+    const viewer = await getViewerContext();
+    if (!viewer.signedIn) {
+      redirect(`/login?redirect=${encodeURIComponent(fullPath)}`);
+    }
+    viewerLevel = viewer.level;
   }
 
   const shouldTeaser =
-    article.frontmatter.access === "customers" && viewer.level !== "full";
+    article.frontmatter.access === "customers" && viewerLevel !== "full";
 
   // Truncate AT THE MARKDOWN LEVEL for teaser mode. Words beyond
   // TEASER_WORDS are never passed to the renderer, so view-source on
@@ -121,7 +142,7 @@ export default async function ArticlePage({
     : article.body;
   const bodyHtml = await renderMarkdown(bodyMd);
 
-  const related = await getRelatedArticles(article, viewer.level);
+  const related = await getRelatedArticles(article, viewerLevel);
   const readMinutes = estimateReadMinutes(article.body);
   const categoryTitle = titleCaseCategorySlug(article.category);
   const helpful = await safeGetHelpfulBadge(category, slug);

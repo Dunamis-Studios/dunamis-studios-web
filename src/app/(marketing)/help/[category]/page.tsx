@@ -9,12 +9,26 @@ import { JsonLd } from "@/components/seo/json-ld";
 import {
   KB_PRODUCT_LABEL,
   estimateReadMinutes,
+  getAllCategorySlugs,
   getArticlesInCategory,
   type KbArticle,
 } from "@/lib/kb";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+/**
+ * ISR. KB lives on disk in content/kb/{category}/{slug}.md so the
+ * category list is fully known at build time. Revalidate keeps the
+ * helpful-badge counts (Redis-backed) reasonably fresh on the article
+ * cards.
+ */
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const slugs = await getAllCategorySlugs();
+  return slugs.map((category) => ({ category }));
+}
 
 interface CategoryPageProps {
   params: Promise<{ category: string }>;
