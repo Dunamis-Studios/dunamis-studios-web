@@ -7,6 +7,55 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 
+type HastNode = {
+  type: string;
+  tagName?: string;
+  value?: string;
+  properties?: Record<string, unknown> & { className?: string[] | string };
+  children?: HastNode[];
+};
+
+/**
+ * Walk a hast tree and tag every <input type="checkbox"> inside a
+ * <li class="task-list-item"> with an aria-label derived from the
+ * surrounding li text. GFM task lists (`- [ ] item`) emit the input as
+ * the first child of the li with the readable text following as a
+ * sibling text node, which Lighthouse's `label` audit (and most screen
+ * readers without sibling-aware heuristics) treat as unlabelled.
+ */
+function rehypeTaskListLabels() {
+  function collectText(node: HastNode): string {
+    if (node.type === "text") return node.value ?? "";
+    if (!node.children) return "";
+    return node.children.map(collectText).join("");
+  }
+  function hasClass(props: HastNode["properties"], cls: string): boolean {
+    const c = props?.className;
+    if (Array.isArray(c)) return c.includes(cls);
+    if (typeof c === "string") return c.split(/\s+/).includes(cls);
+    return false;
+  }
+  function visit(node: HastNode) {
+    if (!node.children) return;
+    if (node.tagName === "li" && hasClass(node.properties, "task-list-item")) {
+      const text = node.children
+        .filter((c) => !(c.tagName === "input"))
+        .map(collectText)
+        .join("")
+        .trim();
+      for (const child of node.children) {
+        if (child.tagName !== "input") continue;
+        const props = (child.properties ??= {});
+        if (props.type !== "checkbox") continue;
+        if (props["aria-label"] || props["ariaLabel"]) continue;
+        props["ariaLabel"] = text || "Task list item";
+      }
+    }
+    for (const child of node.children) visit(child);
+  }
+  return (tree: HastNode) => visit(tree);
+}
+
 /**
  * Render markdown to HTML using the unified pipeline.
  *
@@ -43,6 +92,7 @@ export async function renderMarkdown(md: string): Promise<string> {
       },
     })
     .use(rehypeHighlight, { detect: true, ignoreMissing: true })
+    .use(rehypeTaskListLabels)
     .use(rehypeStringify)
     .process(md);
   return String(file);
