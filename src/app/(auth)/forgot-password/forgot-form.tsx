@@ -31,7 +31,7 @@ export function ForgotForm() {
       }
       setSent(true);
     } catch {
-      setError("Network error — please try again.");
+      setError("Network error, please try again.");
     } finally {
       setLoading(false);
     }

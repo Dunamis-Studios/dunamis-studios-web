@@ -44,7 +44,7 @@ export function PasswordSection() {
       });
       formRef.current?.reset();
     } catch {
-      setError("Network error — please try again.");
+      setError("Network error, please try again.");
     } finally {
       setLoading(false);
     }

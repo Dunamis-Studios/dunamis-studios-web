@@ -308,7 +308,7 @@ export default async function ClaimPage({ params, searchParams }: PageProps) {
               Portal domain
             </dt>
             <dd className="mt-1 text-[var(--fg)]">
-              {entitlement.portalDomain || "—"}
+              {entitlement.portalDomain || "·"}
             </dd>
           </div>
           <div>

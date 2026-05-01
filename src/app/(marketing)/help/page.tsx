@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     "Docs, guides, and how-tos for Debrief, Property Pulse, and the Dunamis Studios platform.",
   alternates: { canonical: "/help" },
   openGraph: {
-    title: "Help center — Dunamis Studios",
+    title: "Help center · Dunamis Studios",
     description:
       "Docs, guides, and how-tos for Debrief, Property Pulse, and the Dunamis Studios platform.",
     url: "/help",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Help center — Dunamis Studios",
+    title: "Help center · Dunamis Studios",
     description:
       "Docs, guides, and how-tos for Debrief, Property Pulse, and the Dunamis Studios platform.",
     images: [

@@ -47,7 +47,7 @@ Deals is a common first-use surface. Repeat this flow for every other object typ
 1. Click the **Settings** gear icon in the top-right nav.
 2. In the left sidebar, go to **Data Management → Objects → Deals**.
 3. Click the **Record customization** tab at the top of the Deals settings.
-4. Pick the record view you want to edit — either the default view for all users or a team-specific view. You can also create a new view for a specific team.
+4. Pick the record view you want to edit, either the default view for all users or a team-specific view. You can also create a new view for a specific team.
 5. In the layout editor, click **+ Add a tab** to create a new tab, or select an existing tab to modify.
 6. In the target section, click **+ Add cards**.
 7. In the card picker, find **Property Pulse** (cards from installed apps appear in this list).
@@ -64,17 +64,17 @@ Repeat the steps above under **Data Management → Objects → [Contacts | Compa
 
 Before the card shows useful data on a record, both conditions must be true:
 
-1. **Tracked properties are configured in Property Pulse** — Connected Apps → Property Pulse → **Settings**. The page header reads **Property Pulse · Tracked Properties**. Each object type has its own accordion labeled **{Object name} · {N} tracked** (for example, *Contacts · 4 tracked*). Expand an accordion to pick which properties to track for that object type. Inside each accordion is an **Allow users to add their own properties** toggle — flip it on to let individual users add properties of their own on top of the admin set for that object type.
+1. **Tracked properties are configured in Property Pulse**, in Connected Apps → Property Pulse → **Settings**. The page header reads **Property Pulse · Tracked Properties**. Each object type has its own accordion labeled **{Object name} · {N} tracked** (for example, *Contacts · 4 tracked*). Expand an accordion to pick which properties to track for that object type. Inside each accordion is an **Allow users to add their own properties** toggle. Flip it on to let individual users add properties of their own on top of the admin set for that object type.
 2. The Property Pulse card has been **added to the record layout** for that object type (the flow above).
 
 If the card renders but shows no entries, check gate one. If the card doesn't render at all, check gate two.
 
-At the top of the Settings page, the **Week start day** selector tunes how the card's recency badges bucket recent activity — set it to match your team's reporting week.
+At the top of the Settings page, the **Week start day** selector tunes how the card's recency badges bucket recent activity. Set it to match your team's reporting week.
 
 ## Your first change log
 
-Open any record that now has the Property Pulse card. The card shows the recent change history for every tracked property on that record — who changed it, when, from what value to what value, and the source (HubSpot UI edit, workflow, API, import, or an inline edit made from the card itself).
+Open any record that now has the Property Pulse card. The card shows the recent change history for every tracked property on that record: who changed it, when, from what value to what value, and the source (HubSpot UI edit, workflow, API, import, or an inline edit made from the card itself).
 
 Use the filter controls on the card to narrow by property, user, or time window, then export the filtered view to CSV for audit or review.
 
-Edit a tracked property inline from the card — when your portal permits writes on that field, the new value is written to HubSpot and recorded in the log, with you as the source.
+Edit a tracked property inline from the card. When your portal permits writes on that field, the new value is written to HubSpot and recorded in the log, with you as the source.

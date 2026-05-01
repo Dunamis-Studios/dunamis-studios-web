@@ -119,7 +119,7 @@ export function EntitlementsTable({
                     {e.tier}
                   </Badge>
                 ) : (
-                  <span className="text-[var(--fg-subtle)]">—</span>
+                  <span className="text-[var(--fg-subtle)]">·</span>
                 )}
               </TD>
               <TD className="whitespace-nowrap text-[var(--fg-muted)]">

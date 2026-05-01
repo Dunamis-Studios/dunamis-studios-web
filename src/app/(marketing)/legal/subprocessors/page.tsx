@@ -5,7 +5,7 @@ import { Container, Section, PageHeader } from "@/components/ui/primitives";
 export const metadata: Metadata = {
   title: "Sub-processors",
   description:
-    "Dunamis Studios sub-processors that process Customer Personal Data — names, purposes, processing locations, and EU–US transfer mechanisms.",
+    "Dunamis Studios sub-processors that process Customer Personal Data: names, purposes, processing locations, and EU/US transfer mechanisms.",
   alternates: { canonical: "/legal/subprocessors" },
 };
 
@@ -25,7 +25,7 @@ const SUBPROCESSORS: Subprocessor[] = [
   {
     n: 1,
     name: "Anthropic, PBC",
-    purpose: "LLM inference — generating handoff briefs via the Claude API",
+    purpose: "LLM inference for generating handoff briefs via the Claude API",
     location: "United States (AWS + GCP)",
     transfer:
       "SCCs Modules 2 & 3 + UK Addendum + Swiss Addendum",
@@ -50,7 +50,7 @@ const SUBPROCESSORS: Subprocessor[] = [
     n: 3,
     name: "Upstash, Inc.",
     purpose:
-      "Redis storage — app state, brief metadata, session cache",
+      "Redis storage for app state, brief metadata, session cache",
     location:
       "United States (default AWS us-east-1; EU region available AWS eu-west-1)",
     transfer:
@@ -204,7 +204,7 @@ export default function SubprocessorsPage() {
           id="operational-tooling"
           className="mt-12 scroll-mt-24 font-[var(--font-display)] text-xl font-medium tracking-tight"
         >
-          Operational tooling — does not receive Customer Personal Data
+          Operational tooling: does not receive Customer Personal Data
         </h2>
         <div className="mt-4 space-y-3 text-[var(--fg-muted)] leading-relaxed">
           <p>
@@ -217,15 +217,15 @@ export default function SubprocessorsPage() {
           </p>
           <ul className="list-disc space-y-1 pl-5">
             <li>
-              <strong>Google Workspace</strong> (Google LLC) — internal
+              <strong>Google Workspace</strong> (Google LLC): internal
               email, calendar, documents.
             </li>
             <li>
-              <strong>GitHub</strong> (GitHub, Inc.) — source control for
+              <strong>GitHub</strong> (GitHub, Inc.): source control for
               Dunamis Studios code.
             </li>
             <li>
-              <strong>1Password</strong> (AgileBits Inc.) — credential and
+              <strong>1Password</strong> (AgileBits Inc.): credential and
               secrets vault.
             </li>
             <li>

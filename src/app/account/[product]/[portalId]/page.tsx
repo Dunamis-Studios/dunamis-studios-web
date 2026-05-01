@@ -168,7 +168,7 @@ function PurchaseBanner({
         <span className="text-[var(--fg-muted)]">
           {paid
             ? "Your Property Pulse license is active on this portal."
-            : "Your license will activate as soon as Stripe confirms — usually a few seconds. Refresh if you don't see it."}
+            : "Your license will activate as soon as Stripe confirms. Usually a few seconds. Refresh if you don't see it."}
         </span>
       </div>
     );
@@ -914,7 +914,7 @@ function invoiceDisplayAmountCents(inv: Stripe.Invoice): number {
 }
 
 function InvoiceStatusPill({ status }: { status: string | null }) {
-  const s = status ?? "—";
+  const s = status ?? "·";
   const variant =
     s === "paid"
       ? "success"

@@ -63,7 +63,7 @@ export function BuyPropertyPulseButton({
       disabled={loading}
       aria-busy={loading}
     >
-      {loading ? "Starting checkout…" : (label ?? "Buy license — $49")}
+      {loading ? "Starting checkout…" : (label ?? "Buy license · $49")}
     </Button>
   );
 }

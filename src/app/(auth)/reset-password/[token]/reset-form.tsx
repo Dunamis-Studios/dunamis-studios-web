@@ -44,7 +44,7 @@ export function ResetForm({ token }: { token: string }) {
       router.push("/account");
       router.refresh();
     } catch {
-      setError("Network error — please try again.");
+      setError("Network error, please try again.");
     } finally {
       setLoading(false);
     }

@@ -56,7 +56,7 @@ export function CancelSubscriptionBlock({
             content={
               isDebrief
                 ? "Start a subscription first."
-                : "Billing coming soon — cancellation will be available once Stripe is wired up."
+                : "Billing coming soon. Cancellation will be available once Stripe is wired up."
             }
           >
             <span tabIndex={0} className="inline-flex">

@@ -298,7 +298,7 @@ function ChangePlanActions({
       onDone();
       router.refresh();
     } catch {
-      setError("Network error — please try again.");
+      setError("Network error, please try again.");
     } finally {
       setFinalizing(false);
       setLoading(false);
@@ -314,7 +314,7 @@ function ChangePlanActions({
               className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
               aria-hidden
             />
-            Applying plan change — waiting on Stripe&apos;s confirmation webhook.
+            Applying plan change. Waiting on Stripe&apos;s confirmation webhook.
           </div>
         ) : (
           <p className="text-sm text-[var(--fg-muted)]">
@@ -411,7 +411,7 @@ function CreateSubscriptionCheckout({
         setSetupIntentId(data.setupIntentId);
         lastSetupIntentIdRef.current = data.setupIntentId;
       } catch {
-        if (!cancelled) setError("Network error — please try again.");
+        if (!cancelled) setError("Network error, please try again.");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -580,7 +580,7 @@ function CheckoutForm({
       }
       if (paymentIntent?.status !== "succeeded") {
         setError(
-          `Payment is ${paymentIntent?.status ?? "pending"} — please retry.`,
+          `Payment is ${paymentIntent?.status ?? "pending"}. Please retry.`,
         );
         setSubmitting(false);
         return;
@@ -646,7 +646,7 @@ function CheckoutForm({
               className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
               aria-hidden
             />
-            Finalizing your subscription — hang tight, we&apos;re waiting on
+            Finalizing your subscription. Hang tight, we&apos;re waiting on
             Stripe&apos;s confirmation webhook.
           </div>
         ) : (

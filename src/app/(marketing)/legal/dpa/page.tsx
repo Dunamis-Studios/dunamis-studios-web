@@ -653,11 +653,11 @@ const SECTIONS: Sec[] = [
   {
     n: "Annex 1",
     id: "annex-1",
-    title: "Annex 1 — List of Parties",
+    title: "Annex 1: List of Parties",
     body: (
       <>
         <p>
-          <strong>Data Exporter (Controller)</strong> — the customer
+          <strong>Data Exporter (Controller)</strong>: the customer
           identified on the account that accepted the Master Agreement and
           this DPA, including the account administrative contact, as
           recorded in Dunamis Studios’s account system.
@@ -713,7 +713,7 @@ const SECTIONS: Sec[] = [
   {
     n: "Annex 2",
     id: "annex-2",
-    title: "Annex 2 — Description of Processing",
+    title: "Annex 2: Description of Processing",
     body: (
       <>
         <p>
@@ -776,7 +776,7 @@ const SECTIONS: Sec[] = [
   {
     n: "Annex 3",
     id: "annex-3",
-    title: "Annex 3 — Technical and Organizational Measures",
+    title: "Annex 3: Technical and Organizational Measures",
     body: (
       <>
         <p>
@@ -867,7 +867,7 @@ const SECTIONS: Sec[] = [
   {
     n: "Annex 4",
     id: "annex-4",
-    title: "Annex 4 — Sub-processors",
+    title: "Annex 4: Sub-processors",
     body: (
       <>
         <p>

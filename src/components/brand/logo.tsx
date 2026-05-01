@@ -23,7 +23,7 @@ export function Logo({
         "inline-flex items-center gap-2.5 text-[var(--fg)] transition-opacity hover:opacity-80 focus-visible:opacity-80",
         className,
       )}
-      aria-label="Dunamis Studios — home"
+      aria-label="Dunamis Studios home"
     >
       <LogoMark size={size} />
       {label ? (

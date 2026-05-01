@@ -51,7 +51,7 @@ export async function generateMetadata({
     description: frontmatter.description,
     alternates: { canonical: article.href },
     openGraph: {
-      title: `${frontmatter.title} — Dunamis Studios help center`,
+      title: `${frontmatter.title} · Dunamis Studios help center`,
       description: frontmatter.description,
       url: article.href,
       type: "article",
@@ -69,7 +69,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: `${frontmatter.title} — Dunamis Studios help center`,
+      title: `${frontmatter.title} · Dunamis Studios help center`,
       description: frontmatter.description,
       images: [
         {

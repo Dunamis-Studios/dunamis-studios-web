@@ -41,7 +41,7 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
       router.push(redirectTo);
       router.refresh();
     } catch {
-      setFormError("Network error — please try again.");
+      setFormError("Network error, please try again.");
     } finally {
       setLoading(false);
     }

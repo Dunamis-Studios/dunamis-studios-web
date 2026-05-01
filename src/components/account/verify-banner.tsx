@@ -37,7 +37,7 @@ export function VerifyBanner({ email }: { email: string }) {
             Verify your email
           </strong>
           <span className="text-[var(--fg-muted)]">
-            {" — "}we sent a link to <span className="font-mono text-[var(--fg)]">{email}</span>.
+            {": "}we sent a link to <span className="font-mono text-[var(--fg)]">{email}</span>.
           </span>
         </div>
       </div>

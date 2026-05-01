@@ -47,7 +47,7 @@ Deals is the most common first-use surface. Repeat this flow for every other obj
 1. Click the **Settings** gear icon in the top-right nav.
 2. In the left sidebar, go to **Data Management → Objects → Deals**.
 3. Click the **Record customization** tab at the top of the Deals settings.
-4. Pick the record view you want to edit — either the default view for all users or a team-specific view. You can also create a new view for a specific team.
+4. Pick the record view you want to edit, either the default view for all users or a team-specific view. You can also create a new view for a specific team.
 5. In the layout editor, click **+ Add a tab** to create a new tab, or select an existing tab to modify.
 6. In the target section, click **+ Add cards**.
 7. In the card picker, find **Debrief** (cards from installed apps appear in this list).
@@ -64,7 +64,7 @@ Repeat the steps above under **Data Management → Objects → [Contacts | Compa
 
 Before the card actually renders on a record, both conditions must be true:
 
-1. The object type is **enabled in Debrief** — Connected Apps → Debrief → Settings → **Enabled object types**. Standard types (Deal, Contact, Company, Ticket) are enabled by default; custom objects need explicit opt-in.
+1. The object type is **enabled in Debrief**, in Connected Apps → Debrief → Settings → **Enabled object types**. Standard types (Deal, Contact, Company, Ticket) are enabled by default; custom objects need explicit opt-in.
 2. The Debrief card has been **added to the record layout** for that object type (the flow above).
 
 If the card isn't showing up, check both gates.

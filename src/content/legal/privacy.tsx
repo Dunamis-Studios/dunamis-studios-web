@@ -35,7 +35,7 @@ export const privacyPolicy: LegalDocument = {
     {
       n: "2",
       id: "pp-scope",
-      title: "Scope — who this policy applies to, and who is controller",
+      title: "Scope: who this policy applies to, and who is controller",
       body: (
         <>
           <div className="rounded-lg border border-[var(--fg-subtle)]/30 bg-[color-mix(in_oklch,var(--fg)_4%,transparent)] px-4 py-4 text-sm">

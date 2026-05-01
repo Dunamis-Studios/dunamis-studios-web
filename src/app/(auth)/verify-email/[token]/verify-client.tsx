@@ -43,7 +43,7 @@ export function VerifyClient({ token }: { token: string }) {
       } catch {
         if (!cancelled) {
           setState("error");
-          setMessage("Network error — please try again.");
+          setMessage("Network error, please try again.");
         }
       }
     })();

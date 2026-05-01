@@ -23,8 +23,8 @@ export async function generateMetadata({
     robots: { index: false, follow: true },
     openGraph: {
       title: q
-        ? `${title} — Dunamis Studios`
-        : "Search — Dunamis Studios help center",
+        ? `${title} · Dunamis Studios`
+        : "Search · Dunamis Studios help center",
       description,
       url: "/help/search",
       type: "website",
@@ -41,8 +41,8 @@ export async function generateMetadata({
     twitter: {
       card: "summary_large_image",
       title: q
-        ? `${title} — Dunamis Studios`
-        : "Search — Dunamis Studios help center",
+        ? `${title} · Dunamis Studios`
+        : "Search · Dunamis Studios help center",
       description,
       images: [
         {

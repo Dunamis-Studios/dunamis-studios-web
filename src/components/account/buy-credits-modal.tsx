@@ -187,7 +187,7 @@ function PackCheckout({
           lastPaymentIntentIdRef.current = data.paymentIntentId;
         }
       } catch {
-        if (!cancelled) setError("Network error — please try again.");
+        if (!cancelled) setError("Network error, please try again.");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -366,7 +366,7 @@ function CheckoutForm({
               className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
               aria-hidden
             />
-            Finalizing your purchase — waiting on Stripe&apos;s confirmation
+            Finalizing your purchase. Waiting on Stripe&apos;s confirmation
             webhook.
           </div>
         ) : (

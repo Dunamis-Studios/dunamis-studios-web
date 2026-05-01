@@ -128,7 +128,7 @@ export function SignupForm({
             : "Linking failed unexpectedly.";
         push({
           kind: "error",
-          title: `Account created — ${productLabel} link failed`,
+          title: `Account created. ${productLabel} link failed.`,
           description: `${claimError} You can retry from the ${productLabel} app.`,
         });
         router.push("/account");
@@ -145,7 +145,7 @@ export function SignupForm({
       router.push("/account");
       router.refresh();
     } catch {
-      setFormError("Network error — please try again.");
+      setFormError("Network error, please try again.");
     } finally {
       setLoading(false);
     }
@@ -196,7 +196,7 @@ export function SignupForm({
           <FieldError>{errors.email}</FieldError>
         ) : hasClaim ? (
           <FieldHint>
-            HubSpot installer email — we&apos;ll link your {productLabel}{" "}
+            HubSpot installer email. We&apos;ll link your {productLabel}{" "}
             install to this Dunamis account.
           </FieldHint>
         ) : null}

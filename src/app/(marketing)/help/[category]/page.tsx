@@ -50,11 +50,11 @@ export async function generateMetadata({
       : `${articles.length} articles in ${title}. Help docs, guides, and how-tos from Dunamis Studios.`;
 
   return {
-    title: `${title} — Help`,
+    title: `${title} · Help`,
     description,
     alternates: { canonical: `/help/${category}` },
     openGraph: {
-      title: `${title} — Dunamis Studios help center`,
+      title: `${title} · Dunamis Studios help center`,
       description,
       url: `/help/${category}`,
       type: "website",
@@ -63,21 +63,21 @@ export async function generateMetadata({
           url: "/opengraph-image",
           width: 1200,
           height: 630,
-          alt: `${title} — Dunamis Studios help center`,
+          alt: `${title} · Dunamis Studios help center`,
           type: "image/png",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} — Dunamis Studios help center`,
+      title: `${title} · Dunamis Studios help center`,
       description,
       images: [
         {
           url: "/twitter-image",
           width: 1200,
           height: 630,
-          alt: `${title} — Dunamis Studios help center`,
+          alt: `${title} · Dunamis Studios help center`,
         },
       ],
     },
@@ -94,7 +94,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const collectionSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: `${title} — Dunamis Studios help center`,
+    name: `${title} · Dunamis Studios help center`,
     url: `${SITE_URL}/help/${category}`,
     isPartOf: {
       "@type": "WebSite",

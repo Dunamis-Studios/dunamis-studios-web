@@ -63,13 +63,13 @@ export const shipped: ShippedItem[] = [
   {
     title: "Transparent cost preview",
     description:
-      "Token-accurate credit estimates before you generate a brief — no surprise drains on the monthly allotment.",
+      "Token-accurate credit estimates before you generate a brief, with no surprise drains on the monthly allotment.",
     shippedAt: "April 2026",
   },
   {
     title: "Admin-controlled per-brief context overrides",
     description:
-      "Admins can tune which associations, properties, and engagements feed each handoff type — every change goes to the audit trail.",
+      "Admins can tune which associations, properties, and engagements feed each handoff type. Every change goes to the audit trail.",
     shippedAt: "April 2026",
   },
   {
@@ -81,7 +81,7 @@ export const shipped: ShippedItem[] = [
   {
     title: "Live credit balance updates",
     description:
-      "The balance in the app header and in your Dunamis Studios dashboard reflects usage in real time — no refresh, no stale numbers.",
+      "The balance in the app header and in your Dunamis Studios dashboard reflects usage in real time. No refresh, no stale numbers.",
     shippedAt: "April 2026",
   },
   {
@@ -93,7 +93,7 @@ export const shipped: ShippedItem[] = [
   {
     title: "HubSpot install → Dunamis account handoff",
     description:
-      "Install Debrief from the HubSpot marketplace, land on a claim page, create or link a Dunamis account — stub entitlement attaches automatically.",
+      "Install Debrief from the HubSpot marketplace, land on a claim page, create or link a Dunamis account. Stub entitlement attaches automatically.",
     shippedAt: "April 2026",
   },
 ];
@@ -116,12 +116,12 @@ export const comingSoon: ComingSoonItem[] = [
   {
     title: "Reconstruct: regenerate briefs from updated context",
     description:
-      "Pull fresh record state and rerun the brief without re-entering sender notes — useful when a handoff sits unread and the deal has moved.",
+      "Pull fresh record state and rerun the brief without re-entering sender notes. Useful when a handoff sits unread and the deal has moved.",
   },
   {
     title: "Admin analytics dashboard",
     description:
-      "Per-user brief volume, cost trends, and handoff adoption metrics — the view admins need to decide whether the tool is earning its seat.",
+      "Per-user brief volume, cost trends, and handoff adoption metrics. The view admins need to decide whether the tool is earning its seat.",
   },
 ];
 

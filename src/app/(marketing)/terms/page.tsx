@@ -8,7 +8,7 @@ import type { LegalDocument } from "@/content/legal/types";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description:
-    "Terms of Service for Dunamis Studios apps — the Debrief and Property Pulse HubSpot apps, the dunamisstudios.net website, and any related services.",
+    "Terms of Service for Dunamis Studios apps: the Debrief and Property Pulse HubSpot apps, the dunamisstudios.net website, and any related services.",
   alternates: { canonical: "/terms" },
 };
 
