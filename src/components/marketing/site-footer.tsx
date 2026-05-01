@@ -18,9 +18,9 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <h4 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+          <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
             Products
-          </h4>
+          </h3>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li>
               <Link href="/products" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
@@ -44,9 +44,9 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <h4 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+          <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
             Resources
-          </h4>
+          </h3>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li>
               <Link href="/articles" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
@@ -75,9 +75,9 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <h4 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+          <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
             Legal
-          </h4>
+          </h3>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li>
               <Link href="/terms" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
