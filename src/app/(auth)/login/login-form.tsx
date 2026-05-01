@@ -2,19 +2,56 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label, FieldError } from "@/components/ui/label";
 
-export function LoginForm({ redirectTo }: { redirectTo: string }) {
+/**
+ * Restrict redirect targets to same-origin internal paths so a crafted
+ * `?redirect=//evil.com` cannot bounce a user off the site after a
+ * successful sign-in. This used to live in the server page; mirrored
+ * here verbatim because the client now reads searchParams directly.
+ */
+function sanitizeRedirect(input: string | null): string | null {
+  if (!input) return null;
+  if (!input.startsWith("/") || input.startsWith("//")) return null;
+  return input;
+}
+
+export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = sanitizeRedirect(searchParams.get("redirect")) ?? "/account";
+
   const [loading, setLoading] = React.useState(false);
   const [formError, setFormError] = React.useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = React.useState<{
     email?: string;
     password?: string;
   }>({});
+
+  /**
+   * If the visitor is already signed in, bounce them to the redirect
+   * target (or /account) without rendering the form. Replaces the
+   * server-side getCurrentSession + redirect that previously forced
+   * this page to render dynamically.
+   */
+  React.useEffect(() => {
+    let cancelled = false;
+    fetch("/api/auth/me", { credentials: "same-origin" })
+      .then((r) => (r.ok ? r.json() : { account: null }))
+      .then((data: { account: unknown }) => {
+        if (cancelled) return;
+        if (data.account) router.replace(redirectTo);
+      })
+      .catch(() => {
+        /* not signed in or redis down: render the form */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [redirectTo, router]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

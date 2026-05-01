@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { AuthCard } from "@/components/auth/auth-card";
 import { LoginForm } from "./login-form";
-import { getCurrentSession } from "@/lib/session";
-
-export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Sign in",
@@ -13,19 +10,13 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-interface Props {
-  searchParams: Promise<{ redirect?: string }>;
-}
-
-export default async function LoginPage({ searchParams }: Props) {
-  const { redirect: redirectTo } = await searchParams;
-  let session: Awaited<ReturnType<typeof getCurrentSession>> = null;
-  try {
-    session = await getCurrentSession();
-  } catch {
-    /* redis not configured locally; continue */
-  }
-  if (session) redirect(sanitizeRedirect(redirectTo) ?? "/account");
+/**
+ * Static shell. The "redirect to /account if already signed-in" check
+ * and the read of `?redirect=` both moved into LoginForm, which fires
+ * on hydration. Keeping this page static lets it pass bf-cache and
+ * removes the force-dynamic that previously dragged auth pages.
+ */
+export default function LoginPage() {
   return (
     <AuthCard
       title="Welcome back"
@@ -39,14 +30,9 @@ export default async function LoginPage({ searchParams }: Props) {
         </>
       }
     >
-      <LoginForm redirectTo={sanitizeRedirect(redirectTo) ?? "/account"} />
+      <Suspense fallback={null}>
+        <LoginForm />
+      </Suspense>
     </AuthCard>
   );
-}
-
-function sanitizeRedirect(input: string | undefined): string | null {
-  if (!input) return null;
-  // Only allow same-origin internal paths
-  if (!input.startsWith("/") || input.startsWith("//")) return null;
-  return input;
 }
