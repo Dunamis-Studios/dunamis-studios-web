@@ -4,6 +4,10 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container, Section } from "@/components/ui/primitives";
 import { JsonLd } from "@/components/seo/json-ld";
+import {
+  FaqSection,
+  buildFaqPageSchema,
+} from "@/components/marketing/article-extras";
 import { getPost } from "@/lib/content";
 import { buildArticleJsonLd, getOgImageUrl, computeReadingTime } from "@/lib/post-seo";
 
@@ -30,6 +34,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `/guides/${slug}`,
       images: [{ url: ogImage }],
     },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.description,
+      images: [{ url: ogImage, alt: post.title }],
+    },
   };
 }
 
@@ -39,6 +49,8 @@ export default async function GuidePage({ params }: Props) {
   if (!post || post.status !== "published") notFound();
 
   const jsonLd = buildArticleJsonLd(post, "guide");
+  const faqPageSchema =
+    post.faq && post.faq.length > 0 ? buildFaqPageSchema(post.faq) : null;
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -68,6 +80,9 @@ export default async function GuidePage({ params }: Props) {
           id={`jsonld-guide-${slug}-breadcrumb`}
           schema={breadcrumbSchema}
         />
+        {faqPageSchema ? (
+          <JsonLd id={`jsonld-guide-${slug}-faq`} schema={faqPageSchema} />
+        ) : null}
         <Breadcrumbs
           items={[
             { label: "Home", href: "/" },
@@ -79,7 +94,7 @@ export default async function GuidePage({ params }: Props) {
         {post.coverImageUrl && (
           <Image
             src={post.coverImageUrl}
-            alt=""
+            alt={`Cover image for ${post.title}`}
             width={800}
             height={450}
             className="mb-8 aspect-video w-full rounded-lg object-cover"
@@ -106,6 +121,9 @@ export default async function GuidePage({ params }: Props) {
           className="kb-prose mt-10"
           dangerouslySetInnerHTML={{ __html: post.contentHtml }}
         />
+        {post.faq && post.faq.length > 0 ? (
+          <FaqSection faq={post.faq} />
+        ) : null}
       </Container>
     </Section>
   );

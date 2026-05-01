@@ -52,12 +52,12 @@ const softwareSchema = {
 };
 
 export const metadata: Metadata = {
-  title: "Carbon Copy: CC and BCC for HubSpot transactional emails",
+  title: "Carbon Copy: CC and BCC for HubSpot",
   description:
     "A HubSpot workflow action that adds CC and BCC envelope support to Single-Send transactional emails. Built and deployed, marketplace listing in progress.",
   alternates: { canonical: meta.href },
   openGraph: {
-    title: "Carbon Copy: CC and BCC for HubSpot transactional emails",
+    title: "Carbon Copy: CC and BCC for HubSpot",
     description:
       "A HubSpot workflow action that adds CC and BCC envelope support to Single-Send transactional emails. Built and deployed, marketplace listing in progress.",
     url: meta.href,
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Carbon Copy: CC and BCC for HubSpot transactional emails",
+    title: "Carbon Copy: CC and BCC for HubSpot",
     description:
       "A HubSpot workflow action that adds CC and BCC envelope support to Single-Send transactional emails. Built and deployed, marketplace listing in progress.",
   },

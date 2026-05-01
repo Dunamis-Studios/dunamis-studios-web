@@ -15,10 +15,10 @@ import {
 export const metadata: Metadata = {
   title: "Debrief roadmap",
   description:
-    "What's shipped, what's in progress, and what's next for Debrief — Dunamis Studios' handoff intelligence app for HubSpot CRM.",
+    "What's shipped, what's in progress, and what's next for Debrief, Dunamis Studios' handoff intelligence app for HubSpot CRM.",
   alternates: { canonical: "/products/debrief/roadmap" },
   openGraph: {
-    title: "Debrief roadmap — Dunamis Studios",
+    title: "Debrief roadmap · Dunamis Studios",
     description:
       "What's shipped, what's in progress, and what's next for Debrief.",
     url: "/products/debrief/roadmap",
@@ -28,8 +28,22 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Debrief roadmap — Dunamis Studios",
+        alt: "Debrief roadmap · Dunamis Studios",
         type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Debrief roadmap · Dunamis Studios",
+    description:
+      "What's shipped, what's in progress, and what's next for Debrief.",
+    images: [
+      {
+        url: "/twitter-image",
+        width: 1200,
+        height: 630,
+        alt: "Debrief roadmap · Dunamis Studios",
       },
     ],
   },
@@ -61,7 +75,7 @@ export default function DebriefRoadmapPage() {
             className="mt-6"
             eyebrow="Debrief roadmap"
             title="What we've shipped, and what's next."
-            description="The honest state of Debrief. Updated by hand when things change — not a generated feed. If something's missing or wrong, email josh@dunamisstudios.net."
+            description="The honest state of Debrief. Updated by hand when things change, not a generated feed. If something's missing or wrong, email josh@dunamisstudios.net."
           />
           <p className="mt-6 text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
             Last updated{" "}

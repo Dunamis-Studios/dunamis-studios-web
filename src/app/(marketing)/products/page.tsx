@@ -78,12 +78,12 @@ const collectionSchema = {
 export const metadata: Metadata = {
   title: "Products by Dunamis Studios",
   description:
-    "Every Dunamis Studios product in one place. Property Pulse for change history. Debrief for handoff briefs. Carbon Copy, Traverse and Update, and Association Visualizer in earlier stages.",
+    "Every Dunamis Studios product: Property Pulse, Debrief, Carbon Copy, Traverse and Update, Association Visualizer. HubSpot apps built by HubSpot users.",
   alternates: { canonical: "/products" },
   openGraph: {
     title: "Products by Dunamis Studios",
     description:
-      "Every Dunamis Studios product in one place. Property Pulse for change history. Debrief for handoff briefs. Carbon Copy, Traverse and Update, and Association Visualizer in earlier stages.",
+      "Every Dunamis Studios product: Property Pulse, Debrief, Carbon Copy, Traverse and Update, Association Visualizer. HubSpot apps built by HubSpot users.",
     url: "/products",
     type: "website",
     images: [
@@ -100,7 +100,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Products by Dunamis Studios",
     description:
-      "Every Dunamis Studios product in one place. Property Pulse for change history. Debrief for handoff briefs. Carbon Copy, Traverse and Update, and Association Visualizer in earlier stages.",
+      "Every Dunamis Studios product: Property Pulse, Debrief, Carbon Copy, Traverse and Update, Association Visualizer. HubSpot apps built by HubSpot users.",
   },
 };
 

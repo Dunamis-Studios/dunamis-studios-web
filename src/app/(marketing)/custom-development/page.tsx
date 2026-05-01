@@ -17,12 +17,12 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = {
   title: "Custom Development",
   description:
-    "Custom HubSpot development from Dunamis Studios. UI extensions, API integrations, data pipelines, AI workflows, and portal recovery for teams whose needs don't fit a marketplace app.",
+    "HubSpot UI extensions, API integrations, data pipelines, AI workflows, and portal recovery from Dunamis Studios. For teams beyond marketplace apps.",
   alternates: { canonical: "/custom-development" },
   openGraph: {
     title: "Custom Development · Dunamis Studios",
     description:
-      "Custom HubSpot development from Dunamis Studios. UI extensions, API integrations, data pipelines, AI workflows, and portal recovery for teams whose needs don't fit a marketplace app.",
+      "HubSpot UI extensions, API integrations, data pipelines, AI workflows, and portal recovery from Dunamis Studios. For teams beyond marketplace apps.",
     url: "/custom-development",
     type: "website",
     images: [
@@ -32,6 +32,20 @@ export const metadata: Metadata = {
         height: 630,
         alt: "Custom Development · Dunamis Studios",
         type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Custom Development · Dunamis Studios",
+    description:
+      "HubSpot UI extensions, API integrations, data pipelines, AI workflows, and portal recovery from Dunamis Studios. For teams beyond marketplace apps.",
+    images: [
+      {
+        url: "/twitter-image",
+        width: 1200,
+        height: 630,
+        alt: "Custom Development · Dunamis Studios",
       },
     ],
   },

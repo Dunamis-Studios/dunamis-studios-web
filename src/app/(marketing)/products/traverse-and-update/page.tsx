@@ -52,14 +52,14 @@ const softwareSchema = {
 };
 
 export const metadata: Metadata = {
-  title: "Traverse and Update: Two-hop property updates for HubSpot",
+  title: "Traverse and Update for HubSpot",
   description:
-    "A HubSpot workflow action that updates properties on records two outbound association hops away. Optional association-label filters and CRM Search prefiltering. Built; not yet on the marketplace.",
+    "Workflow action that walks two HubSpot association hops and updates properties on every target record. Label filters and CRM Search prefilter included.",
   alternates: { canonical: meta.href },
   openGraph: {
-    title: "Traverse and Update: Two-hop property updates for HubSpot",
+    title: "Traverse and Update for HubSpot",
     description:
-      "A HubSpot workflow action that updates properties on records two outbound association hops away. Optional association-label filters and CRM Search prefiltering. Built; not yet on the marketplace.",
+      "Workflow action that walks two HubSpot association hops and updates properties on every target record. Label filters and CRM Search prefilter included.",
     url: meta.href,
     type: "website",
     images: [
@@ -74,9 +74,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Traverse and Update: Two-hop property updates for HubSpot",
+    title: "Traverse and Update for HubSpot",
     description:
-      "A HubSpot workflow action that updates properties on records two outbound association hops away. Optional association-label filters and CRM Search prefiltering. Built; not yet on the marketplace.",
+      "Workflow action that walks two HubSpot association hops and updates properties on every target record. Label filters and CRM Search prefilter included.",
   },
 };
 

@@ -136,12 +136,12 @@ const faqPageSchema = {
 export const metadata: Metadata = {
   title: "Debrief: AI-powered CRM handoffs for HubSpot",
   description:
-    "Debrief is a HubSpot marketplace app that generates structured handoff briefs and draft messages when a HubSpot user starts a CRM record handoff. User-initiated, not auto-triggered. Not a meeting tool.",
+    "Debrief generates structured handoff briefs and draft messages from a HubSpot CRM card. User-initiated, not auto-triggered. Not a meeting tool.",
   alternates: { canonical: "/products/debrief" },
   openGraph: {
     title: "Debrief: AI-powered CRM handoffs for HubSpot",
     description:
-      "Debrief is a HubSpot marketplace app that generates structured handoff briefs and draft messages when a HubSpot user starts a CRM record handoff. User-initiated, not auto-triggered. Not a meeting tool.",
+      "Debrief generates structured handoff briefs and draft messages from a HubSpot CRM card. User-initiated, not auto-triggered. Not a meeting tool.",
     url: "/products/debrief",
     type: "website",
     images: [
@@ -158,7 +158,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Debrief: AI-powered CRM handoffs for HubSpot",
     description:
-      "Debrief is a HubSpot marketplace app that generates structured handoff briefs and draft messages when a HubSpot user starts a CRM record handoff. User-initiated, not auto-triggered. Not a meeting tool.",
+      "Debrief generates structured handoff briefs and draft messages from a HubSpot CRM card. User-initiated, not auto-triggered. Not a meeting tool.",
     images: [
       {
         url: "/twitter-image",

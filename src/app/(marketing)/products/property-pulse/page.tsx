@@ -117,12 +117,12 @@ const faqPageSchema = {
 };
 
 export const metadata: Metadata = {
-  title: "Property Pulse: Property change history for HubSpot CRM",
+  title: "Property Pulse for HubSpot CRM",
   description:
     "Property Pulse is a HubSpot marketplace app that surfaces every tracked property's full change history on one CRM card, filterable and exportable to CSV.",
   alternates: { canonical: "/products/property-pulse" },
   openGraph: {
-    title: "Property Pulse: Property change history for HubSpot CRM",
+    title: "Property Pulse for HubSpot CRM",
     description:
       "Property Pulse is a HubSpot marketplace app that surfaces every tracked property's full change history on one CRM card, filterable and exportable to CSV.",
     url: "/products/property-pulse",
@@ -132,14 +132,14 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Property Pulse: Property change history for HubSpot CRM",
+        alt: "Property Pulse for HubSpot CRM",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Property Pulse: Property change history for HubSpot CRM",
+    title: "Property Pulse for HubSpot CRM",
     description:
       "Property Pulse is a HubSpot marketplace app that surfaces every tracked property's full change history on one CRM card, filterable and exportable to CSV.",
     images: [
@@ -147,7 +147,7 @@ export const metadata: Metadata = {
         url: "/twitter-image",
         width: 1200,
         height: 630,
-        alt: "Property Pulse: Property change history for HubSpot CRM",
+        alt: "Property Pulse for HubSpot CRM",
       },
     ],
   },

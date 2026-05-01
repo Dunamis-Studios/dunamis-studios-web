@@ -15,6 +15,34 @@ export const metadata: Metadata = {
   title: "Guides",
   description: PAGE_DESCRIPTION,
   alternates: { canonical: "/guides" },
+  openGraph: {
+    title: "Guides · Dunamis Studios",
+    description: PAGE_DESCRIPTION,
+    url: "/guides",
+    type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Guides · Dunamis Studios",
+        type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Guides · Dunamis Studios",
+    description: PAGE_DESCRIPTION,
+    images: [
+      {
+        url: "/twitter-image",
+        width: 1200,
+        height: 630,
+        alt: "Guides · Dunamis Studios",
+      },
+    ],
+  },
 };
 
 /**
@@ -77,7 +105,7 @@ export default async function GuidesPage() {
                 {post.coverImageUrl && (
                   <Image
                     src={post.coverImageUrl}
-                    alt=""
+                    alt={`Cover image for ${post.title}`}
                     width={600}
                     height={338}
                     className="mb-4 aspect-video w-full rounded-md object-cover"

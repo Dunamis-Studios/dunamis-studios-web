@@ -47,12 +47,12 @@ const softwareSchema = {
 };
 
 export const metadata: Metadata = {
-  title: "Association Visualizer: Two-hop CRM relationship maps",
+  title: "Association Visualizer for HubSpot",
   description:
     "An internal Dunamis Studios tool that renders a HubSpot CRM record's outbound associations as a two-hop tree. We're exploring whether to ship it as a public product.",
   alternates: { canonical: meta.href },
   openGraph: {
-    title: "Association Visualizer: Two-hop CRM relationship maps",
+    title: "Association Visualizer for HubSpot",
     description:
       "An internal Dunamis Studios tool that renders a HubSpot CRM record's outbound associations as a two-hop tree. We're exploring whether to ship it as a public product.",
     url: meta.href,
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Association Visualizer: Two-hop CRM relationship maps",
+    title: "Association Visualizer for HubSpot",
     description:
       "An internal Dunamis Studios tool that renders a HubSpot CRM record's outbound associations as a two-hop tree. We're exploring whether to ship it as a public product.",
   },

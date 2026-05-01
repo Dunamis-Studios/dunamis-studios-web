@@ -11,12 +11,12 @@ import { CREDIT_PACKS, CREDIT_COST_TABLE } from "@/lib/pricing";
 export const metadata: Metadata = {
   // Override the root template to a distinctive, length-tuned title
   // instead of the template-generated "Pricing · Dunamis Studios".
-  title: { absolute: "Pricing — Dunamis Studios apps" },
+  title: { absolute: "Pricing · Dunamis Studios apps" },
   description:
     "Simple, transparent pricing for Dunamis Studios apps. Per-portal monthly plans with credit-based usage and no annual lock-in.",
   alternates: { canonical: "/pricing" },
   openGraph: {
-    title: "Pricing — Dunamis Studios apps",
+    title: "Pricing · Dunamis Studios apps",
     description:
       "Simple, transparent pricing for Dunamis Studios apps. Per-portal monthly plans with credit-based usage and no annual lock-in.",
     url: "/pricing",
@@ -26,8 +26,22 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Pricing — Dunamis Studios apps",
+        alt: "Pricing · Dunamis Studios apps",
         type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pricing · Dunamis Studios apps",
+    description:
+      "Simple, transparent pricing for Dunamis Studios apps. Per-portal monthly plans with credit-based usage and no annual lock-in.",
+    images: [
+      {
+        url: "/twitter-image",
+        width: 1200,
+        height: 630,
+        alt: "Pricing · Dunamis Studios apps",
       },
     ],
   },
@@ -129,7 +143,7 @@ export default function PricingPage() {
           <PageHeader
             eyebrow="Pricing"
             title="Transparent tiers. No surprise line items."
-            description="Each product is priced on its own. Install from the HubSpot marketplace, then pay from your account dashboard — one-time for Property Pulse, monthly for Debrief. Upgrade or downgrade Debrief tiers anytime."
+            description="Each product is priced on its own. Install from the HubSpot marketplace, then pay from your account dashboard. One-time for Property Pulse, monthly for Debrief. Upgrade or downgrade Debrief tiers anytime."
           />
         </Container>
       </Section>
@@ -145,7 +159,7 @@ export default function PricingPage() {
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-[var(--fg-muted)]">
             We&apos;re a one-person studio. Send me a note and I&apos;ll tell
-            you which tier is right — even if the honest answer is Starter.
+            you which tier is right, even if the honest answer is Starter.
           </p>
           <div className="mt-6">
             <Button asChild size="lg" variant="secondary">

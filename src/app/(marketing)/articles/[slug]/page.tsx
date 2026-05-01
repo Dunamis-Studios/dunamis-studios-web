@@ -36,6 +36,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `/articles/${slug}`,
       images: [{ url: ogImage }],
     },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.description,
+      images: [{ url: ogImage, alt: post.title }],
+    },
   };
 }
 
@@ -104,7 +110,7 @@ export default async function ArticlePage({ params }: Props) {
         {post.coverImageUrl && (
           <Image
             src={post.coverImageUrl}
-            alt=""
+            alt={`Cover image for ${post.title}`}
             width={800}
             height={450}
             className="mb-8 aspect-video w-full rounded-lg object-cover"
