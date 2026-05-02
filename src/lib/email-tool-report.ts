@@ -97,10 +97,25 @@ export async function sendHandoffCalculatorReportEmail({
     `  Hours lost to in-process owner changes (turnover): ${fmtHours(results.turnoverHours)} across ${results.turnoverHandoffs} reassigned books`,
     `  Total annual handoff cost: ${fmtUsd(results.totalCost)}`,
     "",
-    "Where this comes from:",
-    "Routine handoffs assume one structured handoff per closed deal across sales-to-CS or owner-change events. Turnover-driven handoffs assume the departing rep's full quarterly book gets reassigned cold, with each reassigned deal taking roughly twice the time of a routine handoff because the new owner is starting without context.",
+    "Industry sourcing:",
+    "B2B SaaS sales rep turnover averages 30 to 36 percent annually (Bridge Group, Xactly, Ebsta).",
+    "Sales reps spend about 28 percent of their time actively selling, with the rest on admin and ramp work (Salesforce State of Sales 2024).",
+    "Account research alone runs 1 to 3 hours per account on the receiving end (Salesmotion).",
     "",
-    "Numbers are directional, not audited. Adjust the inputs to match your portal and the output recalculates.",
+    "Our model assumptions:",
+    "Two hours per handoff is our working estimate for synthesized handoff time, not a published benchmark.",
+    "The 2x penalty on cold reassignments is our assumption based on the new owner starting from zero context, not published data.",
+    "",
+    "How we calculated this:",
+    "  annual_deals     = reps * deals_per_rep_per_quarter * 4",
+    "  routine_hours    = annual_deals * hours_per_handoff",
+    "  routine_cost     = routine_hours * rep_hourly_cost",
+    "  reassigned_books = round(reps * turnover_pct * deals_per_rep_per_quarter)",
+    "  cold_hours       = reassigned_books * hours_per_handoff * 2",
+    "  cold_cost        = cold_hours * rep_hourly_cost",
+    "  total_cost       = routine_cost + cold_cost",
+    "",
+    "These are directional estimates based on industry research. Your actual numbers will vary. Adjust the inputs to match your portal and the output recalculates.",
     "",
     "Debrief automates this. It generates an inheritance brief on every CRM record when ownership changes, so the new owner gets a 90-second read instead of an hour of timeline scrolling. Free during marketplace beta.",
     "",
@@ -140,7 +155,25 @@ export async function sendHandoffCalculatorReportEmail({
       </table>
     </div>
 
-    <p style="font-size:13px;line-height:1.6;color:#888;margin-top:18px;">Routine handoffs assume one structured handoff per closed deal across sales-to-CS or owner-change events. Turnover-driven handoffs assume the departing rep's full quarterly book gets reassigned cold, with each reassigned deal taking roughly twice the time of a routine handoff because the new owner is starting without context. Numbers are directional. Adjust inputs to match your portal.</p>
+    <div style="margin-top:18px;padding:18px;background:#0e0e0e;border:1px solid #262626;border-radius:10px;">
+      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">Industry sourcing</div>
+      <p style="font-size:13px;line-height:1.6;color:#cfcfcf;margin:0 0 10px;">B2B SaaS sales rep turnover averages 30 to 36 percent annually (Bridge Group, Xactly, Ebsta). Sales reps spend about 28 percent of their time actively selling, with the rest on admin and ramp work (Salesforce State of Sales 2024). Account research alone runs 1 to 3 hours per account on the receiving end (Salesmotion).</p>
+      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin:14px 0 10px;">Our model assumptions</div>
+      <p style="font-size:13px;line-height:1.6;color:#cfcfcf;margin:0;">Two hours per handoff is our working estimate for synthesized handoff time, not a published benchmark. The 2x penalty on cold reassignments is our assumption based on the new owner starting from zero context, not published data.</p>
+    </div>
+
+    <div style="margin-top:18px;padding:18px;background:#0e0e0e;border:1px solid #262626;border-radius:10px;">
+      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">How we calculated this</div>
+      <pre style="margin:0;font-family:Menlo,Consolas,monospace;font-size:12px;line-height:1.7;color:#cfcfcf;white-space:pre-wrap;">annual_deals     = reps * deals_per_rep_per_quarter * 4
+routine_hours    = annual_deals * hours_per_handoff
+routine_cost     = routine_hours * rep_hourly_cost
+reassigned_books = round(reps * turnover_pct * deals_per_rep_per_quarter)
+cold_hours       = reassigned_books * hours_per_handoff * 2
+cold_cost        = cold_hours * rep_hourly_cost
+total_cost       = routine_cost + cold_cost</pre>
+    </div>
+
+    <p style="font-size:12px;line-height:1.6;color:#888;margin-top:18px;">These are directional estimates based on industry research. Your actual numbers will vary. Adjust the inputs to match your portal and the output recalculates live.</p>
 
     <div style="margin-top:24px;padding:18px;background:#1a1530;border:1px solid #3b2f7a;border-radius:10px;">
       <div style="font-size:13px;line-height:1.6;color:#cfcfcf;">Debrief automates this. It generates an inheritance brief on every CRM record when ownership changes, so the new owner gets a 90-second read instead of an hour of timeline scrolling. Free during marketplace beta.</div>

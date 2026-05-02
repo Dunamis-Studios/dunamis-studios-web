@@ -46,7 +46,10 @@ const DEFAULTS: Inputs = {
   dealsPerRepPerQuarter: 25,
   handoffHours: 2,
   hourlyCost: 75,
-  turnoverPct: 20,
+  // 30% matches the median annual rep turnover reported across B2B SaaS
+  // benchmarks (Bridge Group, Xactly, Ebsta). Visitors with lower-churn
+  // teams should slide it down; the calculator updates live.
+  turnoverPct: 30,
 };
 
 function computeResults(inputs: Inputs): Results {
@@ -100,6 +103,10 @@ export function HandoffTimeCalculator() {
       <div className="lg:col-span-3 flex flex-col gap-6">
         <ResultsPanel results={results} />
         <DebriefCta />
+        <p className="text-xs leading-relaxed text-[var(--fg-subtle)]">
+          These are directional estimates based on industry research. Your
+          actual numbers will vary.
+        </p>
         <EmailCapture inputs={inputs} />
       </div>
     </div>
@@ -309,13 +316,70 @@ function ResultsPanel({ results }: { results: Results }) {
         />
       </div>
 
-      <p className="mt-6 text-xs leading-relaxed text-[var(--fg-subtle)]">
-        Routine handoffs assume one structured handoff per closed deal across
-        sales-to-CS or owner-change events. Turnover-driven reassignments
-        assume the departing rep&apos;s full quarterly book gets handed cold
-        to a new owner, and each cold reassignment takes roughly twice the
-        time of a routine handoff. Numbers are directional, not audited.
-      </p>
+      <div className="mt-6 space-y-3 text-xs leading-relaxed text-[var(--fg-subtle)]">
+        <p>
+          <span className="font-medium text-[var(--fg-muted)]">
+            Industry sourcing.
+          </span>{" "}
+          B2B SaaS sales rep turnover averages 30 to 36 percent annually
+          (Bridge Group, Xactly, Ebsta). Sales reps spend about 28 percent of
+          their time actively selling, with the rest on admin and ramp work
+          (Salesforce State of Sales 2024). Account research alone runs 1 to
+          3 hours per account on the receiving end (Salesmotion).
+        </p>
+        <p>
+          <span className="font-medium text-[var(--fg-muted)]">
+            Our model assumptions.
+          </span>{" "}
+          Two hours per handoff is our working estimate for synthesized
+          handoff time, not a published benchmark. The 2x penalty on cold
+          reassignments is our assumption based on the new owner starting
+          from zero context, not published data. Slide either input to match
+          your team and the output recalculates.
+        </p>
+      </div>
+
+      <details className="group mt-5 rounded-lg border border-[var(--border)] bg-[var(--bg)] open:bg-[var(--bg-elevated)]">
+        <summary className="flex cursor-pointer items-center justify-between gap-2 px-4 py-3 text-sm font-medium text-[var(--fg)] [&::-webkit-details-marker]:hidden">
+          <span>How we calculated this</span>
+          <span
+            aria-hidden
+            className="text-xs text-[var(--fg-subtle)] transition-transform duration-150 group-open:rotate-90"
+          >
+            &#9656;
+          </span>
+        </summary>
+        <div className="border-t border-[var(--border)] px-4 py-4">
+          <ol className="list-decimal space-y-1.5 pl-5 font-mono text-xs leading-relaxed text-[var(--fg-muted)]">
+            <li>
+              annual_deals = reps {"×"} deals_per_rep_per_quarter {"×"} 4
+            </li>
+            <li>
+              routine_hours = annual_deals {"×"} hours_per_handoff
+            </li>
+            <li>
+              routine_cost = routine_hours {"×"} rep_hourly_cost
+            </li>
+            <li>
+              reassigned_books = round(reps {"×"} turnover_pct {"×"} deals_per_rep_per_quarter)
+            </li>
+            <li>
+              cold_hours = reassigned_books {"×"} hours_per_handoff {"×"} 2
+            </li>
+            <li>
+              cold_cost = cold_hours {"×"} rep_hourly_cost
+            </li>
+            <li>
+              total_cost = routine_cost + cold_cost
+            </li>
+          </ol>
+          <p className="mt-3 text-xs leading-relaxed text-[var(--fg-subtle)]">
+            The server recomputes from the same formula before saving the
+            record or sending the email, so what you see here is what gets
+            captured. Plug your own values into a spreadsheet to verify.
+          </p>
+        </div>
+      </details>
     </div>
   );
 }
