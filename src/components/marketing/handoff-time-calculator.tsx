@@ -366,11 +366,6 @@ function ResultsPanel({ results }: { results: Results }) {
             </p>
             <p>Total cost is routine plus turnover.</p>
           </div>
-          <p className="mt-4 text-xs leading-relaxed text-[var(--fg-subtle)]">
-            The server recomputes from the same logic before saving or
-            emailing your report. Plug your own numbers into a spreadsheet
-            to verify.
-          </p>
         </div>
       </details>
     </div>

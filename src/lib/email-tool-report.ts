@@ -113,8 +113,6 @@ export async function sendHandoffCalculatorReportEmail({
     "",
     "Total cost is routine plus turnover.",
     "",
-    "The server recomputes from the same logic before saving or emailing your report. Plug your own numbers into a spreadsheet to verify.",
-    "",
     "These are directional estimates based on industry research. Your actual numbers will vary. Adjust the inputs to match your portal and the output recalculates.",
     "",
     "Debrief automates this. It generates an inheritance brief on every CRM record when ownership changes, so the new owner gets a 90-second read instead of an hour of timeline scrolling. Free during marketplace beta.",
@@ -166,8 +164,7 @@ export async function sendHandoffCalculatorReportEmail({
       <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">How we calculated this</div>
       <p style="font-size:13px;line-height:1.6;color:#cfcfcf;margin:0 0 10px;">We start with how many deals your team closes a year (reps multiplied by deals per quarter, times four). Every closed deal gets one routine handoff at your specified hours per handoff, costed at your hourly rate. That&apos;s your routine number.</p>
       <p style="font-size:13px;line-height:1.6;color:#cfcfcf;margin:0 0 10px;">Then we estimate how many books get reassigned cold each year by applying your turnover rate to your team. Those reassignments hit harder because the new owner starts from zero context, so we count them at twice the routine handoff time. That&apos;s your turnover number.</p>
-      <p style="font-size:13px;line-height:1.6;color:#cfcfcf;margin:0 0 10px;">Total cost is routine plus turnover.</p>
-      <p style="font-size:12px;line-height:1.6;color:#888;margin:0;">The server recomputes from the same logic before saving or emailing your report. Plug your own numbers into a spreadsheet to verify.</p>
+      <p style="font-size:13px;line-height:1.6;color:#cfcfcf;margin:0;">Total cost is routine plus turnover.</p>
     </div>
 
     <p style="font-size:12px;line-height:1.6;color:#888;margin-top:18px;">These are directional estimates based on industry research. Your actual numbers will vary. Adjust the inputs to match your portal and the output recalculates live.</p>
