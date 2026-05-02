@@ -83,8 +83,9 @@ export function PropertyAuditChecklist() {
         <ResultsPanel results={results} answeredCount={answeredCount} />
         <Methodology />
         <p className="text-xs leading-relaxed text-[var(--fg-subtle)]">
-          These are directional estimates based on the portals we have
-          audited. Your actual numbers will vary.
+          Scoring is calibrated against published HubSpot benchmarks and our
+          own model assumptions, both detailed in &quot;How we scored
+          this&quot; above.
         </p>
         <EmailCapture answers={answers} disabled={!isComplete(answers)} />
       </div>
@@ -494,12 +495,12 @@ function Methodology() {
             </div>
             <p className="mt-2">
               HubSpot&apos;s per-tier custom property cap is 100 to 1,000+
-              depending on Hub level. The 50, 150, and 300 thresholds we
-              use to score property count are calibrated against the
-              portals Dunamis Studios has audited, not a published
-              benchmark. The 5 percent fill-rate cutoff and the four-tier
-              breakpoints (80, 50, 20) are our model assumptions, not
-              industry standards.
+              depending on Hub level (HubSpot product limits docs). That is
+              the only published benchmark this scoring leans on. The 50,
+              150, and 300 thresholds we use to score property count, the
+              5 percent fill-rate cutoff, and the four-tier breakpoints
+              (80, 50, 20) are all our model assumptions, not industry
+              standards. Adjust your read of the score accordingly.
             </p>
           </div>
         </div>

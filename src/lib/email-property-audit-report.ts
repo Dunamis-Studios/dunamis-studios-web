@@ -92,9 +92,9 @@ export async function sendPropertyAuditReportEmail({
     "Each of ten questions contributes 0 to 10 points to a 0 to 100 score. Higher scores reward documented practice (naming conventions, descriptions, owners, review cadence) and active hygiene (recent audit, visibility into fill rate, fewer duplicates and incidents). Lower scores flag drift and bloat. We surface your three lowest-scoring questions as priority actions so the punch list is yours, not generic.",
     "",
     "Industry sourcing and our model:",
-    "HubSpot's per-tier custom property cap is 100 to 1,000+ depending on Hub level (HubSpot product limits). The 50, 150, and 300 thresholds we use to score property count are calibrated against the portals Dunamis Studios has audited, not a published benchmark. The 5% fill-rate cutoff and the four-tier breakpoints (80/50/20) are our model assumptions, not industry standards.",
+    "HubSpot's per-tier custom property cap is 100 to 1,000+ depending on Hub level (HubSpot product limits). That is the only published benchmark this scoring leans on. The 50, 150, and 300 thresholds we use to score property count, the 5% fill-rate cutoff, and the four-tier breakpoints (80/50/20) are all our model assumptions, not industry standards.",
     "",
-    "These are directional estimates. Your actual numbers will vary. Re-take the assessment after each round of cleanup to track progress.",
+    "Scoring is calibrated against published HubSpot benchmarks and our own model assumptions. Re-take the assessment after each round of cleanup to track progress.",
     "",
     "Questions? Reply to this email or write to josh@dunamisstudios.net.",
     "",
@@ -146,10 +146,10 @@ export async function sendPropertyAuditReportEmail({
       <p style="font-size:13px;line-height:1.6;color:#cfcfcf;margin:0 0 10px;">Each of ten questions contributes 0 to 10 points to a 0 to 100 score. Higher scores reward documented practice (naming conventions, descriptions, owners, review cadence) and active hygiene (recent audit, visibility into fill rate, fewer duplicates and incidents). Lower scores flag drift and bloat.</p>
       <p style="font-size:13px;line-height:1.6;color:#cfcfcf;margin:0;">We surface your three lowest-scoring questions as priority actions so the punch list is yours, not generic.</p>
       <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin:14px 0 10px;">Industry sourcing and our model</div>
-      <p style="font-size:13px;line-height:1.6;color:#cfcfcf;margin:0;">HubSpot's per-tier custom property cap is 100 to 1,000+ depending on Hub level. The 50, 150, and 300 thresholds we use to score property count are calibrated against the portals Dunamis Studios has audited, not a published benchmark. The 5% fill-rate cutoff and the four-tier breakpoints (80/50/20) are our model assumptions, not industry standards.</p>
+      <p style="font-size:13px;line-height:1.6;color:#cfcfcf;margin:0;">HubSpot's per-tier custom property cap is 100 to 1,000+ depending on Hub level. That is the only published benchmark this scoring leans on. The 50, 150, and 300 thresholds we use to score property count, the 5% fill-rate cutoff, and the four-tier breakpoints (80/50/20) are all our model assumptions, not industry standards.</p>
     </div>
 
-    <p style="font-size:12px;line-height:1.6;color:#888;margin-top:18px;">These are directional estimates. Your actual numbers will vary. Re-take the assessment after each round of cleanup to track progress.</p>
+    <p style="font-size:12px;line-height:1.6;color:#888;margin-top:18px;">Scoring is calibrated against published HubSpot benchmarks and our own model assumptions. Re-take the assessment after each round of cleanup to track progress.</p>
 
     <div style="margin-top:32px;padding-top:24px;border-top:1px solid #262626;color:#888;font-size:12px;line-height:1.6;">
       Questions? Reply to this email or write to <a href="mailto:josh@dunamisstudios.net" style="color:#a89bff;">josh@dunamisstudios.net</a>.<br><br>
