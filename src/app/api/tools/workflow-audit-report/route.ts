@@ -43,7 +43,7 @@ const AnswersSchema: z.ZodType<WorkflowAuditAnswers> = z.object({
   ]),
   lastAudit: z.enum(["90_days", "1_year", "over_year", "never"]),
   namingConvention: z.enum(["yes", "partial", "no"]),
-  ownersAssigned: z.enum(["yes", "partial", "no"]),
+  teamsAssigned: z.enum(["yes", "partial", "no"]),
   descriptionsFilled: z.enum(["all", "most", "some", "none"]),
   duplicatePropertyWriters: z.enum(["no", "suspect", "yes", "many"]),
   archivedReferences: z.enum(["no", "suspect", "yes", "many"]),

@@ -34,7 +34,7 @@ const INITIAL: PartialAnswers = {
   tier: null,
   lastAudit: null,
   namingConvention: null,
-  ownersAssigned: null,
+  teamsAssigned: null,
   descriptionsFilled: null,
   duplicatePropertyWriters: null,
   archivedReferences: null,
@@ -48,7 +48,7 @@ function isComplete(p: PartialAnswers): p is WorkflowAuditAnswers {
     p.tier !== null &&
     p.lastAudit !== null &&
     p.namingConvention !== null &&
-    p.ownersAssigned !== null &&
+    p.teamsAssigned !== null &&
     p.descriptionsFilled !== null &&
     p.duplicatePropertyWriters !== null &&
     p.archivedReferences !== null &&
@@ -163,9 +163,9 @@ function Questions({
         <RadioQuestion
           number={5}
           id="wq5"
-          question="Is an owner assigned to every active workflow?"
-          value={answers.ownersAssigned}
-          onChange={(v) => set("ownersAssigned", v)}
+          question="Are workflows assigned to teams (HubSpot's asset-level ownership)?"
+          value={answers.teamsAssigned}
+          onChange={(v) => set("teamsAssigned", v)}
           options={[
             { value: "yes", label: "Yes" },
             { value: "partial", label: "Partial" },
@@ -579,12 +579,15 @@ function Methodology() {
               Dunamis model assumptions.
             </span>{" "}
             Approaching cap at 80% of tier limit, critical at 95%. Scoring
-            weights: ownership and documentation 30% (naming, owners,
-            descriptions), conflict signals 30% (duplicate property writers,
-            archived references, re-enrollment intent), audit cadence 20%,
-            recent incidents 20%. Cadence and incidents are double-weighted
-            because they correlate with downstream impact more reliably than
-            any single hygiene signal.
+            weights: ownership and documentation 30% (naming, team
+            assignment, descriptions), conflict signals 30% (duplicate
+            property writers, archived references, re-enrollment intent),
+            audit cadence 20%, recent incidents 20%. Cadence and incidents
+            are double-weighted because they correlate with downstream
+            impact more reliably than any single hygiene signal. HubSpot
+            supports team-level (asset-level) assignment for workflows, not
+            per-workflow individual owners, so the team-assignment question
+            is what stands in for ownership in the assessment.
           </p>
         </div>
       </details>

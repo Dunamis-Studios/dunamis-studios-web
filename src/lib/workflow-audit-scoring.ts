@@ -36,7 +36,7 @@ export interface WorkflowAuditAnswers {
   tier: HubSpotTier;
   lastAudit: AuditCadence;
   namingConvention: TriState;
-  ownersAssigned: TriState;
+  teamsAssigned: TriState;
   descriptionsFilled: FillCoverage;
   duplicatePropertyWriters: ConflictState;
   archivedReferences: ConflictState;
@@ -202,10 +202,10 @@ const ACTION_MAP: Record<QuestionScore["id"], WorkflowAuditAction> = {
     title: "Adopt a workflow naming convention",
     body: "Use a consistent format like \"[Object] | [Trigger] | [Outcome]\" (for example, \"Contact | Form Fill | Demo Sequence\"). Naming reads from the workflow list at a glance and makes orphaned automation obvious. Without a convention, the list becomes unreadable past 50 workflows.",
   },
-  ownersAssigned: {
-    questionId: "ownersAssigned",
-    title: "Assign an owner to every active workflow",
-    body: "Use HubSpot's owner field or a custom property if needed. Owners are responsible for reviewing their workflows quarterly and approving changes. Without owners, every workflow drifts toward dust collector status because no one is accountable for keeping it sharp.",
+  teamsAssigned: {
+    questionId: "teamsAssigned",
+    title: "Assign every active workflow to a team",
+    body: "HubSpot supports team-level (asset-level) assignment for workflows, not per-workflow individual owners. Assign every active workflow to the team responsible for it via Settings > Users & Teams or the workflow's asset settings. The assigned team is accountable for quarterly review and approving changes. Without team assignment, workflows drift toward dust collector status because no team owns the upkeep.",
   },
   descriptionsFilled: {
     questionId: "descriptionsFilled",
@@ -255,11 +255,11 @@ export function scoreWorkflowAudit_(
       loss: 10 - scoreTri(answers.namingConvention),
     },
     {
-      id: "ownersAssigned",
-      label: "Owner assigned",
-      score: scoreTri(answers.ownersAssigned),
+      id: "teamsAssigned",
+      label: "Team assignment",
+      score: scoreTri(answers.teamsAssigned),
       maxScore: 10,
-      loss: 10 - scoreTri(answers.ownersAssigned),
+      loss: 10 - scoreTri(answers.teamsAssigned),
     },
     {
       id: "descriptionsFilled",
