@@ -6,6 +6,7 @@ import {
   Gauge,
   Hourglass,
   ListChecks,
+  PiggyBank,
   Target,
 } from "lucide-react";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
@@ -96,6 +97,13 @@ const TOOLS: ToolEntry[] = [
     description:
       "Quantify the dollar value of stalled pipeline. Nine inputs feed pipeline value at risk, daily revenue bleed per stalled deal, and pipeline velocity vs the published benchmark for your deal-size bracket.",
     Icon: Hourglass,
+  },
+  {
+    href: "/tools/tech-stack-cost-audit",
+    title: "Tech Stack Cost Audit",
+    description:
+      "List the SaaS tools your team pays for and get total annual spend, license waste at the Zylo 46% non-utilization rate, overlap detection across 19 categories, and the top consolidation opportunities ranked by potential savings.",
+    Icon: PiggyBank,
     badge: "New",
   },
 ];
