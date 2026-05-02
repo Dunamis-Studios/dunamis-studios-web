@@ -51,7 +51,8 @@ const contentHtml = `<p>A senior AE leaves on a Friday. Their book gets carved u
 <p>The job it's actually for: in-process owner changes. AE leaves, territory shifts, promotion bumps a rep off their book, anything that puts a deal in front of a new owner mid-cycle. That's the trigger we built around.</p>
 <p>What we don't do: full sales-to-CS handoff packages with success-criteria templates, onboarding workflows, or post-close customer-facing onboarding tracking. Debrief is upstream of CS. It's about getting the next sales owner up to speed.</p>
 <p>What we also don't do: conversation intelligence on calls themselves. Debrief reads what your meeting and call apps have already written into HubSpot. If your reps don't record calls or take notes, Debrief has less to work with. Pair it with Fathom, Gong, or Avoma for the recording layer; we read what they write.</p>
-<p>Pricing: per-portal subscription tied to credits, where one credit equals one brief. Free during HubSpot marketplace beta.</p>
+<p>Pricing post-beta: three tiers, all per portal per month. Starter at $19/month gives 50 credits per month (100 in the first month) on standard objects, with a 30-day Handoff Log and Brief Search window. Pro at $49/month gives 250 credits per month (500 first month), adds custom-object briefs, and extends the Log and Search window to 90 days. Enterprise at $149/month gives 1,000 credits per month (2,000 first month), full custom-object associations, a 365-day Log, unlimited Brief Search, and custom prompt tuning.</p>
+<p>Credits scale with brief size: a simple handoff is 1 credit; a deep-history brief can run 16 or more. Add-on credit packs run from $25 (100 credits) up to $1,500 (10,000 credits, 40% off at the top). Free during HubSpot marketplace beta.</p>
 <p><strong>Best for:</strong> HubSpot teams with frequent in-process owner changes, where the new owner has minutes (not hours) to ramp on an inherited deal.</p>
 <h2>AskElephant</h2>
 <p>The most direct competitor in the handoff-brief category, and the one we benchmark against most often. They've shipped a real product and they execute well in their lane.</p>
@@ -114,7 +115,7 @@ const faq = [
   },
   {
     q: "What's the cheapest way to handle sales handoffs in HubSpot?",
-    a: "Native HubSpot. The activity timeline is free, workflows are free on most paid tiers, and AI-generated email and call summaries come with Sales Hub Pro. If your team is under 10 reps with short deal cycles and the new owner already knows the deal through team standups, you don't need to pay for a third-party app. Cheap-but-not-free option: AskElephant has a $99/month Unlimited tier (plus a lower Essential tier with pricing not shown publicly) for sales-to-CS, or per-portal subscription pricing for Debrief if it's in-process owner changes.",
+    a: "Native HubSpot. The activity timeline is free, workflows are free on most paid tiers, and AI-generated email and call summaries come with Sales Hub Pro. If your team is under 10 reps with short deal cycles and the new owner already knows the deal through team standups, you don't need to pay for a third-party app. Cheap-but-not-free option: AskElephant has a $99/month Unlimited tier (plus a lower Essential tier with pricing not shown publicly) for sales-to-CS, or Debrief starting at $19/portal/month on the Starter tier for in-process owner changes (free during the marketplace beta).",
   },
   {
     q: "Do I need a handoff tool if my reps already record calls?",
@@ -190,7 +191,7 @@ const comparisonTable = {
       dimension: "Total cost",
       cells: [
         "Free, AI summaries on Sales Hub Pro",
-        "Per-portal subscription, free during beta",
+        "Tiered $19 to $149/portal/mo post-beta, free during beta",
         "$99/mo Unlimited tier, lower Essential tier with pricing not public",
         "Contact sales",
         "Varies by tool",
