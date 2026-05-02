@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, Calculator, ListChecks } from "lucide-react";
+import { ArrowUpRight, Calculator, Gauge, ListChecks } from "lucide-react";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -68,6 +68,13 @@ const TOOLS: ToolEntry[] = [
     description:
       "Ten-question assessment that scores your custom property hygiene 0 to 100, assigns a tier from Clean to Crisis, and ranks three priority actions against your weakest answers.",
     Icon: ListChecks,
+  },
+  {
+    href: "/tools/hubspot-bloat-score",
+    title: "HubSpot Bloat Score",
+    description:
+      "Benchmark your portal against published HubSpot tier limits and Vantage Point research. Score 0 to 100 across properties, workflows, lists, and asset density per contact, with per-category breakdown and the top three concentrations of bloat.",
+    Icon: Gauge,
     badge: "New",
   },
 ];
