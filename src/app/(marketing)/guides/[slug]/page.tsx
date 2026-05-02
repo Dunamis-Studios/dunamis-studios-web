@@ -85,7 +85,7 @@ export default async function GuidePage({ params }: Props) {
 
   return (
     <Section>
-      <Container size="sm">
+      <Container size="prose">
         <JsonLd id={`jsonld-guide-${slug}`} schema={jsonLd} />
         <JsonLd
           id={`jsonld-guide-${slug}-breadcrumb`}

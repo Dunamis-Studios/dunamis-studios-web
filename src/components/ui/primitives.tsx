@@ -5,9 +5,17 @@ export function Container({
   className,
   size = "md",
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & { size?: "sm" | "md" | "lg" | "xl" }) {
+}: React.HTMLAttributes<HTMLDivElement> & {
+  size?: "sm" | "prose" | "md" | "lg" | "xl";
+}) {
+  // "prose" sits between "sm" (centered narrow text like 404 / coming-soon
+  // splash) and "md" (full marketing content). Tuned for article and guide
+  // body copy where the line measure had been collapsing to roughly half
+  // the viewport on desktop. 3xl widens it without crossing into the
+  // unreadably-long-line zone of md/lg.
   const map: Record<typeof size, string> = {
     sm: "max-w-2xl",
+    prose: "max-w-3xl",
     md: "max-w-5xl",
     lg: "max-w-6xl",
     xl: "max-w-7xl",

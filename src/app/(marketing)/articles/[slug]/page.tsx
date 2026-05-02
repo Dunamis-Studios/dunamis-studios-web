@@ -90,7 +90,7 @@ export default async function ArticlePage({ params }: Props) {
 
   return (
     <Section>
-      <Container size="sm">
+      <Container size="prose">
         {/*
           Three JSON-LD blocks may render here. The Article block
           always renders and carries entity and provenance signals

@@ -15,10 +15,10 @@ export default async function PreviewGuidePage({ params }: Props) {
 
   return (
     <Section>
-      <Container size="sm">
+      <Container size="prose">
         <div className="mb-4">
           <Badge variant={post.status === "published" ? "success" : "neutral"}>
-            {post.status} — admin preview
+            {post.status} - admin preview
           </Badge>
         </div>
         {post.coverImageUrl && (

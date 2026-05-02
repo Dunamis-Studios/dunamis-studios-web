@@ -29,7 +29,7 @@ export default async function PreviewArticlePage({ params }: Props) {
 
   return (
     <Section>
-      <Container size="sm">
+      <Container size="prose">
         {faqPageSchema ? (
           <JsonLd
             id={`jsonld-article-${slug}-faq`}
