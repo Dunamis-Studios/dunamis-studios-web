@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 /**
- * Email-course signup form. First name + email required, last name
- * optional. POSTs to /api/courses/signup with the course slug. The
+ * Email-course signup form. First name, last name, and email all
+ * required. POSTs to /api/courses/signup with the course slug. The
  * site does not send drip emails itself; the HubSpot workflow
  * attached to the courses form is the sender.
  *
@@ -69,13 +69,12 @@ export function CourseSignupForm({
 
     try {
       const hubspotutk = readHubspotUtk();
-      const trimmedLast = lastName.trim();
       const payload: Record<string, string> = {
         firstName,
+        lastName,
         email,
         courseSlug,
       };
-      if (trimmedLast) payload.lastName = trimmedLast;
       if (hubspotutk) payload.hubspotutk = hubspotutk;
       const res = await fetch("/api/courses/signup", {
         method: "POST",
@@ -158,15 +157,15 @@ export function CourseSignupForm({
         </div>
         <div>
           <Label htmlFor="course-last-name">
-            Last name{" "}
-            <span className="text-xs font-normal text-[var(--fg-subtle)]">
-              (optional)
-            </span>
+            Last name
+            <RequiredMark />
           </Label>
           <Input
             id="course-last-name"
             type="text"
             autoComplete="family-name"
+            required
+            aria-required="true"
             placeholder="Lee"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}

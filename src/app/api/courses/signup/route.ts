@@ -41,7 +41,7 @@ const COURSES: Record<string, CourseDef> = {
 
 const BodySchema = z.object({
   firstName: z.string().min(1).max(80),
-  lastName: z.string().max(80).optional(),
+  lastName: z.string().min(1).max(80),
   email: z.string().email().max(254),
   courseSlug: z.string().min(1).max(80),
   hubspotutk: z.string().max(200).optional(),
@@ -50,7 +50,7 @@ const BodySchema = z.object({
 interface CourseSignupRecord {
   email: string;
   firstName: string;
-  lastName?: string;
+  lastName: string;
   courseSlug: string;
   courseName: string;
   signedUpAt: string;
@@ -98,8 +98,15 @@ export async function POST(req: NextRequest) {
 
   const cleanEmail = email.trim();
   const cleanFirstName = firstName.trim();
-  const cleanLastName = lastName?.trim() || undefined;
+  const cleanLastName = lastName.trim();
   const ipAddress = clientIp(req);
+
+  if (!cleanFirstName || !cleanLastName) {
+    return NextResponse.json(
+      { error: "Please check your inputs and try again." },
+      { status: 400 },
+    );
+  }
 
   const record: CourseSignupRecord = {
     email: cleanEmail,
