@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, Calculator, Gauge, ListChecks, Target } from "lucide-react";
+import {
+  ArrowUpRight,
+  Calculator,
+  Gauge,
+  Hourglass,
+  ListChecks,
+  Target,
+} from "lucide-react";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -80,8 +87,15 @@ const TOOLS: ToolEntry[] = [
     href: "/tools/lead-scoring-builder",
     title: "Lead Scoring Builder",
     description:
-      "Generate a starter HubSpot lead-scoring model from six ICP and funnel inputs. Outputs Fit/Engagement split, MQL threshold, point values, decay period, and A/B/C tier ranges, formatted for copy-paste into HubSpot's lead-scoring tool.",
+      "Generate a starter HubSpot lead-scoring model from six ICP and funnel inputs. Outputs Fit/Engagement split, MQL threshold, point values, decay period, and A/B/C tier ranges as a build reference for HubSpot's lead-scoring tool.",
     Icon: Target,
+  },
+  {
+    href: "/tools/sales-cycle-stagnation-calculator",
+    title: "Sales Cycle Stagnation Calculator",
+    description:
+      "Quantify the dollar value of stalled pipeline. Nine inputs feed pipeline value at risk, daily revenue bleed per stalled deal, and pipeline velocity vs the published benchmark for your deal-size bracket.",
+    Icon: Hourglass,
     badge: "New",
   },
 ];
