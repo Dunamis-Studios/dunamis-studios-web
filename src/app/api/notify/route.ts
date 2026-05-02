@@ -33,6 +33,8 @@ import {
 
 interface SignupRecord {
   email: string;
+  firstName: string;
+  lastName: string;
   product: ProductCatalogSlug;
   signedUpAt: string;
   ip: string;
@@ -62,12 +64,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { email, product, hubspotutk } = (body ?? {}) as {
+  const { firstName, lastName, email, product, hubspotutk } = (body ?? {}) as {
+    firstName?: unknown;
+    lastName?: unknown;
     email?: unknown;
     product?: unknown;
     hubspotutk?: unknown;
   };
 
+  const cleanFirstName =
+    typeof firstName === "string" ? firstName.trim() : "";
+  const cleanLastName =
+    typeof lastName === "string" ? lastName.trim() : "";
+
+  if (cleanFirstName.length === 0 || cleanFirstName.length > 80) {
+    return NextResponse.json(
+      { error: "Please enter your first name." },
+      { status: 400 },
+    );
+  }
+  if (cleanLastName.length === 0 || cleanLastName.length > 80) {
+    return NextResponse.json(
+      { error: "Please enter your last name." },
+      { status: 400 },
+    );
+  }
   if (typeof email !== "string" || !EMAIL_RE.test(email.trim())) {
     return NextResponse.json(
       { error: "Please enter a valid email address." },
@@ -94,6 +115,8 @@ export async function POST(req: NextRequest) {
   const ipAddress = clientIp(req);
   const record: SignupRecord = {
     email: cleanEmail,
+    firstName: cleanFirstName,
+    lastName: cleanLastName,
     product: slug,
     signedUpAt: new Date().toISOString(),
     ip: ipAddress,
@@ -130,6 +153,8 @@ export async function POST(req: NextRequest) {
   try {
     await submitToHubSpotNotifyForm({
       email: cleanEmail,
+      firstName: cleanFirstName,
+      lastName: cleanLastName,
       slug,
       productName,
       hubspotutk: hubspotutkValue,

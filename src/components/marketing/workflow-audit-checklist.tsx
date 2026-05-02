@@ -5,6 +5,10 @@ import { ArrowRight, CheckCircle2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  LeadNameFields,
+  RequiredMark,
+} from "@/components/marketing/lead-form-fields";
 import { cn } from "@/lib/utils";
 import {
   capStatusLabel,
@@ -606,6 +610,8 @@ function EmailCapture({
   answers: PartialAnswers;
   disabled: boolean;
 }) {
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [status, setStatus] = React.useState<EmailStatus>("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
@@ -619,12 +625,17 @@ function EmailCapture({
 
     try {
       const hubspotutk = readHubspotUtk();
+      const payload: Record<string, unknown> = {
+        firstName,
+        lastName,
+        email,
+        answers,
+      };
+      if (hubspotutk) payload.hubspotutk = hubspotutk;
       const res = await fetch("/api/tools/workflow-audit-report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          hubspotutk ? { email, answers, hubspotutk } : { email, answers },
-        ),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
         let message = "Could not send the report. Please try again.";
@@ -674,32 +685,46 @@ function EmailCapture({
         We&apos;ll send a clean breakdown of your score, cap utilization,
         per-question grade, and prioritized actions. Optional.
       </p>
-      <form onSubmit={onSubmit} className="mt-4 flex flex-col gap-2 sm:flex-row">
-        <label htmlFor="wac-email" className="sr-only">
-          Email address
-        </label>
-        <Input
-          id="wac-email"
-          type="email"
-          autoComplete="email"
-          inputMode="email"
-          required
-          placeholder="you@company.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+      <form onSubmit={onSubmit} className="mt-4 flex flex-col gap-3">
+        <LeadNameFields
+          idPrefix="wac"
+          firstName={firstName}
+          lastName={lastName}
+          setFirstName={setFirstName}
+          setLastName={setLastName}
           disabled={status === "submitting" || disabled}
-          className="flex-1"
         />
-        <Button
-          type="submit"
-          disabled={status === "submitting" || disabled}
-          aria-disabled={status === "submitting" || disabled}
-        >
-          {status === "submitting" ? "Sending..." : "Email it"}
-          {status === "submitting" ? null : (
-            <ArrowRight className="ml-0.5 h-4 w-4" aria-hidden />
-          )}
-        </Button>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+          <div className="flex-1">
+            <Label htmlFor="wac-email">
+              Email
+              <RequiredMark />
+            </Label>
+            <Input
+              id="wac-email"
+              type="email"
+              autoComplete="email"
+              inputMode="email"
+              required
+              aria-required="true"
+              placeholder="you@company.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={status === "submitting" || disabled}
+              className="mt-1.5"
+            />
+          </div>
+          <Button
+            type="submit"
+            disabled={status === "submitting" || disabled}
+            aria-disabled={status === "submitting" || disabled}
+          >
+            {status === "submitting" ? "Sending..." : "Email it"}
+            {status === "submitting" ? null : (
+              <ArrowRight className="ml-0.5 h-4 w-4" aria-hidden />
+            )}
+          </Button>
+        </div>
       </form>
       {disabled && status !== "error" ? (
         <p className="mt-2 text-xs text-[var(--fg-subtle)]">

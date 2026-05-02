@@ -116,6 +116,8 @@ const AnswersSchema: z.ZodType<OnboardingAnswers> = z.object({
 });
 
 const BodySchema = z.object({
+  firstName: z.string().min(1).max(80),
+  lastName: z.string().min(1).max(80),
   email: z.string().email().max(254),
   answers: AnswersSchema,
   hubspotutk: z.string().max(200).optional(),
@@ -164,6 +166,8 @@ const ROLE_REQUIRED_FIELDS: Record<
 
 interface ToolReportRecord {
   email: string;
+  firstName: string;
+  lastName: string;
   toolSlug: string;
   answers: OnboardingAnswers;
   results: OnboardingResults;
@@ -201,7 +205,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { email, answers, hubspotutk } = parsed.data;
+  const { firstName, lastName, email, answers, hubspotutk } = parsed.data;
 
   // Per-role required-field validation
   const required = ROLE_REQUIRED_FIELDS[answers.role];
@@ -218,11 +222,21 @@ export async function POST(req: NextRequest) {
   }
 
   const cleanEmail = email.trim();
+  const cleanFirstName = firstName.trim();
+  const cleanLastName = lastName.trim();
+  if (!cleanFirstName || !cleanLastName) {
+    return NextResponse.json(
+      { error: "Please check your inputs and try again." },
+      { status: 400 },
+    );
+  }
   const results = scoreOnboarding(answers);
   const ipAddress = clientIp(req);
 
   const record: ToolReportRecord = {
     email: cleanEmail,
+    firstName: cleanFirstName,
+    lastName: cleanLastName,
     toolSlug: TOOL_SLUG,
     answers,
     results,
@@ -248,6 +262,8 @@ export async function POST(req: NextRequest) {
 
   await submitFreeToolLead({
     email: cleanEmail,
+    firstName: cleanFirstName,
+    lastName: cleanLastName,
     toolName: TOOL_DISPLAY_NAME,
     hubspotutk,
     ipAddress: ipAddress !== "unknown" ? ipAddress : undefined,

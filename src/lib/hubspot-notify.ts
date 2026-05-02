@@ -25,6 +25,8 @@ import "server-only";
 
 interface SubmitArgs {
   email: string;
+  firstName: string;
+  lastName: string;
   slug: string;
   productName: string;
   /**
@@ -57,6 +59,8 @@ interface ContactLookupResponse {
 
 export async function submitToHubSpotNotifyForm({
   email,
+  firstName,
+  lastName,
   slug,
   productName,
   hubspotutk,
@@ -138,6 +142,8 @@ export async function submitToHubSpotNotifyForm({
       body: JSON.stringify({
         fields: [
           { name: "email", value: email },
+          { name: "firstname", value: firstName },
+          { name: "lastname", value: lastName },
           { name: "notify_interests", value: merged },
         ],
         context,

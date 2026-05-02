@@ -5,6 +5,10 @@ import { ArrowRight, CheckCircle2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  LeadNameFields,
+  RequiredMark,
+} from "@/components/marketing/lead-form-fields";
 import { cn } from "@/lib/utils";
 
 /**
@@ -401,6 +405,8 @@ function StatCard({
 type EmailStatus = "idle" | "submitting" | "success" | "error";
 
 function EmailCapture({ inputs }: { inputs: Inputs }) {
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [status, setStatus] = React.useState<EmailStatus>("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
@@ -413,14 +419,17 @@ function EmailCapture({ inputs }: { inputs: Inputs }) {
 
     try {
       const hubspotutk = readHubspotUtk();
+      const payload: Record<string, unknown> = {
+        firstName,
+        lastName,
+        email,
+        inputs,
+      };
+      if (hubspotutk) payload.hubspotutk = hubspotutk;
       const res = await fetch("/api/tools/handoff-calculator-report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          hubspotutk
-            ? { email, inputs, hubspotutk }
-            : { email, inputs },
-        ),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
         let message = "Could not send the report. Please try again.";
@@ -470,32 +479,46 @@ function EmailCapture({ inputs }: { inputs: Inputs }) {
         We&apos;ll send a clean PDF-style breakdown of your inputs and results.
         Optional. The calculator works without it.
       </p>
-      <form onSubmit={onSubmit} className="mt-4 flex flex-col gap-2 sm:flex-row">
-        <label htmlFor="calc-email" className="sr-only">
-          Email address
-        </label>
-        <Input
-          id="calc-email"
-          type="email"
-          autoComplete="email"
-          inputMode="email"
-          required
-          placeholder="you@company.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+      <form onSubmit={onSubmit} className="mt-4 flex flex-col gap-3">
+        <LeadNameFields
+          idPrefix="handoff-calc"
+          firstName={firstName}
+          lastName={lastName}
+          setFirstName={setFirstName}
+          setLastName={setLastName}
           disabled={status === "submitting"}
-          className="flex-1"
         />
-        <Button
-          type="submit"
-          disabled={status === "submitting"}
-          aria-disabled={status === "submitting"}
-        >
-          {status === "submitting" ? "Sending..." : "Email it"}
-          {status === "submitting" ? null : (
-            <ArrowRight className="ml-0.5 h-4 w-4" aria-hidden />
-          )}
-        </Button>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+          <div className="flex-1">
+            <Label htmlFor="calc-email">
+              Email
+              <RequiredMark />
+            </Label>
+            <Input
+              id="calc-email"
+              type="email"
+              autoComplete="email"
+              inputMode="email"
+              required
+              aria-required="true"
+              placeholder="you@company.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={status === "submitting"}
+              className="mt-1.5"
+            />
+          </div>
+          <Button
+            type="submit"
+            disabled={status === "submitting"}
+            aria-disabled={status === "submitting"}
+          >
+            {status === "submitting" ? "Sending..." : "Email it"}
+            {status === "submitting" ? null : (
+              <ArrowRight className="ml-0.5 h-4 w-4" aria-hidden />
+            )}
+          </Button>
+        </div>
       </form>
       {status === "error" && errorMessage ? (
         <p role="alert" className="mt-2 text-sm text-[var(--color-danger)]">

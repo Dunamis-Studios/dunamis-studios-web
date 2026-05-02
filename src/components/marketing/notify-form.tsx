@@ -3,6 +3,9 @@
 import * as React from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { LeadNameFields, RequiredMark } from "@/components/marketing/lead-form-fields";
 import { cn } from "@/lib/utils";
 import type { ProductCatalogSlug } from "@/lib/types";
 
@@ -40,6 +43,8 @@ export function NotifyForm({
   productName,
   className,
 }: NotifyFormProps) {
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [status, setStatus] = React.useState<Status>("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
@@ -51,14 +56,17 @@ export function NotifyForm({
     setErrorMessage(null);
     try {
       const hubspotutk = readHubspotUtk();
+      const payload: Record<string, string> = {
+        firstName,
+        lastName,
+        email,
+        product,
+      };
+      if (hubspotutk) payload.hubspotutk = hubspotutk;
       const res = await fetch("/api/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          hubspotutk
-            ? { email, product, hubspotutk }
-            : { email, product },
-        ),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
         let message = "Something went wrong. Please try again.";
@@ -104,23 +112,35 @@ export function NotifyForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className={cn("flex flex-col gap-3", className)}>
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <label htmlFor={`notify-${product}`} className="sr-only">
-          Email address
-        </label>
-        <input
-          id={`notify-${product}`}
-          type="email"
-          required
-          autoComplete="email"
-          inputMode="email"
-          placeholder="you@company.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={status === "submitting"}
-          className="flex-1 rounded-md border border-[var(--border)] bg-[var(--bg)] px-3 py-2.5 text-sm text-[var(--fg)] placeholder:text-[var(--fg-subtle)] focus:border-[var(--ring)] focus:outline-none focus:ring-1 focus:ring-[var(--ring)] disabled:opacity-60"
-        />
+    <form onSubmit={onSubmit} className={cn("flex flex-col gap-4", className)}>
+      <LeadNameFields
+        idPrefix={`notify-${product}`}
+        firstName={firstName}
+        lastName={lastName}
+        setFirstName={setFirstName}
+        setLastName={setLastName}
+        disabled={status === "submitting"}
+      />
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+        <div className="flex-1">
+          <Label htmlFor={`notify-${product}-email`}>
+            Email
+            <RequiredMark />
+          </Label>
+          <Input
+            id={`notify-${product}-email`}
+            type="email"
+            required
+            aria-required="true"
+            autoComplete="email"
+            inputMode="email"
+            placeholder="you@company.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={status === "submitting"}
+            className="mt-1.5"
+          />
+        </div>
         <Button
           type="submit"
           size="lg"

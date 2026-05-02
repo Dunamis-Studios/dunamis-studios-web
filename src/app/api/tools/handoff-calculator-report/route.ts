@@ -44,6 +44,8 @@ const InputsSchema = z.object({
 });
 
 const BodySchema = z.object({
+  firstName: z.string().min(1).max(80),
+  lastName: z.string().min(1).max(80),
   email: z.string().email().max(254),
   inputs: InputsSchema,
   hubspotutk: z.string().max(200).optional(),
@@ -51,6 +53,8 @@ const BodySchema = z.object({
 
 interface ToolReportRecord {
   email: string;
+  firstName: string;
+  lastName: string;
   toolSlug: string;
   inputs: HandoffCalculatorInputs;
   results: HandoffCalculatorResults;
@@ -117,13 +121,23 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { email, inputs, hubspotutk } = parsed.data;
+  const { firstName, lastName, email, inputs, hubspotutk } = parsed.data;
   const cleanEmail = email.trim();
+  const cleanFirstName = firstName.trim();
+  const cleanLastName = lastName.trim();
+  if (!cleanFirstName || !cleanLastName) {
+    return NextResponse.json(
+      { error: "Please check your inputs and try again." },
+      { status: 400 },
+    );
+  }
   const results = computeHandoffResults(inputs);
   const ipAddress = clientIp(req);
 
   const record: ToolReportRecord = {
     email: cleanEmail,
+    firstName: cleanFirstName,
+    lastName: cleanLastName,
     toolSlug: TOOL_SLUG,
     inputs,
     results,
@@ -150,6 +164,8 @@ export async function POST(req: NextRequest) {
   // failure mode that would bubble up.
   await submitFreeToolLead({
     email: cleanEmail,
+    firstName: cleanFirstName,
+    lastName: cleanLastName,
     toolName: TOOL_DISPLAY_NAME,
     hubspotutk,
     ipAddress: ipAddress !== "unknown" ? ipAddress : undefined,
