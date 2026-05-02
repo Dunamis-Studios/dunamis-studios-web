@@ -9,6 +9,7 @@ import {
   ListChecks,
   PiggyBank,
   Target,
+  UserPlus,
   Workflow,
 } from "lucide-react";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
@@ -120,6 +121,13 @@ const TOOLS: ToolEntry[] = [
     description:
       "Branching seven-question decision tree that recommends Custom Object, Custom Property, Repurposed Standard Object, HubDB, or Custom Event. Each recommendation comes with tradeoffs, examples, and tier eligibility from HubSpot's product KB.",
     Icon: GitBranch,
+  },
+  {
+    href: "/tools/hubspot-team-onboarding-checklist",
+    title: "HubSpot Team Member Onboarding Checklist",
+    description:
+      "Role-aware checklist scoring readiness for a new HubSpot team member across eight phases (access, concepts, role-specific properties, tools, process, integrations, reporting, day-30 adoption). Outputs a 0 to 100 readiness score, tier, top three actions, and role-specific risk flags.",
+    Icon: UserPlus,
     badge: "New",
   },
 ];

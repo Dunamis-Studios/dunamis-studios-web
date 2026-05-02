@@ -156,6 +156,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      url: `${base}/tools/hubspot-team-onboarding-checklist`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
       url: `${base}/pricing`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "weekly",
