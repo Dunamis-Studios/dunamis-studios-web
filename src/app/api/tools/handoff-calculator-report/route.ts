@@ -7,19 +7,21 @@ import {
   type HandoffCalculatorInputs,
   type HandoffCalculatorResults,
 } from "@/lib/email-tool-report";
+import { submitFreeToolLead } from "@/lib/hubspot-free-tools-form";
 
 /**
  * POST /api/tools/handoff-calculator-report
  *
  * Lead capture for the /tools/handoff-time-calculator surface. The
- * frontend submits the visitor's email plus the inputs they filled in
- * and the computed results. Three side effects, in order:
+ * frontend submits the visitor's email plus the inputs they filled in.
+ * Three side effects, in order:
  *
  *   1. Redis write to dunamis:tools:handoff-calculator:{hash} as
  *      source of truth. If this fails, the request fails with 500.
- *   2. HubSpot Forms mirror via the public form endpoint, tagged
- *      with notify_interests = "Free Tools - Handoff Calculator".
- *      Best-effort; failures are logged but do not bubble up.
+ *   2. HubSpot Forms mirror via the dedicated "Free Tools - Lead
+ *      Capture" form (HUBSPOT_FREE_TOOLS_FORM_GUID), with the tool's
+ *      display name landing in the form's hidden free_tool_used field
+ *      so HubSpot segmentation can route by tool. Best-effort.
  *   3. Resend transactional email delivering the report to the
  *      visitor. Best-effort; failure does not fail the lead capture.
  *
@@ -30,10 +32,7 @@ import {
  */
 
 const TOOL_SLUG = "handoff-calculator";
-const PRODUCT_NAME = "Free Tools - Handoff Calculator";
-
-const HUBSPOT_API_BASE = "https://api.hubapi.com";
-const HUBSPOT_FORMS_BASE = "https://api.hsforms.com";
+const TOOL_DISPLAY_NAME = "Handoff Time Calculator";
 const PUBLIC_PAGE_BASE = "https://www.dunamisstudios.net";
 
 const InputsSchema = z.object({
@@ -86,9 +85,6 @@ function computeHandoffResults(
   const turnoverHandoffs = Math.round(
     inputs.reps * (inputs.turnoverPct / 100) * inputs.dealsPerRepPerQuarter,
   );
-  // Reassigned deals take roughly twice the time of routine handoffs
-  // because the new owner is starting cold without a deal-close trigger
-  // or a CS-handoff doc.
   const turnoverHours = turnoverHandoffs * inputs.handoffHours * 2;
   const turnoverCost = turnoverHours * inputs.hourlyCost;
   const totalHours = routineHours + turnoverHours;
@@ -148,20 +144,18 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Best-effort HubSpot mirror. Same Forms endpoint as the notify form
-  // so the contact gets created or upserted, with notify_interests
-  // appended to indicate a free-tool lead. Reuses the existing form
-  // GUID env var; a per-tool form GUID can be added later if the
-  // segmentation needs to live entirely inside HubSpot.
-  try {
-    await mirrorToHubSpot({
-      email: cleanEmail,
-      hubspotutk,
-      ipAddress: ipAddress !== "unknown" ? ipAddress : undefined,
-    });
-  } catch (err) {
-    console.error("[tools/handoff-calculator] hubspot mirror threw", err);
-  }
+  // Best-effort HubSpot mirror via the dedicated Free Tools form.
+  // submitFreeToolLead handles its own logging and never throws past
+  // its own try/catch; the await here is for ordering, not for any
+  // failure mode that would bubble up.
+  await submitFreeToolLead({
+    email: cleanEmail,
+    toolName: TOOL_DISPLAY_NAME,
+    hubspotutk,
+    ipAddress: ipAddress !== "unknown" ? ipAddress : undefined,
+    pageUri: `${PUBLIC_PAGE_BASE}/tools/handoff-time-calculator`,
+    pageName: "Handoff Time Calculator report request",
+  });
 
   try {
     await sendHandoffCalculatorReportEmail({
@@ -174,90 +168,4 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({ ok: true, results });
-}
-
-interface MirrorArgs {
-  email: string;
-  hubspotutk?: string;
-  ipAddress?: string;
-}
-
-interface ContactLookupResponse {
-  properties?: { notify_interests?: string | null };
-}
-
-function mergeInterests(existing: string, addition: string): string {
-  const parts = existing
-    .split(";")
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0);
-  if (!parts.includes(addition)) parts.push(addition);
-  return parts.join(";");
-}
-
-async function mirrorToHubSpot({
-  email,
-  hubspotutk,
-  ipAddress,
-}: MirrorArgs): Promise<void> {
-  const accessToken = process.env.HUBSPOT_ACCESS_TOKEN;
-  const portalId = process.env.HUBSPOT_PORTAL_ID;
-  const formGuid = process.env.HUBSPOT_NOTIFY_FORM_GUID;
-  if (!accessToken || !portalId || !formGuid) {
-    console.warn(
-      "[tools/handoff-calculator] hubspot env vars missing; skipping mirror",
-    );
-    return;
-  }
-
-  let existingInterests = "";
-  try {
-    const lookupUrl = `${HUBSPOT_API_BASE}/crm/v3/objects/contacts/${encodeURIComponent(
-      email,
-    )}?idProperty=email&properties=notify_interests`;
-    const res = await fetch(lookupUrl, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    if (res.status === 200) {
-      const data = (await res.json()) as ContactLookupResponse;
-      existingInterests = data.properties?.notify_interests ?? "";
-    } else if (res.status !== 404) {
-      const text = await res.text().catch(() => "");
-      console.error("[tools/handoff-calculator] contact lookup failed", {
-        status: res.status,
-        body: text.slice(0, 500),
-      });
-      return;
-    }
-  } catch (err) {
-    console.error("[tools/handoff-calculator] contact lookup threw", err);
-    return;
-  }
-
-  const merged = mergeInterests(existingInterests, PRODUCT_NAME);
-  const submitUrl = `${HUBSPOT_FORMS_BASE}/submissions/v3/integration/submit/${portalId}/${formGuid}`;
-  const context: Record<string, string> = {
-    pageUri: `${PUBLIC_PAGE_BASE}/tools/handoff-time-calculator`,
-    pageName: "Handoff Time Calculator report request",
-  };
-  if (hubspotutk) context.hutk = hubspotutk;
-  if (ipAddress) context.ipAddress = ipAddress;
-  const res = await fetch(submitUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      fields: [
-        { name: "email", value: email },
-        { name: "notify_interests", value: merged },
-      ],
-      context,
-    }),
-  });
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    console.error("[tools/handoff-calculator] hubspot submit failed", {
-      status: res.status,
-      body: text.slice(0, 500),
-    });
-  }
 }
