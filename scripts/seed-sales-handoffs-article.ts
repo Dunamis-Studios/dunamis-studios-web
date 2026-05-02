@@ -191,7 +191,7 @@ const comparisonTable = {
       dimension: "Total cost",
       cells: [
         "Free, AI summaries on Sales Hub Pro",
-        "Tiered $19 to $149/portal/mo post-beta, free during beta",
+        "Starter $19, Pro $49, Enterprise $149 per portal/month. Free during marketplace beta. Credit add-ons available.",
         "$99/mo Unlimited tier, lower Essential tier with pricing not public",
         "Contact sales",
         "Varies by tool",
