@@ -58,14 +58,14 @@ const contentHtml = `<p>A senior AE leaves on a Friday. Their book gets carved u
 <p>What it does: an AI agent that listens to your sales calls, watches your CRM, and auto-generates a sales-to-CS handoff package when a deal closes won. The package pulls pain points, success criteria, stakeholders, timeline, and next steps out of the call, email, and note corpus and lays them into a structured doc inside HubSpot. Also does AI deal coaching, churn-risk alerts, and CRM-update automation as adjacent features.</p>
 <p>What it's good for: post-sale handoffs at teams that already record calls. If your reps already use Gong, Chorus, or Fathom, and your CS team needs structured context fast, AskElephant turns those raw transcripts into a handoff doc without anyone manually assembling.</p>
 <p>What it doesn't do as well: in-process owner changes. AskElephant's primary motion is closed-won to CS. If a senior AE leaves Tuesday and the new owner inherits 40 active deals Wednesday, AskElephant isn't shaped around that lifecycle event specifically. The brief generation works best with a clean trigger (deal closes) and a defined receiving team (CS or onboarding).</p>
-<p>Marketplace stats: 5.0 rating, 200+ installs. Pricing starts at $99/month with no seat minimums.</p>
+<p>Marketplace stats: 5.0 rating with 12 reviews, 300+ installs. Pricing: $99/month for the Unlimited tier with a 14-day free trial. A lower Essential tier exists with pricing not shown publicly.</p>
 <p><strong>Best for:</strong> HubSpot teams that record calls, want post-sale handoffs to be automatic, and have a defined CS or onboarding function on the receiving end.</p>
 <h2>Arrows</h2>
 <p>Arrows isn't a brief generator. It's an onboarding execution platform that solves a related but different problem, and it shows up in handoff conversations because the boundaries blur once a deal closes.</p>
 <p>What it does: customer-facing onboarding plans and AI-powered sales rooms that attach to HubSpot deals, tickets, or custom objects. After a deal closes, an onboarding plan can be created automatically and tied to the record, with milestones, content, and shared visibility for both internal teams and the customer. Sales rooms (the pre-close surface) connect to onboarding plans (the post-close surface) so the handoff isn't a separate document anyone has to write.</p>
 <p>What it's good for: teams whose handoff problem is really an onboarding-execution problem. If your sales-to-CS friction is "nobody knows where the customer is in onboarding," Arrows fixes that with shared plans both sides can see. Stronger in industries with multi-month implementations and customers who participate in the workflow (SaaS, fintech, services).</p>
 <p>What it doesn't do: it doesn't synthesize a brief. The handoff context comes from whatever sales already wrote into the deal record. Arrows builds the post-sale workflow on top, not the pre-sale narrative.</p>
-<p>Marketplace stats: 4.9 rating, 1,200+ installs. One of the more deeply integrated apps in this corner of the marketplace.</p>
+<p>Marketplace stats: 4.9 rating with 53 reviews, 2K installs. HubSpot Certified App. One of the more deeply integrated apps in this corner of the marketplace.</p>
 <p><strong>Best for:</strong> teams where post-sale execution is the bottleneck, not pre-sale context capture. Pairs naturally with a brief generator.</p>
 <h2>A note on call and meeting intelligence tools</h2>
 <p>Gong, Chorus (ZoomInfo), Avoma, Fathom. These come up constantly in handoff conversations. They are not handoff apps. They are call and meeting recording and summarization tools that get used for handoffs because the raw material lives inside them.</p>
@@ -114,7 +114,7 @@ const faq = [
   },
   {
     q: "What's the cheapest way to handle sales handoffs in HubSpot?",
-    a: "Native HubSpot. The activity timeline is free, workflows are free on most paid tiers, and AI-generated email and call summaries come with Sales Hub Pro. If your team is under 10 reps with short deal cycles and the new owner already knows the deal through team standups, you don't need to pay for a third-party app. Cheap-but-not-free option: $99/month for AskElephant if your handoff problem is sales-to-CS, or per-portal subscription pricing for Debrief if it's in-process owner changes.",
+    a: "Native HubSpot. The activity timeline is free, workflows are free on most paid tiers, and AI-generated email and call summaries come with Sales Hub Pro. If your team is under 10 reps with short deal cycles and the new owner already knows the deal through team standups, you don't need to pay for a third-party app. Cheap-but-not-free option: AskElephant has a $99/month Unlimited tier (plus a lower Essential tier with pricing not shown publicly) for sales-to-CS, or per-portal subscription pricing for Debrief if it's in-process owner changes.",
   },
   {
     q: "Do I need a handoff tool if my reps already record calls?",
@@ -191,8 +191,8 @@ const comparisonTable = {
       cells: [
         "Free, AI summaries on Sales Hub Pro",
         "Per-portal subscription, free during beta",
-        "Starts $99/month, no seat minimums",
-        "Quote-based, plan tiers",
+        "$99/mo Unlimited tier, lower Essential tier with pricing not public",
+        "Contact sales",
         "Varies by tool",
       ],
     },
