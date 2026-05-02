@@ -4,6 +4,7 @@ import {
   ArrowUpRight,
   Calculator,
   Gauge,
+  GitBranch,
   Hourglass,
   ListChecks,
   PiggyBank,
@@ -112,6 +113,13 @@ const TOOLS: ToolEntry[] = [
     description:
       "Ten-question assessment that scores your HubSpot workflow operations 0 to 100, assigns a Healthy / Drift / Bloat / Crisis tier, compares your active workflow count to the published cap for your HubSpot tier, and ranks the top three priority actions.",
     Icon: Workflow,
+  },
+  {
+    href: "/tools/custom-object-decision-tree",
+    title: "HubSpot Custom Object Decision Tree",
+    description:
+      "Branching seven-question decision tree that recommends Custom Object, Custom Property, Repurposed Standard Object, HubDB, or Custom Event. Each recommendation comes with tradeoffs, examples, and tier eligibility from HubSpot's product KB.",
+    Icon: GitBranch,
     badge: "New",
   },
 ];
