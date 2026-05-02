@@ -173,6 +173,8 @@ export default function ToolsPage() {
                 <Link
                   key={tool.href}
                   href={tool.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="group flex flex-col gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6 transition-colors hover:border-[var(--border-strong)]"
                 >
                   <div className="flex items-start justify-between">
