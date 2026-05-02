@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, Calculator, Gauge, ListChecks } from "lucide-react";
+import { ArrowUpRight, Calculator, Gauge, ListChecks, Target } from "lucide-react";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -75,6 +75,13 @@ const TOOLS: ToolEntry[] = [
     description:
       "Benchmark your portal against published HubSpot tier limits and Vantage Point research. Score 0 to 100 across properties, workflows, lists, and asset density per contact, with per-category breakdown and the top three concentrations of bloat.",
     Icon: Gauge,
+  },
+  {
+    href: "/tools/lead-scoring-builder",
+    title: "Lead Scoring Builder",
+    description:
+      "Generate a starter HubSpot lead-scoring model from six ICP and funnel inputs. Outputs Fit/Engagement split, MQL threshold, point values, decay period, and A/B/C tier ranges, formatted for copy-paste into HubSpot's lead-scoring tool.",
+    Icon: Target,
     badge: "New",
   },
 ];
