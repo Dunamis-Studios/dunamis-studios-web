@@ -8,6 +8,7 @@ import {
   ListChecks,
   PiggyBank,
   Target,
+  Workflow,
 } from "lucide-react";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
 import { Badge } from "@/components/ui/badge";
@@ -104,6 +105,13 @@ const TOOLS: ToolEntry[] = [
     description:
       "List the SaaS tools your team pays for and get total annual spend, license waste at the Zylo 46% non-utilization rate, overlap detection across 19 categories, and the top consolidation opportunities ranked by potential savings.",
     Icon: PiggyBank,
+  },
+  {
+    href: "/tools/workflow-audit-checklist",
+    title: "HubSpot Workflow Audit Checklist",
+    description:
+      "Ten-question assessment that scores your HubSpot workflow operations 0 to 100, assigns a Healthy / Drift / Bloat / Crisis tier, compares your active workflow count to the published cap for your HubSpot tier, and ranks the top three priority actions.",
+    Icon: Workflow,
     badge: "New",
   },
 ];
