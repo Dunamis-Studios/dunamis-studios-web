@@ -7,16 +7,34 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 /**
- * Email-course signup form. First name + email, both required. POSTs to
- * /api/courses/signup with the course slug. The site does not send drip
- * emails itself; the HubSpot workflow attached to the courses form is
- * the sender.
+ * Email-course signup form. First name + email required, last name
+ * optional. POSTs to /api/courses/signup with the course slug. The
+ * site does not send drip emails itself; the HubSpot workflow
+ * attached to the courses form is the sender.
+ *
+ * The Course Name hidden field is not rendered in the form markup;
+ * the API route hardcodes it server-side from the COURSES allow-list
+ * keyed by courseSlug, so the field cannot be tampered with by the
+ * client. See src/lib/hubspot-courses-form.ts for the field name
+ * (course_name) that lands in the HubSpot form submission.
  */
 
 function readHubspotUtk(): string {
   if (typeof document === "undefined") return "";
   const match = document.cookie.match(/(?:^|;\s*)hubspotutk=([^;]+)/);
   return match ? decodeURIComponent(match[1]) : "";
+}
+
+function RequiredMark() {
+  return (
+    <span
+      aria-hidden
+      className="ml-0.5 text-[var(--color-danger)]"
+      title="Required"
+    >
+      *
+    </span>
+  );
 }
 
 type Status = "idle" | "submitting" | "success" | "error";
@@ -38,6 +56,7 @@ export function CourseSignupForm({
   successMessage = "Check your inbox. Day 1 is on its way.",
 }: CourseSignupFormProps) {
   const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [status, setStatus] = React.useState<Status>("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
@@ -50,14 +69,18 @@ export function CourseSignupForm({
 
     try {
       const hubspotutk = readHubspotUtk();
+      const trimmedLast = lastName.trim();
+      const payload: Record<string, string> = {
+        firstName,
+        email,
+        courseSlug,
+      };
+      if (trimmedLast) payload.lastName = trimmedLast;
+      if (hubspotutk) payload.hubspotutk = hubspotutk;
       const res = await fetch("/api/courses/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          hubspotutk
-            ? { firstName, email, courseSlug, hubspotutk }
-            : { firstName, email, courseSlug },
-        ),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
         let message = "Could not sign you up. Please try again.";
@@ -103,7 +126,6 @@ export function CourseSignupForm({
       className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6 sm:p-7"
       aria-label={`${courseName} signup`}
     >
-      <input type="hidden" name="course-name" value={courseName} readOnly />
       <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
         Sign up
       </div>
@@ -117,12 +139,16 @@ export function CourseSignupForm({
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <div>
-          <Label htmlFor="course-first-name">First name</Label>
+          <Label htmlFor="course-first-name">
+            First name
+            <RequiredMark />
+          </Label>
           <Input
             id="course-first-name"
             type="text"
             autoComplete="given-name"
             required
+            aria-required="true"
             placeholder="Pat"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
@@ -131,20 +157,43 @@ export function CourseSignupForm({
           />
         </div>
         <div>
-          <Label htmlFor="course-email">Email</Label>
+          <Label htmlFor="course-last-name">
+            Last name{" "}
+            <span className="text-xs font-normal text-[var(--fg-subtle)]">
+              (optional)
+            </span>
+          </Label>
           <Input
-            id="course-email"
-            type="email"
-            autoComplete="email"
-            inputMode="email"
-            required
-            placeholder="you@company.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            id="course-last-name"
+            type="text"
+            autoComplete="family-name"
+            placeholder="Lee"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
             disabled={status === "submitting"}
             className="mt-1.5"
           />
         </div>
+      </div>
+
+      <div className="mt-4">
+        <Label htmlFor="course-email">
+          Email
+          <RequiredMark />
+        </Label>
+        <Input
+          id="course-email"
+          type="email"
+          autoComplete="email"
+          inputMode="email"
+          required
+          aria-required="true"
+          placeholder="you@company.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={status === "submitting"}
+          className="mt-1.5"
+        />
       </div>
 
       <div className="mt-5">
