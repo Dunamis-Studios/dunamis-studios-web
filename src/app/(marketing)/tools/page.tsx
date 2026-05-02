@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, Calculator } from "lucide-react";
+import { ArrowUpRight, Calculator, ListChecks } from "lucide-react";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -61,6 +61,13 @@ const TOOLS: ToolEntry[] = [
     description:
       "Estimate the annual hours and dollar cost of routine sales handoffs and turnover-driven owner changes. Five inputs, four outputs, optional emailed report.",
     Icon: Calculator,
+  },
+  {
+    href: "/tools/property-audit-checklist",
+    title: "HubSpot Property Audit Checklist",
+    description:
+      "Ten-question assessment that scores your custom property hygiene 0 to 100, assigns a tier from Clean to Crisis, and ranks three priority actions against your weakest answers.",
+    Icon: ListChecks,
     badge: "New",
   },
 ];

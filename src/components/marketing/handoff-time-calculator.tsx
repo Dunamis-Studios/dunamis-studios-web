@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import { ArrowRight, ArrowUpRight, CheckCircle2, Mail } from "lucide-react";
+import { ArrowRight, CheckCircle2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -102,7 +101,6 @@ export function HandoffTimeCalculator() {
       </div>
       <div className="lg:col-span-3 flex flex-col gap-6">
         <ResultsPanel results={results} />
-        <DebriefCta />
         <p className="text-xs leading-relaxed text-[var(--fg-subtle)]">
           These are directional estimates based on industry research. Your
           actual numbers will vary.
@@ -395,31 +393,6 @@ function StatCard({
         {value}
       </div>
     </div>
-  );
-}
-
-// ----------------------------------------------------------------- cta
-
-function DebriefCta() {
-  return (
-    <Link
-      href="/products/debrief"
-      className="group flex items-start justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5 transition-colors hover:border-[var(--border-strong)]"
-    >
-      <div>
-        <div className="text-sm font-medium text-[var(--fg)]">
-          Debrief automates this.
-        </div>
-        <p className="mt-1 text-sm text-[var(--fg-muted)]">
-          Inheritance briefs on every CRM record when ownership changes. Free
-          during marketplace beta.
-        </p>
-      </div>
-      <ArrowUpRight
-        className="h-5 w-5 shrink-0 text-[var(--fg-subtle)] transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[var(--fg)]"
-        aria-hidden
-      />
-    </Link>
   );
 }
 

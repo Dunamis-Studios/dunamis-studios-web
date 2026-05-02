@@ -115,10 +115,6 @@ export async function sendHandoffCalculatorReportEmail({
     "",
     "These are directional estimates based on industry research. Your actual numbers will vary. Adjust the inputs to match your portal and the output recalculates.",
     "",
-    "Debrief automates this. It generates an inheritance brief on every CRM record when ownership changes, so the new owner gets a 90-second read instead of an hour of timeline scrolling. Free during marketplace beta.",
-    "",
-    "https://www.dunamisstudios.net/products/debrief",
-    "",
     "Questions? Reply to this email or write to josh@dunamisstudios.net.",
     "",
     "Dunamis Studios",
@@ -168,11 +164,6 @@ export async function sendHandoffCalculatorReportEmail({
     </div>
 
     <p style="font-size:12px;line-height:1.6;color:#888;margin-top:18px;">These are directional estimates based on industry research. Your actual numbers will vary. Adjust the inputs to match your portal and the output recalculates live.</p>
-
-    <div style="margin-top:24px;padding:18px;background:#1a1530;border:1px solid #3b2f7a;border-radius:10px;">
-      <div style="font-size:13px;line-height:1.6;color:#cfcfcf;">Debrief automates this. It generates an inheritance brief on every CRM record when ownership changes, so the new owner gets a 90-second read instead of an hour of timeline scrolling. Free during marketplace beta.</div>
-      <p style="margin:14px 0 0;"><a href="https://www.dunamisstudios.net/products/debrief" style="display:inline-block;background:#6d5cf5;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:500;font-size:14px;">See Debrief</a></p>
-    </div>
 
     <div style="margin-top:32px;padding-top:24px;border-top:1px solid #262626;color:#888;font-size:12px;line-height:1.6;">
       Questions? Reply to this email or write to <a href="mailto:josh@dunamisstudios.net" style="color:#a89bff;">josh@dunamisstudios.net</a>.<br><br>
