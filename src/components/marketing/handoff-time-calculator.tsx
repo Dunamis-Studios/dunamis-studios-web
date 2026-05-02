@@ -350,33 +350,26 @@ function ResultsPanel({ results }: { results: Results }) {
           </span>
         </summary>
         <div className="border-t border-[var(--border)] px-4 py-4">
-          <ol className="list-decimal space-y-1.5 pl-5 font-mono text-xs leading-relaxed text-[var(--fg-muted)]">
-            <li>
-              annual_deals = reps {"×"} deals_per_rep_per_quarter {"×"} 4
-            </li>
-            <li>
-              routine_hours = annual_deals {"×"} hours_per_handoff
-            </li>
-            <li>
-              routine_cost = routine_hours {"×"} rep_hourly_cost
-            </li>
-            <li>
-              reassigned_books = round(reps {"×"} turnover_pct {"×"} deals_per_rep_per_quarter)
-            </li>
-            <li>
-              cold_hours = reassigned_books {"×"} hours_per_handoff {"×"} 2
-            </li>
-            <li>
-              cold_cost = cold_hours {"×"} rep_hourly_cost
-            </li>
-            <li>
-              total_cost = routine_cost + cold_cost
-            </li>
-          </ol>
-          <p className="mt-3 text-xs leading-relaxed text-[var(--fg-subtle)]">
-            The server recomputes from the same formula before saving the
-            record or sending the email, so what you see here is what gets
-            captured. Plug your own values into a spreadsheet to verify.
+          <div className="space-y-3 text-sm leading-relaxed text-[var(--fg-muted)]">
+            <p>
+              We start with how many deals your team closes a year (reps
+              multiplied by deals per quarter, times four). Every closed deal
+              gets one routine handoff at your specified hours per handoff,
+              costed at your hourly rate. That&apos;s your routine number.
+            </p>
+            <p>
+              Then we estimate how many books get reassigned cold each year
+              by applying your turnover rate to your team. Those
+              reassignments hit harder because the new owner starts from
+              zero context, so we count them at twice the routine handoff
+              time. That&apos;s your turnover number.
+            </p>
+            <p>Total cost is routine plus turnover.</p>
+          </div>
+          <p className="mt-4 text-xs leading-relaxed text-[var(--fg-subtle)]">
+            The server recomputes from the same logic before saving or
+            emailing your report. Plug your own numbers into a spreadsheet
+            to verify.
           </p>
         </div>
       </details>

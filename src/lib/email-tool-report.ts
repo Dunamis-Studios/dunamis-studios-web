@@ -107,13 +107,13 @@ export async function sendHandoffCalculatorReportEmail({
     "The 2x penalty on cold reassignments is our assumption based on the new owner starting from zero context, not published data.",
     "",
     "How we calculated this:",
-    "  annual_deals     = reps * deals_per_rep_per_quarter * 4",
-    "  routine_hours    = annual_deals * hours_per_handoff",
-    "  routine_cost     = routine_hours * rep_hourly_cost",
-    "  reassigned_books = round(reps * turnover_pct * deals_per_rep_per_quarter)",
-    "  cold_hours       = reassigned_books * hours_per_handoff * 2",
-    "  cold_cost        = cold_hours * rep_hourly_cost",
-    "  total_cost       = routine_cost + cold_cost",
+    "We start with how many deals your team closes a year (reps multiplied by deals per quarter, times four). Every closed deal gets one routine handoff at your specified hours per handoff, costed at your hourly rate. That's your routine number.",
+    "",
+    "Then we estimate how many books get reassigned cold each year by applying your turnover rate to your team. Those reassignments hit harder because the new owner starts from zero context, so we count them at twice the routine handoff time. That's your turnover number.",
+    "",
+    "Total cost is routine plus turnover.",
+    "",
+    "The server recomputes from the same logic before saving or emailing your report. Plug your own numbers into a spreadsheet to verify.",
     "",
     "These are directional estimates based on industry research. Your actual numbers will vary. Adjust the inputs to match your portal and the output recalculates.",
     "",
@@ -164,13 +164,10 @@ export async function sendHandoffCalculatorReportEmail({
 
     <div style="margin-top:18px;padding:18px;background:#0e0e0e;border:1px solid #262626;border-radius:10px;">
       <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">How we calculated this</div>
-      <pre style="margin:0;font-family:Menlo,Consolas,monospace;font-size:12px;line-height:1.7;color:#cfcfcf;white-space:pre-wrap;">annual_deals     = reps * deals_per_rep_per_quarter * 4
-routine_hours    = annual_deals * hours_per_handoff
-routine_cost     = routine_hours * rep_hourly_cost
-reassigned_books = round(reps * turnover_pct * deals_per_rep_per_quarter)
-cold_hours       = reassigned_books * hours_per_handoff * 2
-cold_cost        = cold_hours * rep_hourly_cost
-total_cost       = routine_cost + cold_cost</pre>
+      <p style="font-size:13px;line-height:1.6;color:#cfcfcf;margin:0 0 10px;">We start with how many deals your team closes a year (reps multiplied by deals per quarter, times four). Every closed deal gets one routine handoff at your specified hours per handoff, costed at your hourly rate. That&apos;s your routine number.</p>
+      <p style="font-size:13px;line-height:1.6;color:#cfcfcf;margin:0 0 10px;">Then we estimate how many books get reassigned cold each year by applying your turnover rate to your team. Those reassignments hit harder because the new owner starts from zero context, so we count them at twice the routine handoff time. That&apos;s your turnover number.</p>
+      <p style="font-size:13px;line-height:1.6;color:#cfcfcf;margin:0 0 10px;">Total cost is routine plus turnover.</p>
+      <p style="font-size:12px;line-height:1.6;color:#888;margin:0;">The server recomputes from the same logic before saving or emailing your report. Plug your own numbers into a spreadsheet to verify.</p>
     </div>
 
     <p style="font-size:12px;line-height:1.6;color:#888;margin-top:18px;">These are directional estimates based on industry research. Your actual numbers will vary. Adjust the inputs to match your portal and the output recalculates live.</p>
