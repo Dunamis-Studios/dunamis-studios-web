@@ -5,6 +5,7 @@ import { Container, Section } from "@/components/ui/primitives";
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
 import { WorkflowAuditChecklist } from "@/components/marketing/workflow-audit-checklist";
+import { CourseCtaCard } from "@/components/marketing/course-cta-card";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -100,6 +101,8 @@ export default function WorkflowAuditChecklistPage() {
           <div className="mt-12">
             <WorkflowAuditChecklist />
           </div>
+
+          <CourseCtaCard />
         </Container>
       </Section>
     </>

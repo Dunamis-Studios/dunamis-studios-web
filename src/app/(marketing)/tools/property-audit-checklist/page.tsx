@@ -5,6 +5,7 @@ import { Container, Section } from "@/components/ui/primitives";
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
 import { PropertyAuditChecklist } from "@/components/marketing/property-audit-checklist";
+import { CourseCtaCard } from "@/components/marketing/course-cta-card";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -98,6 +99,8 @@ export default function PropertyAuditChecklistPage() {
           <div className="mt-12">
             <PropertyAuditChecklist />
           </div>
+
+          <CourseCtaCard />
         </Container>
       </Section>
     </>

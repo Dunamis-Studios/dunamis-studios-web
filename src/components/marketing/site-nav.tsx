@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { href: "/products", label: "Products" },
   { href: "/custom-development", label: "Custom Development" },
   { href: "/tools", label: "Free Tools" },
+  { href: "/courses", label: "Courses" },
   { href: "/guides", label: "Guides" },
   { href: "/articles", label: "Articles" },
   { href: "/pricing", label: "Pricing" },

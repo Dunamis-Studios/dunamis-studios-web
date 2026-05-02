@@ -81,4 +81,14 @@ export const KEY = {
    */
   toolReport: (toolSlug: string, emailHash: string) =>
     `dunamis:tools:${toolSlug}:${emailHash}`,
+  /**
+   * Email-course signup record. Keyed by course slug + sha256(email) so
+   * re-submissions from the same visitor overwrite cleanly. Value is a
+   * small JSON record holding the raw email, first name, ISO timestamp,
+   * and source page. Source of truth for the signup; HubSpot Forms
+   * mirror is best-effort on top, and HubSpot's workflow handles the
+   * actual drip emails.
+   */
+  courseSignup: (courseSlug: string, emailHash: string) =>
+    `dunamis:courses:signup:${courseSlug}:${emailHash}`,
 } as const;
