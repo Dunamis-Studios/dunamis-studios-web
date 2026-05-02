@@ -51,11 +51,11 @@ export async function sendLeadScoringReportEmail({
   inputs,
   results,
 }: SendArgs): Promise<void> {
-  const subject = `Your HubSpot lead-scoring model: MQL at ${results.mqlThreshold} (${LABELS.tier[inputs.tier]})`;
+  const subject = `Your HubSpot lead-scoring build reference: MQL at ${results.mqlThreshold} (${LABELS.tier[inputs.tier]})`;
   const copyText = renderModelAsText(inputs, results);
 
   const text = [
-    "Here is your HubSpot lead-scoring starter model.",
+    "Here is your HubSpot lead-scoring build reference. HubSpot's lead-scoring tool is UI-driven, not text-driven, so use this as the structured reference you read while configuring the score in HubSpot.",
     "",
     `Tier: ${LABELS.tier[inputs.tier]} (cap ${results.scoreCap})`,
     `Cycle: ${LABELS.cycle[inputs.cycleLength]}`,
@@ -63,7 +63,7 @@ export async function sendLeadScoringReportEmail({
     `MQL threshold: ${results.mqlThreshold} points`,
     `Decay: ${results.decayRate}, ${results.decayDays} days`,
     "",
-    "Copy-paste model below:",
+    "Build reference below:",
     "",
     copyText,
     "",
@@ -85,22 +85,30 @@ export async function sendLeadScoringReportEmail({
       .map(
         (r) =>
           `<tr>
-  <td style="padding:6px 8px 6px 0;color:#cfcfcf;font-size:14px;vertical-align:top;width:55%;">
+  <td style="padding:8px 8px 8px 0;color:#cfcfcf;font-size:14px;vertical-align:top;width:65%;border-bottom:1px solid #1a1a1a;">
     <div style="color:#eaeaea;">${escapeHtml(r.name)}</div>
     <div style="color:#888;font-size:12px;margin-top:2px;">${escapeHtml(r.description)}</div>
+    <div style="color:#a89bff;font-size:12px;margin-top:6px;font-family:Menlo,Consolas,monospace;line-height:1.5;">${escapeHtml(r.hubspotPath)}</div>
   </td>
-  <td style="padding:6px 0;color:${r.points >= 0 ? "#7ec77a" : "#e0726a"};font-family:Menlo,Consolas,monospace;font-size:14px;text-align:right;vertical-align:top;font-weight:500;">${r.points >= 0 ? "+" : ""}${r.points}</td>
+  <td style="padding:8px 0;color:${r.points >= 0 ? "#7ec77a" : "#e0726a"};font-family:Menlo,Consolas,monospace;font-size:14px;text-align:right;vertical-align:top;font-weight:500;border-bottom:1px solid #1a1a1a;">${r.points >= 0 ? "+" : ""}${r.points}</td>
 </tr>`,
       )
       .join("");
 
+  const bandTint = (band: "A" | "B" | "C"): string =>
+    band === "A"
+      ? "rgba(126,199,122,0.08)"
+      : band === "B"
+        ? "rgba(168,155,255,0.08)"
+        : "rgba(255,255,255,0.02)";
+
   const tierRows = results.tiers
     .map(
-      (t) => `<tr>
-  <td style="padding:6px 8px 6px 0;color:#eaeaea;font-weight:500;font-size:14px;vertical-align:top;width:25%;">${t.letter}</td>
-  <td style="padding:6px 8px 6px 0;color:#cfcfcf;font-size:14px;vertical-align:top;width:25%;">${escapeHtml(t.label)}</td>
-  <td style="padding:6px 8px 6px 0;color:#cfcfcf;font-family:Menlo,Consolas,monospace;font-size:14px;vertical-align:top;width:25%;">${escapeHtml(t.range)}</td>
-  <td style="padding:6px 0;color:#888;font-size:13px;vertical-align:top;">${escapeHtml(t.description)}</td>
+      (t) => `<tr style="background:${bandTint(t.band)};">
+  <td style="padding:8px 8px 8px 12px;color:#eaeaea;font-weight:500;font-size:14px;vertical-align:top;width:12%;font-family:Menlo,Consolas,monospace;">${t.letter}</td>
+  <td style="padding:8px 8px 8px 0;color:#cfcfcf;font-size:14px;vertical-align:top;width:24%;">${escapeHtml(t.label)}</td>
+  <td style="padding:8px 8px 8px 0;color:#cfcfcf;font-family:Menlo,Consolas,monospace;font-size:13px;vertical-align:top;width:18%;">${escapeHtml(t.range)}</td>
+  <td style="padding:8px 12px 8px 0;color:#888;font-size:13px;vertical-align:top;line-height:1.5;">${escapeHtml(t.description)}</td>
 </tr>`,
     )
     .join("");
@@ -110,10 +118,10 @@ export async function sendLeadScoringReportEmail({
 <body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;background:#0a0a0a;margin:0;padding:32px 16px;color:#eaeaea;">
   <div style="max-width:640px;margin:0 auto;background:#141414;border:1px solid #262626;border-radius:14px;padding:32px;">
     <div style="font-family:Georgia,serif;font-size:22px;font-weight:500;letter-spacing:-0.02em;margin-bottom:24px;">Dunamis Studios</div>
-    <p style="font-size:15px;line-height:1.6;">Here is your HubSpot lead-scoring starter model.</p>
+    <p style="font-size:15px;line-height:1.6;">Here is your HubSpot lead-scoring build reference. HubSpot&#39;s lead-scoring tool is UI-driven, so use this as the structured reference you read while configuring criteria in HubSpot.</p>
 
     <div style="margin-top:24px;padding:18px;background:#0e0e0e;border:1px solid #262626;border-radius:10px;">
-      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">Model summary</div>
+      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">Score settings</div>
       <table style="width:100%;font-size:14px;color:#cfcfcf;border-collapse:collapse;">
         <tr><td style="padding:4px 0;color:#888;">HubSpot tier</td><td style="text-align:right;">${escapeHtml(LABELS.tier[inputs.tier])} (cap ${results.scoreCap})</td></tr>
         <tr><td style="padding:4px 0;color:#888;">Sales cycle</td><td style="text-align:right;">${escapeHtml(LABELS.cycle[inputs.cycleLength])}</td></tr>
@@ -124,14 +132,14 @@ export async function sendLeadScoringReportEmail({
     </div>
 
     <div style="margin-top:18px;padding:18px;background:#0e0e0e;border:1px solid #262626;border-radius:10px;">
-      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">Fit scoring (firmographic)</div>
+      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">Fit criteria (firmographic)</div>
       <table style="width:100%;border-collapse:collapse;">${renderRules(results.fitRules)}</table>
     </div>
 
     ${
       results.engagementRules.length > 0
         ? `<div style="margin-top:18px;padding:18px;background:#0e0e0e;border:1px solid #262626;border-radius:10px;">
-      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">Engagement scoring (positive)</div>
+      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">Engagement criteria</div>
       <table style="width:100%;border-collapse:collapse;">${renderRules(results.engagementRules)}</table>
     </div>`
         : ""
@@ -140,19 +148,19 @@ export async function sendLeadScoringReportEmail({
     ${
       results.negativeRules.length > 0
         ? `<div style="margin-top:18px;padding:18px;background:#0e0e0e;border:1px solid #262626;border-radius:10px;">
-      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">Negative scoring</div>
+      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">Negative criteria</div>
       <table style="width:100%;border-collapse:collapse;">${renderRules(results.negativeRules)}</table>
     </div>`
         : ""
     }
 
     <div style="margin-top:18px;padding:18px;background:#0e0e0e;border:1px solid #262626;border-radius:10px;">
-      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">Tier mapping</div>
+      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">Tier mapping (A1 to C3)</div>
       <table style="width:100%;border-collapse:collapse;">${tierRows}</table>
     </div>
 
     <div style="margin-top:18px;padding:18px;background:#0e0e0e;border:1px solid #262626;border-radius:10px;">
-      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">Copy-paste into HubSpot</div>
+      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:10px;">Plain-text reference (save for offline)</div>
       <pre style="margin:0;padding:14px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;font-family:Menlo,Consolas,monospace;font-size:12px;line-height:1.6;color:#cfcfcf;white-space:pre-wrap;overflow-x:auto;">${escapeHtml(copyText)}</pre>
     </div>
 

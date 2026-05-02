@@ -14,6 +14,7 @@ import {
   type LeadScoringInputs,
   type LeadScoringResults,
   type ScoringRule,
+  type TierMapping,
 } from "@/lib/lead-scoring-logic";
 
 /**
@@ -417,10 +418,20 @@ function ResultsPanel({
   return (
     <div className="flex flex-col gap-5">
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6 sm:p-7">
-        <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-          Your scoring model
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+              Your scoring model
+            </div>
+            <p className="mt-1 max-w-md text-xs text-[var(--fg-muted)]">
+              A build reference to read while configuring HubSpot&apos;s
+              lead-scoring tool. The tool is UI-driven; each criterion below
+              shows where to set it.
+            </p>
+          </div>
+          <CopyAsTextButton inputs={completeInputs} results={results} />
         </div>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
           <SummaryStat
             label="Score cap"
             value={`${results.scoreCap} pts`}
@@ -450,58 +461,72 @@ function ResultsPanel({
       </div>
 
       <RuleSection
-        title="Fit scoring (firmographic)"
+        title="Fit criteria"
         rules={results.fitRules}
         emptyMessage={null}
       />
 
       <RuleSection
-        title="Engagement scoring (positive)"
+        title="Engagement criteria"
         rules={results.engagementRules}
         emptyMessage="Select high-intent actions to populate this section."
       />
 
       <RuleSection
-        title="Negative scoring"
+        title="Disqualifier criteria"
         rules={results.negativeRules}
         emptyMessage="Select disqualifiers to populate this section."
       />
 
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5 sm:p-6">
-        <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-          Tier mapping
-        </div>
-        <div className="mt-4 flex flex-col gap-3">
-          {results.tiers.map((t) => (
-            <div
-              key={t.letter}
-              className="flex items-start gap-4 rounded-lg border border-[var(--border)] bg-[var(--bg)] p-4"
-            >
-              <div className="font-[var(--font-display)] text-2xl font-medium tracking-tight text-[var(--fg)]">
-                {t.letter}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <div className="text-sm font-medium text-[var(--fg)]">
-                    {t.label}
-                  </div>
-                  <div className="font-mono text-sm text-[var(--fg-muted)]">
-                    {t.range}
-                  </div>
-                </div>
-                <p className="mt-1 text-sm leading-relaxed text-[var(--fg-muted)]">
-                  {t.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <CopyBlock inputs={completeInputs} results={results} />
+      <TierMappingGrid tiers={results.tiers} />
 
       <ImplementationSteps results={results} />
     </div>
+  );
+}
+
+function CopyAsTextButton({
+  inputs,
+  results,
+}: {
+  inputs: LeadScoringInputs;
+  results: LeadScoringResults;
+}) {
+  const [copied, setCopied] = React.useState(false);
+
+  async function copy() {
+    if (typeof navigator === "undefined" || !navigator.clipboard) return;
+    try {
+      await navigator.clipboard.writeText(renderModelAsText(inputs, results));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard unavailable. The visitor can still use the email helper
+      // below to receive the same text reference.
+    }
+  }
+
+  return (
+    <Button
+      type="button"
+      size="sm"
+      variant="secondary"
+      onClick={copy}
+      disabled={copied}
+      title="Copy a plain-text version of this build reference for offline use"
+    >
+      {copied ? (
+        <>
+          <Check className="h-4 w-4" aria-hidden />
+          Copied
+        </>
+      ) : (
+        <>
+          <Copy className="h-4 w-4" aria-hidden />
+          Copy as text
+        </>
+      )}
+    </Button>
   );
 }
 
@@ -561,7 +586,7 @@ function RuleSection({
           {rules.map((r) => (
             <li
               key={r.name}
-              className="flex items-start gap-4 py-3 first:pt-0 last:pb-0"
+              className="flex items-start gap-4 py-4 first:pt-0 last:pb-0"
             >
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-[var(--fg)]">
@@ -570,6 +595,17 @@ function RuleSection({
                 <p className="mt-0.5 text-xs leading-relaxed text-[var(--fg-muted)]">
                   {r.description}
                 </p>
+                <div className="mt-2 flex items-start gap-1.5 text-xs leading-relaxed text-[var(--color-brand-400)]">
+                  <span
+                    aria-hidden
+                    className="shrink-0 select-none font-medium uppercase tracking-[0.12em] text-[var(--fg-subtle)]"
+                  >
+                    Where
+                  </span>
+                  <span className="font-mono text-[var(--color-brand-400)]">
+                    {r.hubspotPath}
+                  </span>
+                </div>
               </div>
               <div
                 className={cn(
@@ -590,56 +626,49 @@ function RuleSection({
   );
 }
 
-function CopyBlock({
-  inputs,
-  results,
-}: {
-  inputs: LeadScoringInputs;
-  results: LeadScoringResults;
-}) {
-  const [copied, setCopied] = React.useState(false);
-  const text = renderModelAsText(inputs, results);
-
-  async function copy() {
-    if (typeof navigator === "undefined" || !navigator.clipboard) return;
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Clipboard unavailable; the textarea below is the fallback.
+function TierMappingGrid({ tiers }: { tiers: TierMapping[] }) {
+  const bandTone = (band: TierMapping["band"]) => {
+    if (band === "A") {
+      return "border-[color-mix(in_oklch,var(--color-success)_35%,transparent)] bg-[color-mix(in_oklch,var(--color-success)_6%,transparent)]";
     }
-  }
+    if (band === "B") {
+      return "border-[color-mix(in_oklch,var(--color-brand-500)_35%,transparent)] bg-[color-mix(in_oklch,var(--color-brand-500)_6%,transparent)]";
+    }
+    return "border-[var(--border)] bg-[var(--bg)]";
+  };
 
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5 sm:p-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-          Copy-paste into HubSpot
-        </div>
-        <Button
-          type="button"
-          size="sm"
-          variant="secondary"
-          onClick={copy}
-          disabled={copied}
-        >
-          {copied ? (
-            <>
-              <Check className="h-4 w-4" aria-hidden />
-              Copied
-            </>
-          ) : (
-            <>
-              <Copy className="h-4 w-4" aria-hidden />
-              Copy as text
-            </>
-          )}
-        </Button>
+      <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+        Tier mapping (A1 to C3)
       </div>
-      <pre className="mt-3 max-h-96 overflow-auto rounded-lg border border-[var(--border)] bg-[var(--bg)] p-4 font-mono text-xs leading-relaxed text-[var(--fg-muted)] whitespace-pre-wrap">
-        {text}
-      </pre>
+      <p className="mt-1 text-xs text-[var(--fg-muted)]">
+        Three sub-tiers per band so triage can scale beyond binary MQL/not-MQL.
+        Wire the matching range to its workflow in HubSpot.
+      </p>
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        {tiers.map((t) => (
+          <div
+            key={t.letter}
+            className={cn("rounded-lg border p-4", bandTone(t.band))}
+          >
+            <div className="flex items-baseline justify-between gap-2">
+              <div className="font-[var(--font-display)] text-xl font-medium tracking-tight text-[var(--fg)]">
+                {t.letter}
+              </div>
+              <div className="font-mono text-xs text-[var(--fg-muted)]">
+                {t.range}
+              </div>
+            </div>
+            <div className="mt-2 text-sm font-medium text-[var(--fg)]">
+              {t.label}
+            </div>
+            <p className="mt-1 text-xs leading-relaxed text-[var(--fg-muted)]">
+              {t.description}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
