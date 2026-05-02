@@ -71,4 +71,14 @@ export const KEY = {
    */
   notifySignup: (productSlug: string, emailHash: string) =>
     `dunamis:notify:${productSlug}:${emailHash}`,
+  /**
+   * Free-tool report submissions (e.g., the handoff time calculator).
+   * Keyed by tool slug + sha256(email) so re-submissions from the same
+   * visitor overwrite cleanly. Value is a JSON record holding the raw
+   * email, the inputs the visitor filled in, the computed results, and
+   * an ISO timestamp. Source of truth for the lead capture; HubSpot
+   * Forms mirror is best-effort on top.
+   */
+  toolReport: (toolSlug: string, emailHash: string) =>
+    `dunamis:tools:${toolSlug}:${emailHash}`,
 } as const;
