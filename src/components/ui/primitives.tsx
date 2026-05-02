@@ -10,12 +10,13 @@ export function Container({
 }) {
   // "prose" sits between "sm" (centered narrow text like 404 / coming-soon
   // splash) and "md" (full marketing content). Tuned for article and guide
-  // body copy where the line measure had been collapsing to roughly half
-  // the viewport on desktop. 3xl widens it without crossing into the
-  // unreadably-long-line zone of md/lg.
+  // body copy where the line measure had been collapsing to roughly a
+  // third of the viewport on desktop. 4xl gives the prose surfaces a
+  // comfortable reading column on a 1920px viewport without crossing
+  // into the over-long line measure of md/lg.
   const map: Record<typeof size, string> = {
     sm: "max-w-2xl",
-    prose: "max-w-3xl",
+    prose: "max-w-4xl",
     md: "max-w-5xl",
     lg: "max-w-6xl",
     xl: "max-w-7xl",
