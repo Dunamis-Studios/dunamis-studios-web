@@ -39,16 +39,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getPost("article", slug);
   if (!post || post.status !== "published") return {};
   const ogImage = getOgImageUrl(post, "article");
+  const publishedTime = post.publishedAt
+    ? new Date(post.publishedAt).toISOString()
+    : undefined;
+  const modifiedTime = new Date(post.updatedAt).toISOString();
   return {
     title: post.title,
     description: post.description,
     alternates: { canonical: `/articles/${slug}` },
+    // og:article:published_time and og:article:modified_time give
+    // Facebook, LinkedIn, and other Open Graph parsers the freshness
+    // signal that the JSON-LD Article block also carries. Both
+    // surfaces stay in lockstep with post.publishedAt and
+    // post.updatedAt as the single source of truth.
     openGraph: {
       title: post.title,
       description: post.description,
       type: "article",
       url: `/articles/${slug}`,
       images: [{ url: ogImage }],
+      publishedTime,
+      modifiedTime,
     },
     twitter: {
       card: "summary_large_image",
@@ -66,7 +77,13 @@ export default async function ArticlePage({ params }: Props) {
 
   const articleSchema = buildArticleJsonLd(post, "article");
   const faqPageSchema =
-    post.faq && post.faq.length > 0 ? buildFaqPageSchema(post.faq) : null;
+    post.faq && post.faq.length > 0
+      ? buildFaqPageSchema(post.faq, {
+          name: `${post.title} FAQ`,
+          description: `Frequently asked questions about ${post.title}.`,
+          url: `${SITE_URL}/articles/${slug}`,
+        })
+      : null;
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -139,7 +156,7 @@ export default async function ArticlePage({ params }: Props) {
         </h1>
         <p className="mt-3 text-[var(--fg-muted)]">{post.description}</p>
         {post.publishedAt && (
-          <div className="mt-2 flex items-center gap-3 text-sm text-[var(--fg-subtle)]">
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--fg-subtle)]">
             <time dateTime={new Date(post.publishedAt).toISOString()}>
               {new Date(post.publishedAt).toLocaleDateString("en-US", {
                 year: "numeric",
@@ -147,6 +164,21 @@ export default async function ArticlePage({ params }: Props) {
                 day: "numeric",
               })}
             </time>
+            {post.updatedAt > post.publishedAt ? (
+              <>
+                <span aria-hidden>·</span>
+                <span>
+                  Updated{" "}
+                  <time dateTime={new Date(post.updatedAt).toISOString()}>
+                    {new Date(post.updatedAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </time>
+                </span>
+              </>
+            ) : null}
             <span aria-hidden>·</span>
             <span>{readingTime} min read</span>
           </div>

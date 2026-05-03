@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight, GraduationCap } from "lucide-react";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
 import { JsonLd } from "@/components/seo/json-ld";
+import { siteFreshness } from "@/lib/schema-freshness";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -71,6 +72,7 @@ function buildCollectionSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
+    ...siteFreshness(),
     name: TITLE,
     description: DESCRIPTION,
     url: `${SITE_URL}/courses`,

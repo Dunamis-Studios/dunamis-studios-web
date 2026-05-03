@@ -10,6 +10,7 @@ import {
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
+import { siteFreshness } from "@/lib/schema-freshness";
 import {
   KB_PRODUCTS,
   KB_PRODUCT_LABEL,
@@ -71,6 +72,7 @@ export const metadata: Metadata = {
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  ...siteFreshness(),
   name: "Dunamis Studios help center",
   url: `${SITE_URL}/help`,
   description:
@@ -80,6 +82,9 @@ const websiteSchema = {
     name: "Dunamis Studios",
     url: SITE_URL,
   },
+  // Mirror the Organization sameAs so crawlers that look for social
+  // links on the WebSite entity still find them.
+  sameAs: ["https://www.linkedin.com/company/dunamis-studios/"],
   potentialAction: {
     "@type": "SearchAction",
     target: {

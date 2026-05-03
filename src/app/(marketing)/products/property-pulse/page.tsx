@@ -3,6 +3,7 @@ import { ProductPageShell } from "@/components/marketing/product-page-shell";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/primitives";
 import { JsonLd } from "@/components/seo/json-ld";
+import { siteFreshness } from "@/lib/schema-freshness";
 import { PRODUCT_META } from "@/lib/types";
 
 const SITE_URL =
@@ -34,6 +35,7 @@ const breadcrumbSchema = {
 const propertyPulseSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
+  ...siteFreshness(),
   name: "Property Pulse",
   applicationCategory: "BusinessApplication",
   applicationSubCategory: "CRM",
@@ -106,6 +108,10 @@ const FAQ: { q: string; a: string }[] = [
 const faqPageSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  name: "Property Pulse FAQ",
+  description:
+    "Frequently asked questions about Property Pulse, the HubSpot marketplace app from Dunamis Studios that surfaces property change history on every CRM record.",
+  url: `${SITE_URL}/products/property-pulse`,
   mainEntity: FAQ.map(({ q, a }) => ({
     "@type": "Question",
     name: q,

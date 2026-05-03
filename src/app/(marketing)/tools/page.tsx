@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
 import { MarketingFaq } from "@/components/marketing/marketing-faq";
 import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+import { siteFreshness } from "@/lib/schema-freshness";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -155,12 +156,18 @@ const FAQ: { q: string; a: string }[] = [
   },
 ];
 
-const faqPageSchema = buildFaqPageSchema(FAQ);
+const faqPageSchema = buildFaqPageSchema(FAQ, {
+  name: "Dunamis Studios free tools FAQ",
+  description:
+    "Frequently asked questions about the free HubSpot calculators and assessments published by Dunamis Studios.",
+  url: `${SITE_URL}/tools`,
+});
 
 function buildCollectionSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
+    ...siteFreshness(),
     name: TITLE,
     description: DESCRIPTION,
     url: `${SITE_URL}/tools`,

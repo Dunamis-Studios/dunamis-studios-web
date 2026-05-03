@@ -168,13 +168,30 @@ export function RelatedProductsSection({
  * caller is responsible for emitting it via the JsonLd helper. Kept
  * here so the public render route and the admin preview produce
  * byte-identical structured data.
+ *
+ * The options object carries the page-level identity fields that
+ * schema.org recommends on every FAQPage: a name (typically the
+ * page title or a descriptive FAQ-section name), a short description
+ * of what the FAQ covers, and the canonical URL of the page hosting
+ * it. These pin the FAQPage to a specific page so answer engines
+ * cite the right source.
  */
+export interface FaqPageSchemaOptions {
+  name: string;
+  description: string;
+  url: string;
+}
+
 export function buildFaqPageSchema(
   faq: PostFaqItem[],
+  options: FaqPageSchemaOptions,
 ): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    name: options.name,
+    description: options.description,
+    url: options.url,
     mainEntity: faq.map(({ q, a }) => ({
       "@type": "Question",
       name: q,

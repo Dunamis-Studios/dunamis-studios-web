@@ -7,6 +7,10 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { CustomObjectDecisionTree } from "@/components/marketing/custom-object-decision-tree";
 import { MarketingFaq } from "@/components/marketing/marketing-faq";
 import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+import { siteFreshness } from "@/lib/schema-freshness";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
 const FAQ: { q: string; a: string }[] = [
   {
@@ -27,10 +31,12 @@ const FAQ: { q: string; a: string }[] = [
   },
 ];
 
-const faqPageSchema = buildFaqPageSchema(FAQ);
-
-const SITE_URL =
-  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+const faqPageSchema = buildFaqPageSchema(FAQ, {
+  name: "HubSpot Custom Object Decision Tree FAQ",
+  description:
+    "Frequently asked questions about the Dunamis Studios HubSpot Custom Object Decision Tree: recommendations, branching logic, and tier eligibility sources.",
+  url: `${SITE_URL}/tools/custom-object-decision-tree`,
+});
 
 const TITLE = "HubSpot Custom Object Decision Tree";
 const DESCRIPTION =
@@ -74,6 +80,7 @@ function buildSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebApplication",
+    ...siteFreshness(),
     name: TITLE,
     description: DESCRIPTION,
     url: `${SITE_URL}/tools/custom-object-decision-tree`,

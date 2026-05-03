@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/primitives";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { JsonLd } from "@/components/seo/json-ld";
 import { ProductPageComingSoonShell } from "@/components/marketing/product-page-coming-soon-shell";
+import { siteFreshness } from "@/lib/schema-freshness";
 import { PRODUCT_META } from "@/lib/types";
 
 const SITE_URL =
@@ -32,6 +33,7 @@ const breadcrumbSchema = {
 const softwareSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
+  ...siteFreshness(),
   name: meta.name,
   applicationCategory: "BusinessApplication",
   applicationSubCategory: "CRM",

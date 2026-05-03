@@ -6,6 +6,7 @@ import { NotifyForm } from "@/components/marketing/notify-form";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container, Section } from "@/components/ui/primitives";
 import { JsonLd } from "@/components/seo/json-ld";
+import { siteFreshness } from "@/lib/schema-freshness";
 import { PRODUCT_META } from "@/lib/types";
 
 const SITE_URL =
@@ -34,6 +35,7 @@ const breadcrumbSchema = {
 const debriefSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
+  ...siteFreshness(),
   name: "Debrief",
   applicationCategory: "BusinessApplication",
   applicationSubCategory: "CRM",
@@ -123,6 +125,10 @@ const FAQ: { q: string; a: string }[] = [
 const faqPageSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  name: "Debrief FAQ",
+  description:
+    "Frequently asked questions about Debrief, the HubSpot marketplace app from Dunamis Studios that generates structured handoff briefs and conversational handoff messages on demand.",
+  url: `${SITE_URL}/products/debrief`,
   mainEntity: FAQ.map(({ q, a }) => ({
     "@type": "Question",
     name: q,

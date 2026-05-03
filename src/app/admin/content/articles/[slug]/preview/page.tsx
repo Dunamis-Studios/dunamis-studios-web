@@ -11,6 +11,9 @@ import {
 import { getPost } from "@/lib/content";
 import { Badge } from "@/components/ui/badge";
 
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -25,7 +28,13 @@ export default async function PreviewArticlePage({ params }: Props) {
   // ordering and FAQPage JSON-LD output identical to that route so
   // editors can verify everything that ships to production from here.
   const faqPageSchema =
-    post.faq && post.faq.length > 0 ? buildFaqPageSchema(post.faq) : null;
+    post.faq && post.faq.length > 0
+      ? buildFaqPageSchema(post.faq, {
+          name: `${post.title} FAQ`,
+          description: `Frequently asked questions about ${post.title}.`,
+          url: `${SITE_URL}/articles/${slug}`,
+        })
+      : null;
 
   return (
     <Section>

@@ -15,6 +15,10 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { CourseSignupForm } from "@/components/marketing/course-signup-form";
 import { MarketingFaq } from "@/components/marketing/marketing-faq";
 import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+import { siteFreshness } from "@/lib/schema-freshness";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
 // Single source of truth for the course FAQ. Drives both the visible
 // accordion and the FAQPage JSON-LD.
@@ -37,10 +41,12 @@ const FAQ: { q: string; a: string }[] = [
   },
 ];
 
-const faqPageSchema = buildFaqPageSchema(FAQ);
-
-const SITE_URL =
-  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+const faqPageSchema = buildFaqPageSchema(FAQ, {
+  name: "5-Day HubSpot Audit course FAQ",
+  description:
+    "Frequently asked questions about the free 5-Day HubSpot Audit email course from Dunamis Studios.",
+  url: `${SITE_URL}/courses/hubspot-audit`,
+});
 
 const COURSE_SLUG = "hubspot-audit";
 const COURSE_NAME = "5-Day HubSpot Audit";
@@ -86,6 +92,7 @@ function buildSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Course",
+    ...siteFreshness(),
     name: COURSE_NAME,
     description: DESCRIPTION,
     url: `${SITE_URL}/courses/hubspot-audit`,

@@ -28,7 +28,18 @@ const organizationSchema = {
   logo: `${SITE_URL}/icon`,
   description:
     "Dunamis Studios builds focused, reliable apps for the HubSpot marketplace.",
+  // sameAs: official Dunamis Studios profiles on third-party platforms.
+  // Add new profile URLs here as we register them. Schema.org sameAs
+  // expects entity-identity URIs (org's profile page on the platform),
+  // not community surfaces (subreddits, forum boards) that are not
+  // owned by the organization.
   sameAs: ["https://www.linkedin.com/company/dunamis-studios/"],
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "St. Augustine",
+    addressRegion: "FL",
+    addressCountry: "US",
+  },
   foundingDate: "2026",
   founder: {
     "@type": "Person",

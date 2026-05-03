@@ -7,6 +7,10 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { TechStackCostAudit } from "@/components/marketing/tech-stack-cost-audit";
 import { MarketingFaq } from "@/components/marketing/marketing-faq";
 import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+import { siteFreshness } from "@/lib/schema-freshness";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
 const FAQ: { q: string; a: string }[] = [
   {
@@ -27,10 +31,12 @@ const FAQ: { q: string; a: string }[] = [
   },
 ];
 
-const faqPageSchema = buildFaqPageSchema(FAQ);
-
-const SITE_URL =
-  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+const faqPageSchema = buildFaqPageSchema(FAQ, {
+  name: "Tech Stack Cost Audit FAQ",
+  description:
+    "Frequently asked questions about the Dunamis Studios Tech Stack Cost Audit: outputs, granularity of inputs, source of the 46% non-utilization rate, and data handling.",
+  url: `${SITE_URL}/tools/tech-stack-cost-audit`,
+});
 
 const TITLE = "Tech Stack Cost Audit";
 const DESCRIPTION =
@@ -74,6 +80,7 @@ function buildSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebApplication",
+    ...siteFreshness(),
     name: TITLE,
     description: DESCRIPTION,
     url: `${SITE_URL}/tools/tech-stack-cost-audit`,

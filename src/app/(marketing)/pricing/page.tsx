@@ -10,6 +10,33 @@ import { CREDIT_PACKS, CREDIT_COST_TABLE } from "@/lib/pricing";
 import { MarketingFaq } from "@/components/marketing/marketing-faq";
 import { buildFaqPageSchema } from "@/components/marketing/article-extras";
 import { JsonLd } from "@/components/seo/json-ld";
+import { siteFreshness } from "@/lib/schema-freshness";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+// WebPage schema carries the page-level freshness signals
+// (datePublished, dateModified) that schema.org and Google
+// recommend for content recency. Without a typed schema block,
+// crawlers fall back to HTTP Last-Modified, which Vercel does not
+// always set predictably.
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  ...siteFreshness(),
+  name: "Pricing",
+  description:
+    "Per-portal pricing for Dunamis Studios apps: one-time install for Property Pulse, monthly tiers for Debrief, plus optional credit packs.",
+  url: `${SITE_URL}/pricing`,
+  isPartOf: {
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+  },
+  publisher: {
+    "@type": "Organization",
+    "@id": `${SITE_URL}/#organization`,
+  },
+};
 
 // Single source of truth for the pricing-page FAQ. Drives both the
 // visible accordion and the FAQPage JSON-LD so answer engines can cite
@@ -33,7 +60,12 @@ const FAQ: { q: string; a: string }[] = [
   },
 ];
 
-const faqPageSchema = buildFaqPageSchema(FAQ);
+const faqPageSchema = buildFaqPageSchema(FAQ, {
+  name: "Dunamis Studios pricing FAQ",
+  description:
+    "Frequently asked questions about Dunamis Studios pricing: per-portal billing, Debrief credit structure, annual options, and one-time vs monthly products.",
+  url: `${SITE_URL}/pricing`,
+});
 
 export const metadata: Metadata = {
   // Override the root template to a distinctive, length-tuned title
@@ -165,6 +197,7 @@ const TIERS: Record<Product, Tier[]> = {
 export default function PricingPage() {
   return (
     <>
+      <JsonLd id="jsonld-pricing-webpage" schema={webPageSchema} />
       <JsonLd id="jsonld-pricing-faq" schema={faqPageSchema} />
       <Section>
         <Container size="xl">

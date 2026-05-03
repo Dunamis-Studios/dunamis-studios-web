@@ -8,6 +8,10 @@ import { PropertyAuditChecklist } from "@/components/marketing/property-audit-ch
 import { CourseCtaCard } from "@/components/marketing/course-cta-card";
 import { MarketingFaq } from "@/components/marketing/marketing-faq";
 import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+import { siteFreshness } from "@/lib/schema-freshness";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
 const FAQ: { q: string; a: string }[] = [
   {
@@ -28,10 +32,12 @@ const FAQ: { q: string; a: string }[] = [
   },
 ];
 
-const faqPageSchema = buildFaqPageSchema(FAQ);
-
-const SITE_URL =
-  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+const faqPageSchema = buildFaqPageSchema(FAQ, {
+  name: "HubSpot Property Audit Checklist FAQ",
+  description:
+    "Frequently asked questions about the Dunamis Studios HubSpot Property Audit Checklist scoring, methodology, and tier outputs.",
+  url: `${SITE_URL}/tools/property-audit-checklist`,
+});
 
 const TITLE = "HubSpot Property Audit Checklist";
 const DESCRIPTION =
@@ -75,6 +81,7 @@ function buildSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebApplication",
+    ...siteFreshness(),
     name: TITLE,
     description: DESCRIPTION,
     url: `${SITE_URL}/tools/property-audit-checklist`,

@@ -7,6 +7,10 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { SalesCycleStagnationCalculator } from "@/components/marketing/sales-cycle-stagnation-calculator";
 import { MarketingFaq } from "@/components/marketing/marketing-faq";
 import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+import { siteFreshness } from "@/lib/schema-freshness";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
 const FAQ: { q: string; a: string }[] = [
   {
@@ -27,10 +31,12 @@ const FAQ: { q: string; a: string }[] = [
   },
 ];
 
-const faqPageSchema = buildFaqPageSchema(FAQ);
-
-const SITE_URL =
-  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+const faqPageSchema = buildFaqPageSchema(FAQ, {
+  name: "Sales Cycle Stagnation Calculator FAQ",
+  description:
+    "Frequently asked questions about the Dunamis Studios Sales Cycle Stagnation Calculator: outputs, inputs, stalled-deal cutoffs, and HubSpot mapping.",
+  url: `${SITE_URL}/tools/sales-cycle-stagnation-calculator`,
+});
 
 const TITLE = "Sales Cycle Stagnation Calculator";
 const DESCRIPTION =
@@ -74,6 +80,7 @@ function buildSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebApplication",
+    ...siteFreshness(),
     name: TITLE,
     description: DESCRIPTION,
     url: `${SITE_URL}/tools/sales-cycle-stagnation-calculator`,

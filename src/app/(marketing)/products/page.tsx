@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { Container, Section } from "@/components/ui/primitives";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { JsonLd } from "@/components/seo/json-ld";
+import { siteFreshness } from "@/lib/schema-freshness";
 import { ProductStageBadge } from "@/components/marketing/product-stage-badge";
 import {
   PRODUCT_CATALOG_SLUGS,
@@ -41,6 +42,7 @@ const breadcrumbSchema = {
 const collectionSchema = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
+  ...siteFreshness(),
   name: "Products by Dunamis Studios",
   description:
     "The full Dunamis Studios catalog of HubSpot apps and tools, including Property Pulse, Debrief, Carbon Copy, Traverse and Update, and Association Visualizer.",

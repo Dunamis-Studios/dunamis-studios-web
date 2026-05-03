@@ -15,7 +15,29 @@ import { CustomDevelopmentContactForm } from "@/components/marketing/custom-deve
 import { MarketingFaq } from "@/components/marketing/marketing-faq";
 import { buildFaqPageSchema } from "@/components/marketing/article-extras";
 import { JsonLd } from "@/components/seo/json-ld";
+import { siteFreshness } from "@/lib/schema-freshness";
 import { cn } from "@/lib/utils";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  ...siteFreshness(),
+  name: "Custom HubSpot Development",
+  description:
+    "Custom HubSpot apps and UI extensions, API integrations, data pipelines, AI workflows, and portal recovery from Dunamis Studios.",
+  url: `${SITE_URL}/custom-development`,
+  isPartOf: {
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+  },
+  publisher: {
+    "@type": "Organization",
+    "@id": `${SITE_URL}/#organization`,
+  },
+};
 
 // Single source of truth for the custom-development FAQ. Drives both
 // the visible accordion and the FAQPage JSON-LD.
@@ -38,7 +60,12 @@ const FAQ: { q: string; a: string }[] = [
   },
 ];
 
-const faqPageSchema = buildFaqPageSchema(FAQ);
+const faqPageSchema = buildFaqPageSchema(FAQ, {
+  name: "Custom HubSpot Development FAQ",
+  description:
+    "Frequently asked questions about Dunamis Studios custom HubSpot development engagements: capabilities, fit, scoping, and example work.",
+  url: `${SITE_URL}/custom-development`,
+});
 
 export const metadata: Metadata = {
   title: "Custom Development",
@@ -187,6 +214,7 @@ const PROCESS_STEPS: { title: string; body: string }[] = [
 export default function CustomDevelopmentPage() {
   return (
     <>
+      <JsonLd id="jsonld-custom-development-webpage" schema={webPageSchema} />
       <JsonLd id="jsonld-custom-development-faq" schema={faqPageSchema} />
       {/* ---- HERO ---- */}
       <div className="relative overflow-hidden">

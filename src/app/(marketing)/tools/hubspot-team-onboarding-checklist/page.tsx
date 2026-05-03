@@ -8,6 +8,10 @@ import { TeamOnboardingChecklist } from "@/components/marketing/team-onboarding-
 import { CourseCtaCard } from "@/components/marketing/course-cta-card";
 import { MarketingFaq } from "@/components/marketing/marketing-faq";
 import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+import { siteFreshness } from "@/lib/schema-freshness";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
 const FAQ: { q: string; a: string }[] = [
   {
@@ -28,10 +32,12 @@ const FAQ: { q: string; a: string }[] = [
   },
 ];
 
-const faqPageSchema = buildFaqPageSchema(FAQ);
-
-const SITE_URL =
-  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+const faqPageSchema = buildFaqPageSchema(FAQ, {
+  name: "HubSpot Team Onboarding Checklist FAQ",
+  description:
+    "Frequently asked questions about the Dunamis Studios HubSpot Team Member Onboarding Checklist: scoring phases, role-specific risk flags, and reuse.",
+  url: `${SITE_URL}/tools/hubspot-team-onboarding-checklist`,
+});
 
 const TITLE = "HubSpot Team Member Onboarding Checklist";
 const DESCRIPTION =
@@ -75,6 +81,7 @@ function buildSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebApplication",
+    ...siteFreshness(),
     name: TITLE,
     description: DESCRIPTION,
     url: `${SITE_URL}/tools/hubspot-team-onboarding-checklist`,

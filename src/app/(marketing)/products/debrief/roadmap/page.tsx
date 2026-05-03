@@ -3,6 +3,8 @@ import Link from "next/link";
 import { ArrowLeft, Check, Clock, Compass, Sparkles } from "lucide-react";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
 import { Badge } from "@/components/ui/badge";
+import { JsonLd } from "@/components/seo/json-ld";
+import { siteFreshness } from "@/lib/schema-freshness";
 import { cn } from "@/lib/utils";
 import {
   LAST_UPDATED,
@@ -11,6 +13,28 @@ import {
   comingSoon,
   exploring,
 } from "@/data/debrief-roadmap";
+
+const SITE_URL =
+  process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+// Roadmap is hand-edited content with its own LAST_UPDATED constant in
+// the data module; surface it as dateModified so the JSON-LD freshness
+// signal reflects the actual roadmap edit date instead of the global
+// site-modified constant.
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  ...siteFreshness(),
+  dateModified: LAST_UPDATED,
+  name: "Debrief roadmap",
+  description:
+    "What's shipped, what's in progress, and what's next for Debrief.",
+  url: `${SITE_URL}/products/debrief/roadmap`,
+  isPartOf: {
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+  },
+};
 
 export const metadata: Metadata = {
   title: "Debrief roadmap",
@@ -62,6 +86,7 @@ function formatLastUpdated(iso: string): string {
 export default function DebriefRoadmapPage() {
   return (
     <>
+      <JsonLd id="jsonld-debrief-roadmap" schema={webPageSchema} />
       <Section className="pb-10 sm:pb-12">
         <Container size="lg">
           <Link

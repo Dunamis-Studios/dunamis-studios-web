@@ -6,6 +6,7 @@ import { Container, Section, PageHeader } from "@/components/ui/primitives";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { JsonLd } from "@/components/seo/json-ld";
+import { siteFreshness } from "@/lib/schema-freshness";
 import {
   KB_PRODUCT_LABEL,
   estimateReadMinutes,
@@ -108,6 +109,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const collectionSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
+    ...siteFreshness(),
     name: `${title} · Dunamis Studios help center`,
     url: `${SITE_URL}/help/${category}`,
     isPartOf: {

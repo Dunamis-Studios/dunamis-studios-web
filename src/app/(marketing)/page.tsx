@@ -10,6 +10,7 @@ import { CustomerLogoStrip } from "@/components/marketing/customer-logo-strip";
 import { MarketingFaq } from "@/components/marketing/marketing-faq";
 import { buildFaqPageSchema } from "@/components/marketing/article-extras";
 import { JsonLd } from "@/components/seo/json-ld";
+import { siteFreshness } from "@/lib/schema-freshness";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -36,7 +37,12 @@ const FAQ: { q: string; a: string }[] = [
   },
 ];
 
-const faqPageSchema = buildFaqPageSchema(FAQ);
+const faqPageSchema = buildFaqPageSchema(FAQ, {
+  name: "Dunamis Studios FAQ",
+  description:
+    "Frequently asked questions about Dunamis Studios, our HubSpot marketplace apps, and how account claims and entitlements work.",
+  url: `${SITE_URL}/`,
+});
 
 /**
  * WebSite schema with SearchAction. Mirrors the help-center pattern
@@ -50,6 +56,7 @@ const faqPageSchema = buildFaqPageSchema(FAQ);
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  ...siteFreshness(),
   name: "Dunamis Studios",
   url: SITE_URL,
   description:
@@ -58,6 +65,11 @@ const websiteSchema = {
     "@type": "Organization",
     "@id": `${SITE_URL}/#organization`,
   },
+  // Mirror the Organization sameAs so crawlers that look for social
+  // links on the WebSite entity (rather than reconciling to the
+  // Organization @id reference above) still find them. Add new
+  // profiles here whenever they are added to layout.tsx.
+  sameAs: ["https://www.linkedin.com/company/dunamis-studios/"],
   potentialAction: {
     "@type": "SearchAction",
     target: {
