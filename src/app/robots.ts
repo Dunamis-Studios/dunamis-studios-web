@@ -35,7 +35,9 @@ const AI_CRAWLERS = [
   "OAI-SearchBot",     // OpenAI search index
   "Google-Extended",   // Google AI training (separate from Googlebot)
   "ClaudeBot",         // Anthropic crawler
-  "Claude-Web",        // Anthropic on-demand fetch
+  "Claude-SearchBot",  // Anthropic search index
+  "Claude-User",       // Anthropic on-demand fetch from chat
+  "Claude-Web",        // Anthropic on-demand fetch (legacy)
   "anthropic-ai",      // Anthropic legacy user-agent
   "PerplexityBot",     // Perplexity training/index crawler
   "Perplexity-User",   // Perplexity on-demand fetch
