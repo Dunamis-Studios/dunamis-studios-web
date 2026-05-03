@@ -6,6 +6,29 @@ import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
 import { WorkflowAuditChecklist } from "@/components/marketing/workflow-audit-checklist";
 import { CourseCtaCard } from "@/components/marketing/course-cta-card";
+import { MarketingFaq } from "@/components/marketing/marketing-faq";
+import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "What does the workflow audit score?",
+    a: "Operations health across ten dimensions: ownership and review cadence, conflict signals (duplicate property writers, archived references, naming drift), audit cadence, recent incidents, error-rate visibility, naming and folder discipline, gating discipline (re-enrollment, exit conditions), the active-workflow count versus your tier cap, and the share of workflows that have not been touched in the past year. The total maps to a 0-to-100 score and one of four tiers: Healthy, Drift, Bloat, Crisis.",
+  },
+  {
+    q: "How does cap utilization factor in?",
+    a: "HubSpot publishes a per-tier cap on active workflows. The audit takes your active workflow count and your tier and reports utilization as a percentage. High utilization (above 80%) shifts your tier verdict toward Bloat or Crisis even when other dimensions look healthy, because being near the cap restricts your ability to ship new workflows without first archiving old ones.",
+  },
+  {
+    q: "What do the priority actions look like?",
+    a: "Three actions ranked by points lost. Each names the specific dimension (for example, 'Tighten ownership review cadence' or 'Resolve duplicate property writers'), explains why the dimension matters, and gives the next concrete step inside HubSpot to start fixing it. Priority actions are weighted to surface the highest-leverage fixes first, not just the lowest-scored questions.",
+  },
+  {
+    q: "Is this for one workflow or the whole portal?",
+    a: "Whole portal. The questions ask about your overall workflow operations rather than a single workflow's logic. If you want to dig into one specific workflow, the audit will not help. If you want to know whether your team's workflow practice as a whole is healthy or bloated, that is what this is for.",
+  },
+];
+
+const faqPageSchema = buildFaqPageSchema(FAQ);
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -73,6 +96,7 @@ export default function WorkflowAuditChecklistPage() {
   return (
     <>
       <JsonLd id="jsonld-workflow-audit-checklist" schema={buildSchema()} />
+      <JsonLd id="jsonld-workflow-audit-checklist-faq" schema={faqPageSchema} />
       <Section>
         <Container size="lg">
           <Link
@@ -105,6 +129,8 @@ export default function WorkflowAuditChecklistPage() {
           <CourseCtaCard />
         </Container>
       </Section>
+
+      <MarketingFaq faq={FAQ} />
     </>
   );
 }

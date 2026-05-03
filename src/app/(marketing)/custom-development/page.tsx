@@ -12,7 +12,33 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HeroGradient } from "@/components/marketing/hero-gradient";
 import { CustomDevelopmentContactForm } from "@/components/marketing/custom-development-contact-form";
+import { MarketingFaq } from "@/components/marketing/marketing-faq";
+import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+import { JsonLd } from "@/components/seo/json-ld";
 import { cn } from "@/lib/utils";
+
+// Single source of truth for the custom-development FAQ. Drives both
+// the visible accordion and the FAQPage JSON-LD.
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "What kinds of custom HubSpot work do you take on?",
+    a: "Custom HubSpot apps and UI extensions (React extensions for CRM cards, App Home, and Settings surfaces), API integrations and bidirectional syncs, data pipelines and migration tooling (multi-object dedup, large imports, custom ETL), AI-powered HubSpot workflows (Anthropic Claude integrations), and portal audits, architecture reviews, and recovery from compromised or corrupted environments.",
+  },
+  {
+    q: "Who is a good fit for custom engagements?",
+    a: "Solutions Partners needing overflow technical capacity, HubSpot customers who have outgrown admin-level configuration, teams building CRM workflows that require code, and companies with complex data, integration, or AI needs in HubSpot. We are not a fit for basic portal setup, email and landing page template work, marketing strategy, or generic admin or no-code automation.",
+  },
+  {
+    q: "How does an engagement get scoped and priced?",
+    a: "You reach out with a problem, not a spec. We figure out the spec together, then quote a fixed price or hourly rate depending on what fits. We build, ship, and iterate on real feedback (not mock data, not theoretical solutions). You own the result: source code, documentation, and ongoing access.",
+  },
+  {
+    q: "Can you share examples of past engagements?",
+    a: "A real-estate investment CRM managing 450K+ contacts, 400K+ properties, and 500K+ phone records, including a multi-object dedup pipeline that consolidated 55K+ records and a bidirectional CallTools sync with 40+ mapped fields. A direct-mail automation system with a sequencing algorithm and Postalytics integration. A portal compromise recovery that rebuilt corrupted contact-property associations across thousands of records and contributed artifacts to HubSpot's internal security review. Plus our two marketplace products, Debrief and Property Pulse.",
+  },
+];
+
+const faqPageSchema = buildFaqPageSchema(FAQ);
 
 export const metadata: Metadata = {
   title: "Custom Development",
@@ -161,6 +187,7 @@ const PROCESS_STEPS: { title: string; body: string }[] = [
 export default function CustomDevelopmentPage() {
   return (
     <>
+      <JsonLd id="jsonld-custom-development-faq" schema={faqPageSchema} />
       {/* ---- HERO ---- */}
       <div className="relative overflow-hidden">
         <HeroGradient />
@@ -315,6 +342,9 @@ export default function CustomDevelopmentPage() {
           </div>
         </Container>
       </Section>
+
+      {/* ---- FAQ ---- */}
+      <MarketingFaq faq={FAQ} />
 
       {/* ---- CTA ---- */}
       <Section id="contact" className="border-t border-[var(--border)]">

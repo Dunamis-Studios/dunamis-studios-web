@@ -6,6 +6,29 @@ import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
 import { BloatScoreChecklist } from "@/components/marketing/bloat-score-checklist";
 import { CourseCtaCard } from "@/components/marketing/course-cta-card";
+import { MarketingFaq } from "@/components/marketing/marketing-faq";
+import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "What is bloat in a HubSpot portal?",
+    a: "Bloat is the accumulation of custom properties, workflows, lists, and per-record assets beyond what the portal's actual operations need. It shows up as forgotten custom fields with low fill rates, duplicate or near-duplicate workflows, abandoned static lists, and asset-density patterns that grow faster than headcount or pipeline. Bloat slows admins, confuses users, and pushes portals toward their HubSpot tier limits.",
+  },
+  {
+    q: "What does the score measure?",
+    a: "Eight inputs feed a 0-to-100 score across four categories: custom-property volume (benchmarked against published HubSpot per-tier limits and Vantage Point research on property accumulation), active and total workflow counts (against your tier cap), active list counts, and per-contact asset density (workflow-touches per contact, list memberships per contact). The breakdown shows each category's contribution so you can see whether the bloat is concentrated in one area or spread across all four.",
+  },
+  {
+    q: "What do I need to know about my portal to fill it out?",
+    a: "Your HubSpot tier (Starter / Pro / Enterprise / Marketing+ flavors), portal age in years, total contact count, total custom-property count across all object types, total active and total workflow count, total active list count, and approximate workflow-touches per contact and list memberships per contact. All of these are surfaced inside HubSpot's Settings → Properties, Settings → Workflows, and Lists screens.",
+  },
+  {
+    q: "Where do the per-tier limits come from?",
+    a: "HubSpot's public product KB. The exact caps cited in the score (custom-property limits, active-workflow limits, list limits) are taken from the published per-tier limits documents and are updated as HubSpot changes them. Where industry benchmarks are used (for example, Vantage Point on property accumulation patterns), the source is named on the result.",
+  },
+];
+
+const faqPageSchema = buildFaqPageSchema(FAQ);
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -73,6 +96,7 @@ export default function HubSpotBloatScorePage() {
   return (
     <>
       <JsonLd id="jsonld-hubspot-bloat-score" schema={buildSchema()} />
+      <JsonLd id="jsonld-hubspot-bloat-score-faq" schema={faqPageSchema} />
       <Section>
         <Container size="lg">
           <Link
@@ -105,6 +129,8 @@ export default function HubSpotBloatScorePage() {
           <CourseCtaCard />
         </Container>
       </Section>
+
+      <MarketingFaq faq={FAQ} />
     </>
   );
 }

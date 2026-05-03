@@ -6,6 +6,29 @@ import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
 import { PropertyAuditChecklist } from "@/components/marketing/property-audit-checklist";
 import { CourseCtaCard } from "@/components/marketing/course-cta-card";
+import { MarketingFaq } from "@/components/marketing/marketing-faq";
+import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "What does the score actually measure?",
+    a: "Custom property hygiene across ten dimensions: documentation, ownership, naming conventions, approval process, audit cadence, fill rate awareness, archival discipline, integration writes, recent incidents, and used-in coverage. Each question is scored 0 to 10 and your total maps to a 0-to-100 hygiene score, then to one of four tiers: Clean, Drift, Bloat, Crisis.",
+  },
+  {
+    q: "What do I get back when I finish?",
+    a: "Three things. A tier verdict (Clean / Drift / Bloat / Crisis) anchored to your total score. A per-question score so you can see exactly which dimensions are weak. The top three priority actions, ranked against your weakest answers, with what to do and why each matters.",
+  },
+  {
+    q: "How long does the assessment take?",
+    a: "About three minutes if you know the portal well. The questions are written so you can answer most from memory. Two of the ten ask for an exact custom-property count and a rough fill-rate band, which take 30 seconds in HubSpot Settings to look up if you do not have the numbers handy.",
+  },
+  {
+    q: "Is the assessment specific to a HubSpot tier?",
+    a: "The assessment itself is tier-agnostic, but the priority actions reference the published HubSpot per-tier custom-property limits where relevant (for example, a Crisis-tier verdict on a Pro portal flags that you are within reach of the cap, while the same verdict on Enterprise points at archival discipline rather than the limit itself).",
+  },
+];
+
+const faqPageSchema = buildFaqPageSchema(FAQ);
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -73,6 +96,7 @@ export default function PropertyAuditChecklistPage() {
   return (
     <>
       <JsonLd id="jsonld-property-audit-checklist" schema={buildSchema()} />
+      <JsonLd id="jsonld-property-audit-checklist-faq" schema={faqPageSchema} />
       <Section>
         <Container size="lg">
           <Link
@@ -103,6 +127,8 @@ export default function PropertyAuditChecklistPage() {
           <CourseCtaCard />
         </Container>
       </Section>
+
+      <MarketingFaq faq={FAQ} />
     </>
   );
 }

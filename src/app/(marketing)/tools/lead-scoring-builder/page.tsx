@@ -5,6 +5,29 @@ import { Container, Section } from "@/components/ui/primitives";
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
 import { LeadScoringBuilder } from "@/components/marketing/lead-scoring-builder";
+import { MarketingFaq } from "@/components/marketing/marketing-faq";
+import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "What does the builder output?",
+    a: "A complete starter HubSpot lead-scoring model: a Fit-versus-Engagement point split, an MQL threshold, point values for the high-intent and disqualifier signals you flagged, a decay period for engagement points, and A/B/C tier ranges. Everything is formatted for copy-paste into HubSpot's lead-scoring tool, so the output is a build reference, not a black box.",
+  },
+  {
+    q: "How is it tier-aware?",
+    a: "HubSpot's lead-scoring tool has different point ceilings per tier: Pro caps the score at 100, Enterprise scales to 500. The builder asks for your tier and scales the point values, MQL threshold, and tier ranges so the model fits inside the cap with usable resolution between A, B, and C bands.",
+  },
+  {
+    q: "Why six inputs and not more?",
+    a: "Six inputs cover the dimensions that change the model's shape: buyer role, company-size band, sales-cycle length, the high-intent actions you actually have data on, your common disqualifiers, and your HubSpot tier. Adding more inputs (industry vertical, deal size, lifecycle stage definitions) makes the model more bespoke but does not change the structural shape of a starter model. The output is meant as a starting point you tune in HubSpot, not a finished model.",
+  },
+  {
+    q: "Can I run this against an existing scoring model?",
+    a: "Yes. Run the builder, compare the output to what your portal has today, and treat the deltas as a sanity check. If your existing MQL threshold is far above or below what the builder returns, that is a signal worth investigating. The builder is also useful as a clean-slate reference when migrating from a legacy scoring property to HubSpot's native lead-scoring tool.",
+  },
+];
+
+const faqPageSchema = buildFaqPageSchema(FAQ);
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -72,6 +95,7 @@ export default function LeadScoringBuilderPage() {
   return (
     <>
       <JsonLd id="jsonld-lead-scoring-builder" schema={buildSchema()} />
+      <JsonLd id="jsonld-lead-scoring-builder-faq" schema={faqPageSchema} />
       <Section>
         <Container size="lg">
           <Link
@@ -102,6 +126,8 @@ export default function LeadScoringBuilderPage() {
           </div>
         </Container>
       </Section>
+
+      <MarketingFaq faq={FAQ} />
     </>
   );
 }

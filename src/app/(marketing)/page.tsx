@@ -7,10 +7,36 @@ import { Badge } from "@/components/ui/badge";
 import { HeroGradient } from "@/components/marketing/hero-gradient";
 import { ProductTile } from "@/components/marketing/product-tile";
 import { CustomerLogoStrip } from "@/components/marketing/customer-logo-strip";
+import { MarketingFaq } from "@/components/marketing/marketing-faq";
+import { buildFaqPageSchema } from "@/components/marketing/article-extras";
 import { JsonLd } from "@/components/seo/json-ld";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+// Single source of truth for the homepage FAQ. Drives both the visible
+// accordion and the FAQPage JSON-LD so answer engines can cite Q/A
+// pairs verbatim. Same pattern as the product pages.
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "What is Dunamis Studios?",
+    a: "Dunamis Studios is a one-person product studio that builds focused HubSpot apps and tools. Our two main marketplace apps are Property Pulse (a CRM card that surfaces full property change history on every record) and Debrief (an AI-powered handoff brief and message generator). We also publish free calculators and assessments at dunamisstudios.net/tools and take on a small number of custom HubSpot development engagements.",
+  },
+  {
+    q: "Which products do you ship today?",
+    a: "Property Pulse is live in open beta on the HubSpot marketplace. Debrief is built and waiting on its marketplace listing. Carbon Copy and Traverse and Update are working code with marketplace listings in progress. Association Visualizer is an internal tool we are deciding whether to release publicly. The full catalog is at /products.",
+  },
+  {
+    q: "Do I need a Dunamis Studios account separate from my HubSpot account?",
+    a: "Yes. Your Dunamis Studios account holds every entitlement across every HubSpot portal you administer. Install an app from the HubSpot marketplace, then claim the entitlement from your Dunamis Studios account dashboard. One account covers all of our apps and all of your portals.",
+  },
+  {
+    q: "How do you handle our HubSpot data?",
+    a: "Each app reads only the HubSpot data it needs at the moment it needs it, scoped by OAuth to specific objects and actions. Configuration data lives inside your HubSpot portal where possible (Property Pulse keeps tracked-property settings in a HubDB table in your portal). Dunamis Studios servers hold OAuth tokens, app metadata, and per-portal entitlement state, and they do not maintain a separate copy of your CRM data. Per-app specifics are documented on each product page.",
+  },
+];
+
+const faqPageSchema = buildFaqPageSchema(FAQ);
 
 /**
  * WebSite schema with SearchAction. Mirrors the help-center pattern
@@ -78,6 +104,7 @@ export default function LandingPage() {
   return (
     <>
       <JsonLd id="jsonld-home-website" schema={websiteSchema} />
+      <JsonLd id="jsonld-home-faq" schema={faqPageSchema} />
       {/* ---- HERO ---- */}
       <div className="relative overflow-hidden">
         <HeroGradient />
@@ -185,6 +212,9 @@ export default function LandingPage() {
           </div>
         </Container>
       </Section>
+
+      {/* ---- FAQ ---- */}
+      <MarketingFaq faq={FAQ} />
 
       {/* ---- FINAL CTA ---- */}
       <Section>

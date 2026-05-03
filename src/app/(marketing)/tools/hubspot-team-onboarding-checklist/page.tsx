@@ -6,6 +6,29 @@ import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
 import { TeamOnboardingChecklist } from "@/components/marketing/team-onboarding-checklist";
 import { CourseCtaCard } from "@/components/marketing/course-cta-card";
+import { MarketingFaq } from "@/components/marketing/marketing-faq";
+import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "What does the checklist score?",
+    a: "Onboarding readiness for one specific new HubSpot team member, across eight phases: access (seat type, permissions, two-factor), HubSpot concepts (objects, lifecycle, automation primitives), role-specific properties (the fields the role actually has to know), tools (sequences, snippets, templates, dashboards), process (handoffs, deal hygiene, attribution), integrations the role touches, reporting they will own or run, and day-30 adoption (whether they are using HubSpot independently). Each phase contributes to a 0-to-100 score and a tier verdict: Ready, Mostly Ready, Gaps, Critical Gaps.",
+  },
+  {
+    q: "Why does it ask for the role first?",
+    a: "Phase 3 (role-specific properties) swaps based on role. An SDR needs to know lead source, lifecycle stage, and disposition reasons cold; an AE needs deal stage, deal type, and forecast category; Marketing Ops, CS, and RevOps Admin each have their own minimum-viable property set. Picking the role loads the right phase-3 questions; the other seven phases are the same regardless.",
+  },
+  {
+    q: "What are role-specific risk flags?",
+    a: "Items that historically corrupt HubSpot data when missed. For example, an SDR who does not know the lead-source canonical values usually creates fragmented attribution. An AE who does not know the deal-stage definitions usually skips stages, breaking velocity reporting. The risk flags surface only when the corresponding question is answered no, and they explain the specific data corruption pattern that question is gating against.",
+  },
+  {
+    q: "Is the checklist reusable across multiple new hires?",
+    a: "Yes, but rerun it per hire rather than treating it as a one-time score. The questions ask about a specific person's readiness, not the team's onboarding program in the abstract. The score for an SDR who started today is independent from the score for an AE who started last month. Use the checklist on each new hire near day 14 and again at day 30 to see whether the gaps closed.",
+  },
+];
+
+const faqPageSchema = buildFaqPageSchema(FAQ);
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -73,6 +96,7 @@ export default function HubSpotTeamOnboardingChecklistPage() {
   return (
     <>
       <JsonLd id="jsonld-team-onboarding-checklist" schema={buildSchema()} />
+      <JsonLd id="jsonld-team-onboarding-checklist-faq" schema={faqPageSchema} />
       <Section>
         <Container size="lg">
           <Link
@@ -105,6 +129,8 @@ export default function HubSpotTeamOnboardingChecklistPage() {
           <CourseCtaCard />
         </Container>
       </Section>
+
+      <MarketingFaq faq={FAQ} />
     </>
   );
 }

@@ -13,6 +13,31 @@ import { Container, Section } from "@/components/ui/primitives";
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
 import { CourseSignupForm } from "@/components/marketing/course-signup-form";
+import { MarketingFaq } from "@/components/marketing/marketing-faq";
+import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+
+// Single source of truth for the course FAQ. Drives both the visible
+// accordion and the FAQPage JSON-LD.
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "What does the 5-Day HubSpot Audit cover?",
+    a: "Day 1 covers properties (custom property count, fill rate, Used-in coverage, what to archive). Day 2 covers workflows (ownership, conflicts, audit cadence, active count vs your tier cap). Day 3 covers pipeline and deal stages (stalled-pipeline value, daily revenue bleed, velocity benchmark). Day 4 covers lead scoring and lifecycle stages (a starter scoring model and tier mapping). Day 5 covers team setup and onboarding (access, role-specific properties, day-30 adoption).",
+  },
+  {
+    q: "How is the course delivered?",
+    a: "One email per day for five days. Day 1 sends within a few minutes of signup. Each email is short, points at the relevant free tool on dunamisstudios.net/tools, and ends with one specific action to take. After Day 5, the course stops. We do not add you to a newsletter, do not share your email, and do not pitch you on Dunamis Studios products.",
+  },
+  {
+    q: "How much time per day do I need?",
+    a: "Plan for 30 to 60 minutes per day depending on portal size. Each day pairs an email with a free tool that takes 2 to 5 minutes to fill out. The remaining time is spent acting on the day's recommendation: archiving properties, tightening a workflow, mapping a pipeline stage, and so on. The course is designed to leave behind real changes, not just notes.",
+  },
+  {
+    q: "Is the course actually free?",
+    a: "Yes, free. No credit card, no upsell mid-course, no pitch at the end. We publish the course because the same audit is the first thing we run when we engage with a new HubSpot portal in our custom-development practice. Most teams can do it themselves with the right prompts, and that is what the course gives them.",
+  },
+];
+
+const faqPageSchema = buildFaqPageSchema(FAQ);
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -173,6 +198,7 @@ export default function HubSpotAuditCoursePage() {
   return (
     <>
       <JsonLd id="jsonld-course-hubspot-audit" schema={buildSchema()} />
+      <JsonLd id="jsonld-course-hubspot-audit-faq" schema={faqPageSchema} />
       <Section>
         <Container size="lg">
           <Link
@@ -274,6 +300,8 @@ export default function HubSpotAuditCoursePage() {
           </div>
         </Container>
       </Section>
+
+      <MarketingFaq faq={FAQ} />
     </>
   );
 }

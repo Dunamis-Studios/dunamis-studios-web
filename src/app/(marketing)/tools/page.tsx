@@ -15,6 +15,8 @@ import {
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
+import { MarketingFaq } from "@/components/marketing/marketing-faq";
+import { buildFaqPageSchema } from "@/components/marketing/article-extras";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -132,6 +134,29 @@ const TOOLS: ToolEntry[] = [
   },
 ];
 
+// Single source of truth for the tools-index FAQ. Drives both the
+// visible accordion and the FAQPage JSON-LD.
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "Are the free tools actually free?",
+    a: "Yes. Every tool on this page runs in your browser, returns a result on the page, and does not require a sign-up to use. We publish them because the same calculations show up over and over in our custom-development engagements and we would rather hand operators a working tool than rebuild it for each engagement.",
+  },
+  {
+    q: "Does my data leave the browser?",
+    a: "No. The calculators and assessments run entirely client-side. Inputs you type into a tool are not posted to a server, are not logged, and are not stored anywhere outside the browser tab. Closing the tab clears the inputs. The one exception is the optional emailed report on the Handoff Time Calculator, which only sends if you explicitly choose to email yourself a copy.",
+  },
+  {
+    q: "Where do the benchmarks and scoring weights come from?",
+    a: "Each tool cites its sources on the page itself. HubSpot per-tier limits come from the public HubSpot product KB. Industry benchmarks come from named sources (Vantage Point on property accumulation, Zylo and BetterCloud and Cleed on SaaS spend, plus published HubSpot research). Where a weight is our own judgment from custom-development engagements, we say so on the tool.",
+  },
+  {
+    q: "Can I use these tools for client work?",
+    a: "Yes. Solutions Partners and consultants run these against client portals all the time, and that is fine. The outputs are intended to be screenshot-friendly and copy-pasteable into a deliverable. If you want a co-branded variant or want the methodology explained in writing for a client deck, email hello@dunamisstudios.net.",
+  },
+];
+
+const faqPageSchema = buildFaqPageSchema(FAQ);
+
 function buildCollectionSchema() {
   return {
     "@context": "https://schema.org",
@@ -158,6 +183,7 @@ export default function ToolsPage() {
   return (
     <>
       <JsonLd id="jsonld-tools-index" schema={buildCollectionSchema()} />
+      <JsonLd id="jsonld-tools-index-faq" schema={faqPageSchema} />
       <Section>
         <Container>
           <PageHeader
@@ -208,6 +234,8 @@ export default function ToolsPage() {
           </div>
         </Container>
       </Section>
+
+      <MarketingFaq faq={FAQ} />
     </>
   );
 }

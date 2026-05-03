@@ -7,6 +7,33 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { PRODUCT_META, type Product } from "@/lib/types";
 import { CREDIT_PACKS, CREDIT_COST_TABLE } from "@/lib/pricing";
+import { MarketingFaq } from "@/components/marketing/marketing-faq";
+import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+import { JsonLd } from "@/components/seo/json-ld";
+
+// Single source of truth for the pricing-page FAQ. Drives both the
+// visible accordion and the FAQPage JSON-LD so answer engines can cite
+// Q/A pairs verbatim.
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "Why is Property Pulse one-time and Debrief monthly?",
+    a: "Property Pulse runs entirely off configuration stored in your HubSpot portal and reads property history from HubSpot's API at card render time, so we have no ongoing per-portal infrastructure cost to recover. Debrief calls a large language model to generate each brief, and that has a real per-handoff cost, so it is priced as a per-portal monthly subscription with a credit allotment.",
+  },
+  {
+    q: "How do Debrief credits work?",
+    a: "Each Debrief tier (Starter, Pro, Enterprise) includes a monthly credit allotment that resets each billing cycle. Most handoffs cost 1 credit. Larger handoffs with deeper history cost more, scaling with the amount of context the brief pulls in. Credits expire at the end of the billing cycle. Optional credit packs can be purchased on top of the subscription, never expire, and stack into a separate addon bucket that is consumed only after the monthly allotment is used up.",
+  },
+  {
+    q: "Do you offer annual pricing or discounts?",
+    a: "No annual pricing today. Debrief is month-to-month and you can upgrade or downgrade tiers at any time from your account dashboard. The first month on every Debrief tier doubles the included monthly credit allotment so the initial rollout has more headroom. Property Pulse is one-time, so annual versus monthly does not apply.",
+  },
+  {
+    q: "Is pricing per portal or per user?",
+    a: "Per HubSpot portal. Property Pulse is $49 once for the whole portal and every user in the portal can use it. Debrief tiers are billed per portal per month and every user with HubSpot access in that portal can initiate handoffs from the Debrief CRM card. We do not charge per seat for either app.",
+  },
+];
+
+const faqPageSchema = buildFaqPageSchema(FAQ);
 
 export const metadata: Metadata = {
   // Override the root template to a distinctive, length-tuned title
@@ -138,6 +165,7 @@ const TIERS: Record<Product, Tier[]> = {
 export default function PricingPage() {
   return (
     <>
+      <JsonLd id="jsonld-pricing-faq" schema={faqPageSchema} />
       <Section>
         <Container size="xl">
           <PageHeader
@@ -151,6 +179,8 @@ export default function PricingPage() {
       <ProductPricing product="property-pulse" />
       <ProductPricing product="debrief" />
       <DebriefCreditAddons />
+
+      <MarketingFaq faq={FAQ} />
 
       <Section>
         <Container size="md" className="text-center">

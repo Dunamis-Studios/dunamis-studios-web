@@ -5,6 +5,29 @@ import { Container, Section } from "@/components/ui/primitives";
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
 import { SalesCycleStagnationCalculator } from "@/components/marketing/sales-cycle-stagnation-calculator";
+import { MarketingFaq } from "@/components/marketing/marketing-faq";
+import { buildFaqPageSchema } from "@/components/marketing/article-extras";
+
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "What does the calculator quantify?",
+    a: "Three numbers. Pipeline value at risk: total dollars in deals that have stopped moving past their expected stage duration. Critically at risk: the subset that has been stalled long enough to materially threaten close. Daily revenue bleed: implied revenue you are losing per stalled deal per day, based on deal size and expected close timing. The output also benchmarks your pipeline velocity against the published industry benchmark for your deal-size bracket.",
+  },
+  {
+    q: "What inputs do I need?",
+    a: "Nine: average deal size, win rate, average sales-cycle length, total open pipeline value, number of open deals, number of pipeline stages, average days per stage, percentage of deals that are stalled today, and average days stalled. The defaults are pre-populated based on commonly published B2B benchmarks so the calculator produces a usable estimate before you change anything.",
+  },
+  {
+    q: "How is a deal considered stalled?",
+    a: "The calculator treats a deal as stalled when its time-in-stage exceeds the expected stage duration you provide. The result page shows the cutoff applied to your inputs and the resulting at-risk and critically-at-risk thresholds, so you can see exactly which time-in-stage bands feed which output number.",
+  },
+  {
+    q: "How does this map to HubSpot?",
+    a: "Every input maps to a HubSpot deal-pipeline metric you can pull from the deal record or pipeline reports: deal amount, deal stage, time-in-stage, close date. Where your stage names differ from the inputs, just average across the matching stage. The calculator does not require a HubSpot connection or any data upload; it runs entirely in your browser.",
+  },
+];
+
+const faqPageSchema = buildFaqPageSchema(FAQ);
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -72,6 +95,7 @@ export default function SalesCycleStagnationCalculatorPage() {
   return (
     <>
       <JsonLd id="jsonld-sales-cycle-stagnation" schema={buildSchema()} />
+      <JsonLd id="jsonld-sales-cycle-stagnation-faq" schema={faqPageSchema} />
       <Section>
         <Container size="lg">
           <Link
@@ -101,6 +125,8 @@ export default function SalesCycleStagnationCalculatorPage() {
           </div>
         </Container>
       </Section>
+
+      <MarketingFaq faq={FAQ} />
     </>
   );
 }
