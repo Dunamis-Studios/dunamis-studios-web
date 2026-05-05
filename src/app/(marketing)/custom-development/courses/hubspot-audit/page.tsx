@@ -29,7 +29,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "How is the course delivered?",
-    a: "One email per day for five days. Day 1 sends within a few minutes of signup. Each email is short, points at the relevant free tool on dunamisstudios.net/tools, and ends with one specific action to take. After Day 5, the course stops. We do not add you to a newsletter, do not share your email, and do not pitch you on Dunamis Studios products.",
+    a: "One email per day for five days. Day 1 sends within a few minutes of signup. Each email is short, points at the relevant free tool on dunamisstudios.net/custom-development/tools, and ends with one specific action to take. After Day 5, the course stops. We do not add you to a newsletter, do not share your email, and do not pitch you on Dunamis Studios products.",
   },
   {
     q: "How much time per day do I need?",

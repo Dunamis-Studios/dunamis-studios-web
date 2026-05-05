@@ -78,7 +78,7 @@ function layout(title: string, body: string): string {
     <div style="font-family:Georgia,serif;font-size:22px;font-weight:500;letter-spacing:-0.02em;margin-bottom:24px;">Dunamis Studios</div>
     ${body}
     <div style="margin-top:32px;padding-top:24px;border-top:1px solid #262626;color:#888;font-size:12px;line-height:1.6;">
-      Dunamis Studios — precision tools for HubSpot.<br>
+      Dunamis Studios — a software studio with a HubSpot specialty.<br>
       Questions? <a href="mailto:josh@dunamisstudios.net" style="color:#6d5cf5;">josh@dunamisstudios.net</a>
     </div>
   </div>

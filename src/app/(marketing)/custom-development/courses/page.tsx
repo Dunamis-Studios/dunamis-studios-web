@@ -8,7 +8,7 @@ import { siteFreshness } from "@/lib/schema-freshness";
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
-const TITLE = "Courses";
+const TITLE = "HubSpot Courses";
 const DESCRIPTION =
   "Free email courses for HubSpot operators. Each course is one focused topic, delivered one email per day, with a specific action to take each day. No fluff, no pitch.";
 

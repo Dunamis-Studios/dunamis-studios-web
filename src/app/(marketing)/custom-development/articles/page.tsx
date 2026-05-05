@@ -21,14 +21,14 @@ export const revalidate = 60;
 export const dynamic = "force-static";
 
 const PAGE_DESCRIPTION =
-  "News, updates, and insights from the Dunamis Studios team.";
+  "News, updates, and insights from Dunamis Studios on HubSpot custom development, marketplace apps, and portal operations.";
 
 export const metadata: Metadata = {
-  title: "Articles",
+  title: "HubSpot Articles",
   description: PAGE_DESCRIPTION,
   alternates: { canonical: "/custom-development/articles" },
   openGraph: {
-    title: "Articles · Dunamis Studios",
+    title: "HubSpot Articles · Dunamis Studios",
     description: PAGE_DESCRIPTION,
     url: "/custom-development/articles",
     type: "website",
@@ -37,21 +37,21 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Articles · Dunamis Studios",
+        alt: "HubSpot Articles · Dunamis Studios",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Articles · Dunamis Studios",
+    title: "HubSpot Articles · Dunamis Studios",
     description: PAGE_DESCRIPTION,
     images: [
       {
         url: "/twitter-image",
         width: 1200,
         height: 630,
-        alt: "Articles · Dunamis Studios",
+        alt: "HubSpot Articles · Dunamis Studios",
       },
     ],
   },
@@ -70,7 +70,7 @@ function buildBlogSchema(posts: Post[]) {
     "@context": "https://schema.org",
     "@type": "Blog",
     ...siteFreshness(),
-    name: "Dunamis Studios articles",
+    name: "Dunamis Studios HubSpot articles",
     description: PAGE_DESCRIPTION,
     url: `${SITE_URL}/custom-development/articles`,
     publisher: {

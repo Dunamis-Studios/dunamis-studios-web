@@ -21,11 +21,11 @@ const PAGE_DESCRIPTION =
   "In-depth guides for getting the most out of your HubSpot portal with Dunamis Studios apps.";
 
 export const metadata: Metadata = {
-  title: "Guides",
+  title: "HubSpot Guides",
   description: PAGE_DESCRIPTION,
   alternates: { canonical: "/custom-development/guides" },
   openGraph: {
-    title: "Guides · Dunamis Studios",
+    title: "HubSpot Guides · Dunamis Studios",
     description: PAGE_DESCRIPTION,
     url: "/custom-development/guides",
     type: "website",
@@ -34,21 +34,21 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Guides · Dunamis Studios",
+        alt: "HubSpot Guides · Dunamis Studios",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Guides · Dunamis Studios",
+    title: "HubSpot Guides · Dunamis Studios",
     description: PAGE_DESCRIPTION,
     images: [
       {
         url: "/twitter-image",
         width: 1200,
         height: 630,
-        alt: "Guides · Dunamis Studios",
+        alt: "HubSpot Guides · Dunamis Studios",
       },
     ],
   },
@@ -65,7 +65,7 @@ function buildBlogSchema(posts: Post[]) {
     "@context": "https://schema.org",
     "@type": "Blog",
     ...siteFreshness(),
-    name: "Dunamis Studios guides",
+    name: "Dunamis Studios HubSpot guides",
     description: PAGE_DESCRIPTION,
     url: `${SITE_URL}/custom-development/guides`,
     publisher: {

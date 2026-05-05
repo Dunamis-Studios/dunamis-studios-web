@@ -77,7 +77,7 @@ const display = Fraunces({
 
 export const metadata: Metadata = {
   title: {
-    default: "Dunamis Studios: A software studio with a HubSpot specialty",
+    default: "Dunamis Studios: Custom software, with a HubSpot specialty",
     template: "%s · Dunamis Studios",
   },
   description:
@@ -88,7 +88,7 @@ export const metadata: Metadata = {
     process.env.APP_URL ?? "https://dunamisstudios.net",
   ),
   openGraph: {
-    title: "Dunamis Studios: A software studio with a HubSpot specialty",
+    title: "Dunamis Studios: Custom software, with a HubSpot specialty",
     description:
       "A software studio that builds custom applications for agencies and businesses, with a HubSpot specialty practice and products for HubSpot CRM. Home of Debrief and Property Pulse.",
     type: "website",
@@ -102,7 +102,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dunamis Studios: A software studio with a HubSpot specialty",
+    title: "Dunamis Studios: Custom software, with a HubSpot specialty",
     description:
       "A software studio that builds custom applications for agencies and businesses, with a HubSpot specialty practice and products for HubSpot CRM. Home of Debrief and Property Pulse.",
     // twitter:image meta tags come from src/app/twitter-image.tsx's

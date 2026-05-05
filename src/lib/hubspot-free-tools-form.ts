@@ -57,7 +57,7 @@ export interface SubmitFreeToolLeadArgs {
   ipAddress?: string;
   /**
    * Public URL of the page that captured the lead (e.g.
-   * https://www.dunamisstudios.net/tools/handoff-time-calculator).
+   * https://www.dunamisstudios.net/custom-development/tools/handoff-time-calculator).
    * Forwarded to HubSpot in the form context.
    */
   pageUri: string;

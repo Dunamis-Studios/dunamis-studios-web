@@ -43,9 +43,9 @@ const collectionSchema = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   ...siteFreshness(),
-  name: "Products by Dunamis Studios",
+  name: "HubSpot Products by Dunamis Studios",
   description:
-    "The full Dunamis Studios catalog of HubSpot apps and tools, including Property Pulse, Debrief, Carbon Copy, Traverse and Update, and Association Visualizer.",
+    "Dunamis Studios apps for the HubSpot marketplace: Property Pulse, Debrief, Carbon Copy, Traverse and Update, Association Visualizer. Built by HubSpot users.",
   url: `${SITE_URL}/custom-development/products`,
   publisher: {
     "@type": "Organization",
@@ -78,14 +78,14 @@ const collectionSchema = {
 };
 
 export const metadata: Metadata = {
-  title: "Products by Dunamis Studios",
+  title: "HubSpot Products",
   description:
-    "Every Dunamis Studios product: Property Pulse, Debrief, Carbon Copy, Traverse and Update, Association Visualizer. HubSpot apps built by HubSpot users.",
+    "Dunamis Studios apps for the HubSpot marketplace: Property Pulse, Debrief, Carbon Copy, Traverse and Update, Association Visualizer. Built by HubSpot users.",
   alternates: { canonical: "/custom-development/products" },
   openGraph: {
-    title: "Products by Dunamis Studios",
+    title: "HubSpot Products by Dunamis Studios",
     description:
-      "Every Dunamis Studios product: Property Pulse, Debrief, Carbon Copy, Traverse and Update, Association Visualizer. HubSpot apps built by HubSpot users.",
+      "Dunamis Studios apps for the HubSpot marketplace: Property Pulse, Debrief, Carbon Copy, Traverse and Update, Association Visualizer. Built by HubSpot users.",
     url: "/custom-development/products",
     type: "website",
     images: [
@@ -93,16 +93,16 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Products by Dunamis Studios",
+        alt: "HubSpot Products by Dunamis Studios",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Products by Dunamis Studios",
+    title: "HubSpot Products by Dunamis Studios",
     description:
-      "Every Dunamis Studios product: Property Pulse, Debrief, Carbon Copy, Traverse and Update, Association Visualizer. HubSpot apps built by HubSpot users.",
+      "Dunamis Studios apps for the HubSpot marketplace: Property Pulse, Debrief, Carbon Copy, Traverse and Update, Association Visualizer. Built by HubSpot users.",
   },
 };
 
@@ -126,13 +126,13 @@ export default function ProductsIndexPage() {
               Products
             </div>
             <h1 className="mt-3 font-[var(--font-display)] text-4xl font-medium tracking-[-0.02em] leading-[1.05] text-[var(--fg)] sm:text-5xl lg:text-6xl">
-              The Dunamis Studios catalog.
+              HubSpot apps from Dunamis Studios.
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-[var(--fg-muted)]">
-              Every product we ship, in one place. Each one earns its weight by
-              solving one specific HubSpot problem end to end. Some are live in
-              the marketplace. Some are built and on the way. A couple are
-              still earlier ideas we&apos;re working on in public.
+              Every HubSpot app we ship, in one place. Each one earns its
+              weight by solving one specific HubSpot problem end to end. Some
+              are live in the marketplace. Some are built and on the way. A
+              couple are still earlier ideas we&apos;re working on in public.
             </p>
           </div>
         </Container>

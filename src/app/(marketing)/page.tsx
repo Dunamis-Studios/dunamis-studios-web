@@ -21,11 +21,11 @@ const SITE_URL =
 const FAQ: { q: string; a: string }[] = [
   {
     q: "What is Dunamis Studios?",
-    a: "Dunamis Studios is a software studio with two service lines and a small catalog of products. Build Services is custom application development for agencies (white-label) and end businesses (direct), scoped through paid discovery and shipped on your infrastructure with full handover documentation. HubSpot Custom Development is our specialty practice for HubSpot UI extensions, integrations, and recovery work. Our products today are Property Pulse (a CRM card that surfaces full property change history on every HubSpot record) and Debrief (an AI-powered handoff brief and message generator). We also publish free calculators and assessments at dunamisstudios.net/tools.",
+    a: "Dunamis Studios is a software studio with two service lines and a small catalog of products. Build Services is custom application development for agencies (white-label) and end businesses (direct), scoped through paid discovery and shipped on your infrastructure with full handover documentation. HubSpot Custom Development is our specialty practice for HubSpot UI extensions, integrations, and recovery work. Our products today are Property Pulse (a CRM card that surfaces full property change history on every HubSpot record) and Debrief (an AI-powered handoff brief and message generator). We also publish free HubSpot calculators and assessments at dunamisstudios.net/custom-development/tools.",
   },
   {
     q: "Which products do you ship today?",
-    a: "Property Pulse is live in open beta on the HubSpot marketplace. Debrief is built and waiting on its marketplace listing. Carbon Copy and Traverse and Update are working code with marketplace listings in progress. Association Visualizer is an internal tool we are deciding whether to release publicly. The full catalog is at /custom-development/products.",
+    a: "Property Pulse is live in open beta on the HubSpot marketplace. Debrief is built and waiting on its marketplace listing. Carbon Copy and Traverse and Update are working code with marketplace listings in progress. Association Visualizer is an internal tool we are deciding whether to release publicly. The full HubSpot products catalog is at /custom-development/products.",
   },
   {
     q: "Do I need a Dunamis Studios account separate from my HubSpot account?",
@@ -85,13 +85,13 @@ export const metadata: Metadata = {
   // "%s · Dunamis Studios" template since it IS the studio.
   title: {
     absolute:
-      "Dunamis Studios: A software studio with a HubSpot specialty",
+      "Dunamis Studios: Custom software, with a HubSpot specialty",
   },
   description:
     "A software studio that builds custom applications for agencies and businesses, with a HubSpot specialty practice and products for HubSpot CRM. Home of Debrief and Property Pulse.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Dunamis Studios: A software studio with a HubSpot specialty",
+    title: "Dunamis Studios: Custom software, with a HubSpot specialty",
     description:
       "A software studio that builds custom applications for agencies and businesses, with a HubSpot specialty practice and products for HubSpot CRM. Home of Debrief and Property Pulse.",
     url: "/",
@@ -105,7 +105,7 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Dunamis Studios: A software studio with a HubSpot specialty",
+        alt: "Dunamis Studios: Custom software, with a HubSpot specialty",
         type: "image/png",
       },
     ],
@@ -199,7 +199,7 @@ export default function LandingPage() {
           <div className="mb-12 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
             <div>
               <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-                Products
+                HubSpot Products
               </div>
               <h2 className="mt-2 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
                 Apps for operators who live in HubSpot.
@@ -247,8 +247,8 @@ export default function LandingPage() {
           <div className="grid gap-10 lg:grid-cols-3">
             <Principle
               index="01"
-              title="Single pane of glass"
-              body="One Dunamis Studios account holds every entitlement across every HubSpot portal you admin. Install once, manage forever."
+              title="Single pane of glass for HubSpot apps"
+              body="One Dunamis Studios account holds every HubSpot product entitlement across every portal you admin. Install once, manage forever."
             />
             <Principle
               index="02"

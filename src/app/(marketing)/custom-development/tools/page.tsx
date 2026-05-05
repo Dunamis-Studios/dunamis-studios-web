@@ -22,7 +22,7 @@ import { siteFreshness } from "@/lib/schema-freshness";
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
-const TITLE = "Free Tools";
+const TITLE = "HubSpot Free Tools";
 const DESCRIPTION =
   "Free calculators and assessments for HubSpot teams. Estimate the cost of handoffs, audits, and other operations work without leaving your browser.";
 

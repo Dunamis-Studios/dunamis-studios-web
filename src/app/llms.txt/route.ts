@@ -64,7 +64,7 @@ export async function GET(): Promise<Response> {
     `- [Property Pulse](${SITE_URL}/custom-development/products/property-pulse): A HubSpot marketplace app that surfaces property change history directly on every CRM record. Admins choose which properties to track per object type, and users see the full change log, prior values, current values, and source in a single CRM card with inline editing and filtering.`,
   );
   lines.push(
-    `- [Debrief](${SITE_URL}/custom-development/products/debrief): A HubSpot marketplace app that generates structured handoff briefs and conversational handoff messages whenever ownership of a CRM record changes. Reads the record's history, properties, and engagement to produce a brief for the new owner and a personalized message they can send to the contact.`,
+    `- [Debrief](${SITE_URL}/custom-development/products/debrief): A HubSpot marketplace app that generates structured handoff briefs and conversational handoff messages on demand, when a HubSpot user starts a handoff from the Debrief CRM card on a record. Reads the record's history, properties, and engagement to produce a brief for the new owner and a personalized message they can send to the contact.`,
   );
   lines.push("");
 

@@ -24,9 +24,9 @@ const webPageSchema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   ...siteFreshness(),
-  name: "Pricing",
+  name: "HubSpot Apps Pricing",
   description:
-    "Per-portal pricing for Dunamis Studios apps: one-time install for Property Pulse, monthly tiers for Debrief, plus optional credit packs.",
+    "Per-portal pricing for Dunamis Studios HubSpot apps: one-time install for Property Pulse, monthly tiers for Debrief, plus optional credit packs.",
   url: `${SITE_URL}/custom-development/pricing`,
   isPartOf: {
     "@type": "WebSite",
@@ -61,23 +61,23 @@ const FAQ: { q: string; a: string }[] = [
 ];
 
 const faqPageSchema = buildFaqPageSchema(FAQ, {
-  name: "Dunamis Studios pricing FAQ",
+  name: "HubSpot apps pricing FAQ",
   description:
-    "Frequently asked questions about Dunamis Studios pricing: per-portal billing, Debrief credit structure, annual options, and one-time vs monthly products.",
+    "Frequently asked questions about Dunamis Studios HubSpot apps pricing: per-portal billing, Debrief credit structure, annual options, and one-time vs monthly products.",
   url: `${SITE_URL}/custom-development/pricing`,
 });
 
 export const metadata: Metadata = {
-  // Override the root template to a distinctive, length-tuned title
-  // instead of the template-generated "Pricing · Dunamis Studios".
-  title: { absolute: "Pricing · Dunamis Studios apps" },
+  // Override the root template with a lane-disambiguated title — this
+  // is the HubSpot apps pricing page, distinct from /build-services/pricing.
+  title: { absolute: "HubSpot Apps Pricing · Dunamis Studios" },
   description:
-    "Simple, transparent pricing for Dunamis Studios apps. Per-portal monthly plans with credit-based usage and no annual lock-in.",
+    "Simple, transparent pricing for Dunamis Studios HubSpot apps. Per-portal monthly plans with credit-based usage and no annual lock-in.",
   alternates: { canonical: "/custom-development/pricing" },
   openGraph: {
-    title: "Pricing · Dunamis Studios apps",
+    title: "HubSpot Apps Pricing · Dunamis Studios",
     description:
-      "Simple, transparent pricing for Dunamis Studios apps. Per-portal monthly plans with credit-based usage and no annual lock-in.",
+      "Simple, transparent pricing for Dunamis Studios HubSpot apps. Per-portal monthly plans with credit-based usage and no annual lock-in.",
     url: "/custom-development/pricing",
     type: "website",
     images: [
@@ -85,22 +85,22 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Pricing · Dunamis Studios apps",
+        alt: "HubSpot Apps Pricing · Dunamis Studios",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pricing · Dunamis Studios apps",
+    title: "HubSpot Apps Pricing · Dunamis Studios",
     description:
-      "Simple, transparent pricing for Dunamis Studios apps. Per-portal monthly plans with credit-based usage and no annual lock-in.",
+      "Simple, transparent pricing for Dunamis Studios HubSpot apps. Per-portal monthly plans with credit-based usage and no annual lock-in.",
     images: [
       {
         url: "/twitter-image",
         width: 1200,
         height: 630,
-        alt: "Pricing · Dunamis Studios apps",
+        alt: "HubSpot Apps Pricing · Dunamis Studios",
       },
     ],
   },
@@ -202,7 +202,7 @@ export default function PricingPage() {
       <Section>
         <Container size="xl">
           <PageHeader
-            eyebrow="Pricing"
+            eyebrow="HubSpot Apps Pricing"
             title="Transparent tiers. No surprise line items."
             description="Each product is priced on its own. Install from the HubSpot marketplace, then pay from your account dashboard. One-time for Property Pulse, monthly for Debrief. Upgrade or downgrade Debrief tiers anytime."
           />

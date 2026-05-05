@@ -13,8 +13,9 @@ export function SiteFooter() {
             </span>
           </Link>
           <p className="mt-3 max-w-xs text-sm text-[var(--fg-muted)]">
-            A software studio for custom application development, with a small
-            catalog of HubSpot marketplace apps.
+            A software studio with two service lines — Build Services and
+            HubSpot Custom Development — and a small catalog of HubSpot
+            marketplace apps.
           </p>
         </div>
 

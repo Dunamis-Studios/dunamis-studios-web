@@ -175,7 +175,7 @@ const RECENT_WORK: RecentWork[] = [
   {
     kind: "product",
     name: "Debrief",
-    tag: "Dunamis Studios Product",
+    tag: "HubSpot Marketplace Product",
     description:
       "AI-powered handoff intelligence app that generates handoff briefs and conversational messages when CRM record ownership transfers.",
     href: "/custom-development/products/debrief",
@@ -184,7 +184,7 @@ const RECENT_WORK: RecentWork[] = [
   {
     kind: "product",
     name: "Property Pulse",
-    tag: "Dunamis Studios Product",
+    tag: "HubSpot Marketplace Product",
     description:
       "Property change history tracking on every record, with audit trail and source attribution.",
     href: "/custom-development/products/property-pulse",
