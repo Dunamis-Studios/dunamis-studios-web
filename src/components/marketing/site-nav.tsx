@@ -9,15 +9,29 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const NAV_LINKS = [
-  { href: "/products", label: "Products" },
-  { href: "/custom-development", label: "Custom Development" },
+type NavAccent = "build" | "hubspot";
+
+const NAV_LINKS: { href: string; label: string; accent?: NavAccent }[] = [
+  { href: "/build-services", label: "Build Services", accent: "build" },
+  { href: "/products", label: "Products", accent: "hubspot" },
+  {
+    href: "/custom-development",
+    label: "HubSpot Custom Development",
+    accent: "hubspot",
+  },
   { href: "/tools", label: "Free Tools" },
   { href: "/courses", label: "Courses" },
   { href: "/guides", label: "Guides" },
   { href: "/articles", label: "Articles" },
   { href: "/pricing", label: "Pricing" },
 ];
+
+const ACCENT_CLASSES: Record<NavAccent, string> = {
+  build:
+    "hover:text-[var(--color-build-600)] dark:hover:text-[var(--color-build-400)] aria-[current=page]:text-[var(--color-build-600)] dark:aria-[current=page]:text-[var(--color-build-400)]",
+  hubspot:
+    "hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)] aria-[current=page]:text-[var(--color-hubspot-600)] dark:aria-[current=page]:text-[var(--color-hubspot-400)]",
+};
 
 type AuthState =
   | { status: "loading" }
@@ -86,15 +100,18 @@ export function SiteNav() {
         <div className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((l) => {
             const active = pathname === l.href || pathname?.startsWith(l.href + "/");
+            const accentClass = l.accent ? ACCENT_CLASSES[l.accent] : null;
             return (
               <Link
                 key={l.href}
                 href={l.href}
+                aria-current={active ? "page" : undefined}
                 className={cn(
                   "px-3 py-1.5 text-sm transition-colors rounded-md",
                   active
                     ? "text-[var(--fg)]"
                     : "text-[var(--fg-muted)] hover:text-[var(--fg)]",
+                  accentClass,
                 )}
               >
                 {l.label}
@@ -142,7 +159,10 @@ export function SiteNav() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="rounded-md px-3 py-2 text-sm text-[var(--fg)] hover:bg-[var(--bg-muted)]"
+                className={cn(
+                  "rounded-md px-3 py-2 text-sm text-[var(--fg)] hover:bg-[var(--bg-muted)]",
+                  l.accent ? ACCENT_CLASSES[l.accent] : null,
+                )}
               >
                 {l.label}
               </Link>

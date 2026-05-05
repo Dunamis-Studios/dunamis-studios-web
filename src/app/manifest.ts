@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Dunamis Studios",
     short_name: "Dunamis",
     description:
-      "Focused, reliable apps for the HubSpot marketplace. Home of Debrief and Property Pulse.",
+      "A software studio for custom application development, with a HubSpot specialty practice and products for HubSpot CRM.",
     start_url: "/",
     display: "standalone",
     background_color: "#0a0a0a",

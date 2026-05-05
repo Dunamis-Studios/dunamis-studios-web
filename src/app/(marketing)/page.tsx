@@ -21,7 +21,7 @@ const SITE_URL =
 const FAQ: { q: string; a: string }[] = [
   {
     q: "What is Dunamis Studios?",
-    a: "Dunamis Studios is a one-person product studio that builds focused HubSpot apps and tools. Our two main marketplace apps are Property Pulse (a CRM card that surfaces full property change history on every record) and Debrief (an AI-powered handoff brief and message generator). We also publish free calculators and assessments at dunamisstudios.net/tools and take on a small number of custom HubSpot development engagements.",
+    a: "Dunamis Studios is a software studio with two service lines and a small catalog of products. Build Services is custom application development for agencies (white-label) and end businesses (direct), scoped through paid discovery and shipped on your infrastructure with full handover documentation. HubSpot Custom Development is our specialty practice for HubSpot UI extensions, integrations, and recovery work. Our products today are Property Pulse (a CRM card that surfaces full property change history on every HubSpot record) and Debrief (an AI-powered handoff brief and message generator). We also publish free calculators and assessments at dunamisstudios.net/tools.",
   },
   {
     q: "Which products do you ship today?",
@@ -60,7 +60,7 @@ const websiteSchema = {
   name: "Dunamis Studios",
   url: SITE_URL,
   description:
-    "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
+    "A software studio for custom application development with a HubSpot specialty. Home of Build Services, HubSpot Custom Development, Debrief, and Property Pulse.",
   publisher: {
     "@type": "Organization",
     "@id": `${SITE_URL}/#organization`,
@@ -85,15 +85,15 @@ export const metadata: Metadata = {
   // "%s · Dunamis Studios" template since it IS the studio.
   title: {
     absolute:
-      "Dunamis Studios: Precision tools for the HubSpot marketplace",
+      "Dunamis Studios: A software studio with a HubSpot specialty",
   },
   description:
-    "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
+    "A software studio that builds custom applications for agencies and businesses, with a HubSpot specialty practice and products for HubSpot CRM. Home of Debrief and Property Pulse.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Dunamis Studios: Precision tools for the HubSpot marketplace",
+    title: "Dunamis Studios: A software studio with a HubSpot specialty",
     description:
-      "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
+      "A software studio that builds custom applications for agencies and businesses, with a HubSpot specialty practice and products for HubSpot CRM. Home of Debrief and Property Pulse.",
     url: "/",
     type: "website",
     // Page-level openGraph blocks replace (not merge) the layout's
@@ -105,7 +105,7 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Dunamis Studios: Precision tools for the HubSpot marketplace",
+        alt: "Dunamis Studios: A software studio with a HubSpot specialty",
         type: "image/png",
       },
     ],
@@ -127,35 +127,74 @@ export default function LandingPage() {
               Studio of one, built with care
             </Badge>
             <h1 className="mt-6 font-[var(--font-display)] text-5xl font-medium tracking-[-0.03em] leading-[1.02] text-[var(--fg)] sm:text-6xl lg:text-7xl">
-              Precision tools for
+              A software studio,
               <span className="relative inline-block px-1">
                 <span className="relative z-10 italic text-[var(--accent)]">
-                  HubSpot
+                  built deliberately
                 </span>
               </span>
               .
             </h1>
             <p className="mx-auto mt-7 max-w-xl text-lg leading-relaxed text-[var(--fg-muted)]">
-              Dunamis Studios builds focused, reliable apps for the HubSpot
-              marketplace. One account, every entitlement, every portal.
+              Dunamis Studios builds custom applications for agencies and
+              businesses, runs a HubSpot specialty practice, and ships a small
+              catalog of products for HubSpot CRM.
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg">
-                <Link href="/signup">
-                  Create an account
+                <Link href="/build-services">
+                  Explore Build Services
                   <ArrowRight className="ml-0.5 h-4 w-4" />
                 </Link>
               </Button>
               <Button asChild size="lg" variant="secondary">
-                <Link href="/pricing">View pricing</Link>
+                <Link href="/products">See products</Link>
               </Button>
             </div>
           </div>
         </Container>
       </div>
 
-      {/* ---- PRODUCTS ---- */}
+      {/* ---- SERVICES ---- */}
       <Section className="relative">
+        <Container size="xl">
+          <div className="mb-12 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
+            <div>
+              <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+                What we do
+              </div>
+              <h2 className="mt-2 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
+                Two service lines, one studio.
+              </h2>
+            </div>
+            <p className="max-w-sm text-[var(--fg-muted)]">
+              Build Services for custom application development. HubSpot
+              Custom Development for HubSpot-specific work. Both shipped to
+              fixed scope.
+            </p>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            <ServiceTile
+              accent="build"
+              name="Build Services"
+              tagline="Custom application development"
+              href="/build-services"
+              description="White-label for agencies, direct for businesses. Paid discovery, fixed-price tiers, hosting on your infrastructure, full handover documentation, 30 days of post-launch bug-fix support."
+            />
+            <ServiceTile
+              accent="hubspot"
+              name="HubSpot Custom Development"
+              tagline="Our HubSpot specialty practice"
+              href="/custom-development"
+              description="HubSpot UI extensions, marketplace apps, API integrations, data pipelines, AI workflows, and portal recovery. For teams beyond what an admin can configure."
+            />
+          </div>
+        </Container>
+      </Section>
+
+      {/* ---- PRODUCTS ---- */}
+      <Section className="relative border-t border-[var(--border)]">
         <Container size="xl">
           <div className="mb-12 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
             <div>
@@ -163,12 +202,12 @@ export default function LandingPage() {
                 Products
               </div>
               <h2 className="mt-2 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
-                Built for operators who live in HubSpot.
+                Apps for operators who live in HubSpot.
               </h2>
             </div>
             <p className="max-w-sm text-[var(--fg-muted)]">
-              Each app solves one specific problem, end-to-end. No toolbelts,
-              no half-finished features.
+              Each app solves one specific HubSpot problem, end-to-end. No
+              toolbelts, no half-finished features.
             </p>
           </div>
 
@@ -282,5 +321,51 @@ function Principle({
       </h3>
       <p className="mt-2 text-[var(--fg-muted)] leading-relaxed">{body}</p>
     </div>
+  );
+}
+
+function ServiceTile({
+  accent,
+  name,
+  tagline,
+  href,
+  description,
+}: {
+  accent: "build" | "hubspot";
+  name: string;
+  tagline: string;
+  href: string;
+  description: string;
+}) {
+  const accentText =
+    accent === "build"
+      ? "text-[var(--color-build-600)] dark:text-[var(--color-build-400)]"
+      : "text-[var(--color-hubspot-600)] dark:text-[var(--color-hubspot-400)]";
+  const accentBorder =
+    accent === "build"
+      ? "hover:border-[var(--color-build-500)]/50"
+      : "hover:border-[var(--color-hubspot-500)]/50";
+  return (
+    <Link
+      href={href}
+      className={`group relative isolate flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-7 transition-colors ${accentBorder}`}
+    >
+      <div className="flex items-center justify-between gap-3">
+        <Badge variant={accent === "build" ? "build" : "hubspot"}>
+          {accent === "build" ? "Build Services" : "HubSpot Specialty"}
+        </Badge>
+        <ArrowRight
+          className={`h-5 w-5 text-[var(--fg-subtle)] transition-all duration-300 group-hover:translate-x-0.5 ${accentText}`}
+          aria-hidden
+        />
+      </div>
+      <h3 className={`mt-5 font-[var(--font-display)] text-2xl font-medium tracking-tight ${accentText}`}>
+        {name}
+      </h3>
+      <p className="mt-1 text-sm text-[var(--fg-muted)]">{tagline}</p>
+      <p className="mt-4 flex-1 text-sm leading-relaxed text-[var(--fg-muted)]">
+        {description}
+      </p>
+    </Link>
   );
 }

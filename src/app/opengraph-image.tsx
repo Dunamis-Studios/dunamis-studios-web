@@ -7,7 +7,7 @@ import { ImageResponse } from "next/og";
 export const dynamic = "force-dynamic";
 
 export const alt =
-  "Dunamis Studios: Precision tools for the HubSpot marketplace";
+  "Dunamis Studios: A software studio with a HubSpot specialty";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -70,8 +70,10 @@ export default async function OpenGraphImage() {
             maxWidth: "900px",
           }}
         >
-          Precision tools for{" "}
-          <span style={{ color: "#a89bff", fontStyle: "italic" }}>HubSpot</span>
+          A software studio,{" "}
+          <span style={{ color: "#a89bff", fontStyle: "italic" }}>
+            built deliberately
+          </span>
           .
         </div>
 
@@ -84,8 +86,8 @@ export default async function OpenGraphImage() {
             lineHeight: 1.4,
           }}
         >
-          Focused, reliable apps for the HubSpot marketplace. Built by a team
-          that uses HubSpot every day.
+          Custom application development with a HubSpot specialty. Home of
+          Build Services, Debrief, and Property Pulse.
         </div>
 
         <div

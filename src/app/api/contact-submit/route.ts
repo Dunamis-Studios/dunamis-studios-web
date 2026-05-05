@@ -1,13 +1,32 @@
 import { NextResponse } from "next/server";
 import { apiError, parseJson } from "@/lib/api";
-import { contactSubmitSchema, type ContactSubmitInput } from "@/lib/validation";
+import {
+  contactSubmitSchema,
+  type ContactSource,
+  type ContactSubmitInput,
+} from "@/lib/validation";
 
 const HUBSPOT_PORTAL_ID = "20867488";
 const HUBSPOT_FORM_GUID = "cfda52bd-4573-4e7e-9057-68d2aea2a10a";
 const HUBSPOT_SUBMIT_URL = `https://api.hsforms.com/submissions/v3/integration/submit/${HUBSPOT_PORTAL_ID}/${HUBSPOT_FORM_GUID}`;
 
-const PAGE_URI = "https://www.dunamisstudios.net/custom-development";
-const PAGE_NAME = "Custom Development";
+const SITE_ORIGIN = "https://www.dunamisstudios.net";
+
+const SOURCE_PAGE_META: Record<
+  ContactSource,
+  { pageUri: string; pageName: string }
+> = {
+  "hubspot-custom-development": {
+    pageUri: `${SITE_ORIGIN}/custom-development`,
+    pageName: "HubSpot Custom Development",
+  },
+  "build-services": {
+    pageUri: `${SITE_ORIGIN}/build-services`,
+    pageName: "Build Services",
+  },
+};
+
+const DEFAULT_PAGE_META = SOURCE_PAGE_META["hubspot-custom-development"];
 
 function getHubspotUtk(req: Request): string | undefined {
   const header = req.headers.get("cookie");
@@ -22,6 +41,8 @@ function getHubspotUtk(req: Request): string | undefined {
 }
 
 function buildHubspotPayload(data: ContactSubmitInput, hutk: string | undefined) {
+  const pageMeta =
+    (data.source && SOURCE_PAGE_META[data.source]) ?? DEFAULT_PAGE_META;
   return {
     fields: [
       { objectTypeId: "0-1", name: "firstname", value: data.firstname },
@@ -46,8 +67,8 @@ function buildHubspotPayload(data: ContactSubmitInput, hutk: string | undefined)
     ],
     context: {
       ...(hutk ? { hutk } : {}),
-      pageUri: PAGE_URI,
-      pageName: PAGE_NAME,
+      pageUri: pageMeta.pageUri,
+      pageName: pageMeta.pageName,
     },
   };
 }

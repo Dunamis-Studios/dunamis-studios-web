@@ -27,7 +27,7 @@ const organizationSchema = {
   url: SITE_URL,
   logo: `${SITE_URL}/icon`,
   description:
-    "Dunamis Studios builds focused, reliable apps for the HubSpot marketplace.",
+    "Dunamis Studios is a software studio building custom applications for agencies and businesses, with a HubSpot specialty practice and a small catalog of HubSpot marketplace apps.",
   // sameAs: official Dunamis Studios profiles on third-party platforms.
   // Add new profile URLs here as we register them. Schema.org sameAs
   // expects entity-identity URIs (org's profile page on the platform),
@@ -77,20 +77,20 @@ const display = Fraunces({
 
 export const metadata: Metadata = {
   title: {
-    default: "Dunamis Studios: Precision tools for the HubSpot marketplace",
+    default: "Dunamis Studios: A software studio with a HubSpot specialty",
     template: "%s · Dunamis Studios",
   },
   description:
-    "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
+    "A software studio that builds custom applications for agencies and businesses, with a HubSpot specialty practice and products for HubSpot CRM. Home of Debrief and Property Pulse.",
   applicationName: "Dunamis Studios",
   authors: [{ name: "Dunamis Studios" }],
   metadataBase: new URL(
     process.env.APP_URL ?? "https://dunamisstudios.net",
   ),
   openGraph: {
-    title: "Dunamis Studios: Precision tools for the HubSpot marketplace",
+    title: "Dunamis Studios: A software studio with a HubSpot specialty",
     description:
-      "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
+      "A software studio that builds custom applications for agencies and businesses, with a HubSpot specialty practice and products for HubSpot CRM. Home of Debrief and Property Pulse.",
     type: "website",
     url: "/",
     siteName: "Dunamis Studios",
@@ -102,9 +102,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dunamis Studios: Precision tools for the HubSpot marketplace",
+    title: "Dunamis Studios: A software studio with a HubSpot specialty",
     description:
-      "Focused, reliable apps for the HubSpot marketplace. Built by a team that uses HubSpot every day. Home of Debrief and Property Pulse.",
+      "A software studio that builds custom applications for agencies and businesses, with a HubSpot specialty practice and products for HubSpot CRM. Home of Debrief and Property Pulse.",
     // twitter:image meta tags come from src/app/twitter-image.tsx's
     // file convention, same rationale as openGraph above.
   },

@@ -54,7 +54,7 @@ export async function GET(): Promise<Response> {
   lines.push("# Dunamis Studios");
   lines.push("");
   lines.push(
-    "> Precision tools for HubSpot. We build focused, single-purpose marketplace apps for HubSpot administrators and RevOps teams. Each app solves one real problem deeply rather than serving as part of an all-in-one suite.",
+    "> A software studio. We take on custom application development engagements directly and on a white-label basis (Build Services), with a HubSpot specialty practice (HubSpot Custom Development) and a small catalog of HubSpot marketplace apps. Two service lines, plus products.",
   );
   lines.push("");
 
@@ -108,11 +108,18 @@ export async function GET(): Promise<Response> {
   }
   lines.push("");
 
-  lines.push("## About");
+  lines.push("## Services");
   lines.push("");
   lines.push(
-    `- [Custom development](${SITE_URL}/custom-development): Direct engagement options for custom HubSpot work that the marketplace apps don't cover.`,
+    `- [Build Services](${SITE_URL}/build-services): Custom application development for agencies (white-label) and end businesses (direct). Paid discovery, fixed-price tiers, hosting on the client's infrastructure, full handover documentation, and 30 days of post-launch bug-fix support.`,
   );
+  lines.push(
+    `- [HubSpot Custom Development](${SITE_URL}/custom-development): Specialty practice for HubSpot UI extensions, marketplace apps, API integrations, data pipelines, AI workflows, and portal recovery.`,
+  );
+  lines.push("");
+
+  lines.push("## About");
+  lines.push("");
   lines.push(
     `- [Pricing](${SITE_URL}/pricing): Pricing for Property Pulse, Debrief, and other products.`,
   );

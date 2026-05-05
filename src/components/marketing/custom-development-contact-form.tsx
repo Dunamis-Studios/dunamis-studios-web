@@ -10,13 +10,16 @@ import {
   BUDGET_OPTIONS,
   TIMELINE_OPTIONS,
   contactSubmitSchema,
+  type ContactSource,
   type ContactSubmitInput,
 } from "@/lib/validation";
 
-type FieldName = keyof ContactSubmitInput;
+// `source` is set by the page that hosts the form, not by user input,
+// so it's omitted from the editable field set.
+type FieldName = keyof Omit<ContactSubmitInput, "source">;
 type FieldErrors = Partial<Record<FieldName, string>>;
 
-const INITIAL_VALUES: ContactSubmitInput = {
+const INITIAL_VALUES: Omit<ContactSubmitInput, "source"> = {
   firstname: "",
   lastname: "",
   email: "",
@@ -38,14 +41,35 @@ const FIELD_CHROME =
   "disabled:cursor-not-allowed disabled:opacity-60 " +
   "aria-[invalid=true]:border-[var(--color-danger)] aria-[invalid=true]:focus:ring-[var(--color-danger)]/20";
 
-export function CustomDevelopmentContactForm() {
-  const [values, setValues] = React.useState<ContactSubmitInput>(INITIAL_VALUES);
+export interface CustomDevelopmentContactFormProps {
+  source?: ContactSource;
+  heading?: string;
+  blurb?: string;
+  successHeading?: string;
+  successBody?: string;
+  submitLabel?: string;
+}
+
+export function CustomDevelopmentContactForm({
+  source = "hubspot-custom-development",
+  heading = "Let's Talk",
+  blurb = "Tell us what you're working on. We'll respond within two business days with whether it's something we can help with and a rough sense of scope.",
+  successHeading = "Thanks, message received.",
+  successBody = "We'll respond within two business days with whether it's something we can help with and a rough sense of scope.",
+  submitLabel = "Send inquiry",
+}: CustomDevelopmentContactFormProps = {}) {
+  const [values, setValues] = React.useState<Omit<ContactSubmitInput, "source">>(
+    INITIAL_VALUES,
+  );
   const [fieldErrors, setFieldErrors] = React.useState<FieldErrors>({});
   const [formError, setFormError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
 
-  function setValue<K extends FieldName>(name: K, value: ContactSubmitInput[K]) {
+  function setValue<K extends FieldName>(
+    name: K,
+    value: Omit<ContactSubmitInput, "source">[K],
+  ) {
     setValues((prev) => ({ ...prev, [name]: value }));
     // Clear a field's error as soon as the user edits it; re-validation
     // happens on blur or submit.
@@ -74,7 +98,7 @@ export function CustomDevelopmentContactForm() {
     e.preventDefault();
     setFormError(null);
 
-    const parsed = contactSubmitSchema.safeParse(values);
+    const parsed = contactSubmitSchema.safeParse({ ...values, source });
     if (!parsed.success) {
       const next: FieldErrors = {};
       for (const issue of parsed.error.issues) {
@@ -115,11 +139,10 @@ export function CustomDevelopmentContactForm() {
     return (
       <>
         <h2 className="font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
-          Thanks, message received.
+          {successHeading}
         </h2>
         <p className="mx-auto mt-4 max-w-lg text-[var(--fg-muted)]">
-          We&apos;ll respond within two business days with whether it&apos;s
-          something we can help with and a rough sense of scope.
+          {successBody}
         </p>
       </>
     );
@@ -128,13 +151,9 @@ export function CustomDevelopmentContactForm() {
   return (
     <>
       <h2 className="font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
-        Let&apos;s Talk
+        {heading}
       </h2>
-      <p className="mx-auto mt-4 max-w-lg text-[var(--fg-muted)]">
-        Tell us what you&apos;re working on. We&apos;ll respond within two
-        business days with whether it&apos;s something we can help with and a
-        rough sense of scope.
-      </p>
+      <p className="mx-auto mt-4 max-w-lg text-[var(--fg-muted)]">{blurb}</p>
 
       <form
         onSubmit={onSubmit}
@@ -309,7 +328,7 @@ export function CustomDevelopmentContactForm() {
 
         <div className="flex justify-end pt-2">
           <Button type="submit" size="lg" loading={submitting}>
-            Send inquiry
+            {submitLabel}
           </Button>
         </div>
       </form>

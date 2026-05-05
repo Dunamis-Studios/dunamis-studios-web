@@ -166,6 +166,18 @@ export const TIMELINE_OPTIONS = [
   "Just exploring",
 ] as const;
 
+/**
+ * Source surface that originated the inquiry. Drives pageUri/pageName
+ * on the HubSpot submission so RevOps can segment leads by service line.
+ * Keep narrow; do not let arbitrary strings reach the HubSpot context.
+ */
+export const CONTACT_SOURCES = [
+  "hubspot-custom-development",
+  "build-services",
+] as const;
+
+export type ContactSource = (typeof CONTACT_SOURCES)[number];
+
 export const contactSubmitSchema = z.object({
   firstname: z
     .string()
@@ -200,6 +212,7 @@ export const contactSubmitSchema = z.object({
   custom_dev_timeline: z.enum(TIMELINE_OPTIONS, {
     errorMap: () => ({ message: "Choose a timeline" }),
   }),
+  source: z.enum(CONTACT_SOURCES).optional(),
 });
 
 export type ContactSubmitInput = z.infer<typeof contactSubmitSchema>;

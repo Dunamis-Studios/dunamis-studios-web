@@ -25,7 +25,7 @@ const webPageSchema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   ...siteFreshness(),
-  name: "Custom HubSpot Development",
+  name: "HubSpot Custom Development",
   description:
     "Custom HubSpot apps and UI extensions, API integrations, data pipelines, AI workflows, and portal recovery from Dunamis Studios.",
   url: `${SITE_URL}/custom-development`,
@@ -68,12 +68,12 @@ const faqPageSchema = buildFaqPageSchema(FAQ, {
 });
 
 export const metadata: Metadata = {
-  title: "Custom Development",
+  title: "HubSpot Custom Development",
   description:
     "HubSpot UI extensions, API integrations, data pipelines, AI workflows, and portal recovery from Dunamis Studios. For teams beyond marketplace apps.",
   alternates: { canonical: "/custom-development" },
   openGraph: {
-    title: "Custom Development · Dunamis Studios",
+    title: "HubSpot Custom Development · Dunamis Studios",
     description:
       "HubSpot UI extensions, API integrations, data pipelines, AI workflows, and portal recovery from Dunamis Studios. For teams beyond marketplace apps.",
     url: "/custom-development",
@@ -83,14 +83,14 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Custom Development · Dunamis Studios",
+        alt: "HubSpot Custom Development · Dunamis Studios",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Custom Development · Dunamis Studios",
+    title: "HubSpot Custom Development · Dunamis Studios",
     description:
       "HubSpot UI extensions, API integrations, data pipelines, AI workflows, and portal recovery from Dunamis Studios. For teams beyond marketplace apps.",
     images: [
@@ -98,7 +98,7 @@ export const metadata: Metadata = {
         url: "/twitter-image",
         width: 1200,
         height: 630,
-        alt: "Custom Development · Dunamis Studios",
+        alt: "HubSpot Custom Development · Dunamis Studios",
       },
     ],
   },
@@ -221,13 +221,13 @@ export default function CustomDevelopmentPage() {
         <HeroGradient />
         <Container size="xl" className="py-24 sm:py-32 lg:py-40">
           <div className="mx-auto max-w-3xl text-center stagger">
-            <Badge variant="accent" className="mx-auto">
-              Custom HubSpot Development
+            <Badge variant="hubspot" className="mx-auto">
+              HubSpot Specialty
             </Badge>
             <h1 className="mt-6 font-[var(--font-display)] text-5xl font-medium tracking-[-0.03em] leading-[1.02] text-[var(--fg)] sm:text-6xl lg:text-7xl">
-              Custom HubSpot
+              HubSpot Custom
               <span className="relative inline-block px-1">
-                <span className="relative z-10 italic text-[var(--accent)]">
+                <span className="relative z-10 italic text-[var(--color-hubspot-600)] dark:text-[var(--color-hubspot-400)]">
                   Development
                 </span>
               </span>
@@ -259,11 +259,17 @@ export default function CustomDevelopmentPage() {
       <Section className="border-t border-[var(--border)]">
         <Container size="md">
           <p className="text-lg leading-relaxed text-[var(--fg-muted)]">
-            Dunamis Studios is a HubSpot product studio. We build and ship
-            marketplace apps that solve common problems at scale, and we take on
-            select custom development projects for clients who need something
-            specific. If you&apos;ve outgrown what an admin can configure and
-            need actual code, we can help.
+            Dunamis Studios is a software studio with a HubSpot specialty. This
+            page covers our HubSpot work — UI extensions, API integrations,
+            data pipelines, AI workflows, and portal recovery. Looking for
+            custom application development outside the HubSpot ecosystem?{" "}
+            <Link
+              href="/build-services"
+              className="text-[var(--color-build-600)] underline underline-offset-4 hover:text-[var(--color-build-700)] dark:text-[var(--color-build-400)] dark:hover:text-[var(--color-build-300)]"
+            >
+              See Build Services
+            </Link>
+            .
           </p>
         </Container>
       </Section>

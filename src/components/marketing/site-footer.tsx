@@ -13,31 +13,43 @@ export function SiteFooter() {
             </span>
           </Link>
           <p className="mt-3 max-w-xs text-sm text-[var(--fg-muted)]">
-            Focused, reliable apps for the HubSpot marketplace.
+            A software studio for custom application development, with a small
+            catalog of HubSpot marketplace apps.
           </p>
         </div>
 
         <div>
           <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-            Products
+            Services & Products
           </h3>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li>
-              <Link href="/products" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
-                Products
+              <Link
+                href="/build-services"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-build-600)] dark:hover:text-[var(--color-build-400)]"
+              >
+                Build Services
               </Link>
             </li>
             <li>
-              <Link href="/pricing" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
-                Pricing
+              <Link
+                href="/products"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
+              >
+                Products
               </Link>
             </li>
             <li>
               <Link
                 href="/custom-development"
-                className="text-[var(--fg-muted)] hover:text-[var(--fg)]"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
               >
-                Custom Development
+                HubSpot Custom Development
+              </Link>
+            </li>
+            <li>
+              <Link href="/pricing" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
+                Pricing
               </Link>
             </li>
           </ul>
