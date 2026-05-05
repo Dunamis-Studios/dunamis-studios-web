@@ -2,7 +2,7 @@
  * One-off content patcher: inserts the 5-Day HubSpot Audit course CTA
  * inside the stale-property guide, immediately before "The take"
  * section heading. Idempotent: skipped if the post already references
- * /courses/hubspot-audit.
+ * /custom-development/courses/hubspot-audit.
  *
  * Usage:
  *   npx tsx scripts/patch-content-add-course-cta.ts
@@ -32,7 +32,7 @@ interface Patch {
 const COURSE_CTA_HTML = [
   '<div style="margin:1.8em 0;padding:1.2em 1.4em;border:1px solid var(--border);border-radius:10px;background:var(--bg-elevated);">',
   "<strong>Want the full audit?</strong> ",
-  'Get a <a target="_blank" rel="noopener noreferrer" href="/courses/hubspot-audit">free 5-day email course</a> ',
+  'Get a <a target="_blank" rel="noopener noreferrer" href="/custom-development/courses/hubspot-audit">free 5-day email course</a> ',
   "that walks through every dimension of your portal.",
   "</div>",
 ].join("");
@@ -41,7 +41,7 @@ const PATCHES: Patch[] = [
   {
     type: "guide",
     slug: "how-to-audit-stale-hubspot-properties",
-    courseUrl: "/courses/hubspot-audit",
+    courseUrl: "/custom-development/courses/hubspot-audit",
     // The h2 heading immediately before the closing "take" section.
     // We anchor on it and prepend the CTA so the order becomes:
     // ...prevention copy... CTA card... <h2>The take</h2>... closing copy.

@@ -54,43 +54,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1.0,
     },
     {
-      url: `${base}/products`,
+      url: `${base}/custom-development/products`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
-      url: `${base}/products/debrief`,
+      url: `${base}/custom-development/products/debrief`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
-      url: `${base}/products/property-pulse`,
+      url: `${base}/custom-development/products/property-pulse`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
-      url: `${base}/products/carbon-copy`,
+      url: `${base}/custom-development/products/carbon-copy`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.7,
     },
     {
-      url: `${base}/products/traverse-and-update`,
+      url: `${base}/custom-development/products/traverse-and-update`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.7,
     },
     {
-      url: `${base}/products/association-visualizer`,
+      url: `${base}/custom-development/products/association-visualizer`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
-      url: `${base}/products/debrief/roadmap`,
+      url: `${base}/custom-development/products/debrief/roadmap`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.7,
@@ -108,79 +108,79 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
-      url: `${base}/tools`,
+      url: `${base}/custom-development/tools`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${base}/tools/handoff-time-calculator`,
+      url: `${base}/custom-development/tools/handoff-time-calculator`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${base}/tools/property-audit-checklist`,
+      url: `${base}/custom-development/tools/property-audit-checklist`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${base}/tools/hubspot-bloat-score`,
+      url: `${base}/custom-development/tools/hubspot-bloat-score`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${base}/tools/lead-scoring-builder`,
+      url: `${base}/custom-development/tools/lead-scoring-builder`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${base}/tools/sales-cycle-stagnation-calculator`,
+      url: `${base}/custom-development/tools/sales-cycle-stagnation-calculator`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${base}/tools/tech-stack-cost-audit`,
+      url: `${base}/custom-development/tools/tech-stack-cost-audit`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${base}/tools/workflow-audit-checklist`,
+      url: `${base}/custom-development/tools/workflow-audit-checklist`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${base}/tools/custom-object-decision-tree`,
+      url: `${base}/custom-development/tools/custom-object-decision-tree`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${base}/tools/hubspot-team-onboarding-checklist`,
+      url: `${base}/custom-development/tools/hubspot-team-onboarding-checklist`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${base}/courses`,
+      url: `${base}/custom-development/courses`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${base}/courses/hubspot-audit`,
+      url: `${base}/custom-development/courses/hubspot-audit`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${base}/pricing`,
+      url: `${base}/custom-development/pricing`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.8,
@@ -254,7 +254,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...(publishedGuides.length > 0
       ? [
           {
-            url: `${base}/guides`,
+            url: `${base}/custom-development/guides`,
             lastModified: new Date(publishedGuides[0].updatedAt),
             changeFrequency: "weekly" as const,
             priority: 0.7,
@@ -262,7 +262,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ]
       : []),
     ...publishedGuides.map((p) => ({
-      url: `${base}/guides/${p.slug}`,
+      url: `${base}/custom-development/guides/${p.slug}`,
       lastModified: new Date(p.updatedAt),
       changeFrequency: "monthly" as const,
       priority: 0.6,
@@ -270,7 +270,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...(publishedArticles.length > 0
       ? [
           {
-            url: `${base}/articles`,
+            url: `${base}/custom-development/articles`,
             lastModified: new Date(publishedArticles[0].updatedAt),
             changeFrequency: "weekly" as const,
             priority: 0.7,
@@ -278,7 +278,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ]
       : []),
     ...publishedArticles.map((p) => ({
-      url: `${base}/articles/${p.slug}`,
+      url: `${base}/custom-development/articles/${p.slug}`,
       lastModified: new Date(p.updatedAt),
       changeFrequency: "monthly" as const,
       priority: 0.6,

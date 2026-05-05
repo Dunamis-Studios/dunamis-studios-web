@@ -8,8 +8,8 @@ import {
 } from "./lead-scoring-logic";
 
 /**
- * Transactional email for /tools/lead-scoring-builder. Same dark-card
- * template family as the other /tools emails. No product CTA. Body
+ * Transactional email for /custom-development/tools/lead-scoring-builder. Same dark-card
+ * template family as the other /custom-development/tools emails. No product CTA. Body
  * is dominated by the scoring model in two formats: a structured
  * HTML rendering for readers and a fenced plain-text block for copy-
  * paste into HubSpot's lead-scoring builder.

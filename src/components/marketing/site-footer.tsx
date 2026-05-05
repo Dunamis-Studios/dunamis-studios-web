@@ -33,7 +33,7 @@ export function SiteFooter() {
             </li>
             <li>
               <Link
-                href="/products"
+                href="/custom-development/products"
                 className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
               >
                 Products
@@ -48,7 +48,7 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <Link href="/pricing" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
+              <Link href="/custom-development/pricing" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
                 Pricing
               </Link>
             </li>
@@ -61,12 +61,12 @@ export function SiteFooter() {
           </h3>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li>
-              <Link href="/articles" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
+              <Link href="/custom-development/articles" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
                 Articles
               </Link>
             </li>
             <li>
-              <Link href="/guides" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
+              <Link href="/custom-development/guides" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
                 Guides
               </Link>
             </li>

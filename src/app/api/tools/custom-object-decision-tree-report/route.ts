@@ -13,8 +13,8 @@ import { submitFreeToolLead } from "@/lib/hubspot-free-tools-form";
 /**
  * POST /api/tools/custom-object-decision-tree-report
  *
- * Lead capture for /tools/custom-object-decision-tree. Same three-side
- * effect shape as the other /tools routes:
+ * Lead capture for /custom-development/tools/custom-object-decision-tree. Same three-side
+ * effect shape as the other /custom-development/tools routes:
  *
  *   1. Redis write to dunamis:tools:custom-object-decision-tree:{hash}
  *      as source of truth. Failure here returns 500.
@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
     toolName: TOOL_DISPLAY_NAME,
     hubspotutk,
     ipAddress: ipAddress !== "unknown" ? ipAddress : undefined,
-    pageUri: `${PUBLIC_PAGE_BASE}/tools/custom-object-decision-tree`,
+    pageUri: `${PUBLIC_PAGE_BASE}/custom-development/tools/custom-object-decision-tree`,
     pageName: "Custom Object Decision Tree report request",
   });
 

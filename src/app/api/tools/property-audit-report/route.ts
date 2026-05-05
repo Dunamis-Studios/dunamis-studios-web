@@ -13,7 +13,7 @@ import { submitFreeToolLead } from "@/lib/hubspot-free-tools-form";
 /**
  * POST /api/tools/property-audit-report
  *
- * Lead capture for the /tools/property-audit-checklist surface. The
+ * Lead capture for the /custom-development/tools/property-audit-checklist surface. The
  * frontend submits the visitor's email plus the ten answers. Three
  * side effects, in order:
  *
@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
     toolName: TOOL_DISPLAY_NAME,
     hubspotutk,
     ipAddress: ipAddress !== "unknown" ? ipAddress : undefined,
-    pageUri: `${PUBLIC_PAGE_BASE}/tools/property-audit-checklist`,
+    pageUri: `${PUBLIC_PAGE_BASE}/custom-development/tools/property-audit-checklist`,
     pageName: "Property Audit Checklist report request",
   });
 

@@ -7,9 +7,9 @@ import {
 
 /**
  * Transactional email for "Email me this report" submissions on
- * /tools/property-audit-checklist. Same template family as the
+ * /custom-development/tools/property-audit-checklist. Same template family as the
  * handoff calculator email (dark theme, single-card layout) so the
- * /tools surfaces feel coherent in the visitor's inbox.
+ * /custom-development/tools surfaces feel coherent in the visitor's inbox.
  *
  * Degrades gracefully when RESEND_API_KEY is unset: the caller has
  * already persisted the row to Redis, so the audit lead survives even

@@ -1,5 +1,5 @@
 /**
- * Pure logic for /tools/custom-object-decision-tree.
+ * Pure logic for /custom-development/tools/custom-object-decision-tree.
  * No side effects, no I/O. Imported by the client component (live
  * traversal) and the API route (canonical evaluation persisted to
  * Redis and mailed in the report).

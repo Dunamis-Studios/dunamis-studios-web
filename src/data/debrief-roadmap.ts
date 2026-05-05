@@ -1,6 +1,6 @@
 /**
  * Debrief roadmap — canonical data source for
- * /products/debrief/roadmap.
+ * /custom-development/products/debrief/roadmap.
  *
  * How to update (future-Josh, or whoever owns this next):
  *

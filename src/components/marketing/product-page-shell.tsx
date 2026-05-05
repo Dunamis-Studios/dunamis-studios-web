@@ -43,7 +43,7 @@ export interface ProductPageProps {
   // Optional override for the pricing teaser block. When omitted, falls
   // back to the legacy three-tier copy (Debrief's shape). Pass explicitly
   // for products with non-tiered pricing (e.g. Property Pulse's one-time
-  // install fee) so the teaser accurately reflects /pricing.
+  // install fee) so the teaser accurately reflects /custom-development/pricing.
   pricingTeaser?: {
     eyebrow?: string;
     headline: string;
@@ -170,7 +170,7 @@ export function ProductPageShell(p: ProductPageProps) {
                 </Button>
               )}
               <Button asChild size="lg" variant="secondary">
-                <Link href="/pricing">See pricing</Link>
+                <Link href="/custom-development/pricing">See pricing</Link>
               </Button>
             </div>
           </div>
@@ -360,7 +360,7 @@ export function ProductPageShell(p: ProductPageProps) {
               </p>
             </div>
             <Button asChild size="lg">
-              <Link href="/pricing">
+              <Link href="/custom-development/pricing">
                 {p.pricingTeaser?.ctaLabel ?? "See pricing"}
                 <ArrowRight className="ml-0.5 h-4 w-4" />
               </Link>

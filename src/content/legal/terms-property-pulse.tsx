@@ -130,8 +130,8 @@ export const termsPropertyPulse: LegalDocument = {
         <>
           <p>
             Property Pulse is offered as a one-time license per HubSpot portal, described at{" "}
-            <Link href="/products/property-pulse" className="underline">
-              /products/property-pulse
+            <Link href="/custom-development/products/property-pulse" className="underline">
+              /custom-development/products/property-pulse
             </Link>
             .
           </p>

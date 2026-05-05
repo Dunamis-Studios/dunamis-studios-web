@@ -7,8 +7,8 @@ import {
 } from "./custom-object-decision-tree-logic";
 
 /**
- * Transactional email for /tools/custom-object-decision-tree. Same
- * dark-card template family as the other /tools emails. No product
+ * Transactional email for /custom-development/tools/custom-object-decision-tree. Same
+ * dark-card template family as the other /custom-development/tools emails. No product
  * CTA. Body restates the path the visitor took, the final
  * recommendation, plain-English explanation, tradeoffs, examples,
  * implementation pointers, and the methodology with named sources.

@@ -7,8 +7,8 @@ import {
 } from "./workflow-audit-scoring";
 
 /**
- * Transactional email for /tools/workflow-audit-checklist. Same dark-card
- * template family as the other /tools emails. No product CTA. Body
+ * Transactional email for /custom-development/tools/workflow-audit-checklist. Same dark-card
+ * template family as the other /custom-development/tools emails. No product CTA. Body
  * restates the canonical inputs, score, tier verdict, cap utilization
  * vs published HubSpot tier limit, and the top three prioritized
  * actions.

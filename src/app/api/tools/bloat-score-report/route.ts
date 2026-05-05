@@ -13,7 +13,7 @@ import { submitFreeToolLead } from "@/lib/hubspot-free-tools-form";
 /**
  * POST /api/tools/bloat-score-report
  *
- * Lead capture for /tools/hubspot-bloat-score. The frontend submits
+ * Lead capture for /custom-development/tools/hubspot-bloat-score. The frontend submits
  * the visitor's email plus the eight inputs. Three side effects:
  *
  *   1. Redis write to dunamis:tools:bloat-score:{hash} as source of
@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
     toolName: TOOL_DISPLAY_NAME,
     hubspotutk,
     ipAddress: ipAddress !== "unknown" ? ipAddress : undefined,
-    pageUri: `${PUBLIC_PAGE_BASE}/tools/hubspot-bloat-score`,
+    pageUri: `${PUBLIC_PAGE_BASE}/custom-development/tools/hubspot-bloat-score`,
     pageName: "HubSpot Bloat Score report request",
   });
 

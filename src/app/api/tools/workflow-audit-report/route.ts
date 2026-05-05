@@ -13,8 +13,8 @@ import { submitFreeToolLead } from "@/lib/hubspot-free-tools-form";
 /**
  * POST /api/tools/workflow-audit-report
  *
- * Lead capture for /tools/workflow-audit-checklist. Same three-side-
- * effect shape as the other /tools routes:
+ * Lead capture for /custom-development/tools/workflow-audit-checklist. Same three-side-
+ * effect shape as the other /custom-development/tools routes:
  *
  *   1. Redis write to dunamis:tools:workflow-audit:{hash} as source
  *      of truth. Failure here returns 500.
@@ -144,7 +144,7 @@ export async function POST(req: NextRequest) {
     toolName: TOOL_DISPLAY_NAME,
     hubspotutk,
     ipAddress: ipAddress !== "unknown" ? ipAddress : undefined,
-    pageUri: `${PUBLIC_PAGE_BASE}/tools/workflow-audit-checklist`,
+    pageUri: `${PUBLIC_PAGE_BASE}/custom-development/tools/workflow-audit-checklist`,
     pageName: "Workflow Audit Checklist report request",
   });
 

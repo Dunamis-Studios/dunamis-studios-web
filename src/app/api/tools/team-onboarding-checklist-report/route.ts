@@ -13,8 +13,8 @@ import { submitFreeToolLead } from "@/lib/hubspot-free-tools-form";
 /**
  * POST /api/tools/team-onboarding-checklist-report
  *
- * Lead capture for /tools/hubspot-team-onboarding-checklist. Same
- * three-side-effect shape as the other /tools routes:
+ * Lead capture for /custom-development/tools/hubspot-team-onboarding-checklist. Same
+ * three-side-effect shape as the other /custom-development/tools routes:
  *
  *   1. Redis write to dunamis:tools:team-onboarding-checklist:{hash}
  *      as source of truth. Failure here returns 500.
@@ -267,7 +267,7 @@ export async function POST(req: NextRequest) {
     toolName: TOOL_DISPLAY_NAME,
     hubspotutk,
     ipAddress: ipAddress !== "unknown" ? ipAddress : undefined,
-    pageUri: `${PUBLIC_PAGE_BASE}/tools/hubspot-team-onboarding-checklist`,
+    pageUri: `${PUBLIC_PAGE_BASE}/custom-development/tools/hubspot-team-onboarding-checklist`,
     pageName: "HubSpot Team Member Onboarding Checklist report request",
   });
 

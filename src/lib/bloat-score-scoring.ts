@@ -1,5 +1,5 @@
 /**
- * Pure scoring logic for the /tools/hubspot-bloat-score surface.
+ * Pure scoring logic for the /custom-development/tools/hubspot-bloat-score surface.
  * No side effects, no I/O. Imported by both the client component (live
  * preview) and the API route (canonical score saved to Redis and
  * mailed in the report).

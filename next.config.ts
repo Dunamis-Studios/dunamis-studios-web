@@ -35,6 +35,29 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  /**
+   * Lane migration (May 2026): the global routes /products, /tools,
+   * /courses, /guides, /articles, /pricing moved under
+   * /custom-development/<area> as part of the two-lane IA. These 308s
+   * preserve any existing inbound links and SEO. Internal <Link> hrefs
+   * are updated to canonical new paths so users don't take a redirect
+   * hop; these rules only catch external/cached traffic.
+   */
+  async redirects() {
+    return [
+      { source: "/products", destination: "/custom-development/products", permanent: true },
+      { source: "/products/:slug*", destination: "/custom-development/products/:slug*", permanent: true },
+      { source: "/tools", destination: "/custom-development/tools", permanent: true },
+      { source: "/tools/:slug*", destination: "/custom-development/tools/:slug*", permanent: true },
+      { source: "/courses", destination: "/custom-development/courses", permanent: true },
+      { source: "/courses/:slug*", destination: "/custom-development/courses/:slug*", permanent: true },
+      { source: "/guides", destination: "/custom-development/guides", permanent: true },
+      { source: "/guides/:slug*", destination: "/custom-development/guides/:slug*", permanent: true },
+      { source: "/articles", destination: "/custom-development/articles", permanent: true },
+      { source: "/articles/:slug*", destination: "/custom-development/articles/:slug*", permanent: true },
+      { source: "/pricing", destination: "/custom-development/pricing", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

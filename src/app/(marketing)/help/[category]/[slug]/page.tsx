@@ -344,7 +344,7 @@ function TeaserBody({
         </p>
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <Button asChild>
-            <Link href={`/pricing?return=${encodeURIComponent(fullPath)}`}>
+            <Link href={`/custom-development/pricing?return=${encodeURIComponent(fullPath)}`}>
               See plans
             </Link>
           </Button>
@@ -522,14 +522,14 @@ function productSoftwareSchema(
       description:
         "Handoff intelligence for HubSpot CRM. Generates a structured brief and conversational handoff message when a record changes ownership.",
       subCategory: "CRM",
-      path: "/products/debrief",
+      path: "/custom-development/products/debrief",
     },
     "property-pulse": {
       name: "Property Pulse",
       description:
         "Real-time deal health signal for HubSpot CRM.",
       subCategory: "CRM",
-      path: "/products/property-pulse",
+      path: "/custom-development/products/property-pulse",
     },
   };
   const p = info[product];

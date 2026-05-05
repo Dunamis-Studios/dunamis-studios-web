@@ -25,7 +25,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Which products do you ship today?",
-    a: "Property Pulse is live in open beta on the HubSpot marketplace. Debrief is built and waiting on its marketplace listing. Carbon Copy and Traverse and Update are working code with marketplace listings in progress. Association Visualizer is an internal tool we are deciding whether to release publicly. The full catalog is at /products.",
+    a: "Property Pulse is live in open beta on the HubSpot marketplace. Debrief is built and waiting on its marketplace listing. Carbon Copy and Traverse and Update are working code with marketplace listings in progress. Association Visualizer is an internal tool we are deciding whether to release publicly. The full catalog is at /custom-development/products.",
   },
   {
     q: "Do I need a Dunamis Studios account separate from my HubSpot account?",
@@ -148,7 +148,7 @@ export default function LandingPage() {
                 </Link>
               </Button>
               <Button asChild size="lg" variant="secondary">
-                <Link href="/products">See products</Link>
+                <Link href="/custom-development/products">See products</Link>
               </Button>
             </div>
           </div>
@@ -216,14 +216,14 @@ export default function LandingPage() {
               accent="pulse"
               name="Property Pulse"
               tagline="Real-time deal health for HubSpot CRM"
-              href="/products/property-pulse"
+              href="/custom-development/products/property-pulse"
               description="Watches every deal property you care about and surfaces drift, staleness, and risk before it shows up on a forecast call."
             />
             <ProductTile
               accent="brief"
               name="Debrief"
               tagline="Handoff intelligence for HubSpot CRM"
-              href="/products/debrief"
+              href="/custom-development/products/debrief"
               description="When a record changes hands in HubSpot, Debrief gives the new owner a structured brief, and gives the old owner a message to send with it."
             />
             <ProductTile

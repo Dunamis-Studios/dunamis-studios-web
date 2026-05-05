@@ -7,7 +7,7 @@ import { submitCourseSignup } from "@/lib/hubspot-courses-form";
 /**
  * POST /api/courses/signup
  *
- * Lead capture for /courses/* signups. Two side effects:
+ * Lead capture for /custom-development/courses/* signups. Two side effects:
  *
  *   1. Redis write to dunamis:courses:signup:{courseSlug}:{hash} as
  *      source of truth. Failure here returns 500.
@@ -35,7 +35,7 @@ const COURSES: Record<string, CourseDef> = {
     slug: "hubspot-audit",
     name: "5-Day HubSpot Audit",
     pageName: "5-Day HubSpot Audit signup",
-    pageUri: `${PUBLIC_PAGE_BASE}/courses/hubspot-audit`,
+    pageUri: `${PUBLIC_PAGE_BASE}/custom-development/courses/hubspot-audit`,
   },
 };
 

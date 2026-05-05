@@ -1,7 +1,7 @@
 import "server-only";
 
 /**
- * HubSpot mirror for /tools/* email captures. Submits to the dedicated
+ * HubSpot mirror for /custom-development/tools/* email captures. Submits to the dedicated
  * "Free Tools - Lead Capture" form (GUID in HUBSPOT_FREE_TOOLS_FORM_GUID).
  * Reusable across every free-tool surface: callers pass the tool's
  * display name as `toolName` and it lands in the hidden "Free Tool Used"

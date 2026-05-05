@@ -8,8 +8,8 @@ import {
 } from "./team-onboarding-checklist-logic";
 
 /**
- * Transactional email for /tools/hubspot-team-onboarding-checklist.
- * Same dark-card template family as the other /tools emails. No
+ * Transactional email for /custom-development/tools/hubspot-team-onboarding-checklist.
+ * Same dark-card template family as the other /custom-development/tools emails. No
  * product CTA. Body restates the rep role, the readiness score, the
  * tier verdict, the phase-by-phase breakdown, the top three priority
  * actions, and any role-specific risk flags.

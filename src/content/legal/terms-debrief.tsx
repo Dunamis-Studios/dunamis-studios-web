@@ -65,8 +65,8 @@ export const termsDebrief: LegalDocument = {
         <>
           <p>
             Debrief is offered on monthly subscription tiers published at{" "}
-            <Link href="/pricing" className="underline">
-              /pricing
+            <Link href="/custom-development/pricing" className="underline">
+              /custom-development/pricing
             </Link>
             . Current tiers are:
           </p>

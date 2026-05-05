@@ -32,7 +32,7 @@ export default async function PreviewArticlePage({ params }: Props) {
       ? buildFaqPageSchema(post.faq, {
           name: `${post.title} FAQ`,
           description: `Frequently asked questions about ${post.title}.`,
-          url: `${SITE_URL}/articles/${slug}`,
+          url: `${SITE_URL}/custom-development/articles/${slug}`,
         })
       : null;
 

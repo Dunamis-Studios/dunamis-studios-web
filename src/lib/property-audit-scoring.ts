@@ -1,5 +1,5 @@
 /**
- * Pure scoring logic for the /tools/property-audit-checklist surface.
+ * Pure scoring logic for the /custom-development/tools/property-audit-checklist surface.
  * No side effects, no I/O. Imported by both the client component (for
  * live preview) and the API route (for the canonical score that lands
  * in Redis and the report email).

@@ -5,7 +5,7 @@ import { PRODUCT_META, type ProductCatalogSlug } from "@/lib/types";
 
 /**
  * Shared section components for listicle-grade articles. Both the
- * public render route at /articles/[slug] and the admin preview route
+ * public render route at /custom-development/articles/[slug] and the admin preview route
  * at /admin/content/articles/[slug]/preview render these so the
  * preview is a faithful representation of what will ship to
  * production. Keep the JSX in lockstep across routes by importing
@@ -140,7 +140,7 @@ export function RelatedProductsSection({
           return (
             <Link
               key={slug}
-              href={`/products/${slug}`}
+              href={`/custom-development/products/${slug}`}
               className="group flex items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5 transition-colors hover:border-[var(--border-strong)]"
             >
               <div className="min-w-0">

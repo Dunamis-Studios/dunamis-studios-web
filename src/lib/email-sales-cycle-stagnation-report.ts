@@ -9,8 +9,8 @@ import {
 } from "./sales-cycle-stagnation-logic";
 
 /**
- * Transactional email for /tools/sales-cycle-stagnation-calculator.
- * Same dark-card template family as the other /tools emails. No
+ * Transactional email for /custom-development/tools/sales-cycle-stagnation-calculator.
+ * Same dark-card template family as the other /custom-development/tools emails. No
  * product CTA. Body restates the canonical inputs, the at-risk
  * dollar values, the velocity comparison, and the methodology with
  * named sources.

@@ -1,5 +1,5 @@
 /**
- * Pure recommendation logic for /tools/lead-scoring-builder.
+ * Pure recommendation logic for /custom-development/tools/lead-scoring-builder.
  * No side effects, no I/O. Imported by the client component (live
  * preview) and the API route (canonical model saved to Redis and
  * mailed in the report).

@@ -11,8 +11,8 @@ import {
 } from "./tech-stack-cost-audit-logic";
 
 /**
- * Transactional email for /tools/tech-stack-cost-audit. Same dark-card
- * template family as the other /tools emails. No product CTA. Body
+ * Transactional email for /custom-development/tools/tech-stack-cost-audit. Same dark-card
+ * template family as the other /custom-development/tools emails. No product CTA. Body
  * restates the canonical inputs, headline spend, license waste, the
  * top consolidation opportunities, and the underutilized tool list.
  */

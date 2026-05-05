@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 /**
  * Transactional email for "Email me this report" submissions on the
- * /tools surfaces. Keeps a separate template family from email-notify
+ * /custom-development/tools surfaces. Keeps a separate template family from email-notify
  * (product launch alerts) and email.ts (account-flow templates) so the
  * tool-report copy can evolve without coupling to those flows.
  *

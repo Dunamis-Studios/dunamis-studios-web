@@ -17,7 +17,7 @@ interface TierSpec {
   monthlyDollars: number;
   monthlyAllotment: number;
   firstMonthBonus: number;
-  /** Pretty list of what this tier unlocks — mirrors /pricing. */
+  /** Pretty list of what this tier unlocks — mirrors /custom-development/pricing. */
   features: string[];
 }
 
@@ -106,7 +106,7 @@ export function getTierAllotment(tier: EntitlementTier): number {
 }
 
 /**
- * Canonical Debrief tier feature list. Same data the /pricing page and
+ * Canonical Debrief tier feature list. Same data the /custom-development/pricing page and
  * the subscribe modal render, surfaced here so the Current plan card on
  * the entitlement detail page stays in lockstep instead of drifting its
  * own fabricated copy.

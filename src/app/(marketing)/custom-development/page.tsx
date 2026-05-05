@@ -178,7 +178,7 @@ const RECENT_WORK: RecentWork[] = [
     tag: "Dunamis Studios Product",
     description:
       "AI-powered handoff intelligence app that generates handoff briefs and conversational messages when CRM record ownership transfers.",
-    href: "/products/debrief",
+    href: "/custom-development/products/debrief",
     accent: "brief",
   },
   {
@@ -187,7 +187,7 @@ const RECENT_WORK: RecentWork[] = [
     tag: "Dunamis Studios Product",
     description:
       "Property change history tracking on every record, with audit trail and source attribution.",
-    href: "/products/property-pulse",
+    href: "/custom-development/products/property-pulse",
     accent: "pulse",
   },
 ];

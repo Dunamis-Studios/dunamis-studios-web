@@ -61,10 +61,10 @@ export async function GET(): Promise<Response> {
   lines.push("## Products");
   lines.push("");
   lines.push(
-    `- [Property Pulse](${SITE_URL}/products/property-pulse): A HubSpot marketplace app that surfaces property change history directly on every CRM record. Admins choose which properties to track per object type, and users see the full change log, prior values, current values, and source in a single CRM card with inline editing and filtering.`,
+    `- [Property Pulse](${SITE_URL}/custom-development/products/property-pulse): A HubSpot marketplace app that surfaces property change history directly on every CRM record. Admins choose which properties to track per object type, and users see the full change log, prior values, current values, and source in a single CRM card with inline editing and filtering.`,
   );
   lines.push(
-    `- [Debrief](${SITE_URL}/products/debrief): A HubSpot marketplace app that generates structured handoff briefs and conversational handoff messages whenever ownership of a CRM record changes. Reads the record's history, properties, and engagement to produce a brief for the new owner and a personalized message they can send to the contact.`,
+    `- [Debrief](${SITE_URL}/custom-development/products/debrief): A HubSpot marketplace app that generates structured handoff briefs and conversational handoff messages whenever ownership of a CRM record changes. Reads the record's history, properties, and engagement to produce a brief for the new owner and a personalized message they can send to the contact.`,
   );
   lines.push("");
 
@@ -76,7 +76,7 @@ export async function GET(): Promise<Response> {
       const desc = a.description.trim();
       const suffix = desc.endsWith(".") ? "" : ".";
       lines.push(
-        `- [${title}](${SITE_URL}/articles/${a.slug}): ${desc}${suffix}`,
+        `- [${title}](${SITE_URL}/custom-development/articles/${a.slug}): ${desc}${suffix}`,
       );
     }
     lines.push("");
@@ -90,7 +90,7 @@ export async function GET(): Promise<Response> {
       const desc = g.description.trim();
       const suffix = desc.endsWith(".") ? "" : ".";
       lines.push(
-        `- [${title}](${SITE_URL}/guides/${g.slug}): ${desc}${suffix}`,
+        `- [${title}](${SITE_URL}/custom-development/guides/${g.slug}): ${desc}${suffix}`,
       );
     }
     lines.push("");
@@ -121,7 +121,7 @@ export async function GET(): Promise<Response> {
   lines.push("## About");
   lines.push("");
   lines.push(
-    `- [Pricing](${SITE_URL}/pricing): Pricing for Property Pulse, Debrief, and other products.`,
+    `- [Pricing](${SITE_URL}/custom-development/pricing): Pricing for Property Pulse, Debrief, and other products.`,
   );
   lines.push("");
 

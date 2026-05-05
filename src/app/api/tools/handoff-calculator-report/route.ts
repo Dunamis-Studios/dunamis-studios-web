@@ -12,7 +12,7 @@ import { submitFreeToolLead } from "@/lib/hubspot-free-tools-form";
 /**
  * POST /api/tools/handoff-calculator-report
  *
- * Lead capture for the /tools/handoff-time-calculator surface. The
+ * Lead capture for the /custom-development/tools/handoff-time-calculator surface. The
  * frontend submits the visitor's email plus the inputs they filled in.
  * Three side effects, in order:
  *
@@ -169,7 +169,7 @@ export async function POST(req: NextRequest) {
     toolName: TOOL_DISPLAY_NAME,
     hubspotutk,
     ipAddress: ipAddress !== "unknown" ? ipAddress : undefined,
-    pageUri: `${PUBLIC_PAGE_BASE}/tools/handoff-time-calculator`,
+    pageUri: `${PUBLIC_PAGE_BASE}/custom-development/tools/handoff-time-calculator`,
     pageName: "Handoff Time Calculator report request",
   });
 

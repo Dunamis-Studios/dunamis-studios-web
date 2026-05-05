@@ -13,7 +13,7 @@ import { submitFreeToolLead } from "@/lib/hubspot-free-tools-form";
 /**
  * POST /api/tools/lead-scoring-report
  *
- * Lead capture for /tools/lead-scoring-builder. Three side effects:
+ * Lead capture for /custom-development/tools/lead-scoring-builder. Three side effects:
  *
  *   1. Redis write to dunamis:tools:lead-scoring:{hash} as source of
  *      truth. Failure here returns 500.
@@ -154,7 +154,7 @@ export async function POST(req: NextRequest) {
     toolName: TOOL_DISPLAY_NAME,
     hubspotutk,
     ipAddress: ipAddress !== "unknown" ? ipAddress : undefined,
-    pageUri: `${PUBLIC_PAGE_BASE}/tools/lead-scoring-builder`,
+    pageUri: `${PUBLIC_PAGE_BASE}/custom-development/tools/lead-scoring-builder`,
     pageName: "Lead Scoring Builder report request",
   });
 

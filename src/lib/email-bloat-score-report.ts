@@ -8,8 +8,8 @@ import {
 } from "./bloat-score-scoring";
 
 /**
- * Transactional email for the /tools/hubspot-bloat-score capture.
- * Same dark-card template family as the other /tools emails so the
+ * Transactional email for the /custom-development/tools/hubspot-bloat-score capture.
+ * Same dark-card template family as the other /custom-development/tools emails so the
  * inbox experience reads as a coherent suite. No product CTA.
  *
  * Degrades gracefully when RESEND_API_KEY is unset: the caller has

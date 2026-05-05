@@ -13,17 +13,17 @@ type NavAccent = "build" | "hubspot";
 
 const NAV_LINKS: { href: string; label: string; accent?: NavAccent }[] = [
   { href: "/build-services", label: "Build Services", accent: "build" },
-  { href: "/products", label: "Products", accent: "hubspot" },
+  { href: "/custom-development/products", label: "Products", accent: "hubspot" },
   {
     href: "/custom-development",
     label: "HubSpot Custom Development",
     accent: "hubspot",
   },
-  { href: "/tools", label: "Free Tools" },
-  { href: "/courses", label: "Courses" },
-  { href: "/guides", label: "Guides" },
-  { href: "/articles", label: "Articles" },
-  { href: "/pricing", label: "Pricing" },
+  { href: "/custom-development/tools", label: "Free Tools" },
+  { href: "/custom-development/courses", label: "Courses" },
+  { href: "/custom-development/guides", label: "Guides" },
+  { href: "/custom-development/articles", label: "Articles" },
+  { href: "/custom-development/pricing", label: "Pricing" },
 ];
 
 const ACCENT_CLASSES: Record<NavAccent, string> = {

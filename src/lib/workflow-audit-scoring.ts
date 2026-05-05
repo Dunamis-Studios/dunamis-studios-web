@@ -1,5 +1,5 @@
 /**
- * Pure scoring logic for /tools/workflow-audit-checklist.
+ * Pure scoring logic for /custom-development/tools/workflow-audit-checklist.
  * No side effects, no I/O. Imported by the client component (live
  * preview) and the API route (canonical score persisted to Redis and
  * mailed in the report).

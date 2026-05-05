@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight, GraduationCap } from "lucide-react";
 
 /**
- * Inline CTA pointing visitors at /courses/hubspot-audit. Used at the
+ * Inline CTA pointing visitors at /custom-development/courses/hubspot-audit. Used at the
  * bottom of the audit-relevant tool pages and inside the stale-property
  * guide. Opens in a new tab so the visitor's current tool session is
  * preserved.
@@ -10,7 +10,7 @@ import { ArrowUpRight, GraduationCap } from "lucide-react";
  * Server component. No state, no client features.
  */
 export function CourseCtaCard({
-  courseHref = "/courses/hubspot-audit",
+  courseHref = "/custom-development/courses/hubspot-audit",
 }: {
   courseHref?: string;
 } = {}) {

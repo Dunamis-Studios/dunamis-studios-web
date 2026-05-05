@@ -131,7 +131,7 @@ export async function submitToHubSpotNotifyForm({
   try {
     const submitUrl = `${HUBSPOT_FORMS_BASE}/submissions/v3/integration/submit/${portalId}/${formGuid}`;
     const context: Record<string, string> = {
-      pageUri: `${PUBLIC_PAGE_BASE}/products/${slug}`,
+      pageUri: `${PUBLIC_PAGE_BASE}/custom-development/products/${slug}`,
       pageName: `${productName} notify signup`,
     };
     if (hubspotutk) context.hutk = hubspotutk;

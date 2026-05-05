@@ -13,7 +13,7 @@ import {
  * POST /api/notify
  *
  * Records a "notify me when this ships" signup for one of the unshipped
- * Dunamis Studios products. The frontend on each /products/<slug> page
+ * Dunamis Studios products. The frontend on each /custom-development/products/<slug> page
  * for an unshipped product calls this with the visitor's email and the
  * product slug.
  *

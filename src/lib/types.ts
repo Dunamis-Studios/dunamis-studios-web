@@ -150,7 +150,7 @@ export function sumCredits(c: CreditBuckets | null): number {
 export const PRODUCTS: Product[] = ["property-pulse", "debrief"];
 
 /**
- * Catalog superset for marketing surfaces (the /products index, related
+ * Catalog superset for marketing surfaces (the /custom-development/products index, related
  * product cards on articles, header nav). Includes the entitlement
  * bearing Product union plus products that don't yet have entitlements
  * or billing. Keep Product narrow so pricing, claim, account dashboard,
@@ -183,7 +183,7 @@ export interface ProductMeta {
 }
 
 /**
- * Full catalog in alphabetical order. Drives the /products index, the
+ * Full catalog in alphabetical order. Drives the /custom-development/products index, the
  * admin related-products editor, and any "all products" surface.
  */
 export const PRODUCT_CATALOG_SLUGS: ProductCatalogSlug[] = [
@@ -203,7 +203,7 @@ export const PRODUCT_META: Record<ProductCatalogSlug, ProductMeta> = {
       "An internal CRM card that renders a record's outbound associations as a two hop tree. Inline SVG thumbnail on the record, full size diagram with a clickable list of related records on click. Currently a private tool we're exploring as a public product.",
     stage: "exploring",
     pricingModel: "Internal tool",
-    href: "/products/association-visualizer",
+    href: "/custom-development/products/association-visualizer",
     accentClass: "text-[var(--fg-muted)]",
   },
   "carbon-copy": {
@@ -214,7 +214,7 @@ export const PRODUCT_META: Record<ProductCatalogSlug, ProductMeta> = {
       "A workflow action that wraps HubSpot's Single-Send transactional email API and adds CC and BCC envelope support, including HubSpot personalization tokens and reply-to override. Built and deployed; marketplace listing is in progress.",
     stage: "building",
     pricingModel: "TBD",
-    href: "/products/carbon-copy",
+    href: "/custom-development/products/carbon-copy",
     accentClass: "text-[var(--fg-muted)]",
   },
   debrief: {
@@ -225,7 +225,7 @@ export const PRODUCT_META: Record<ProductCatalogSlug, ProductMeta> = {
       "User-initiated AI handoff briefs. Open a record, click Draft Brief, review the structured brief and a personalized handoff message, then approve to atomically transfer ownership and log a Note. Briefs are generated when the user decides to hand off, not automatically when ownership changes.",
     stage: "coming-soon",
     pricingModel: "Subscription, 3 tiers",
-    href: "/products/debrief",
+    href: "/custom-development/products/debrief",
     accentClass: "text-brief-500",
     marketplaceUrl: "https://ecosystem.hubspot.com/marketplace",
   },
@@ -237,7 +237,7 @@ export const PRODUCT_META: Record<ProductCatalogSlug, ProductMeta> = {
       "A CRM card that shows the change history of admin-curated tracked properties on every record. Inline editing, filtering by date, source, user, and value, plus per-user CSV export. Live in marketplace review with capped installs.",
     stage: "beta",
     pricingModel: "$49 one-time per portal",
-    href: "/products/property-pulse",
+    href: "/custom-development/products/property-pulse",
     accentClass: "text-pulse-500",
     marketplaceUrl: "https://ecosystem.hubspot.com/marketplace",
   },
@@ -249,7 +249,7 @@ export const PRODUCT_META: Record<ProductCatalogSlug, ProductMeta> = {
       "A workflow action that updates any writable property on records exactly two outbound association hops away from the enrolled object. Optional association-label filters on each hop and a CRM Search prefilter to narrow the target set. Fully built; not yet on the marketplace.",
     stage: "building",
     pricingModel: "TBD",
-    href: "/products/traverse-and-update",
+    href: "/custom-development/products/traverse-and-update",
     accentClass: "text-[var(--fg-muted)]",
   },
 };

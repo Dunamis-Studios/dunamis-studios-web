@@ -1,5 +1,5 @@
 /**
- * Pure logic for /tools/sales-cycle-stagnation-calculator.
+ * Pure logic for /custom-development/tools/sales-cycle-stagnation-calculator.
  * No side effects, no I/O. Imported by the client component (live
  * preview) and the API route (canonical numbers persisted to Redis
  * and mailed in the report).
