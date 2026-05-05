@@ -19,7 +19,7 @@ export default async function TwitterImage() {
           alignItems: "flex-start",
           padding: "80px",
           background:
-            "radial-gradient(ellipse 80% 60% at 30% 25%, #3b2f7a 0%, #0a0a0a 70%)",
+            "radial-gradient(ellipse 80% 60% at 30% 25%, #523f1d 0%, #0a0a0a 70%)",
           color: "#eaeaea",
           fontFamily: "system-ui, -apple-system, sans-serif",
         }}
@@ -65,7 +65,7 @@ export default async function TwitterImage() {
           }}
         >
           A software studio,{" "}
-          <span style={{ color: "#a89bff", fontStyle: "italic" }}>
+          <span style={{ color: "#dab66a", fontStyle: "italic" }}>
             built deliberately
           </span>
           .

@@ -219,13 +219,13 @@ export default function BuildServicesPage() {
         <HeroGradient />
         <Container size="xl" className="py-24 sm:py-32 lg:py-40">
           <div className="mx-auto max-w-3xl text-center stagger">
-            <Badge variant="build" className="mx-auto">
+            <Badge variant="accent" className="mx-auto">
               Build Services
             </Badge>
             <h1 className="mt-6 font-[var(--font-display)] text-5xl font-medium tracking-[-0.03em] leading-[1.02] text-[var(--fg)] sm:text-6xl lg:text-7xl">
               Custom software,
               <span className="relative inline-block px-1">
-                <span className="relative z-10 italic text-[var(--color-build-600)] dark:text-[var(--color-build-400)]">
+                <span className="relative z-10 italic text-[var(--color-brand-600)] dark:text-[var(--color-brand-400)]">
                   built and shipped
                 </span>
               </span>
@@ -303,7 +303,7 @@ export default function BuildServicesPage() {
                     className="flex items-start gap-2.5 text-sm text-[var(--fg)]"
                   >
                     <Check
-                      className="h-4 w-4 mt-0.5 shrink-0 text-[var(--color-build-600)] dark:text-[var(--color-build-400)]"
+                      className="h-4 w-4 mt-0.5 shrink-0 text-[var(--color-brand-600)] dark:text-[var(--color-brand-400)]"
                       aria-hidden
                     />
                     <span>{item}</span>
@@ -316,8 +316,8 @@ export default function BuildServicesPage() {
                 it to any developer.
               </p>
             </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[color-mix(in_oklch,var(--color-build-500)_8%,var(--bg-elevated))] p-7">
-              <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--color-build-700)] dark:text-[var(--color-build-400)]">
+            <div className="rounded-2xl border border-[var(--border)] bg-[color-mix(in_oklch,var(--color-brand-500)_8%,var(--bg-elevated))] p-7">
+              <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)]">
                 Discovery
               </div>
               <div className="mt-3 font-[var(--font-display)] text-4xl font-medium tracking-tight">
@@ -369,7 +369,7 @@ export default function BuildServicesPage() {
               >
                 <div
                   aria-hidden
-                  className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[color-mix(in_oklch,var(--color-build-500)_15%,transparent)] text-[var(--color-build-600)] dark:text-[var(--color-build-400)]"
+                  className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[color-mix(in_oklch,var(--color-brand-500)_15%,transparent)] text-[var(--color-brand-600)] dark:text-[var(--color-brand-400)]"
                 >
                   <Check className="h-4 w-4" />
                 </div>
@@ -477,7 +477,7 @@ export default function BuildServicesPage() {
               className="pointer-events-none absolute inset-0 -z-10 opacity-60"
               style={{
                 background:
-                  "radial-gradient(ellipse at bottom, color-mix(in oklch, var(--color-build-500) 30%, transparent) 0%, transparent 60%)",
+                  "radial-gradient(ellipse at bottom, color-mix(in oklch, var(--color-brand-500) 30%, transparent) 0%, transparent 60%)",
               }}
             />
             <CustomDevelopmentContactForm
@@ -500,7 +500,7 @@ function TierCard({ tier }: { tier: Tier }) {
     <div
       className={`relative flex h-full flex-col rounded-2xl border bg-[var(--bg-elevated)] p-6 ${
         tier.highlight
-          ? "border-[var(--color-build-500)]/60 shadow-[0_0_0_1px_color-mix(in_oklch,var(--color-build-500)_30%,transparent)]"
+          ? "border-[var(--color-brand-500)]/60 shadow-[0_0_0_1px_color-mix(in_oklch,var(--color-brand-500)_30%,transparent)]"
           : "border-[var(--border)]"
       }`}
     >
@@ -509,7 +509,7 @@ function TierCard({ tier }: { tier: Tier }) {
           {tier.name}
         </h3>
         {tier.highlight ? (
-          <Badge variant="build">Most common</Badge>
+          <Badge variant="accent">Most common</Badge>
         ) : null}
       </div>
       <div className="mt-4 font-[var(--font-display)] text-3xl font-medium tracking-tight text-[var(--fg)]">
@@ -523,7 +523,7 @@ function TierCard({ tier }: { tier: Tier }) {
         {tier.bullets.map((b) => (
           <li key={b} className="flex items-start gap-2 text-sm">
             <Check
-              className="h-4 w-4 mt-0.5 shrink-0 text-[var(--color-build-600)] dark:text-[var(--color-build-400)]"
+              className="h-4 w-4 mt-0.5 shrink-0 text-[var(--color-brand-600)] dark:text-[var(--color-brand-400)]"
               aria-hidden
             />
             <span className="text-[var(--fg)]">{b}</span>

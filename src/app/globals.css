@@ -25,17 +25,17 @@
   --color-ink-950: oklch(9% 0 0);
   --color-ink-1000: oklch(5% 0 0);
 
-  /* Dunamis parent brand accent — deep indigo-ink, quietly powerful */
-  --color-brand-50: oklch(97% 0.015 270);
-  --color-brand-100: oklch(93% 0.03 270);
-  --color-brand-200: oklch(86% 0.06 270);
-  --color-brand-300: oklch(76% 0.1 270);
-  --color-brand-400: oklch(66% 0.14 270);
-  --color-brand-500: oklch(56% 0.17 270);
-  --color-brand-600: oklch(48% 0.18 270);
-  --color-brand-700: oklch(40% 0.15 270);
-  --color-brand-800: oklch(32% 0.11 270);
-  --color-brand-900: oklch(24% 0.07 270);
+  /* Dunamis parent brand — amber, hue 80 */
+  --color-brand-50:  oklch(97% 0.02 80);
+  --color-brand-100: oklch(93% 0.04 80);
+  --color-brand-200: oklch(86% 0.08 80);
+  --color-brand-300: oklch(86% 0.12 80);
+  --color-brand-400: oklch(78% 0.15 80);
+  --color-brand-500: oklch(72% 0.17 80);
+  --color-brand-600: oklch(62% 0.16 80);
+  --color-brand-700: oklch(52% 0.13 80);
+  --color-brand-800: oklch(42% 0.10 80);
+  --color-brand-900: oklch(32% 0.07 80);
 
   /* Property Pulse — signal green */
   --color-pulse-300: oklch(85% 0.14 155);
@@ -44,26 +44,19 @@
   --color-pulse-600: oklch(56% 0.16 155);
   --color-pulse-700: oklch(46% 0.13 155);
 
-  /* Debrief — warm amber */
-  --color-brief-300: oklch(86% 0.12 60);
-  --color-brief-400: oklch(78% 0.15 60);
-  --color-brief-500: oklch(70% 0.17 60);
-  --color-brief-600: oklch(60% 0.15 60);
-  --color-brief-700: oklch(50% 0.12 60);
+  /* Debrief — cool blue, hue 240 */
+  --color-brief-300: oklch(85% 0.10 240);
+  --color-brief-400: oklch(75% 0.14 240);
+  --color-brief-500: oklch(65% 0.17 240);
+  --color-brief-600: oklch(55% 0.16 240);
+  --color-brief-700: oklch(45% 0.13 240);
 
-  /* HubSpot-line wayfinding — HubSpot orange (#F57722) */
+  /* HubSpot wayfinding — HubSpot orange (#F57722) */
   --color-hubspot-300: oklch(85% 0.10 47);
   --color-hubspot-400: oklch(78% 0.14 47);
   --color-hubspot-500: oklch(68% 0.183 47);
   --color-hubspot-600: oklch(60% 0.18 47);
   --color-hubspot-700: oklch(50% 0.15 47);
-
-  /* Build Services line wayfinding — amber */
-  --color-build-300: oklch(86% 0.12 80);
-  --color-build-400: oklch(78% 0.15 80);
-  --color-build-500: oklch(72% 0.17 80);
-  --color-build-600: oklch(62% 0.16 80);
-  --color-build-700: oklch(52% 0.13 80);
 
   /* Semantic */
   --color-success: oklch(65% 0.17 150);
@@ -106,7 +99,10 @@
   --border: var(--color-ink-200);
   --border-strong: var(--color-ink-300);
   --ring: var(--color-brand-500);
-  --accent: var(--color-brand-600);
+  /* brand-700 (not 600) keeps white text on the accent at AA Normal
+     contrast (~5.6:1). Indigo-600 used to clear AA at 9:1; the new
+     amber-600 lands at ~3.4:1, which only passes AA Large. */
+  --accent: var(--color-brand-700);
   --accent-fg: #ffffff;
 
   color-scheme: light;
