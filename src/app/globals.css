@@ -111,6 +111,11 @@
      amber-600 lands at ~3.4:1, which only passes AA Large. */
   --accent: var(--color-brand-700);
   --accent-fg: #ffffff;
+  /* Atmospheric glow hue used by HeroGradient. Distinct from --accent
+     because the glow wants the brighter *-500 stop at the center of the
+     ellipse, not the AA-contrast *-700 used for buttons/text. Lane
+     wrappers below remap this to their wayfinding hue. */
+  --lane-glow: var(--color-brand-500);
 
   color-scheme: light;
 }
@@ -128,24 +133,28 @@
   --ring: var(--color-build-500);
   --accent: var(--color-build-700);
   --accent-fg: #ffffff;
+  --lane-glow: var(--color-build-500);
 }
 
 .lane-hubspot {
   --ring: var(--color-hubspot-500);
   --accent: var(--color-hubspot-700);
   --accent-fg: #ffffff;
+  --lane-glow: var(--color-hubspot-500);
 }
 
 .dark .lane-build {
   --ring: var(--color-build-400);
   --accent: var(--color-build-400);
   --accent-fg: var(--color-ink-1000);
+  --lane-glow: var(--color-build-500);
 }
 
 .dark .lane-hubspot {
   --ring: var(--color-hubspot-400);
   --accent: var(--color-hubspot-400);
   --accent-fg: var(--color-ink-1000);
+  --lane-glow: var(--color-hubspot-500);
 }
 
 .dark {
