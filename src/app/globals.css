@@ -58,6 +58,13 @@
   --color-hubspot-600: oklch(60% 0.18 47);
   --color-hubspot-700: oklch(50% 0.15 47);
 
+  /* Build Services wayfinding — deep purple, hue 300 */
+  --color-build-300: oklch(85% 0.12 300);
+  --color-build-400: oklch(75% 0.16 300);
+  --color-build-500: oklch(65% 0.19 300);
+  --color-build-600: oklch(55% 0.18 300);
+  --color-build-700: oklch(45% 0.15 300);
+
   /* Semantic */
   --color-success: oklch(65% 0.17 150);
   --color-warning: oklch(75% 0.15 75);

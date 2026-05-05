@@ -26,7 +26,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="/build-services"
-                className="text-[var(--fg-muted)] hover:text-[var(--fg)]"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-build-600)] dark:hover:text-[var(--color-build-400)]"
               >
                 Build Services
               </Link>

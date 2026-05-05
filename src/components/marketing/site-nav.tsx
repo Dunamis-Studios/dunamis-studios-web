@@ -9,10 +9,10 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-type NavAccent = "hubspot";
+type NavAccent = "build" | "hubspot";
 
 const NAV_LINKS: { href: string; label: string; accent?: NavAccent }[] = [
-  { href: "/build-services", label: "Build Services" },
+  { href: "/build-services", label: "Build Services", accent: "build" },
   { href: "/products", label: "Products", accent: "hubspot" },
   {
     href: "/custom-development",
@@ -27,6 +27,8 @@ const NAV_LINKS: { href: string; label: string; accent?: NavAccent }[] = [
 ];
 
 const ACCENT_CLASSES: Record<NavAccent, string> = {
+  build:
+    "hover:text-[var(--color-build-600)] dark:hover:text-[var(--color-build-400)] aria-[current=page]:text-[var(--color-build-600)] dark:aria-[current=page]:text-[var(--color-build-400)]",
   hubspot:
     "hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)] aria-[current=page]:text-[var(--color-hubspot-600)] dark:aria-[current=page]:text-[var(--color-hubspot-400)]",
 };

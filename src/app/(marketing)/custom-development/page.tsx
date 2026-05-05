@@ -265,7 +265,7 @@ export default function CustomDevelopmentPage() {
             custom application development outside the HubSpot ecosystem?{" "}
             <Link
               href="/build-services"
-              className="text-[var(--color-brand-700)] underline underline-offset-4 hover:text-[var(--color-brand-800)] dark:text-[var(--color-brand-400)] dark:hover:text-[var(--color-brand-300)]"
+              className="text-[var(--color-build-600)] underline underline-offset-4 hover:text-[var(--color-build-700)] dark:text-[var(--color-build-400)] dark:hover:text-[var(--color-build-300)]"
             >
               See Build Services
             </Link>

@@ -339,11 +339,11 @@ function ServiceTile({
 }) {
   const accentText =
     accent === "build"
-      ? "text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)]"
+      ? "text-[var(--color-build-600)] dark:text-[var(--color-build-400)]"
       : "text-[var(--color-hubspot-600)] dark:text-[var(--color-hubspot-400)]";
   const accentBorder =
     accent === "build"
-      ? "hover:border-[var(--color-brand-500)]/50"
+      ? "hover:border-[var(--color-build-500)]/50"
       : "hover:border-[var(--color-hubspot-500)]/50";
   return (
     <Link
@@ -351,7 +351,7 @@ function ServiceTile({
       className={`group relative isolate flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-7 transition-colors ${accentBorder}`}
     >
       <div className="flex items-center justify-between gap-3">
-        <Badge variant={accent === "build" ? "accent" : "hubspot"}>
+        <Badge variant={accent === "build" ? "build" : "hubspot"}>
           {accent === "build" ? "Build Services" : "HubSpot Specialty"}
         </Badge>
         <ArrowRight
