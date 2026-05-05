@@ -24,6 +24,10 @@ const SOURCE_PAGE_META: Record<
     pageUri: `${SITE_ORIGIN}/build-services`,
     pageName: "Build Services",
   },
+  general: {
+    pageUri: `${SITE_ORIGIN}/contact`,
+    pageName: "Contact",
+  },
 };
 
 const DEFAULT_PAGE_META = SOURCE_PAGE_META["hubspot-custom-development"];

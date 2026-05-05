@@ -212,7 +212,7 @@ export default function ToolsPage() {
                 >
                   <div className="flex items-start justify-between">
                     <div
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[color-mix(in_oklch,var(--color-brand-500)_15%,transparent)] text-[var(--color-brand-400)]"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[color-mix(in_oklch,var(--color-hubspot-500)_15%,transparent)] text-[var(--color-hubspot-600)] dark:text-[var(--color-hubspot-400)]"
                       aria-hidden
                     >
                       <Icon className="h-4 w-4" aria-hidden />

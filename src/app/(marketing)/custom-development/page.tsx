@@ -290,7 +290,7 @@ export default function CustomDevelopmentPage() {
                 className="group relative rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6 transition-colors hover:border-[var(--border-strong)]"
               >
                 <div
-                  className="mb-5 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[color-mix(in_oklch,var(--color-brand-500)_15%,transparent)] text-[var(--color-brand-400)]"
+                  className="mb-5 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[color-mix(in_oklch,var(--color-hubspot-500)_15%,transparent)] text-[var(--color-hubspot-600)] dark:text-[var(--color-hubspot-400)]"
                   aria-hidden
                 >
                   <span className="font-mono text-xs">
@@ -389,7 +389,7 @@ export default function CustomDevelopmentPage() {
               className="pointer-events-none absolute inset-0 -z-10 opacity-60"
               style={{
                 background:
-                  "radial-gradient(ellipse at bottom, color-mix(in oklch, var(--color-brand-500) 30%, transparent) 0%, transparent 60%)",
+                  "radial-gradient(ellipse at bottom, color-mix(in oklch, var(--color-hubspot-500) 30%, transparent) 0%, transparent 60%)",
               }}
             />
             <CustomDevelopmentContactForm />

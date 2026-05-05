@@ -239,7 +239,7 @@ export default function HubSpotAuditCoursePage() {
                     return (
                       <li key={d.day} className="flex gap-4">
                         <div
-                          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[color-mix(in_oklch,var(--color-brand-500)_12%,transparent)] text-[var(--color-brand-400)]"
+                          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[color-mix(in_oklch,var(--color-hubspot-500)_12%,transparent)] text-[var(--color-hubspot-600)] dark:text-[var(--color-hubspot-400)]"
                           aria-hidden
                         >
                           <Icon className="h-5 w-5" aria-hidden />

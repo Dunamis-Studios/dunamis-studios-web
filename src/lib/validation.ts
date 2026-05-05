@@ -174,6 +174,7 @@ export const TIMELINE_OPTIONS = [
 export const CONTACT_SOURCES = [
   "hubspot-custom-development",
   "build-services",
+  "general",
 ] as const;
 
 export type ContactSource = (typeof CONTACT_SOURCES)[number];

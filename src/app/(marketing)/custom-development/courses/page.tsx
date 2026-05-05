@@ -119,13 +119,13 @@ export default function CoursesPage() {
                 >
                   <div className="flex items-start justify-between">
                     <div
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[color-mix(in_oklch,var(--color-brand-500)_15%,transparent)] text-[var(--color-brand-400)]"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[color-mix(in_oklch,var(--color-hubspot-500)_15%,transparent)] text-[var(--color-hubspot-600)] dark:text-[var(--color-hubspot-400)]"
                       aria-hidden
                     >
                       <Icon className="h-4 w-4" aria-hidden />
                     </div>
                     {course.badge ? (
-                      <span className="inline-flex items-center rounded-md border border-[color-mix(in_oklch,var(--color-brand-500)_50%,transparent)] bg-[color-mix(in_oklch,var(--color-brand-500)_15%,transparent)] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--color-brand-400)]">
+                      <span className="inline-flex items-center rounded-md border border-[color-mix(in_oklch,var(--color-hubspot-500)_50%,transparent)] bg-[color-mix(in_oklch,var(--color-hubspot-500)_15%,transparent)] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--color-hubspot-600)] dark:text-[var(--color-hubspot-400)]">
                         {course.badge}
                       </span>
                     ) : null}

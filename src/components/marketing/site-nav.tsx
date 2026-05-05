@@ -9,28 +9,70 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-type NavAccent = "build" | "hubspot";
+type LaneKey = "build" | "hubspot";
 
-const NAV_LINKS: { href: string; label: string; accent?: NavAccent }[] = [
-  { href: "/build-services", label: "Build Services", accent: "build" },
-  { href: "/custom-development/products", label: "Products", accent: "hubspot" },
+interface LaneNavLink {
+  href: string;
+  label: string;
+  lane: LaneKey;
+}
+
+interface GeneralNavLink {
+  href: string;
+  label: string;
+}
+
+const LANE_LINKS: LaneNavLink[] = [
+  { href: "/build-services", label: "Build Services", lane: "build" },
   {
     href: "/custom-development",
     label: "HubSpot Custom Development",
-    accent: "hubspot",
+    lane: "hubspot",
   },
-  { href: "/custom-development/tools", label: "Free Tools" },
-  { href: "/custom-development/courses", label: "Courses" },
-  { href: "/custom-development/guides", label: "Guides" },
-  { href: "/custom-development/articles", label: "Articles" },
-  { href: "/custom-development/pricing", label: "Pricing" },
 ];
 
-const ACCENT_CLASSES: Record<NavAccent, string> = {
+const GENERAL_LINKS: GeneralNavLink[] = [
+  { href: "/about", label: "About" },
+  { href: "/help", label: "Help Center" },
+  { href: "/contact", label: "Contact" },
+];
+
+/**
+ * Detects which lane (if any) the current pathname falls under so the
+ * matching top-level item shows its active treatment, persistent across
+ * every page within the lane.
+ */
+function detectLane(pathname: string | null): LaneKey | null {
+  if (!pathname) return null;
+  if (pathname === "/build-services" || pathname.startsWith("/build-services/")) {
+    return "build";
+  }
+  if (
+    pathname === "/custom-development" ||
+    pathname.startsWith("/custom-development/")
+  ) {
+    return "hubspot";
+  }
+  return null;
+}
+
+const LANE_DOT_CLASS: Record<LaneKey, string> = {
+  build: "bg-[var(--color-build-500)]",
+  hubspot: "bg-[var(--color-hubspot-500)]",
+};
+
+const LANE_ACTIVE_CLASS: Record<LaneKey, string> = {
   build:
-    "hover:text-[var(--color-build-600)] dark:hover:text-[var(--color-build-400)] aria-[current=page]:text-[var(--color-build-600)] dark:aria-[current=page]:text-[var(--color-build-400)]",
+    "bg-[color-mix(in_oklch,var(--color-build-500)_12%,transparent)] text-[var(--color-build-700)] dark:text-[var(--color-build-300)] font-medium",
   hubspot:
-    "hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)] aria-[current=page]:text-[var(--color-hubspot-600)] dark:aria-[current=page]:text-[var(--color-hubspot-400)]",
+    "bg-[color-mix(in_oklch,var(--color-hubspot-500)_12%,transparent)] text-[var(--color-hubspot-700)] dark:text-[var(--color-hubspot-300)] font-medium",
+};
+
+const LANE_HOVER_CLASS: Record<LaneKey, string> = {
+  build:
+    "hover:text-[var(--color-build-700)] dark:hover:text-[var(--color-build-300)]",
+  hubspot:
+    "hover:text-[var(--color-hubspot-700)] dark:hover:text-[var(--color-hubspot-300)]",
 };
 
 type AuthState =
@@ -39,17 +81,23 @@ type AuthState =
   | { status: "signed-in"; firstName?: string };
 
 /**
- * Fetches /api/auth/me on mount. Defaulting to "loading" lets us render a
- * placeholder slot of fixed width on the right side of the nav so the
- * signed-in / signed-out swap does not cause layout shift. The marketing
- * layout used to fetch the session server-side, but doing so forced
- * every page in the group to render dynamically and blocked bf-cache.
+ * Top-level site nav. Layout:
+ *   [Logo] | [Build Services · HubSpot Custom Development] | [About · Help · Contact] [Theme] [Auth]
+ *
+ * Lane items carry a small color dot in their lane wayfinding color and
+ * pick up an active fill when the user is on a page inside that lane.
+ * Subnav rendering happens in each lane's layout.tsx, not here.
+ *
+ * Mobile: tapping a lane item navigates directly to the lane landing
+ * page; no accordion expansion. The lane subnav appears on the lane
+ * page itself once the user lands there.
  */
 export function SiteNav() {
   const [scrolled, setScrolled] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [auth, setAuth] = React.useState<AuthState>({ status: "loading" });
   const pathname = usePathname();
+  const activeLane = detectLane(pathname);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -98,20 +146,52 @@ export function SiteNav() {
         <Logo />
 
         <div className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map((l) => {
+          {LANE_LINKS.map((l) => {
+            const isActive = activeLane === l.lane;
+            return (
+              <Link
+                key={l.href}
+                href={l.href}
+                aria-current={isActive ? "page" : undefined}
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors",
+                  isActive
+                    ? LANE_ACTIVE_CLASS[l.lane]
+                    : cn(
+                        "text-[var(--fg-muted)]",
+                        LANE_HOVER_CLASS[l.lane],
+                      ),
+                )}
+              >
+                <span
+                  aria-hidden
+                  className={cn(
+                    "h-1.5 w-1.5 shrink-0 rounded-full",
+                    LANE_DOT_CLASS[l.lane],
+                  )}
+                />
+                {l.label}
+              </Link>
+            );
+          })}
+
+          <span
+            aria-hidden
+            className="mx-2 h-5 w-px shrink-0 bg-[var(--border)]"
+          />
+
+          {GENERAL_LINKS.map((l) => {
             const active = pathname === l.href || pathname?.startsWith(l.href + "/");
-            const accentClass = l.accent ? ACCENT_CLASSES[l.accent] : null;
             return (
               <Link
                 key={l.href}
                 href={l.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "px-3 py-1.5 text-sm transition-colors rounded-md",
+                  "rounded-md px-3 py-1.5 text-sm transition-colors",
                   active
                     ? "text-[var(--fg)]"
                     : "text-[var(--fg-muted)] hover:text-[var(--fg)]",
-                  accentClass,
                 )}
               >
                 {l.label}
@@ -155,14 +235,34 @@ export function SiteNav() {
       {mobileOpen ? (
         <div className="md:hidden border-t border-[var(--border)] bg-[var(--bg)] animate-fade-in">
           <div className="flex flex-col gap-1 p-3">
-            {NAV_LINKS.map((l) => (
+            {LANE_LINKS.map((l) => {
+              const isActive = activeLane === l.lane;
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={cn(
+                    "inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm",
+                    isActive
+                      ? LANE_ACTIVE_CLASS[l.lane]
+                      : cn("text-[var(--fg)]", LANE_HOVER_CLASS[l.lane]),
+                  )}
+                >
+                  <span
+                    aria-hidden
+                    className={cn("h-1.5 w-1.5 shrink-0 rounded-full", LANE_DOT_CLASS[l.lane])}
+                  />
+                  {l.label}
+                </Link>
+              );
+            })}
+            <div className="my-1 h-px bg-[var(--border)]" />
+            {GENERAL_LINKS.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
-                className={cn(
-                  "rounded-md px-3 py-2 text-sm text-[var(--fg)] hover:bg-[var(--bg-muted)]",
-                  l.accent ? ACCENT_CLASSES[l.accent] : null,
-                )}
+                className="rounded-md px-3 py-2 text-sm text-[var(--fg)] hover:bg-[var(--bg-muted)]"
               >
                 {l.label}
               </Link>

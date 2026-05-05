@@ -115,6 +115,39 @@
   color-scheme: light;
 }
 
+/* -----------------------------------------------------------------------
+   Lane scope — applied at lane-layout root (.lane-build / .lane-hubspot)
+   to remap --accent / --accent-fg / --ring within the lane subtree. Any
+   <Button>, focus ring, kb-prose link, or component bound to var(--accent)
+   automatically picks up the lane color. Non-lane chrome (top nav, footer,
+   homepage, /about, /contact, /help) renders outside these wrappers and
+   keeps the default amber resolution.
+   ------------------------------------------------------------------- */
+
+.lane-build {
+  --ring: var(--color-build-500);
+  --accent: var(--color-build-700);
+  --accent-fg: #ffffff;
+}
+
+.lane-hubspot {
+  --ring: var(--color-hubspot-500);
+  --accent: var(--color-hubspot-700);
+  --accent-fg: #ffffff;
+}
+
+.dark .lane-build {
+  --ring: var(--color-build-400);
+  --accent: var(--color-build-400);
+  --accent-fg: var(--color-ink-1000);
+}
+
+.dark .lane-hubspot {
+  --ring: var(--color-hubspot-400);
+  --accent: var(--color-hubspot-400);
+  --accent-fg: var(--color-ink-1000);
+}
+
 .dark {
   --bg: var(--color-ink-1000);
   --bg-subtle: var(--color-ink-950);

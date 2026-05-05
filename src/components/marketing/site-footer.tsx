@@ -20,7 +20,7 @@ export function SiteFooter() {
 
         <div>
           <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-            Services & Products
+            Build Services
           </h3>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li>
@@ -28,7 +28,47 @@ export function SiteFooter() {
                 href="/build-services"
                 className="text-[var(--fg-muted)] hover:text-[var(--color-build-600)] dark:hover:text-[var(--color-build-400)]"
               >
-                Build Services
+                Overview
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/build-services/pricing"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-build-600)] dark:hover:text-[var(--color-build-400)]"
+              >
+                Pricing
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/build-services/articles"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-build-600)] dark:hover:text-[var(--color-build-400)]"
+              >
+                Articles
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/build-services/guides"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-build-600)] dark:hover:text-[var(--color-build-400)]"
+              >
+                Guides
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+            HubSpot Custom Development
+          </h3>
+          <ul className="mt-4 space-y-2.5 text-sm">
+            <li>
+              <Link
+                href="/custom-development"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
+              >
+                Overview
               </Link>
             </li>
             <li>
@@ -41,15 +81,26 @@ export function SiteFooter() {
             </li>
             <li>
               <Link
-                href="/custom-development"
+                href="/custom-development/pricing"
                 className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
               >
-                HubSpot Custom Development
+                Pricing
               </Link>
             </li>
             <li>
-              <Link href="/custom-development/pricing" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
-                Pricing
+              <Link
+                href="/custom-development/articles"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
+              >
+                Articles
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/custom-development/guides"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
+              >
+                Guides
               </Link>
             </li>
           </ul>
@@ -57,17 +108,17 @@ export function SiteFooter() {
 
         <div>
           <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-            Resources
+            Company
           </h3>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li>
-              <Link href="/custom-development/articles" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
-                Articles
+              <Link href="/about" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
+                About
               </Link>
             </li>
             <li>
-              <Link href="/custom-development/guides" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
-                Guides
+              <Link href="/contact" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
+                Contact
               </Link>
             </li>
             <li>
@@ -75,22 +126,6 @@ export function SiteFooter() {
                 Help center
               </Link>
             </li>
-            <li>
-              <a
-                href="mailto:hello@dunamisstudios.net"
-                className="text-[var(--fg-muted)] hover:text-[var(--fg)]"
-              >
-                Contact
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-            Legal
-          </h3>
-          <ul className="mt-4 space-y-2.5 text-sm">
             <li>
               <Link href="/terms" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
                 Terms

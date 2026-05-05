@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Check, Mail, Minus } from "lucide-react";
+import { ArrowRight, Mail, Minus } from "lucide-react";
 import { Container, Section } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,20 +38,16 @@ const FAQ: { q: string; a: string }[] = [
     a: "Custom application development outside the HubSpot ecosystem. We take engagements directly from end businesses and on a white-label basis from agencies who need a build partner. We scope the project, build it, ship it, set up hosting on your infrastructure, and hand over full product documentation.",
   },
   {
-    q: "How does the paid discovery phase work?",
-    a: "Discovery starts at $250-400 depending on project complexity. The deliverable is a written spec doc covering the feature list, recommended tech stack, hosting plan, and a fixed-price quote for the build. If you decide to move forward with the build, the discovery fee is credited toward the project. If you don't, you keep the spec doc and can take it to any developer.",
-  },
-  {
-    q: "What's included in every tier?",
-    a: "Every Build Services tier includes hosting setup on your own infrastructure (your accounts, your control), full product documentation covering architecture and operations, and 30 days of bug-fix support after launch. A bug means what we specced isn't working as specced. New feature requests, scope expansions, or fixes for things outside the original spec trigger a new statement of work.",
-  },
-  {
     q: "Who buys Build Services?",
     a: "Two buyer types. Agencies who don't have in-house engineering capacity and need a white-label build partner they can resell to their own clients. And end businesses who want custom software built directly without going through a middleman. The engagement structure is the same; the relationship and branding differ.",
   },
   {
     q: "How is this different from HubSpot Custom Development?",
     a: "Build Services is for custom software outside HubSpot — internal tools, customer portals, dashboards, integrations between non-HubSpot systems, full custom applications. HubSpot Custom Development is our specialty practice for HubSpot-specific work like UI extensions, marketplace apps, and HubSpot API integrations. If your project is HubSpot-centric, start there instead.",
+  },
+  {
+    q: "Where do I find pricing?",
+    a: "Tiers, ranges, what every build includes, and the discovery process all live on the dedicated Build Services pricing page. Every engagement starts with paid discovery and a fixed-quote spec doc.",
   },
 ];
 
@@ -98,78 +94,6 @@ export const metadata: Metadata = {
     ],
   },
 };
-
-type Tier = {
-  name: string;
-  price: string;
-  pace: string;
-  summary: string;
-  bullets: string[];
-  highlight?: boolean;
-};
-
-const TIERS: Tier[] = [
-  {
-    name: "Starter",
-    price: "$2,500-4,000",
-    pace: "1-2 week build",
-    summary: "A single-purpose tool. One job, done well.",
-    bullets: [
-      "One core feature, scoped tight",
-      "Minimal UI, focused on the workflow",
-      "Suitable for internal tools or single-page utilities",
-    ],
-  },
-  {
-    name: "Standard",
-    price: "$5,000-8,500",
-    pace: "3-4 week build",
-    summary: "A multi-feature tool with light integrations.",
-    bullets: [
-      "Several connected features inside one product",
-      "Light third-party integrations (auth, payments, email, one external API)",
-      "Sensible UI patterns across views, basic admin surface",
-    ],
-    highlight: true,
-  },
-  {
-    name: "Pro",
-    price: "$10,000-18,000",
-    pace: "5-8 week build",
-    summary: "A full custom application with multiple roles and integrations.",
-    bullets: [
-      "Multi-role access (admin, end user, optional public surfaces)",
-      "Multiple integrations and webhook-driven flows",
-      "Production-grade error handling, observability, and admin tooling",
-    ],
-  },
-  {
-    name: "Custom",
-    price: "$20,000+",
-    pace: "Quoted after discovery",
-    summary: "Larger or more complex builds. Quoted from the spec doc.",
-    bullets: [
-      "Multi-application or multi-tenant systems",
-      "Heavier compliance, security, or migration scope",
-      "Complex integration surfaces with multiple external systems",
-    ],
-  },
-];
-
-const ALWAYS_INCLUDED: { title: string; body: string }[] = [
-  {
-    title: "Hosting on your infrastructure",
-    body: "We provision the deploy on accounts you own — Vercel, AWS, Cloudflare, your VPS, your call. You keep root access, billing, and DNS. Nothing is hostage on our side.",
-  },
-  {
-    title: "Full product documentation",
-    body: "Architecture overview, environment variables, deploy steps, third-party accounts, runbook for the things that break first. Written for whoever owns the system after we hand over.",
-  },
-  {
-    title: "30 days of bug-fix support post-launch",
-    body: "If what we specced isn't working as specced, we fix it on us within 30 days of launch. Anything outside the spec — new features, scope changes, additions you decide you want — triggers a new SOW.",
-  },
-];
 
 const PROCESS_STEPS: { title: string; body: string }[] = [
   {
@@ -244,7 +168,7 @@ export default function BuildServicesPage() {
                 </Link>
               </Button>
               <Button asChild size="lg" variant="secondary">
-                <Link href="#tiers">
+                <Link href="/build-services/pricing">
                   See pricing
                   <ArrowRight className="ml-0.5 h-4 w-4" />
                 </Link>
@@ -275,112 +199,35 @@ export default function BuildServicesPage() {
         </Container>
       </Section>
 
-      {/* ---- DISCOVERY ---- */}
+      {/* ---- PRICING TEASER ---- */}
       <Section className="border-t border-[var(--border)]">
         <Container size="xl">
-          <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-            Step one
-          </div>
-          <h2 className="mt-3 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
-            Paid Discovery
-          </h2>
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-7">
-              <p className="text-base leading-relaxed text-[var(--fg)]">
-                Every build starts with a paid discovery phase, $250-400
-                depending on complexity. The deliverable is a written spec doc
-                covering:
-              </p>
-              <ul className="mt-5 space-y-2.5">
-                {[
-                  "Feature list, scoped to what the build will and won't include",
-                  "Tech stack recommendation with reasoning",
-                  "Hosting plan on your infrastructure",
-                  "Fixed-price quote for the full build",
-                ].map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-start gap-2.5 text-sm text-[var(--fg)]"
-                  >
-                    <Check
-                      className="h-4 w-4 mt-0.5 shrink-0 text-[var(--color-build-600)] dark:text-[var(--color-build-400)]"
-                      aria-hidden
-                    />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-5 text-sm leading-relaxed text-[var(--fg-muted)]">
-                The discovery fee is credited toward the build if you move
-                forward. If you don&apos;t, you keep the spec doc and can take
-                it to any developer.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[color-mix(in_oklch,var(--color-build-500)_8%,var(--bg-elevated))] p-7">
-              <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--color-build-700)] dark:text-[var(--color-build-400)]">
-                Discovery
-              </div>
-              <div className="mt-3 font-[var(--font-display)] text-4xl font-medium tracking-tight">
-                $250-400
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-[var(--fg-muted)]">
-                Credited toward the build if you move forward.
-              </p>
-            </div>
-          </div>
-        </Container>
-      </Section>
-
-      {/* ---- TIERS ---- */}
-      <Section id="tiers" className="border-t border-[var(--border)]">
-        <Container size="xl">
-          <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-            Build pricing
-          </div>
-          <h2 className="mt-3 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
-            Tiers
-          </h2>
-          <p className="mt-4 max-w-2xl text-[var(--fg-muted)] leading-relaxed">
-            Ranges below are starting bands. The exact number lands in the spec
-            doc after discovery.
-          </p>
-          <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {TIERS.map((tier) => (
-              <TierCard key={tier.name} tier={tier} />
-            ))}
-          </div>
-        </Container>
-      </Section>
-
-      {/* ---- ALWAYS INCLUDED ---- */}
-      <Section className="border-t border-[var(--border)]">
-        <Container size="xl">
-          <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-            Every tier includes
-          </div>
-          <h2 className="mt-3 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
-            What ships with every build
-          </h2>
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {ALWAYS_INCLUDED.map((item) => (
-              <div
-                key={item.title}
-                className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6"
-              >
-                <div
-                  aria-hidden
-                  className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[color-mix(in_oklch,var(--color-build-500)_15%,transparent)] text-[var(--color-build-600)] dark:text-[var(--color-build-400)]"
-                >
-                  <Check className="h-4 w-4" />
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-8 sm:p-10 lg:p-12">
+            <div className="grid gap-8 lg:grid-cols-3 lg:items-center">
+              <div className="lg:col-span-2">
+                <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--color-build-700)] dark:text-[var(--color-build-400)]">
+                  Pricing
                 </div>
-                <h3 className="font-[var(--font-display)] text-lg font-medium tracking-tight">
-                  {item.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-[var(--fg-muted)]">
-                  {item.body}
+                <h2 className="mt-3 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
+                  Four fixed-price tiers, scoped after discovery
+                </h2>
+                <p className="mt-4 max-w-2xl text-[var(--fg-muted)] leading-relaxed">
+                  Builds run $2,500 to $20,000+ across four tiers. Every
+                  engagement starts with paid discovery ($250-400, credited
+                  toward the build) and a written spec doc. Hosting on your
+                  infrastructure, full handover documentation, and 30 days of
+                  bug-fix support ship with every tier.
                 </p>
               </div>
-            ))}
+              <div className="flex lg:justify-end">
+                <Button asChild size="lg">
+                  <Link href="/build-services/pricing">
+                    See pricing
+                    <ArrowRight className="ml-0.5 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
           </div>
         </Container>
       </Section>
@@ -492,44 +339,5 @@ export default function BuildServicesPage() {
         </Container>
       </Section>
     </>
-  );
-}
-
-function TierCard({ tier }: { tier: Tier }) {
-  return (
-    <div
-      className={`relative flex h-full flex-col rounded-2xl border bg-[var(--bg-elevated)] p-6 ${
-        tier.highlight
-          ? "border-[var(--color-build-500)]/60 shadow-[0_0_0_1px_color-mix(in_oklch,var(--color-build-500)_30%,transparent)]"
-          : "border-[var(--border)]"
-      }`}
-    >
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="font-[var(--font-display)] text-xl font-medium tracking-tight">
-          {tier.name}
-        </h3>
-        {tier.highlight ? (
-          <Badge variant="build">Most common</Badge>
-        ) : null}
-      </div>
-      <div className="mt-4 font-[var(--font-display)] text-3xl font-medium tracking-tight text-[var(--fg)]">
-        {tier.price}
-      </div>
-      <div className="mt-1 text-xs text-[var(--fg-subtle)]">{tier.pace}</div>
-      <p className="mt-4 text-sm leading-relaxed text-[var(--fg-muted)]">
-        {tier.summary}
-      </p>
-      <ul className="mt-5 space-y-2 border-t border-[var(--border)] pt-4">
-        {tier.bullets.map((b) => (
-          <li key={b} className="flex items-start gap-2 text-sm">
-            <Check
-              className="h-4 w-4 mt-0.5 shrink-0 text-[var(--color-build-600)] dark:text-[var(--color-build-400)]"
-              aria-hidden
-            />
-            <span className="text-[var(--fg)]">{b}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }

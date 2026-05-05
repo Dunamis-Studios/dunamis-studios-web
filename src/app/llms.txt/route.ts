@@ -121,7 +121,16 @@ export async function GET(): Promise<Response> {
   lines.push("## About");
   lines.push("");
   lines.push(
-    `- [Pricing](${SITE_URL}/custom-development/pricing): Pricing for Property Pulse, Debrief, and other products.`,
+    `- [About Dunamis Studios](${SITE_URL}/about): Studio overview, two service lines, and the engagement model.`,
+  );
+  lines.push(
+    `- [Contact](${SITE_URL}/contact): Get in touch with the studio.`,
+  );
+  lines.push(
+    `- [Build Services pricing](${SITE_URL}/build-services/pricing): Fixed-price tiers for custom application development.`,
+  );
+  lines.push(
+    `- [HubSpot Custom Development pricing](${SITE_URL}/custom-development/pricing): Pricing for Property Pulse, Debrief, and other products.`,
   );
   lines.push("");
 
