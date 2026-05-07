@@ -7,10 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import type {
   AtelierLicenseRecord,
   AtelierLicenseStatus,
+  AtelierRevocationMode,
 } from "@/lib/atelier-license-signing";
 
 interface Props {
@@ -56,6 +65,13 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
   const [searchEmail, setSearchEmail] = React.useState("");
   const [actionRowId, setActionRowId] = React.useState<string | null>(null);
   const [copiedLid, setCopiedLid] = React.useState<string | null>(null);
+  const [revokeTarget, setRevokeTarget] =
+    React.useState<AtelierLicenseRecord | null>(null);
+  const [revokeMode, setRevokeMode] =
+    React.useState<AtelierRevocationMode>("grace_14d");
+  const [revokeReason, setRevokeReason] = React.useState("");
+  const [revokeBusy, setRevokeBusy] = React.useState(false);
+  const [revokeError, setRevokeError] = React.useState<string | null>(null);
 
   const filtered = React.useMemo(() => {
     return licenses.filter((l) => {
@@ -132,6 +148,17 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
   }
 
   async function onSetStatus(lid: string, status: AtelierLicenseStatus) {
+    if (status === "revoked") {
+      // Revocation has more knobs (mode + reason) — open the modal
+      // instead of firing the request straight from the table action.
+      const target = licenses.find((l) => l.lid === lid) ?? null;
+      if (!target) return;
+      setRevokeTarget(target);
+      setRevokeMode("grace_14d");
+      setRevokeReason("");
+      setRevokeError(null);
+      return;
+    }
     if (!confirm(`Mark this license as "${status}"? The license string remains cryptographically valid; this just records the administrative state.`)) {
       return;
     }
@@ -154,6 +181,37 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
       alert(err instanceof Error ? err.message : "Network error.");
     } finally {
       setActionRowId(null);
+    }
+  }
+
+  async function onConfirmRevocation() {
+    if (!revokeTarget) return;
+    setRevokeBusy(true);
+    setRevokeError(null);
+    try {
+      const res = await fetch("/api/admin/license-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lid: revokeTarget.lid,
+          status: "revoked",
+          revocation_mode: revokeMode,
+          revocation_reason: revokeReason.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setRevokeError(data?.error ?? "Status update failed.");
+        return;
+      }
+      setLicenses((prev) =>
+        prev.map((l) => (l.lid === revokeTarget.lid ? data.record : l)),
+      );
+      setRevokeTarget(null);
+    } catch (err) {
+      setRevokeError(err instanceof Error ? err.message : "Network error.");
+    } finally {
+      setRevokeBusy(false);
     }
   }
 
@@ -414,6 +472,127 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
           </table>
         </div>
       </section>
+
+      <Dialog
+        open={revokeTarget != null}
+        onOpenChange={(open) => {
+          if (!open && !revokeBusy) setRevokeTarget(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Revoke license</DialogTitle>
+            <DialogDescription>
+              Choose how aggressively the lockdown takes effect. Most refund-
+              driven revocations leave the customer the 14-day grace window;
+              breach-driven revocations should lock immediately.
+            </DialogDescription>
+          </DialogHeader>
+
+          {revokeTarget ? (
+            <div className="space-y-4 text-sm">
+              <div className="rounded-md border border-[var(--border)] bg-[var(--bg-subtle)] p-3 text-xs">
+                <div className="font-medium text-[var(--fg)]">
+                  {revokeTarget.email}
+                </div>
+                <div className="font-mono text-[var(--fg-subtle)]">
+                  {revokeTarget.lid}
+                </div>
+              </div>
+
+              <fieldset className="space-y-2">
+                <legend className="text-sm font-medium text-[var(--fg)]">
+                  Lockdown mode
+                </legend>
+                <label className="flex cursor-pointer items-start gap-2 rounded-md border border-[var(--border)] p-3">
+                  <input
+                    type="radio"
+                    name="revoke-mode"
+                    value="grace_14d"
+                    checked={revokeMode === "grace_14d"}
+                    onChange={() => setRevokeMode("grace_14d")}
+                    className="mt-0.5"
+                  />
+                  <span>
+                    <span className="block font-medium text-[var(--fg)]">
+                      14-day grace period{" "}
+                      <span className="font-normal text-[var(--fg-subtle)]">
+                        (default)
+                      </span>
+                    </span>
+                    <span className="text-xs text-[var(--fg-muted)]">
+                      Activate and heartbeat return a soft warning. The client
+                      keeps running until the heartbeat hits a revoked license
+                      14 days after the revocation timestamp.
+                    </span>
+                  </span>
+                </label>
+                <label className="flex cursor-pointer items-start gap-2 rounded-md border border-[var(--border)] p-3">
+                  <input
+                    type="radio"
+                    name="revoke-mode"
+                    value="immediate"
+                    checked={revokeMode === "immediate"}
+                    onChange={() => setRevokeMode("immediate")}
+                    className="mt-0.5"
+                  />
+                  <span>
+                    <span className="block font-medium text-[var(--fg)]">
+                      Lock immediately
+                    </span>
+                    <span className="text-xs text-[var(--fg-muted)]">
+                      Next activate or heartbeat returns a hard revoked
+                      response and the client locks instantly. Use for breach,
+                      fraud, or legal-driven revocations.
+                    </span>
+                  </span>
+                </label>
+              </fieldset>
+
+              <div>
+                <Label htmlFor="revoke-reason" className="text-sm">
+                  Reason{" "}
+                  <span className="font-normal text-[var(--fg-subtle)]">
+                    (admin-only, not shown to customer)
+                  </span>
+                </Label>
+                <textarea
+                  id="revoke-reason"
+                  value={revokeReason}
+                  onChange={(e) => setRevokeReason(e.target.value)}
+                  maxLength={500}
+                  rows={3}
+                  placeholder="e.g., Stripe refund #ch_xxx; or breach of EULA §5"
+                  className="mt-1.5 w-full rounded-md border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-sm outline-none focus:border-[var(--border-strong)]"
+                />
+              </div>
+
+              {revokeError ? (
+                <p className="text-sm text-[var(--color-danger)]">
+                  {revokeError}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setRevokeTarget(null)}
+              disabled={revokeBusy}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={onConfirmRevocation}
+              disabled={revokeBusy}
+              className="bg-[var(--color-danger)] text-white hover:bg-[var(--color-danger)]/90"
+            >
+              {revokeBusy ? "Revoking…" : "Revoke license"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

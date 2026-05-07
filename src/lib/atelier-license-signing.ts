@@ -354,13 +354,43 @@ export async function listLicensesByProduct(
   return records.filter((r): r is AtelierLicenseRecord => r != null);
 }
 
+/**
+ * Optional revocation metadata bundled with a "revoked" status flip.
+ * The mode field maps to the atelier-activation grace window:
+ * "immediate" causes activate/heartbeat to hard-lock instantly;
+ * "grace_14d" gives the customer the 14-day window before lockdown.
+ * Reason is admin commentary visible only in the admin UI.
+ */
+export interface SetLicenseStatusOptions {
+  revocation_mode?: AtelierRevocationMode;
+  revocation_reason?: string;
+  revoked_by_admin_email?: string;
+}
+
 export async function setLicenseStatus(
   lid: string,
   status: AtelierLicenseStatus,
+  options: SetLicenseStatusOptions = {},
 ): Promise<AtelierLicenseRecord | null> {
   const existing = await getLicense(lid);
   if (!existing) return null;
   const updated: AtelierLicenseRecord = { ...existing, status };
+  if (status === "revoked") {
+    updated.revocation_mode = options.revocation_mode ?? "grace_14d";
+    updated.revoked_at =
+      existing.revoked_at ??
+      new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
+    updated.revoked_by_admin_email = options.revoked_by_admin_email ?? null;
+    updated.revocation_reason = options.revocation_reason ?? null;
+  } else {
+    // Status reverted away from revoked (or set to refunded): clear
+    // the revocation metadata so a future "revoked" flip starts
+    // fresh rather than reusing stale fields.
+    updated.revocation_mode = null;
+    updated.revoked_at = null;
+    updated.revoked_by_admin_email = null;
+    updated.revocation_reason = null;
+  }
   const r = redis();
   await r.set(KEY.atelierLicense(lid), updated);
   return updated;

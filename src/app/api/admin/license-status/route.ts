@@ -12,31 +12,47 @@ import { setLicenseStatus } from "@/lib/atelier-license-signing";
  * POST /api/admin/license-status
  *
  * Mark a license as refunded or revoked. The license string itself
- * remains cryptographically valid (Atelier has no online revocation
- * in v1 by design — see EULA §6.4); this endpoint just records the
- * administrative status for support and reporting purposes.
+ * remains cryptographically valid by design (offline verification of
+ * the Ed25519 signature still passes), but the activation /
+ * heartbeat endpoints branch on the recorded status:
  *
- * Setting status back to "active" is not allowed via this endpoint —
- * once a license is marked refunded or revoked, the canonical record
- * in Redis reflects that state. If a status flip is genuinely
- * needed (e.g. a refund that gets reversed), edit the record directly
- * via the Upstash dashboard or extend the validation to include
- * "active" as a target.
+ *   - "refunded": next activate or heartbeat returns
+ *     license_refunded and the client locks immediately.
+ *   - "revoked": next activate or heartbeat branches on revocation
+ *     mode. "immediate" hard-locks instantly; "grace_14d" sends a
+ *     soft warning and only locks if the heartbeat is still hitting
+ *     a revoked license 14 days after revoked_at.
+ *
+ * The mode is admin-chosen per revocation in the modal — refunds
+ * default to grace, breach-driven revocations typically use
+ * immediate. Reason is free-text commentary stored on the record
+ * for audit; the customer never sees it.
+ *
+ * Setting status back to "active" is not allowed via this endpoint.
+ * If a status flip is genuinely needed (a refund that gets reversed),
+ * edit the record directly via the Upstash dashboard.
  */
 
-const bodySchema = z.object({
-  lid: z.string().trim().min(1).max(64),
-  status: z.enum(["refunded", "revoked"]),
-});
+const bodySchema = z
+  .object({
+    lid: z.string().trim().min(1).max(64),
+    status: z.enum(["refunded", "revoked"]),
+    revocation_mode: z.enum(["immediate", "grace_14d"]).optional(),
+    revocation_reason: z.string().trim().max(500).optional(),
+  })
+  .refine(
+    (v) => v.status !== "revoked" || v.revocation_mode != null,
+    "revocation_mode is required when status is revoked",
+  );
 
 export async function POST(request: Request) {
-  // Fast 503 in dev where ADMIN_EMAILS is intentionally unset.
   if (!isAdminAllowlistConfigured()) {
     return NextResponse.json(ADMIN_ALLOWLIST_UNCONFIGURED_BODY, { status: 503 });
   }
 
+  let admin: Awaited<ReturnType<typeof requireAdmin>>;
   try {
-    await requireAdmin();
+    admin = await requireAdmin();
   } catch (err) {
     if (err instanceof Response) return err;
     throw err;
@@ -51,10 +67,17 @@ export async function POST(request: Request) {
 
   const parsed = bodySchema.safeParse(raw);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid input." }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid input.", issues: parsed.error.issues },
+      { status: 400 },
+    );
   }
 
-  const updated = await setLicenseStatus(parsed.data.lid, parsed.data.status);
+  const updated = await setLicenseStatus(parsed.data.lid, parsed.data.status, {
+    revocation_mode: parsed.data.revocation_mode,
+    revocation_reason: parsed.data.revocation_reason,
+    revoked_by_admin_email: admin.account.email,
+  });
   if (!updated) {
     return NextResponse.json({ error: "License not found." }, { status: 404 });
   }
