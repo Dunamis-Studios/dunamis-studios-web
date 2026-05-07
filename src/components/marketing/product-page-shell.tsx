@@ -16,7 +16,7 @@ export interface ProductScreenshot {
 }
 
 export interface ProductPageProps {
-  accent: "pulse" | "brief";
+  accent: "pulse" | "brief" | "atelier";
   eyebrow: string;
   name: string;
   headline: string;
@@ -87,6 +87,25 @@ export interface ProductPageProps {
   //     path is a HubSpot OAuth authorize URL rather than a public
   //     marketplace listing (e.g. Property Pulse during beta).
   installCtaHref?: string;
+  // Optional buy CTA for prebuilt-app pages (Atelier and friends)
+  // that ship as one-time-purchase software with an in-page buy form
+  // rather than a HubSpot marketplace listing or notify signup. When
+  // present, both the hero and final CTAs render `buyCta.label` as a
+  // primary button linking to "#<buyCta.anchorId>", and the final-CTA
+  // lede uses `buyCta.finalLede` instead of the marketplace/notify
+  // copy. Takes precedence over marketplaceUrl + installCtaLabel +
+  // installCtaHref so a prebuilt-app page never has to set those at
+  // all.
+  buyCta?: {
+    /** Anchor the primary CTA scrolls to — typically the buy form. */
+    anchorId: string;
+    /** Anchor the secondary "See pricing" CTA scrolls to — typically
+     * an in-page pricing section. Required so the secondary button is
+     * never silently pointed at the buy form. */
+    pricingAnchorId: string;
+    label: string;
+    finalLede: string;
+  };
 }
 
 // Treat any string starting with http:// or https:// as external,
@@ -97,7 +116,7 @@ const EXTERNAL_HREF_RE = /^https?:\/\//;
 
 const ACCENT_CLASSES: Record<
   ProductPageProps["accent"],
-  { text: string; bg: string; glow: string; badge: "pulse" | "brief" }
+  { text: string; bg: string; glow: string; badge: "pulse" | "brief" | "atelier" }
 > = {
   pulse: {
     text: "text-[var(--color-pulse-500)]",
@@ -110,6 +129,12 @@ const ACCENT_CLASSES: Record<
     bg: "bg-[var(--color-brief-500)]/14",
     glow: "color-mix(in oklch, var(--color-brief-500) 30%, transparent)",
     badge: "brief",
+  },
+  atelier: {
+    text: "text-[var(--color-atelier-500)]",
+    bg: "bg-[var(--color-atelier-500)]/14",
+    glow: "color-mix(in oklch, var(--color-atelier-500) 32%, transparent)",
+    badge: "atelier",
   },
 };
 
@@ -137,7 +162,14 @@ export function ProductPageShell(p: ProductPageProps) {
             </p>
             <p className="mx-auto mt-6 max-w-xl text-[var(--fg-muted)]">{p.lede}</p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-              {p.installCtaLabel && p.installCtaHref ? (
+              {p.buyCta ? (
+                <Button asChild size="lg">
+                  <Link href={`#${p.buyCta.anchorId}`}>
+                    {p.buyCta.label}
+                    <ArrowRight className="ml-0.5 h-4 w-4" />
+                  </Link>
+                </Button>
+              ) : p.installCtaLabel && p.installCtaHref ? (
                 EXTERNAL_HREF_RE.test(p.installCtaHref) ? (
                   <Button asChild size="lg">
                     <a
@@ -170,7 +202,15 @@ export function ProductPageShell(p: ProductPageProps) {
                 </Button>
               )}
               <Button asChild size="lg" variant="secondary">
-                <Link href="/custom-development/pricing">See pricing</Link>
+                <Link
+                  href={
+                    p.buyCta
+                      ? `#${p.buyCta.pricingAnchorId}`
+                      : "/custom-development/pricing"
+                  }
+                >
+                  See pricing
+                </Link>
               </Button>
             </div>
           </div>
@@ -408,14 +448,23 @@ export function ProductPageShell(p: ProductPageProps) {
             Ready when you are.
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-[var(--fg-muted)]">
-            {p.installCtaLabel &&
-            p.installCtaHref &&
-            !EXTERNAL_HREF_RE.test(p.installCtaHref)
-              ? `${p.name} is on the way. Drop your email and we'll send a single note when it ships.`
-              : `Install from the HubSpot marketplace and manage ${p.name} alongside every other Dunamis app in one dashboard.`}
+            {p.buyCta
+              ? p.buyCta.finalLede
+              : p.installCtaLabel &&
+                  p.installCtaHref &&
+                  !EXTERNAL_HREF_RE.test(p.installCtaHref)
+                ? `${p.name} is on the way. Drop your email and we'll send a single note when it ships.`
+                : `Install from the HubSpot marketplace and manage ${p.name} alongside every other Dunamis app in one dashboard.`}
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            {p.installCtaLabel && p.installCtaHref ? (
+            {p.buyCta ? (
+              <Button asChild size="lg">
+                <Link href={`#${p.buyCta.anchorId}`}>
+                  {p.buyCta.label}
+                  <ArrowRight className="ml-0.5 h-4 w-4" />
+                </Link>
+              </Button>
+            ) : p.installCtaLabel && p.installCtaHref ? (
               EXTERNAL_HREF_RE.test(p.installCtaHref) ? (
                 <Button asChild size="lg">
                   <a
@@ -447,9 +496,11 @@ export function ProductPageShell(p: ProductPageProps) {
                 </a>
               </Button>
             )}
-            <Button asChild size="lg" variant="ghost">
-              <Link href="/signup">Create a Dunamis account</Link>
-            </Button>
+            {!p.buyCta ? (
+              <Button asChild size="lg" variant="ghost">
+                <Link href="/signup">Create a Dunamis account</Link>
+              </Button>
+            ) : null}
           </div>
         </Container>
       </Section>
@@ -474,7 +525,13 @@ function ProductVisualization({ accent }: { accent: ProductPageProps["accent"] }
         }}
       />
       <div className="relative">
-        {accent === "pulse" ? <PulseGraphic /> : <BriefGraphic />}
+        {accent === "pulse" ? (
+          <PulseGraphic />
+        ) : accent === "brief" ? (
+          <BriefGraphic />
+        ) : (
+          <AtelierGraphic />
+        )}
       </div>
     </div>
   );
@@ -588,6 +645,144 @@ function PulseGraphic() {
                   />
                 ) : null}
               </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AtelierGraphic() {
+  const accentText = "text-[var(--color-atelier-500)]";
+  const accentBg = "bg-[var(--color-atelier-500)]/16";
+  const accentBgStrong = "bg-[var(--color-atelier-500)]/28";
+
+  // Day-of run-of-show events. Each row is a time pill + event bar +
+  // vendor dot + status pill. The first event is highlighted as
+  // "in progress" to give a single hero focus point.
+  const events: {
+    time: string;
+    barW: string;
+    state: "DONE" | "NOW" | "NEXT" | "LATER";
+  }[] = [
+    { time: "14:30", barW: "w-3/5", state: "DONE" },
+    { time: "15:00", barW: "w-3/4", state: "NOW" },
+    { time: "16:15", barW: "w-2/3", state: "NEXT" },
+    { time: "18:00", barW: "w-1/2", state: "LATER" },
+  ];
+
+  // Budget summary line items. Two paid, one outstanding to read as
+  // "money is moving but not finished" — matches the real workspace
+  // texture without being too literal.
+  const budget: { labelW: string; amountW: string; paid: boolean }[] = [
+    { labelW: "w-24", amountW: "w-14", paid: true },
+    { labelW: "w-20", amountW: "w-12", paid: true },
+    { labelW: "w-28", amountW: "w-16", paid: false },
+  ];
+
+  return (
+    <div className="mx-auto max-w-xl rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)] p-5">
+      {/* Card header — planner name + section breadcrumb */}
+      <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+        <div className="flex items-center gap-2">
+          <div className={cn("h-2 w-2 rounded-full", accentBgStrong)} aria-hidden />
+          <div className="h-2 w-28 rounded-full bg-[var(--bg-muted)]" />
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="h-2 w-12 rounded-full bg-[var(--bg-muted)]" />
+          <div className="h-2 w-2 rounded-full bg-[var(--fg-subtle)]" />
+          <div className="h-2 w-14 rounded-full bg-[var(--bg-muted)]" />
+        </div>
+      </div>
+
+      {/* Section eyebrow — RUN OF SHOW */}
+      <div className="mt-4 flex items-center justify-between">
+        <div className="h-1.5 w-20 rounded-full bg-[var(--bg-muted)]" />
+        <span
+          className={cn(
+            "rounded px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-widest",
+            accentBg,
+            accentText,
+          )}
+        >
+          TODAY
+        </span>
+      </div>
+
+      {/* Timeline events */}
+      <div className="mt-3 space-y-2">
+        {events.map((ev, i) => (
+          <div
+            key={i}
+            className={cn(
+              "flex items-center gap-3 rounded-lg border px-3 py-2.5",
+              ev.state === "NOW"
+                ? cn("border-transparent", accentBg)
+                : "border-[var(--border)] bg-[var(--bg-elevated)]",
+            )}
+          >
+            <span
+              className={cn(
+                "shrink-0 font-mono text-[10px] tracking-wider",
+                ev.state === "NOW" ? accentText : "text-[var(--fg-subtle)]",
+              )}
+            >
+              {ev.time}
+            </span>
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <div
+                className={cn(
+                  "h-2 rounded-full bg-[var(--bg-muted)]",
+                  ev.barW,
+                )}
+              />
+              <div className="h-1.5 w-1/3 rounded-full bg-[var(--bg-muted)]" />
+            </div>
+            <div
+              className={cn(
+                "h-5 w-5 shrink-0 rounded-full border border-[var(--border)]",
+                ev.state === "NOW" ? accentBgStrong : "bg-[var(--bg-muted)]",
+              )}
+              aria-hidden
+            />
+            <span
+              className={cn(
+                "shrink-0 rounded px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-widest",
+                ev.state === "NOW"
+                  ? cn(accentBgStrong, accentText)
+                  : ev.state === "DONE"
+                    ? "bg-[var(--bg-muted)] text-[var(--fg-subtle)] line-through"
+                    : "bg-[var(--bg-muted)] text-[var(--fg-subtle)]",
+              )}
+            >
+              {ev.state}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Budget strip */}
+      <div className="mt-5 border-t border-[var(--border)] pt-4">
+        <div className="mb-3 flex items-center justify-between">
+          <div className="h-1.5 w-16 rounded-full bg-[var(--bg-muted)]" />
+          <div className="h-1.5 w-10 rounded-full bg-[var(--bg-muted)]" />
+        </div>
+        <div className="space-y-2">
+          {budget.map((row, i) => (
+            <div key={i} className="grid grid-cols-[1fr_auto_auto] items-center gap-3">
+              <div className={cn("h-1.5 rounded-full bg-[var(--bg-muted)]", row.labelW)} />
+              <div className={cn("h-1.5 rounded-full bg-[var(--bg-muted)]", row.amountW)} />
+              <span
+                className={cn(
+                  "rounded px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-widest",
+                  row.paid
+                    ? cn(accentBg, accentText)
+                    : "bg-[var(--bg-muted)] text-[var(--fg-subtle)]",
+                )}
+              >
+                {row.paid ? "PAID" : "DUE"}
+              </span>
             </div>
           ))}
         </div>
