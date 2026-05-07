@@ -42,6 +42,43 @@ const LICENSE_PREFIX = "ATLR-";
 export const VALID_TIERS = ["self-serve"] as const;
 export type AtelierLicenseTier = (typeof VALID_TIERS)[number];
 
+/**
+ * Tagged error thrown by the signing path when
+ * ATELIER_LICENSE_SIGNING_PRIVATE_KEY is not set in the runtime
+ * environment. Production and Preview always have the key
+ * provisioned in Vercel; Development intentionally does not, so a
+ * developer running `npm run dev` against this codebase can build
+ * and serve the site without configuring license signing locally.
+ *
+ * Routes catch this and convert it to a structured 503 response
+ * (see LICENSE_SIGNING_UNAVAILABLE_BODY below) so consumers see a
+ * clean machine-readable error rather than a 500-with-stack-trace.
+ *
+ * Same lazy-init shape as the KB_RATING_SALT fix from earlier in
+ * src/lib/kb-rating.ts: env var is checked at call time, not module
+ * load, so route modules can be imported in any environment.
+ */
+export class LicenseSigningUnavailableError extends Error {
+  readonly code = "license_signing_unavailable_in_dev";
+  constructor() {
+    super(
+      "License signing requires production/preview env vars (ATELIER_LICENSE_SIGNING_PRIVATE_KEY).",
+    );
+    this.name = "LicenseSigningUnavailableError";
+  }
+}
+
+/**
+ * Canonical response body for the license-signing-unavailable case.
+ * Pulled into a constant so every route returns the exact same
+ * shape — easier to test and easier for clients to branch on.
+ */
+export const LICENSE_SIGNING_UNAVAILABLE_BODY = {
+  error: "license_signing_unavailable_in_dev",
+  message:
+    "License signing requires production/preview env vars (ATELIER_LICENSE_SIGNING_PRIVATE_KEY).",
+} as const;
+
 export interface SignedLicense {
   /** The full license string in the ATLR-{payload}.{signature} format. */
   licenseString: string;
@@ -79,9 +116,7 @@ function nowIso(): string {
 function loadPrivateKey() {
   const pem = process.env.ATELIER_LICENSE_SIGNING_PRIVATE_KEY;
   if (!pem) {
-    throw new Error(
-      "ATELIER_LICENSE_SIGNING_PRIVATE_KEY env var is required for license signing.",
-    );
+    throw new LicenseSigningUnavailableError();
   }
   // The env value may have literal "\n" sequences instead of real
   // newlines (typical of Vercel's UI). Normalize before passing to

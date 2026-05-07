@@ -153,8 +153,12 @@ async function main(): Promise<void> {
   }
 
   if (!process.env.ATELIER_LICENSE_SIGNING_PRIVATE_KEY) {
+    // The CLI runs from a developer machine, so fail-fast with a
+    // clear message — the route handlers convert the same condition
+    // into a structured 503 for HTTP callers, but a CLI user wants
+    // a one-line diagnostic and a non-zero exit, not a JSON payload.
     console.error(
-      "ATELIER_LICENSE_SIGNING_PRIVATE_KEY is not set. Add it to .env.local.",
+      "ATELIER_LICENSE_SIGNING_PRIVATE_KEY not found in environment. Set it in your local .env or run against production env.",
     );
     process.exit(1);
   }

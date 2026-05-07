@@ -196,6 +196,31 @@ function getAdminEmails(): string[] {
 }
 
 /**
+ * Whether the ADMIN_EMAILS allowlist is configured at all. Distinct
+ * from "the current user is not on the allowlist" — Production and
+ * Preview always have ADMIN_EMAILS set in Vercel; Development
+ * intentionally does not. Admin route handlers check this up front
+ * and return a structured 503 in dev rather than the 403 a real
+ * not-on-the-allowlist user would get in prod.
+ */
+export function isAdminAllowlistConfigured(): boolean {
+  const raw = process.env.ADMIN_EMAILS;
+  return Boolean(raw && raw.trim().length > 0);
+}
+
+/**
+ * Canonical body for the unconfigured-allowlist case. Mirrors the
+ * shape of LICENSE_SIGNING_UNAVAILABLE_BODY in
+ * src/lib/atelier-license-signing.ts so admin clients can branch on
+ * the `error` field uniformly.
+ */
+export const ADMIN_ALLOWLIST_UNCONFIGURED_BODY = {
+  error: "admin_allowlist_unconfigured",
+  message:
+    "Admin routes require production/preview env vars (ADMIN_EMAILS).",
+} as const;
+
+/**
  * Returns the current session if the logged-in user is an admin, else null.
  * Use in server components / layouts where you want to redirect rather than 403.
  */

@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { requireAdmin } from "@/lib/session";
+import {
+  requireAdmin,
+  isAdminAllowlistConfigured,
+  ADMIN_ALLOWLIST_UNCONFIGURED_BODY,
+} from "@/lib/session";
 import {
   signAndPersistLicense,
   VALID_TIERS,
+  LicenseSigningUnavailableError,
+  LICENSE_SIGNING_UNAVAILABLE_BODY,
 } from "@/lib/atelier-license-signing";
 
 /**
@@ -32,6 +38,12 @@ const bodySchema = z.object({
 });
 
 export async function POST(request: Request) {
+  // Fast 503 in dev where ADMIN_EMAILS is intentionally unset.
+  // Distinct from a 403 you'd get in prod for a non-admin user.
+  if (!isAdminAllowlistConfigured()) {
+    return NextResponse.json(ADMIN_ALLOWLIST_UNCONFIGURED_BODY, { status: 503 });
+  }
+
   let admin;
   try {
     admin = await requireAdmin();
@@ -66,6 +78,9 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ license: signed.licenseString, lid: signed.lid, record });
   } catch (err) {
+    if (err instanceof LicenseSigningUnavailableError) {
+      return NextResponse.json(LICENSE_SIGNING_UNAVAILABLE_BODY, { status: 503 });
+    }
     console.error("[admin/sign-license] failed", err);
     return NextResponse.json(
       { error: "License signing failed. Check server logs." },

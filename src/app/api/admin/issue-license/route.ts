@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { requireAdmin } from "@/lib/session";
+import {
+  requireAdmin,
+  isAdminAllowlistConfigured,
+  ADMIN_ALLOWLIST_UNCONFIGURED_BODY,
+} from "@/lib/session";
 import {
   signAndPersistLicense,
   VALID_TIERS,
+  LicenseSigningUnavailableError,
+  LICENSE_SIGNING_UNAVAILABLE_BODY,
 } from "@/lib/atelier-license-signing";
 import { sendAtelierLicenseEmail } from "@/lib/email-atelier-license";
 
@@ -36,6 +42,11 @@ const bodySchema = z.object({
 });
 
 export async function POST(request: Request) {
+  // Fast 503 in dev where ADMIN_EMAILS is intentionally unset.
+  if (!isAdminAllowlistConfigured()) {
+    return NextResponse.json(ADMIN_ALLOWLIST_UNCONFIGURED_BODY, { status: 503 });
+  }
+
   let admin;
   try {
     admin = await requireAdmin();
@@ -73,6 +84,9 @@ export async function POST(request: Request) {
     signed = result.signed;
     record = result.record;
   } catch (err) {
+    if (err instanceof LicenseSigningUnavailableError) {
+      return NextResponse.json(LICENSE_SIGNING_UNAVAILABLE_BODY, { status: 503 });
+    }
     console.error("[admin/issue-license] sign+persist failed", err);
     return NextResponse.json(
       { error: "License signing failed. Check server logs." },

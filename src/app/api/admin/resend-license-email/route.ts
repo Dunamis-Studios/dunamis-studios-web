@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { requireAdmin } from "@/lib/session";
+import {
+  requireAdmin,
+  isAdminAllowlistConfigured,
+  ADMIN_ALLOWLIST_UNCONFIGURED_BODY,
+} from "@/lib/session";
 import { getLicense } from "@/lib/atelier-license-signing";
 import { sendAtelierLicenseEmail } from "@/lib/email-atelier-license";
 
@@ -20,6 +24,11 @@ const bodySchema = z.object({
 });
 
 export async function POST(request: Request) {
+  // Fast 503 in dev where ADMIN_EMAILS is intentionally unset.
+  if (!isAdminAllowlistConfigured()) {
+    return NextResponse.json(ADMIN_ALLOWLIST_UNCONFIGURED_BODY, { status: 503 });
+  }
+
   try {
     await requireAdmin();
   } catch (err) {
