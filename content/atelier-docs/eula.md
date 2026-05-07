@@ -3,7 +3,7 @@ title: "End User License Agreement"
 description: "The legal terms governing Atelier — the perpetual license, restrictions, support commitment, warranty, and dispute resolution."
 category: policies
 order: 3
-updated: "2026-05-07"
+updated: "2026-05-08"
 ---
 
 > **Draft — Not Final.** This End User License Agreement is a working draft prepared for Dunamis Studios products. It has not yet been reviewed by a licensed attorney. The final version will be reviewed and approved by counsel prior to commercial release of any product using this agreement.
@@ -12,7 +12,7 @@ updated: "2026-05-07"
 
 **Product:** Atelier
 **Version:** 1.x
-**Effective Date:** 2026-05-07
+**Effective Date:** 2026-05-08
 **Licensor:** Dunamis Studios LLC (a Florida limited liability company), or its predecessor sole proprietorship operating as "Dunamis Studios" until LLC formation completes.
 
 ---
@@ -37,7 +37,7 @@ By installing or using the Software, you (the "Licensee") agree to be bound by t
 
 Subject to Licensee's compliance with this Agreement, Dunamis Studios grants Licensee a perpetual, worldwide, non-exclusive, non-transferable (except as provided in Section 18) license to:
 
-1. Install and use the Software on any number of computers operated by the Licensee for the Licensee's own business purposes.
+1. Install and use the Software on up to three (3) computers operated by the Licensee for the Licensee's own business purposes, subject to the activation limits in Section 6 and the deactivation rights in Section 6.
 2. View, modify, and recompile the Source Code for the Licensee's own internal business purposes.
 3. Make backup copies of the Software and Source Code for archival and disaster-recovery purposes.
 
@@ -65,13 +65,18 @@ Licensee's rights under this Agreement are subject to the following restrictions
 
 A breach of any restriction in this Section 5 is a material breach of this Agreement and is subject to the cure-and-termination process in Section 19.
 
-## 6. License Keys
+## 6. License Keys and Activation
 
 1. Upon purchase of a license, Dunamis Studios will issue a License Key to the Licensee. The License Key is the credential that activates and authorizes use of the Software under this Agreement.
 2. Licensee is solely responsible for maintaining the confidentiality and security of the License Key. Licensee may not distribute, share, publish, post, or otherwise make the License Key available to any third party that is not an Authorized User.
 3. Loss, distribution, or disclosure of the License Key by Licensee, whether intentional or negligent, is a breach of this Agreement. Upon such loss or disclosure, Dunamis Studios may, at its discretion, require payment of a reinstatement fee before issuing a replacement License Key.
 4. Dunamis Studios may revoke a License Key that has been distributed or used in breach of this Agreement, including License Keys that appear in publicly accessible locations or that have been used by parties other than the Licensee and its Authorized Users. Revocation does not entitle the Licensee to a refund.
 5. The License Key is tied to the Licensee identified at the time of purchase. Transfer of the License Key follows the rules in Section 18 (Transfer and Assignment).
+6. License activation requires an active internet connection on first launch and periodically thereafter for ongoing operation. The Software phones home to verify license status and update the activation record.
+7. Each License entitles the Licensee to activate the Software on up to three (3) devices. The Licensee may deactivate any device at any time via the in-app Settings menu or the customer portal at dunamisstudios.com to free an activation slot for use on another device.
+8. After successful first activation, the Software will function offline for up to thirty (30) days between successful heartbeat checks. After thirty days without a successful heartbeat, the Software will lock until the next successful activation check.
+9. First-launch activation requires internet connectivity within seven (7) days of license entry. If no successful activation occurs within seven days, the provisional license expires and a new activation must be performed.
+10. Dunamis Studios may revoke a License Key at any time for breach of this Agreement, refund, or other cause. Revocation may be effective immediately or after a grace period at Dunamis Studios' discretion.
 
 ## 7. Authorized Users and Licensee Responsibility
 
@@ -138,10 +143,12 @@ These limited warranties are the only affirmative warranties made by Dunamis Stu
 
 ## 15. Privacy and Data Handling
 
-1. The Software does not collect telemetry, usage data, or analytics from the Licensee's machine by default. The Software runs locally on Licensee's hardware.
+1. The Software does not collect telemetry, usage data, or analytics from the Licensee's machine by default. The Software runs locally on Licensee's hardware. Wedding data, vendor data, contracts, and all other customer-entered business data are stored exclusively on the Licensee's machine in a local SQLite database, and are not transmitted to Dunamis Studios.
 2. No Licensee data, and no data belonging to Licensee's clients, leaves the Licensee's machine unless Licensee explicitly configures an integration to a third-party service. Any such integration is the Licensee's responsibility, including any required data-processing agreements with the third-party provider.
 3. Dunamis Studios is not a data processor, data controller, or sub-processor of the Licensee's clients' data under the General Data Protection Regulation (GDPR), the California Consumer Privacy Act (CCPA), or any similar privacy regulation. Licensee remains the sole controller of any personal data processed using the Software.
 4. Future versions of the Software may introduce optional telemetry. If introduced, telemetry will be off by default and will require explicit opt-in via a clearly labeled setting in the Software's user interface. Telemetry will never be enabled without affirmative Licensee consent.
+5. License activation and heartbeat traffic transmits only the License Key identifier, the device's hardware fingerprint hash, and the running version of the Software. No wedding data, no vendor data, no customer data of any kind is transmitted as part of license activation or heartbeat.
+6. License activation and heartbeat data is retained by Dunamis Studios solely for the purposes of license enforcement, fraud prevention, and customer support. Activation records are retained for the lifetime of the License plus seven (7) years for tax and audit purposes.
 
 ## 16. Export Controls
 
