@@ -173,6 +173,20 @@ export function signLicense(input: SignLicenseInput): SignedLicense {
 
 export type AtelierLicenseStatus = "active" | "refunded" | "revoked";
 
+/**
+ * Revocation enforcement mode. Admins choose this per revocation in
+ * the admin UI:
+ *   - "immediate": the next activate/heartbeat returns a hard "revoked"
+ *     response and the client locks instantly.
+ *   - "grace_14d": the next activate/heartbeat returns a soft warning,
+ *     and the client lockdown only triggers if the heartbeat is still
+ *     hitting a revoked license 14 days after `revoked_at`. Default
+ *     for refund-driven revocations where a courtesy window is
+ *     expected.
+ *   - undefined / null: license is not revoked.
+ */
+export type AtelierRevocationMode = "immediate" | "grace_14d";
+
 export interface AtelierLicenseRecord {
   lid: string;
   key_string: string;
@@ -185,6 +199,17 @@ export interface AtelierLicenseRecord {
   stripe_customer_id?: string | null;
   stripe_payment_intent_id?: string | null;
   issued_by_admin_email?: string | null;
+  /**
+   * Revocation metadata. Populated when status transitions to
+   * "revoked"; left null otherwise. The mode field controls whether
+   * the client locks immediately or after the 14-day grace window.
+   * Reason is free-text admin commentary visible only in the admin UI
+   * and audit logs.
+   */
+  revocation_mode?: AtelierRevocationMode | null;
+  revoked_at?: string | null;
+  revoked_by_admin_email?: string | null;
+  revocation_reason?: string | null;
 }
 
 export interface PersistLicenseInput {

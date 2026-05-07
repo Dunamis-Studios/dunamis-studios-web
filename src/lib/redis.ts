@@ -146,4 +146,36 @@ export const KEY = {
    */
   atelierLicensesByProduct: (product: string) =>
     `dunamis:atelier-licenses-by-product:${product}`,
+
+  // -----------------------------------------------------------------
+  // Atelier online activation (Online Activation Slice — Part 2)
+  // -----------------------------------------------------------------
+
+  /**
+   * Authoritative record for a single device activation against a
+   * license. Each record holds the license id, the three SHA-256
+   * machine-id components (Windows GUID, motherboard serial, CPU id),
+   * a customer-friendly device label, first-activated and
+   * last-heartbeat timestamps, the running Atelier version, and
+   * a status field ("active" | "deactivated").
+   *
+   * Up to 3 active activations may exist for any one license at a
+   * time; deactivated activations remain in Redis for audit but
+   * release their slot. The admin tools and customer portal both
+   * read these records to render the per-license slot list.
+   */
+  atelierActivation: (activationId: string) =>
+    `dunamis:atelier-activation:${activationId}`,
+
+  /**
+   * SET of activation_ids belonging to a license. Membership includes
+   * both active and deactivated activations — slot-counting iterates
+   * the set and filters on status. Activate, heartbeat, and
+   * deactivate endpoints all read from this set; a license never
+   * exists in the system without at least one activation slot
+   * candidate, so the SET is the canonical "list every device that
+   * has ever touched this license" lookup.
+   */
+  atelierActivationsByLicense: (lid: string) =>
+    `dunamis:atelier-activations-by-license:${lid}`,
 } as const;
