@@ -113,6 +113,49 @@ function nowIso(): string {
   return new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
 }
 
+/**
+ * Extract the lid (license id) from a signed license string without
+ * verifying the signature. The bytes-on-the-wire are
+ * `ATLR-{base64url(payload)}.{base64url(signature)}`; we base64-decode
+ * the payload portion, parse it as JSON, and read the lid field.
+ *
+ * Server-side authentication does not depend on Ed25519 verification
+ * (the Rust client already verifies before sending), but it does rely
+ * on a byte-for-byte equality check against the canonical key_string
+ * stored in Redis. parseLicenseId is the lookup hint that lets us find
+ * the canonical record before doing the comparison; tampering with
+ * the payload bytes either breaks the JSON parse here or breaks the
+ * key_string equality check downstream — either way the request is
+ * rejected without reaching the activation slot logic.
+ *
+ * Returns null on any malformed input. Throws nothing — callers treat
+ * a null return as "license_not_found".
+ */
+export function parseLicenseId(licenseString: string): string | null {
+  if (!licenseString.startsWith(LICENSE_PREFIX)) return null;
+  const trimmed = licenseString.slice(LICENSE_PREFIX.length);
+  const dot = trimmed.indexOf(".");
+  if (dot < 0) return null;
+  const payloadB64 = trimmed.slice(0, dot);
+  // Base64-url to base64 standard, with padding for Buffer.from.
+  const padded = payloadB64
+    .replace(/-/g, "+")
+    .replace(/_/g, "/")
+    .padEnd(payloadB64.length + ((4 - (payloadB64.length % 4)) % 4), "=");
+  let payloadJson: string;
+  try {
+    payloadJson = Buffer.from(padded, "base64").toString("utf8");
+  } catch {
+    return null;
+  }
+  try {
+    const obj = JSON.parse(payloadJson) as { lid?: unknown };
+    return typeof obj.lid === "string" && obj.lid.length > 0 ? obj.lid : null;
+  } catch {
+    return null;
+  }
+}
+
 function loadPrivateKey() {
   const pem = process.env.ATELIER_LICENSE_SIGNING_PRIVATE_KEY;
   if (!pem) {
