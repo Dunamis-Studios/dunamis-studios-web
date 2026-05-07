@@ -75,6 +75,7 @@ export async function sendAtelierLicenseEmail(
     : "Welcome to Atelier. Here's your license key.";
 
   const installUrl = "https://dunamisstudios.net/build-services/products/atelier/docs/install";
+  const portalUrl = "https://dunamisstudios.net/account/atelier-licenses";
   const supportEmail = "legal@dunamisstudios.com";
 
   const text = `${greeting}
@@ -89,7 +90,13 @@ What to do with this:
 
   1. Save this email. The key is the only proof of your purchase, and we issue from a database — re-issuance is possible but slower than digging up your inbox.
   2. Install Atelier — instructions at ${installUrl}.
-  3. On first launch, paste the key into the License Entry screen. Verification is offline; no internet required.
+  3. On first launch, paste the key into the License Entry screen. First activation needs internet (a quick license check); after that Atelier works offline for up to 30 days between license check-ins.
+
+Activation, in plain terms:
+
+  - One license activates on up to 3 devices at a time.
+  - Manage your devices at ${portalUrl} or from inside Atelier at Settings → License — both surfaces let you free a slot for a new machine.
+  - Wedding data never leaves your machine. License activation is the only thing that phones home.
 
 Atelier is yours. The license is perpetual, the bug fixes are free for as long as we operate the major version you bought, and the data lives on your machine.
 
@@ -118,8 +125,15 @@ Dunamis Studios`;
     <ol style="font-size:14px;line-height:1.7;color:#cfcfcf;padding-left:18px;">
       <li>Install Atelier — <a href="${installUrl}" style="color:#d97a7d;">setup walkthrough</a>.</li>
       <li>Open Atelier; on first launch, paste this key into the License Entry screen.</li>
-      <li>Verification is offline — no internet required.</li>
+      <li>First activation needs internet for a quick license check. After that Atelier works offline for up to 30 days between check-ins.</li>
     </ol>
+
+    <p style="font-size:14px;line-height:1.6;color:#cfcfcf;margin-top:18px;">Activation, in plain terms:</p>
+    <ul style="font-size:14px;line-height:1.7;color:#cfcfcf;padding-left:18px;">
+      <li>One license activates on up to 3 devices at a time.</li>
+      <li>Manage your devices at <a href="${portalUrl}" style="color:#d97a7d;">your customer portal</a> or from inside Atelier at <strong>Settings → License</strong>.</li>
+      <li>Wedding data never leaves your machine. License activation is the only thing that phones home.</li>
+    </ul>
 
     <p style="font-size:14px;line-height:1.6;color:#aaa;margin-top:18px;">Atelier is yours. The license is perpetual, bug fixes are free for as long as we operate the major version you bought, and the data lives on your machine.</p>
     <p style="font-size:14px;line-height:1.6;color:#aaa;">Questions or trouble? Reply to this email or write to <a href="mailto:${supportEmail}" style="color:#d97a7d;">${supportEmail}</a>.</p>
