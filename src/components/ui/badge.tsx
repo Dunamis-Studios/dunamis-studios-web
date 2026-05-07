@@ -27,6 +27,8 @@ const badgeVariants = cva(
           "border-transparent bg-[color-mix(in_oklch,var(--color-hubspot-500)_18%,transparent)] text-[var(--color-hubspot-500)]",
         build:
           "border-transparent bg-[color-mix(in_oklch,var(--color-build-500)_18%,transparent)] text-[var(--color-build-500)]",
+        atelier:
+          "border-transparent bg-[color-mix(in_oklch,var(--color-atelier-500)_18%,transparent)] text-[var(--color-atelier-500)]",
       },
     },
     defaultVariants: { variant: "neutral" },
