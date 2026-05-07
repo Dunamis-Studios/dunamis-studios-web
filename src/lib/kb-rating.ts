@@ -36,23 +36,32 @@ const RATED_TTL_SEC = 180 * 24 * 60 * 60; // 180 days
 const HELPFUL_MIN_UPVOTES = 10;
 const HELPFUL_MIN_RATIO = 0.75;
 
-const RAW_SALT = process.env.KB_RATING_SALT;
-if (!RAW_SALT && process.env.NODE_ENV === "production") {
-  // Module-load-time throw so `next build` fails loud on a missing
-  // env. Vercel's build step imports every API route module, which
-  // drags this file in and runs the check before the deploy
-  // finishes. Secret generation, format, and provisioning are
-  // operator decisions — this module's job is to fail if it's not
-  // there, not to prescribe how to create one.
-  throw new Error(
-    "KB_RATING_SALT env var is required. Provision it alongside the other secrets this project uses (see README).",
-  );
-}
-const SALT = RAW_SALT ?? "dev-only-insecure-kb-rating-salt-do-not-ship";
-if (!RAW_SALT && process.env.NODE_ENV !== "production") {
-  console.warn(
-    "[kb-rating] KB_RATING_SALT is unset — using an insecure dev fallback. Set a real salt before deploying.",
-  );
+const DEV_FALLBACK_SALT = "dev-only-insecure-kb-rating-salt-do-not-ship";
+
+/**
+ * Lazy-resolves the salt at first use rather than at module load. Page-
+ * data collection during `next build` imports every route module, so a
+ * module-load throw failed the build whenever a non-Vercel environment
+ * (e.g. local dev without a real salt set) ran `npm run build`. Calling
+ * the runtime path is what actually requires the secret; missing env
+ * still throws there in production, which is what we care about.
+ */
+let warnedDevFallback = false;
+function getSalt(): string {
+  const raw = process.env.KB_RATING_SALT;
+  if (raw) return raw;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "KB_RATING_SALT env var is required. Provision it alongside the other secrets this project uses (see README).",
+    );
+  }
+  if (!warnedDevFallback) {
+    console.warn(
+      "[kb-rating] KB_RATING_SALT is unset — using an insecure dev fallback. Set a real salt before deploying.",
+    );
+    warnedDevFallback = true;
+  }
+  return DEV_FALLBACK_SALT;
 }
 
 /**
@@ -61,7 +70,7 @@ if (!RAW_SALT && process.env.NODE_ENV !== "production") {
  */
 export function hashIp(ip: string): string {
   return createHash("sha256")
-    .update(SALT)
+    .update(getSalt())
     .update("|")
     .update(ip)
     .digest("hex");
