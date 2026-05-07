@@ -4,7 +4,7 @@ import { LogoMark } from "@/components/brand/logo";
 export function SiteFooter() {
   return (
     <footer className="border-t border-[var(--border)] bg-[var(--bg-subtle)]">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-4 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-5 lg:px-8">
         <div className="lg:col-span-1">
           <Link href="/" className="inline-flex items-center gap-2.5 text-[var(--fg)]">
             <LogoMark size={22} />
@@ -14,8 +14,8 @@ export function SiteFooter() {
           </Link>
           <p className="mt-3 max-w-xs text-sm text-[var(--fg-muted)]">
             A software studio with two service lines — Build Services and
-            HubSpot Custom Development — and a small catalog of HubSpot
-            marketplace apps.
+            HubSpot Custom Development — plus a small catalog of HubSpot
+            marketplace apps and prebuilt desktop software.
           </p>
         </div>
 
@@ -42,6 +42,14 @@ export function SiteFooter() {
             </li>
             <li>
               <Link
+                href="/build-services/products"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-build-600)] dark:hover:text-[var(--color-build-400)]"
+              >
+                Products
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/build-services/articles"
                 className="text-[var(--fg-muted)] hover:text-[var(--color-build-600)] dark:hover:text-[var(--color-build-400)]"
               >
@@ -54,6 +62,30 @@ export function SiteFooter() {
                 className="text-[var(--fg-muted)] hover:text-[var(--color-build-600)] dark:hover:text-[var(--color-build-400)]"
               >
                 Guides
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+            Software Projects
+          </h3>
+          <ul className="mt-4 space-y-2.5 text-sm">
+            <li>
+              <Link
+                href="/build-services/products/atelier"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-atelier-600)] dark:hover:text-[var(--color-atelier-400)]"
+              >
+                Atelier
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/build-services/products"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-atelier-600)] dark:hover:text-[var(--color-atelier-400)]"
+              >
+                All prebuilt apps
               </Link>
             </li>
           </ul>
