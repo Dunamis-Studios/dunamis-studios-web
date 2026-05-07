@@ -108,4 +108,42 @@ export const KEY = {
    */
   atelierBuyRequest: (emailHash: string, ts: string) =>
     `dunamis:atelier-buy-request:${emailHash}:${ts}`,
+
+  // -----------------------------------------------------------------
+  // Atelier license issuance (Track 1A — admin license pipeline)
+  // -----------------------------------------------------------------
+
+  /**
+   * Authoritative record for a single issued license. Keyed by the
+   * license ID (lid) so lookups by lid are O(1). Value is a JSON
+   * document carrying the license string, customer email, product,
+   * version_major, tier, issued_at, status, and audit metadata.
+   *
+   * Status values: "active" | "refunded" | "revoked". Atelier has no
+   * online revocation in v1 (the license string remains
+   * cryptographically valid by design — see EULA §6.4), but recording
+   * status here lets support workflows distinguish a refunded/revoked
+   * license from an active one without re-verifying the signature.
+   */
+  atelierLicense: (lid: string) => `dunamis:atelier-license:${lid}`,
+
+  /**
+   * Lookup index from email → set of lid values. One email may hold
+   * multiple licenses (re-purchases, business-assigned-to-individual
+   * scenarios), so this is a SET not a string. The lost-license
+   * lookup endpoint reads this to find every license tied to a
+   * customer's email; admins read it to triage support tickets.
+   */
+  atelierLicensesByEmail: (emailHash: string) =>
+    `dunamis:atelier-licenses-by-email:${emailHash}`,
+
+  /**
+   * Lookup index from product → set of lid values. Lets the admin
+   * licenses page filter by product without scanning every key in
+   * the namespace. Currently only "atelier" is in use; the indirection
+   * is forward-compatible with future prebuilt products that ship
+   * through the same issuance pipeline.
+   */
+  atelierLicensesByProduct: (product: string) =>
+    `dunamis:atelier-licenses-by-product:${product}`,
 } as const;
