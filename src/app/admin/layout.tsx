@@ -50,6 +50,12 @@ export default async function AdminLayout({
               >
                 Content
               </Link>
+              <Link
+                href="/admin/licenses"
+                className="rounded-md px-3 py-1.5 text-sm text-[var(--fg-muted)] hover:text-[var(--fg)]"
+              >
+                Licenses
+              </Link>
             </nav>
           </div>
           <Link
