@@ -3,7 +3,7 @@ title: "Bug fix policy"
 description: "Atelier's commitment to free bug fixes for the lifetime of the major version, the major-version upgrade model, and how to report a bug."
 category: policies
 order: 1
-updated: "2026-05-07"
+updated: "2026-05-08"
 ---
 
 This page is the canonical statement of how Atelier's bug-fix support works. It supersedes any "12-month support window," "first-year free updates," or similar language anywhere else on the site. The current policy is **indefinite free bug fixes**, no time limit.
@@ -79,3 +79,10 @@ Feature requests aren't bugs and aren't covered by the bug-fix policy. They're e
 - **Issues caused by environmental misconfiguration.** Antivirus software quarantining the binary, group-policy lockdowns preventing local file access, that sort of thing. We'll diagnose and recommend a path forward, but the fix is yours to apply.
 
 The honest framing: this policy covers the software we ship, behaving correctly per its own claims, on a supported configuration. Beyond that boundary, we'll help where we can — we're not the kind of studio that hides behind support boundaries — but those issues aren't covered by the standing commitment.
+
+## How fixes are delivered
+
+Bug fixes ship as part of normal updates through the auto-updater. The auto-update check runs alongside the daily license heartbeat — they share the same outbound network event. When a fix is in, the next successful heartbeat surfaces the new build in **Settings → Software Updates** and you can install it with one click.
+
+Customers running offline beyond the [30-day grace period](doc:user-guide#the-30-day-offline-grace-in-detail) are locked out until the next successful heartbeat, which means they also won't pull updates until they come online and re-activate. The "I'm running an air-gapped install for compliance reasons" scenario isn't supported in v1 — Atelier is designed for studios on regular internet, not for fully isolated environments.
+

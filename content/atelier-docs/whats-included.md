@@ -3,7 +3,7 @@ title: "What's included"
 description: "What ships with an Atelier license, what doesn't, and what's deliberately not on the roadmap."
 category: getting-started
 order: 3
-updated: "2026-05-07"
+updated: "2026-05-08"
 ---
 
 A perpetual Atelier license is $149, paid once. This page is the canonical list of what that buys you and, just as importantly, what it doesn't.
@@ -11,11 +11,23 @@ A perpetual Atelier license is $149, paid once. This page is the canonical list 
 ## What's in the box
 
 - **The full Atelier app.** Every feature is unlocked. There is no premium tier, no feature gate, no functionality reserved for a subscription. The app a customer paying $149 receives is the same app we use ourselves.
+- **Activation on up to 3 devices, customer-controlled deactivation.** A single license activates on up to three computers concurrently. You can deactivate any device at any time from inside Atelier (**Settings → License**) or from the customer portal at `dunamisstudios.net/account/atelier-licenses`. See the [user guide § License management](doc:user-guide#license-management) for the full surface and [EULA §6](doc:eula) for the legal version.
 - **Source code.** Atelier ships with unobfuscated source. You can read it, audit it, modify it for your own internal business use. You cannot redistribute it or use it as the foundation for a competing product — see [EULA §5](doc:eula) for the full restrictions.
 - **Local REST API.** A localhost-bound HTTP API on port 7423 exposes Atelier's data model to anything that can make HTTP requests. Per-installation Bearer key, documented at `/api/docs` inside the running app. See the [API reference](doc:api-reference) for the customer-facing version of those docs.
 - **Perpetual license for the current major version.** Yours forever. The license verifies offline against a key embedded in the app — no server check-in, no online activation, no kill switch.
 - **Free bug fixes for as long as we operate the major version you bought.** No 30-day window, no 12-month cliff. See the [bug fix policy](doc:bug-fix-policy) for the full statement and how to report bugs.
 - **Free minor updates for as long as we operate the major version you bought.** New features added within a major version land in your install via the auto-updater (which you can turn off in **Settings → Software Updates** if you'd rather pin a specific build).
+
+## Network requirements
+
+Atelier is a local-first desktop app, but it is not a fully offline app. License enforcement runs against an activation server.
+
+- **First-launch internet.** Required for first activation. A 7-day provisional grace period applies if you're offline at first launch — Atelier works, but it'll attempt activation on each subsequent launch and lock if it can't reach the server within 7 days.
+- **Periodic heartbeat.** About once per day after activation. Payload is roughly 1 KB and contains your license ID, a hashed hardware fingerprint, and the running Atelier version — nothing else. See the [privacy notice](doc:privacy) for the exact contract.
+- **30-day offline grace.** Once activated, Atelier works offline for up to 30 days between successful heartbeats. After 30 days, the next launch shows a "Reconnect to verify license" lockdown until the next successful check-in.
+- **Outbound HTTPS to `dunamisstudios.net`** is the only required network egress for licensing. Antivirus or firewall software that blocks the domain will surface as an activation/heartbeat failure — whitelist if needed.
+
+Wedding data is never sent to Dunamis Studios. The activation/heartbeat traffic is a separate, narrow channel from your business data.
 
 ## What's not included, but available separately
 

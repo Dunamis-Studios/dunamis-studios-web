@@ -1,9 +1,9 @@
 ---
 title: "Troubleshooting"
-description: "Common Atelier issues and how to fix them — startup failures, license activation, SmartScreen, auto-update, database recovery, lost keys, refunds, data export."
+description: "Common Atelier issues — startup failures, activation errors, SmartScreen, auto-update, database recovery, lost keys, device limits, and offline-grace lockdowns."
 category: reference
 order: 2
-updated: "2026-05-07"
+updated: "2026-05-08"
 ---
 
 If you're hitting something not covered here, email **legal@dunamisstudios.com** with what you were trying to do and what happened. We respond.
@@ -95,3 +95,48 @@ Atelier ships with the data in a single SQLite file. Two ways to extract it:
 - **Use the REST API.** With the local API enabled in Settings, every endpoint serves JSON. A short script can dump every wedding, every vendor, every payment to JSON files. See [integration examples](doc:integration-examples) for a working example.
 
 There is no formal "Export" button in v1 because the file-copy approach is simpler and more complete than anything an exporter could do — you have the entire database, in a standard format, that any tool can read.
+
+## I'm at the 3-device limit and need to use a 4th
+
+Each Atelier license activates on up to 3 devices. The 4th device's License Entry screen will show an inline list of all 3 active devices, each with a **Deactivate this one** button.
+
+Click **Deactivate** on whichever device you no longer need. That device's Atelier will lock within 24 hours of its next heartbeat (or immediately if it's currently running and connected). The deactivation frees the slot, your 4th device finishes activating, and you're up.
+
+If you can't tell which device is which from the labels alone, the customer portal at [dunamisstudios.net/account/atelier-licenses](https://dunamisstudios.net/account/atelier-licenses) shows the same list with last-seen dates and Atelier versions — usually enough to identify "the one I haven't touched in months."
+
+## Atelier locked because I was offline too long
+
+Atelier checks in with the activation server about once per day after first activation, and it works offline for up to 30 days between successful check-ins. Past 30 days, the next launch shows a **"Reconnect to verify your license"** lockdown screen.
+
+Your wedding data is safe. The lockdown blocks app access, not data — the SQLite database is untouched.
+
+To recover: connect to the internet (any network that can reach `dunamisstudios.net`), then click **Try to reconnect now** on the lockdown screen. Atelier sends a heartbeat. On success, the app unlocks and you're back where you were.
+
+If the lockdown persists after a successful internet connection, two likely causes:
+
+- **Antivirus or firewall blocking outbound HTTPS to dunamisstudios.net.** Check your firewall logs; whitelist the domain if needed.
+- **License has been revoked.** If the license is in revoked-immediate mode (rare, set by Dunamis Studios for explicit support reasons), reconnecting won't help — the lockdown screen will switch to a "License revoked" message instead. Email legal@dunamisstudios.com.
+
+## I lost a device and can't deactivate it remotely
+
+A laptop got stolen. Or a hard drive died. Or you sold a machine without deactivating Atelier first. Your license is now stuck with one of its three slots tied to a device you can't reach.
+
+Two paths:
+
+1. **Customer portal remote deactivation.** Sign in at [dunamisstudios.net/account/atelier-licenses](https://dunamisstudios.net/account/atelier-licenses), find the missing device in the list, click **Deactivate**. The slot frees immediately. The next time the missing device tries to heartbeat (which it can't, because it's gone), it would lock — but that's already happened in your case, so this is purely housekeeping.
+2. **Email us.** If you don't have customer-portal access set up yet, email legal@dunamisstudios.com from the address tied to your license. We deactivate the slot manually, same effect.
+
+Either path takes a few minutes. You don't need a police report, a serial number, or any other proof of loss — the license is yours, the slots are yours.
+
+## License activation failed — what now
+
+Activation can fail for a few specific reasons, and each one shows a structured error in the License Entry view:
+
+- **"License signature is invalid."** The license string was tampered with or copied wrong. Re-paste from the original purchase email; if the issue persists, email us — we'll re-issue.
+- **"License is for a different product."** You pasted a key for something other than Atelier. Find the right key.
+- **"License is for major version N; this build is major version M."** You bought a v1 license and you're running a v2 build (or vice versa). Install the matching major version, or email us to have us issue a license for the major you're running.
+- **"License is already activated on 3 devices."** See [I'm at the 3-device limit](doc:troubleshooting#im-at-the-3-device-limit-and-need-to-use-a-4th) above.
+- **"Could not reach activation server."** Atelier couldn't connect to `dunamisstudios.net`. Check your internet connection. If you're confident the connection is fine, antivirus or firewall software may be blocking the request — whitelist `dunamisstudios.net` and retry. As a fallback, Atelier grants a 7-day provisional grace period for first-launch internet failures, so you can keep working while you sort the network issue out.
+- **"License has been revoked."** The license has been marked revoked in our records — usually due to a refund or breach. Email legal@dunamisstudios.com.
+
+If none of the above describes what you're seeing, copy the exact error text and email it to us. We respond.
