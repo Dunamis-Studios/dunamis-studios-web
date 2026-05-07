@@ -3,7 +3,7 @@ title: "User guide"
 description: "Day-to-day Atelier — the dashboard, weddings, timelines, vendors, budgets, payments, contracts, and the day-of mode."
 category: using-atelier
 order: 1
-updated: "2026-05-07"
+updated: "2026-05-08"
 ---
 
 This guide walks through Atelier as a working planner uses it. Read it cover to cover the first week to build a mental model; come back to specific sections as needed.
@@ -210,3 +210,46 @@ Five panels at **Settings** (gear icon, top right):
 - **Notifications** — quiet hours and per-category routing.
 - **Local API** — the localhost REST API panel. Toggle the API on or off, generate or regenerate the per-installation Bearer key, and view the documentation URL (`http://127.0.0.1:7423/api/docs` when the API is enabled). See the [API reference](doc:api-reference) and [integration examples](doc:integration-examples) for what you can do with the API.
 - **Software updates** — auto-update toggle and current version info. See [install § upgrading](doc:install#upgrading-from-a-previous-version).
+
+## License management
+
+Atelier licenses activate on up to three devices. Activation, deactivation, and grace-period status all surface in **Settings → License** (and in the customer portal at `dunamisstudios.net/account/atelier-licenses`).
+
+### What the License panel shows
+
+- **This device** — the server-assigned label (e.g. "Computer 1"), first activation date, and last successful heartbeat date.
+- **Other devices on this license** — a short list of every other device this license is active on, with the same label / first-activated / last-seen fields. Useful for confirming your laptop and your office desktop are both checked in.
+- **Grace period status** — one of:
+  - "Verified Xh ago" / "Verified X days ago" — normal operation, recent successful heartbeat.
+  - "Verifying…" — heartbeat in flight.
+  - "Offline grace: X days remaining" — Atelier hasn't reached the server in a while; this is the countdown to lockdown.
+- **Two action buttons:**
+  - **Deactivate this device** — clears the local activation, locks Atelier on this machine, and frees the slot for another device. The app closes after deactivation.
+  - **Manage other devices** — opens the customer portal in your browser, where you can deactivate any other device on the license remotely.
+
+### Active vs. deactivated
+
+Each activation slot is in one of two states:
+
+- **Active** — Atelier on that device is working normally, sending heartbeats. Counts toward the 3-device limit.
+- **Deactivated** — explicitly deactivated by you (either from the device itself or from the customer portal). The slot is freed; the next device that activates takes the slot. Atelier on a deactivated device locks within 24 hours of the next heartbeat. Deactivated records are kept in the customer portal for audit reference but don't count against the limit.
+
+If a device is broken, lost, or otherwise unreachable, deactivate it from the customer portal — you don't need physical access to the machine.
+
+### The 30-day offline grace, in detail
+
+After successful first activation, Atelier checks in with the server once per day. Each successful heartbeat resets a 30-day clock. If Atelier hasn't had a successful heartbeat for 30 days, the next launch shows a full-screen "Reconnect to verify license" lockdown view — your data is safe, but the app won't open until a successful check-in.
+
+In practice, 30 days is generous. The scenarios that actually hit it:
+
+- A laptop that's been in storage for a month between weddings.
+- A traveling planner working from venues with no internet, then a remote office, then a hotel without ever connecting to a network that can reach `dunamisstudios.net`.
+- A failed Windows network stack you haven't gotten around to fixing.
+
+Recovery is one click: come online, click **Try to reconnect now** on the lockdown screen, Atelier sends a heartbeat, and you're back in.
+
+### What happens at the 3-device limit
+
+When you activate Atelier on a fourth device, the License Entry screen shows the three active devices in an inline list, each with a **Deactivate this one** button. Tap one, confirm, and Atelier on that device locks within 24 hours while the new device activates. No support ticket required.
+
+If you can't pick which one to deactivate from a label alone, the customer portal shows the same list with the addition of recent activity dates and Atelier versions — useful for spotting "the one I haven't used in months."

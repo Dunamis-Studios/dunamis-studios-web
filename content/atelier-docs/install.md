@@ -3,10 +3,20 @@ title: "Install guide"
 description: "How to install Atelier on Windows 10 or 11, from download to first launch."
 category: getting-started
 order: 1
-updated: "2026-05-07"
+updated: "2026-05-08"
 ---
 
 This guide walks through installing Atelier on a Windows machine and getting to the first launch. Allow about ten minutes the first time through.
+
+## Activation, in plain terms
+
+Before you install, three facts about how Atelier handles licenses — these surface during first launch and worth knowing in advance:
+
+- **Up to 3 devices per license.** A single Atelier license activates on up to three computers concurrently. You can deactivate any device at any time from inside Atelier (**Settings → License**) or from the customer portal at `dunamisstudios.net/account/atelier-licenses` to free a slot for a new device.
+- **First launch needs internet.** Atelier verifies the license against the activation server on first launch. You have a 7-day provisional grace period if you're offline at first launch — Atelier will work, but it'll attempt activation each subsequent launch and lock if it can't reach the server within 7 days.
+- **30-day offline grace after activation.** Once activated, Atelier checks in with the server about once per day and works offline for up to 30 days between successful check-ins. The day-of mode at the venue, working from a hotel, traveling for destination weddings — none of those scenarios are an issue. A laptop that hasn't seen the internet in over a month is.
+
+The heartbeat payload is small (license ID, hashed hardware fingerprint, version) and contains zero business data. See the [privacy notice](doc:privacy) for the exact contract.
 
 ## System requirements
 

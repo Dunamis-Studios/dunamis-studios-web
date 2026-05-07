@@ -1,28 +1,67 @@
 ---
 title: "Privacy notice"
-description: "What Atelier collects (nothing by default), what leaves your machine (one optional update check), and how Dunamis Studios relates to your data under GDPR and CCPA."
+description: "What Atelier collects (no business data, ever), what leaves your machine (license activation + heartbeat + an optional update check), and how Dunamis Studios relates to your data under GDPR and CCPA."
 category: policies
 order: 4
-updated: "2026-05-07"
+updated: "2026-05-08"
 ---
 
-This privacy notice describes how Atelier handles data. The short version: it doesn't. The long version is below, and the legal version is in [EULA §15](doc:eula).
+This privacy notice describes how Atelier handles data. The headline: your wedding data never leaves your machine. License activation does — exactly what gets sent and why is described below. The legal version is in [EULA §15](doc:eula).
 
-## What Atelier collects from your machine
+## What we do NOT collect
 
-Nothing by default. No telemetry, no analytics, no usage tracking, no crash reporter, no error pings. Atelier runs entirely on your local machine. There is no Atelier-side dashboard at Dunamis Studios that watches what you do.
+Atelier collects **none** of the following from your machine:
 
-This is a deliberate architectural commitment, not an oversight. The shape of the product — a desktop application running locally, paid once, owned forever — is incompatible with usage tracking. We do not get useful data out of it that would justify the trust cost, and our customers (professional wedding planners) handle other people's life events under expectations of discretion. The only acceptable answer is to not collect.
+- Wedding data (couples, dates, venues, ceremonies, anything in a wedding workspace)
+- Vendor data (your vendor database, rates, contact info, notes)
+- Guest data (names, contact info, dietary restrictions, RSVP status)
+- Contract or document content
+- Photos, mood boards, or any media you upload
+- Usage analytics — what tabs you click, how long Atelier is open, which features you use
+- Telemetry — performance metrics, crash reports, error pings
+- Business intelligence — how many weddings you have, what your budgets look like, who your clients are
+
+This is a hard boundary, not a default. The Atelier code does not contain the wiring to send any of the above. If a future version ever introduces optional telemetry, it will be off by default and require an explicit opt-in checkbox in Settings — see [EULA §15.4](doc:eula).
 
 ## What leaves your machine, and when
 
-Exactly one outbound network call exists in Atelier v1, and it is optional and toggleable:
+Three outbound network surfaces exist:
 
-- **Auto-update check.** On launch, Atelier asks GitHub Releases for the latest published Atelier release version. If a newer version exists, the badge in **Settings → Software Updates** lights up. The check sends only a generic GitHub Releases API request — no installation ID, no machine fingerprint, no user identification beyond what your IP and User-Agent reveal to GitHub itself. Atelier doesn't see this request; GitHub does. You can turn off update checks in **Settings → Software Updates**, and that toggle stops every outbound network call from Atelier.
+### 1. License activation (first launch, then per-device once)
 
-The license activation flow does **not** send anything to any server. License keys are signed by Dunamis Studios at issuance, and Atelier verifies the signature locally against a public key embedded in the binary. No network traffic, no phone-home, no online activation step.
+When you paste your license key on first launch, Atelier sends a single request to `dunamisstudios.net/api/atelier/activate` with three values:
+
+- **Your license key string** (the `ATLR-…` text you pasted)
+- **A hardware fingerprint hash** — a SHA-256 of your Windows machine GUID, motherboard serial, and CPU ID. Hashed locally before being sent; the raw values never leave your machine.
+- **The Atelier version you're running** (e.g. `1.0.3`)
+
+That's the entire payload. The server records the activation and returns a confirmation. If your license is already activated on three devices, the server returns the list of active devices so you can deactivate one inline (the device labels and activation dates only — nothing else).
+
+### 2. License heartbeat (once per day)
+
+Once activated, Atelier sends a heartbeat once per day to `dunamisstudios.net/api/atelier/heartbeat` with the same three values: license key, device fingerprint hash, version. Same payload as activation. The heartbeat exists for license enforcement (catching shared keys, processing deactivations, applying revocations) and for nothing else.
+
+If Atelier hasn't been opened in 7+ days, the heartbeat fires on next open instead of waiting for the daily window. Atelier works offline for up to 30 days between successful heartbeats; after 30 days, it locks until the next successful check-in.
+
+### 3. Auto-update check (optional, toggleable)
+
+On launch, Atelier asks GitHub Releases for the latest published version. The check sends only a generic GitHub Releases API request — no installation ID, no machine fingerprint, no user identification beyond what your IP and User-Agent reveal to GitHub itself. Atelier doesn't see this request; GitHub does. You can turn off update checks in **Settings → Software Updates**.
 
 If you configure a third-party integration via Atelier's REST API — say, a script that posts new weddings to a Slack webhook — that script generates outbound traffic. The traffic is yours, going to a destination you chose, governed by your own data-handling rules. Atelier doesn't see it pass through.
+
+## Why license activation phones home
+
+We thought about this for a long time. The honest tradeoff:
+
+- **What we gain:** the ability to enforce the three-device limit, process customer-initiated deactivations, handle refund-driven revocations, and resist license-sharing piracy that would make the one-time-purchase model unsustainable.
+- **What we lose:** pure offline operation. Atelier needs internet on first launch and once per day after that.
+- **What we don't lose:** your data privacy. The license payload is the smallest possible — license ID, device fingerprint hash, version. No business data, no usage data, no anything else.
+
+The wedding data architectural commitment stands: it stays on your machine, in a single SQLite file you can audit, copy, or back up. License activation is a separate concern from data privacy, and the license payload is engineered to keep them separate.
+
+## Activation and heartbeat data retention
+
+Per [EULA §15.6](doc:eula), license activation and heartbeat records are retained by Dunamis Studios for the lifetime of your license plus seven years for tax and audit purposes. The records contain: your license ID, the hashed device fingerprints of the devices you've activated, timestamps of first activation and last heartbeat, and the Atelier versions seen. Nothing more.
 
 ## Where your data lives
 
