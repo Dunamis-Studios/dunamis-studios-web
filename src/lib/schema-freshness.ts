@@ -18,7 +18,7 @@
  * these constants.
  */
 export const SITE_PUBLISHED = "2026-04-15";
-export const SITE_LAST_MODIFIED = "2026-05-03";
+export const SITE_LAST_MODIFIED = "2026-05-06";
 
 /**
  * Spreadable freshness fragment for schema.org blocks. Returns the

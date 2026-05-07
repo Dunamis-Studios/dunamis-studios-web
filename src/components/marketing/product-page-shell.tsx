@@ -400,7 +400,13 @@ export function ProductPageShell(p: ProductPageProps) {
               </p>
             </div>
             <Button asChild size="lg">
-              <Link href="/custom-development/pricing">
+              <Link
+                href={
+                  p.buyCta
+                    ? `#${p.buyCta.pricingAnchorId}`
+                    : "/custom-development/pricing"
+                }
+              >
                 {p.pricingTeaser?.ctaLabel ?? "See pricing"}
                 <ArrowRight className="ml-0.5 h-4 w-4" />
               </Link>

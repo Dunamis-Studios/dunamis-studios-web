@@ -111,7 +111,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${base}/build-services/products`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
-      priority: 0.5,
+      priority: 0.7,
+    },
+    {
+      url: `${base}/build-services/products/atelier`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.9,
     },
     {
       url: `${base}/build-services/tools`,
