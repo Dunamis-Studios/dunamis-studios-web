@@ -56,9 +56,13 @@ export const ATELIER_PRICING: AtelierPricing = {
  * stays out of the way of the headline offer. Customization is a
  * separate, scoped engagement — never bundled into the up-front
  * purchase.
+ *
+ * Worded to read correctly both pre-launch and post-launch — refers to
+ * the engagement happening "after launch and after you've used Atelier"
+ * rather than "right now," so the copy doesn't go stale on ship day.
  */
 export const ATELIER_POST_PURCHASE_CALLOUT = {
-  body: "Need help getting set up, or want custom features? Once you've used Atelier, we offer custom development engagements scoped per-customer. Reach out anytime.",
+  body: "Need help getting set up, or want custom features built in? After Atelier ships and you've spent time in the app, custom development engagements are available scoped per-customer. Reach out anytime.",
   ctaLabel: "Talk to us",
   ctaHref: "/contact",
 };
@@ -173,8 +177,12 @@ export const ATELIER_COMPARISON: {
 
 export const ATELIER_FAQ: { q: string; a: string }[] = [
   {
+    q: "When will Atelier be available?",
+    a: "Atelier is in active development. We aren't committing to a public ship date yet — software estimates lie, and we'd rather under-promise. Drop your email in the form below and we'll send you a single note the moment the installer is ready. No newsletter, no drip, no follow-ups beyond launch.",
+  },
+  {
     q: "Is this really a one-time purchase?",
-    a: "Yes. You buy Atelier once for $149, receive an installer and a perpetual license, and that license is verified offline against a key embedded in the app. There's no subscription, no expiry, no renewal email. Future major versions (v2, v3) will be offered as separate optional purchases at a discount for existing customers, never as a forced upgrade.",
+    a: "Yes. When Atelier ships, you'll buy it once for $149, receive an installer and a perpetual license, and that license is verified offline against a key embedded in the app. There's no subscription, no expiry, no renewal email. Future major versions (v2, v3) will be offered as separate optional purchases at a discount for existing customers, never as a forced upgrade.",
   },
   {
     q: "Does support ever expire?",
@@ -202,11 +210,11 @@ export const ATELIER_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "What if I need a feature that isn't in the box?",
-    a: "Buy Atelier first, use it, then talk to us. Customization is a post-purchase service we scope per customer — not a tier you pre-pay for. Once you've spent time in the app and know exactly what you'd change, a discovery call turns that list into a fixed-price scope, and the customization ships built into your install. Atelier ships with unobfuscated source, so source-level changes are on the table.",
+    a: "Get Atelier when it ships, use it, then talk to us. Customization is a post-purchase service we scope per customer — not a tier you pre-pay for. Once you've spent time in the app and know exactly what you'd change, a discovery call turns that list into a fixed-price scope, and the customization ships built into your install. Atelier ships with unobfuscated source, so source-level changes are on the table.",
   },
   {
     q: "Is there a free trial?",
-    a: "Not in v1. The tradeoff for one-time pricing is that a free trial would require the license-server overhead the local-first model exists specifically to avoid. If you're on the fence, email us first — happy to walk you through Atelier on a screen-share before you buy, no pitch, no pressure.",
+    a: "Not in v1. The tradeoff for one-time pricing is that a free trial would require the license-server overhead the local-first model exists specifically to avoid. If you're on the fence at launch, email us first — happy to walk you through Atelier on a screen-share before you buy, no pitch, no pressure.",
   },
   {
     q: "What about a Mac, Linux, or web version?",

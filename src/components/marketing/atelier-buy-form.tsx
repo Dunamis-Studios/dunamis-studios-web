@@ -18,18 +18,20 @@ interface AtelierBuyFormProps {
 }
 
 /**
- * Lead-capture form for the Atelier marketing page's #buy-atelier
- * section. POSTs to /api/atelier-buy-request with name + email +
- * optional business name + optional notes. The studio reaches out
- * within one business day with payment instructions and the
- * perpetual license — this form is intentionally not a Stripe
- * checkout (Atelier is a Software Projects prebuilt product, not a
- * HubSpot per-portal entitlement, and the studio handles each sale
- * individually for v1).
+ * Notify-on-launch / interest-capture form for the Atelier marketing
+ * page's #buy-atelier section. Atelier is in active development; this
+ * form does NOT take payment. Submitters receive a confirmation now
+ * and a single launch notification when the installer ships.
  *
- * Atelier is a single-tier $149 product. There is no tier selection
- * here; customization is a post-purchase service engagement, not a
- * pre-pay tier.
+ * POSTs to /api/atelier-buy-request with name + email + optional
+ * business name + optional notes. Atelier is a Software Projects
+ * prebuilt product, not a HubSpot per-portal entitlement — the route
+ * intentionally avoids the HubSpot Forms mirror and the per-portal
+ * entitlement machinery.
+ *
+ * Atelier is a single-tier $149 product (at launch). There is no
+ * tier selection here; customization is a post-purchase service
+ * engagement, not a pre-pay tier.
  */
 
 export function AtelierBuyForm({ className }: AtelierBuyFormProps) {
@@ -92,11 +94,11 @@ export function AtelierBuyForm({ className }: AtelierBuyFormProps) {
         />
         <div>
           <div className="text-sm font-medium text-[var(--fg)]">
-            Got it. We&apos;ll be in touch within one business day.
+            Got it. We&apos;ll let you know when Atelier ships.
           </div>
           <p className="mt-1 text-sm text-[var(--fg-muted)]">
-            Check your inbox — a confirmation is on its way with what
-            happens next.
+            Check your inbox — a confirmation is on its way. One email at
+            launch, no newsletter, no follow-ups.
           </p>
         </div>
       </div>
@@ -180,8 +182,7 @@ export function AtelierBuyForm({ className }: AtelierBuyFormProps) {
 
       <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-[var(--fg-subtle)]">
-          No payment yet. We&apos;ll reach out within one business day to
-          finish the purchase and ship the installer.
+          No payment today. One email when Atelier ships.
         </p>
         <Button
           type="submit"
@@ -189,7 +190,7 @@ export function AtelierBuyForm({ className }: AtelierBuyFormProps) {
           disabled={status === "submitting"}
           aria-disabled={status === "submitting"}
         >
-          {status === "submitting" ? "Sending..." : "Get Atelier"}
+          {status === "submitting" ? "Sending..." : "Notify me"}
           {status === "submitting" ? null : (
             <ArrowRight className="ml-0.5 h-4 w-4" aria-hidden />
           )}

@@ -10,18 +10,28 @@ import {
 /**
  * POST /api/atelier-buy-request
  *
- * Lead capture for the Atelier marketing page's #buy-atelier form.
+ * Notify-on-launch interest capture for the Atelier marketing page's
+ * #buy-atelier form. Atelier is in active development; this endpoint
+ * does NOT take payment, does NOT issue a license, does NOT ship an
+ * installer. Submissions become entries on the launch-notification
+ * list, with a single email going out when the installer is ready.
+ *
+ * Route name (`atelier-buy-request`) is retained from the original
+ * shape since it's internal — renaming would be a breaking deploy
+ * with no public benefit. The Redis key namespace is unchanged for
+ * the same reason.
+ *
  * Three side effects, in order, with the same failure-isolation
  * shape /api/notify uses:
  *
  *   1. Redis SET dunamis:atelier-buy-request:{hash(email)}:{ts}.
- *      The timestamp suffix means a buyer who submits twice
+ *      The timestamp suffix means a visitor who submits twice
  *      generates two distinct records rather than overwriting the
  *      prior one. If this write fails, the request fails with 500 —
- *      the studio cannot follow up on a lead it never recorded.
+ *      the studio cannot notify a list it never recorded.
  *   2. Best-effort admin notification email (Josh). Resend hiccups
- *      are logged but do not surface to the visitor; their lead is
- *      already captured.
+ *      are logged but do not surface to the visitor; their interest
+ *      is already captured.
  *   3. Best-effort customer confirmation email. Same isolation —
  *      a Resend failure here does not roll back step 1 or 2.
  *
@@ -29,9 +39,9 @@ import {
  * product, not a HubSpot product. Nothing here writes to the
  * HubSpot Forms API and nothing reads the hubspotutk cookie.
  *
- * Atelier is a single-tier $149 product — there is no `tier` field
- * on the payload or the persisted record. Customization is a
- * post-purchase service engagement, not a pre-pay tier.
+ * Atelier is a single-tier $149 product (at launch) — there is no
+ * `tier` field on the payload or the persisted record. Customization
+ * is a post-purchase service engagement, not a pre-pay tier.
  */
 
 interface BuyRequestRecord {

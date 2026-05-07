@@ -9,12 +9,12 @@ import { HeroGradient } from "@/components/marketing/hero-gradient";
 export const metadata: Metadata = {
   title: "Build Services Products",
   description:
-    "Prebuilt software from Dunamis Studios — owned-forever desktop apps with one-time pricing. Atelier ships today; more on the way.",
+    "Prebuilt software from Dunamis Studios — owned-forever desktop apps with one-time pricing. Atelier is in active development; sign up to be notified at launch.",
   alternates: { canonical: "/build-services/products" },
   openGraph: {
     title: "Build Services Products · Dunamis Studios",
     description:
-      "Prebuilt software from Dunamis Studios — owned-forever desktop apps with one-time pricing. Atelier ships today; more on the way.",
+      "Prebuilt software from Dunamis Studios — owned-forever desktop apps with one-time pricing. Atelier is in active development; sign up to be notified at launch.",
     url: "/build-services/products",
     type: "website",
   },
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Build Services Products · Dunamis Studios",
     description:
-      "Prebuilt software from Dunamis Studios — owned-forever desktop apps with one-time pricing. Atelier ships today; more on the way.",
+      "Prebuilt software from Dunamis Studios — owned-forever desktop apps with one-time pricing. Atelier is in active development; sign up to be notified at launch.",
   },
 };
 
@@ -33,6 +33,9 @@ interface ProductCard {
   audience: string;
   startingPrice: string;
   badgeLabel: string;
+  /** "success" reads as shipped/available; "warning" or "atelier" for
+   * pre-launch so the badge doesn't lie about availability. */
+  badgeVariant: "success" | "warning" | "atelier" | "neutral";
 }
 
 const PRODUCTS: ProductCard[] = [
@@ -42,8 +45,9 @@ const PRODUCTS: ProductCard[] = [
       "Desktop wedding planner workspace — CRM, day-of mode, vendors, guests, seating, budget, payments, contracts. Yours forever, one-time purchase.",
     href: "/build-services/products/atelier",
     audience: "Professional wedding planners",
-    startingPrice: "$149 · one-time",
-    badgeLabel: "Available now",
+    startingPrice: "$149 · one-time (at launch)",
+    badgeLabel: "Coming soon",
+    badgeVariant: "warning",
   },
 ];
 
@@ -76,7 +80,7 @@ export default function BuildServicesProductsPage() {
             Catalog
           </div>
           <h2 className="mt-3 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
-            What ships today.
+            What we&apos;re shipping.
           </h2>
 
           <div className="mt-12 grid gap-6 lg:grid-cols-2">
@@ -90,7 +94,7 @@ export default function BuildServicesProductsPage() {
                   <h3 className="font-[var(--font-display)] text-2xl font-medium tracking-tight">
                     {p.name}
                   </h3>
-                  <Badge variant="success">{p.badgeLabel}</Badge>
+                  <Badge variant={p.badgeVariant}>{p.badgeLabel}</Badge>
                 </div>
                 <p className="mt-3 text-[var(--fg-muted)] leading-relaxed">
                   {p.tagline}

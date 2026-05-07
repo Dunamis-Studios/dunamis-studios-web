@@ -70,7 +70,11 @@ const atelierSchema = {
     price: String(ATELIER_PRICING.priceUSD),
     priceCurrency: "USD",
     category: "OneTime",
-    availability: "https://schema.org/InStock",
+    // Atelier is in active development — not yet shipped. PreOrder is
+    // the closest standard schema.org availability that signals "the
+    // product is announced and will be sold but is not yet available."
+    // Switch back to InStock at launch.
+    availability: "https://schema.org/PreOrder",
   },
 };
 
@@ -99,7 +103,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Atelier: desktop wedding planner workspace, owned forever",
     description:
-      "A perpetual-license Windows desktop app for professional wedding planners. No subscription, no cloud, no telemetry. $149, paid once.",
+      "A perpetual-license Windows desktop app for professional wedding planners. In active development — sign up to be notified at launch. $149, paid once.",
     url: PAGE_PATH,
     type: "website",
     images: [
@@ -116,7 +120,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Atelier: desktop wedding planner workspace, owned forever",
     description:
-      "A perpetual-license Windows desktop app for professional wedding planners. No subscription, no cloud, no telemetry. $149, paid once.",
+      "A perpetual-license Windows desktop app for professional wedding planners. In active development — sign up to be notified at launch. $149, paid once.",
     images: [
       {
         url: "/twitter-image",
@@ -164,7 +168,7 @@ export default function AtelierPage() {
         comparison={ATELIER_COMPARISON}
         faq={ATELIER_FAQ}
         pricingTeaser={{
-          eyebrow: "Pricing",
+          eyebrow: "Pricing — at launch",
           headline: "$149. One-time. Yours forever.",
           body: "One price, every feature unlocked, no subscription. Bug fixes free indefinitely while we operate the major version you bought.",
           ctaLabel: "See what's in the box",
@@ -172,9 +176,9 @@ export default function AtelierPage() {
         buyCta={{
           anchorId: "buy-atelier",
           pricingAnchorId: "pricing-atelier",
-          label: "Get Atelier",
+          label: "Get notified",
           finalLede:
-            "Atelier ships today. $149, paid once, perpetual license. Drop your details below and we'll send the installer.",
+            "Atelier is in active development. Drop your details below and we'll send you the installer plus your license the moment it ships.",
         }}
       />
 
@@ -186,15 +190,16 @@ export default function AtelierPage() {
         <Container size="md">
           <div className="text-center">
             <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-              Pricing
+              Pricing — at launch
             </div>
             <h2 className="mt-3 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
               One price. Every feature.
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-[var(--fg-muted)] leading-relaxed">
-              Atelier is $149, paid once. The same install runs on as many of
-              your own machines as you need. Bug fixes are free for as long as
-              we operate the major version you bought — no time limit.
+              When Atelier ships, it&apos;ll be $149, paid once. The same
+              install runs on as many of your own machines as you need. Bug
+              fixes are free for as long as we operate the major version you
+              bought — no time limit.
             </p>
           </div>
 
@@ -248,7 +253,7 @@ export default function AtelierPage() {
         </Container>
       </Section>
 
-      {/* BUY FORM */}
+      {/* INTEREST / NOTIFY-ON-LAUNCH FORM */}
       <Section
         id="buy-atelier"
         className="border-t border-[var(--border)] scroll-mt-24"
@@ -257,15 +262,15 @@ export default function AtelierPage() {
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-7 sm:p-10">
             <div className="mx-auto max-w-2xl text-center">
               <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-                Get Atelier
+                Get notified
               </div>
               <h2 className="mt-3 font-[var(--font-display)] text-2xl font-medium tracking-tight sm:text-3xl">
-                Tell us where to send the installer.
+                Be first in line when Atelier ships.
               </h2>
               <p className="mx-auto mt-3 max-w-md text-[var(--fg-muted)]">
-                We reach back out from josh@dunamisstudios.net within one
-                business day with payment instructions and your perpetual
-                license. Nothing is charged at submission.
+                Drop your details and we&apos;ll send the installer plus your
+                perpetual license the moment Atelier is ready. No payment
+                today, no newsletter, no follow-ups beyond launch.
               </p>
             </div>
             <div className="mx-auto mt-8 max-w-2xl">

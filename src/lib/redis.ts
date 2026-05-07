@@ -92,14 +92,19 @@ export const KEY = {
   courseSignup: (courseSlug: string, emailHash: string) =>
     `dunamis:courses:signup:${courseSlug}:${emailHash}`,
   /**
-   * Atelier buy-request lead capture. Each submission gets its own key
-   * (timestamp suffix), so a buyer who submits twice — say, once for
-   * Self-Serve and again for Done For You — generates two distinct
-   * records instead of overwriting the prior one. The studio reaches
-   * back out manually after the lead lands. This is NOT a Stripe
+   * Atelier launch-notification interest capture. Atelier is in active
+   * development; submissions are launch-notification list entries, not
+   * purchases. Each submission gets its own key (timestamp suffix), so
+   * a visitor who submits twice generates two distinct records
+   * instead of overwriting the prior one. This is NOT a Stripe
    * checkout intent or an entitlement record; Atelier is a Software
    * Projects prebuilt product and does not plug into the per-portal
    * entitlement machinery.
+   *
+   * Key name retains the `atelier-buy-request` segment since renaming
+   * the production namespace mid-flight would orphan the existing
+   * records — the namespace is internal and the semantics are
+   * documented here.
    */
   atelierBuyRequest: (emailHash: string, ts: string) =>
     `dunamis:atelier-buy-request:${emailHash}:${ts}`,

@@ -219,14 +219,16 @@ export const contactSubmitSchema = z.object({
 export type ContactSubmitInput = z.infer<typeof contactSubmitSchema>;
 
 /**
- * Atelier buy-request form. The /build-services/products/atelier page's
- * #buy-atelier section POSTs here. This is a lead-capture surface, not
- * a Stripe checkout — the studio reaches back out within a business day
- * to collect payment + ship the installer + license.
+ * Atelier launch-notification interest form. The
+ * /build-services/products/atelier page's #buy-atelier section POSTs
+ * here. Atelier is in active development — submissions are
+ * launch-notification entries, not purchases. The endpoint is NOT a
+ * Stripe checkout; the schema below validates name + email + optional
+ * business + optional notes only.
  *
- * Atelier is a single-tier $149 product. There is no `tier` field on
- * the payload; customization is a post-purchase service engagement
- * scoped per customer, not a pre-pay tier.
+ * Atelier is a single-tier $149 product (at launch). There is no
+ * `tier` field on the payload; customization is a post-purchase
+ * service engagement scoped per customer, not a pre-pay tier.
  */
 export const atelierBuyRequestSchema = z.object({
   firstName: z
