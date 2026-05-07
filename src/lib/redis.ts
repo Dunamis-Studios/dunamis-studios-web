@@ -91,4 +91,16 @@ export const KEY = {
    */
   courseSignup: (courseSlug: string, emailHash: string) =>
     `dunamis:courses:signup:${courseSlug}:${emailHash}`,
+  /**
+   * Atelier buy-request lead capture. Each submission gets its own key
+   * (timestamp suffix), so a buyer who submits twice — say, once for
+   * Self-Serve and again for Done For You — generates two distinct
+   * records instead of overwriting the prior one. The studio reaches
+   * back out manually after the lead lands. This is NOT a Stripe
+   * checkout intent or an entitlement record; Atelier is a Software
+   * Projects prebuilt product and does not plug into the per-portal
+   * entitlement machinery.
+   */
+  atelierBuyRequest: (emailHash: string, ts: string) =>
+    `dunamis:atelier-buy-request:${emailHash}:${ts}`,
 } as const;

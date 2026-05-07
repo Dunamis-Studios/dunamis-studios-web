@@ -1,0 +1,263 @@
+"use client";
+
+import * as React from "react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  LeadNameFields,
+  RequiredMark,
+} from "@/components/marketing/lead-form-fields";
+import { cn } from "@/lib/utils";
+import { ATELIER_TIERS, type AtelierTierName } from "@/lib/atelier-content";
+
+type Status = "idle" | "submitting" | "success" | "error";
+
+interface AtelierBuyFormProps {
+  /**
+   * Tier pre-selected when the form mounts. Defaults to the recommended
+   * tier in ATELIER_TIERS so the form opens on a sensible choice rather
+   * than always landing on the cheapest one.
+   */
+  defaultTier?: AtelierTierName;
+  className?: string;
+}
+
+/**
+ * Lead-capture form for the Atelier marketing page's #buy-atelier
+ * section. POSTs to /api/atelier-buy-request with tier + name + email +
+ * studio name + optional notes. The studio reaches out within one
+ * business day with payment instructions and the perpetual license —
+ * this form is intentionally not a Stripe checkout (Atelier is a
+ * Software Projects prebuilt product, not a HubSpot per-portal
+ * entitlement, and the studio handles each sale individually for v1).
+ */
+
+const FALLBACK_TIER: AtelierTierName =
+  ATELIER_TIERS.find((t) => t.recommended)?.name ?? ATELIER_TIERS[0].name;
+
+export function AtelierBuyForm({ defaultTier, className }: AtelierBuyFormProps) {
+  const [tier, setTier] = React.useState<AtelierTierName>(
+    defaultTier ?? FALLBACK_TIER,
+  );
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [studioName, setStudioName] = React.useState("");
+  const [notes, setNotes] = React.useState("");
+  const [status, setStatus] = React.useState<Status>("idle");
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (status === "submitting") return;
+    setStatus("submitting");
+    setErrorMessage(null);
+    try {
+      const payload = {
+        tier,
+        firstName,
+        lastName,
+        email,
+        studioName,
+        notes: notes.trim().length > 0 ? notes : undefined,
+      };
+      const res = await fetch("/api/atelier-buy-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        let message = "Something went wrong. Please try again.";
+        try {
+          const data = (await res.json()) as { error?: string };
+          if (data?.error) message = data.error;
+        } catch {
+          /* fall through to default message */
+        }
+        setStatus("error");
+        setErrorMessage(message);
+        return;
+      }
+      setStatus("success");
+    } catch {
+      setStatus("error");
+      setErrorMessage("Could not reach the server. Please try again.");
+    }
+  }
+
+  if (status === "success") {
+    return (
+      <div
+        className={cn(
+          "flex items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5 text-left",
+          className,
+        )}
+      >
+        <CheckCircle2
+          className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-success)]"
+          aria-hidden
+        />
+        <div>
+          <div className="text-sm font-medium text-[var(--fg)]">
+            Got it. We&apos;ll be in touch within one business day.
+          </div>
+          <p className="mt-1 text-sm text-[var(--fg-muted)]">
+            Check your inbox — a confirmation is on its way with what
+            happens next.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={onSubmit} className={cn("flex flex-col gap-5", className)}>
+      <fieldset className="flex flex-col gap-3" disabled={status === "submitting"}>
+        <legend className="mb-1 block text-sm font-medium text-[var(--fg)]">
+          Pick a tier
+          <RequiredMark />
+        </legend>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {ATELIER_TIERS.map((t) => {
+            const checked = tier === t.name;
+            return (
+              <label
+                key={t.name}
+                className={cn(
+                  "relative flex cursor-pointer flex-col gap-1 rounded-lg border p-3 text-left transition-colors",
+                  checked
+                    ? "border-[var(--color-atelier-500)] bg-[color-mix(in_oklch,var(--color-atelier-500)_8%,var(--bg-elevated))]"
+                    : "border-[var(--border)] bg-[var(--bg-elevated)] hover:border-[var(--border-strong)]",
+                )}
+              >
+                <input
+                  type="radio"
+                  name="atelier-tier"
+                  value={t.name}
+                  checked={checked}
+                  onChange={() => setTier(t.name)}
+                  className="sr-only"
+                />
+                <span className="flex items-baseline justify-between gap-2">
+                  <span className="font-[var(--font-display)] text-base font-medium tracking-tight text-[var(--fg)]">
+                    {t.label}
+                  </span>
+                  <span
+                    className={cn(
+                      "font-mono text-xs",
+                      checked
+                        ? "text-[var(--color-atelier-500)]"
+                        : "text-[var(--fg-subtle)]",
+                    )}
+                  >
+                    {t.priceDisplay}
+                  </span>
+                </span>
+                <span className="text-xs leading-relaxed text-[var(--fg-muted)]">
+                  {t.tagline}
+                </span>
+              </label>
+            );
+          })}
+        </div>
+      </fieldset>
+
+      <LeadNameFields
+        idPrefix="atelier-buy"
+        firstName={firstName}
+        lastName={lastName}
+        setFirstName={setFirstName}
+        setLastName={setLastName}
+        disabled={status === "submitting"}
+      />
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <Label htmlFor="atelier-buy-email">
+            Email
+            <RequiredMark />
+          </Label>
+          <Input
+            id="atelier-buy-email"
+            type="email"
+            required
+            aria-required="true"
+            autoComplete="email"
+            inputMode="email"
+            placeholder="you@studio.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={status === "submitting"}
+            className="mt-1.5"
+          />
+        </div>
+        <div>
+          <Label htmlFor="atelier-buy-studio">
+            Studio name
+            <RequiredMark />
+          </Label>
+          <Input
+            id="atelier-buy-studio"
+            type="text"
+            required
+            aria-required="true"
+            autoComplete="organization"
+            placeholder="Northstar Weddings & Co."
+            value={studioName}
+            onChange={(e) => setStudioName(e.target.value)}
+            disabled={status === "submitting"}
+            className="mt-1.5"
+          />
+        </div>
+      </div>
+
+      <div>
+        <Label htmlFor="atelier-buy-notes">
+          Anything we should know?{" "}
+          <span className="font-normal text-[var(--fg-subtle)]">(optional)</span>
+        </Label>
+        <textarea
+          id="atelier-buy-notes"
+          rows={4}
+          maxLength={2000}
+          placeholder="If you picked Done For You + Customization, sketch the workflow tweaks you have in mind. Otherwise leave blank."
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          disabled={status === "submitting"}
+          className={cn(
+            "mt-1.5 w-full rounded-md border bg-[var(--bg-elevated)] px-3 py-2 text-sm text-[var(--fg)] placeholder:text-[var(--fg-subtle)] transition-colors outline-none",
+            "border-[var(--border)] hover:border-[var(--border-strong)]",
+            "focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20",
+            "disabled:cursor-not-allowed disabled:opacity-60",
+          )}
+        />
+      </div>
+
+      <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-xs text-[var(--fg-subtle)]">
+          No payment yet. We&apos;ll reach out within one business day to
+          finish the purchase and ship the installer.
+        </p>
+        <Button
+          type="submit"
+          size="lg"
+          disabled={status === "submitting"}
+          aria-disabled={status === "submitting"}
+        >
+          {status === "submitting" ? "Sending..." : "Get Atelier"}
+          {status === "submitting" ? null : (
+            <ArrowRight className="ml-0.5 h-4 w-4" aria-hidden />
+          )}
+        </Button>
+      </div>
+
+      {status === "error" && errorMessage ? (
+        <p role="alert" className="text-sm text-[var(--color-danger)]">
+          {errorMessage}
+        </p>
+      ) : null}
+    </form>
+  );
+}

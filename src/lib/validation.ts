@@ -217,3 +217,53 @@ export const contactSubmitSchema = z.object({
 });
 
 export type ContactSubmitInput = z.infer<typeof contactSubmitSchema>;
+
+/**
+ * Atelier buy-request form. The /build-services/products/atelier page's
+ * #buy-atelier section POSTs here. This is a lead-capture surface, not
+ * a Stripe checkout — the studio reaches back out within a business day
+ * to collect payment + ship the installer + license. Same shape every
+ * tier; the heavier tiers (Done For You, Customization) trigger more
+ * follow-up but the form itself stays uniform so a buyer never has to
+ * fill out more fields than necessary up-front.
+ */
+export const ATELIER_TIER_SCHEMA = z.enum([
+  "self-serve",
+  "done-for-you",
+  "done-for-you-custom",
+]);
+
+export const atelierBuyRequestSchema = z.object({
+  tier: ATELIER_TIER_SCHEMA,
+  firstName: z
+    .string()
+    .trim()
+    .min(1, "First name is required")
+    .max(80, "First name is too long"),
+  lastName: z
+    .string()
+    .trim()
+    .min(1, "Last name is required")
+    .max(80, "Last name is too long"),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(3, "Email is required")
+    .max(254, "Email is too long")
+    .email("Enter a valid email address"),
+  studioName: z
+    .string()
+    .trim()
+    .min(1, "Studio name is required")
+    .max(120, "Studio name is too long"),
+  notes: z
+    .string()
+    .trim()
+    .max(2000, "Notes are too long (2000 character limit)")
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined)),
+});
+
+export type AtelierBuyRequestInput = z.infer<typeof atelierBuyRequestSchema>;
+export type AtelierTier = z.infer<typeof ATELIER_TIER_SCHEMA>;

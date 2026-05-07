@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Check } from "lucide-react";
 import { ProductPageShell } from "@/components/marketing/product-page-shell";
+import { AtelierBuyForm } from "@/components/marketing/atelier-buy-form";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container, Section } from "@/components/ui/primitives";
 import { Badge } from "@/components/ui/badge";
@@ -256,24 +257,29 @@ export default function AtelierPage() {
         </Container>
       </Section>
 
-      {/* BUY FORM — replaced with the real form in the next commit */}
+      {/* BUY FORM */}
       <Section
         id="buy-atelier"
         className="border-t border-[var(--border)] scroll-mt-24"
       >
-        <Container size="sm">
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-8 text-center sm:p-10">
-            <h2 className="font-[var(--font-display)] text-2xl font-medium tracking-tight sm:text-3xl">
-              Get Atelier
-            </h2>
-            <p className="mx-auto mt-3 max-w-md text-[var(--fg-muted)]">
-              Pick a tier above, drop your details below, and we&apos;ll
-              send the installer plus your perpetual license within one
-              business day.
-            </p>
-            <p className="mx-auto mt-7 max-w-md text-sm italic text-[var(--fg-subtle)]">
-              Buy form lands in the next commit.
-            </p>
+        <Container size="md">
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-7 sm:p-10">
+            <div className="mx-auto max-w-2xl text-center">
+              <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+                Get Atelier
+              </div>
+              <h2 className="mt-3 font-[var(--font-display)] text-2xl font-medium tracking-tight sm:text-3xl">
+                Tell us where to send the installer.
+              </h2>
+              <p className="mx-auto mt-3 max-w-md text-[var(--fg-muted)]">
+                We reach back out from josh@dunamisstudios.net within one
+                business day with payment instructions and your perpetual
+                license. Nothing is charged at submission.
+              </p>
+            </div>
+            <div className="mx-auto mt-8 max-w-2xl">
+              <AtelierBuyForm />
+            </div>
           </div>
         </Container>
       </Section>
