@@ -5,6 +5,7 @@ import {
   getRecentArticles,
 } from "@/lib/kb";
 import { listPosts } from "@/lib/content";
+import { loadAtelierDocs, ATELIER_DOCS_BASE_PATH } from "@/lib/atelier-docs";
 
 /**
  * Last-modified timestamp bumped per deploy for static marketing
@@ -118,6 +119,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.9,
+    },
+    {
+      url: `${base}${ATELIER_DOCS_BASE_PATH}`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.7,
     },
     {
       url: `${base}/build-services/tools`,
@@ -339,7 +346,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  return [...staticEntries, ...helpEntries, ...contentEntries];
+  // Atelier docs — one entry per markdown file under
+  // content/atelier-docs. lastModified comes from each doc's
+  // frontmatter `updated` field so the sitemap reflects the actual
+  // doc cadence rather than the deploy timestamp.
+  const atelierDocs = await loadAtelierDocs();
+  const atelierDocEntries: MetadataRoute.Sitemap = atelierDocs
+    .filter((d) => !d.slug.includes("/"))
+    .map((d) => ({
+      url: `${base}${d.href}`,
+      lastModified: parseUpdated(d.frontmatter.updated),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    }));
+
+  return [
+    ...staticEntries,
+    ...helpEntries,
+    ...contentEntries,
+    ...atelierDocEntries,
+  ];
 }
 
 function categoryLastModified(

@@ -82,6 +82,14 @@ export function SiteFooter() {
             </li>
             <li>
               <Link
+                href="/build-services/products/atelier/docs"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-atelier-600)] dark:hover:text-[var(--color-atelier-400)]"
+              >
+                Atelier Docs
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/build-services/products"
                 className="text-[var(--fg-muted)] hover:text-[var(--color-atelier-600)] dark:hover:text-[var(--color-atelier-400)]"
               >

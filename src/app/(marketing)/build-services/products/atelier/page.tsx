@@ -182,6 +182,34 @@ export default function AtelierPage() {
         }}
       />
 
+      {/* DOCS PROMO — reads after FAQ, before pricing/buy */}
+      <Section className="border-t border-[var(--border)] py-10 sm:py-12">
+        <Container size="md">
+          <div className="flex flex-col items-start gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+            <div className="min-w-0">
+              <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+                Documentation
+              </div>
+              <h3 className="mt-2 font-[var(--font-display)] text-xl font-medium tracking-tight text-[var(--fg)] sm:text-2xl">
+                Want the full picture before you decide?
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--fg-muted)]">
+                Install guide, user guide, API reference, troubleshooting,
+                privacy notice, refund policy, and the EULA — all in one
+                place. Substantive, not marketing.
+              </p>
+            </div>
+            <Link
+              href="/build-services/products/atelier/docs"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-[var(--color-atelier-500)] px-4 py-2 text-sm font-medium text-[var(--color-atelier-700)] transition-colors hover:bg-[color-mix(in_oklch,var(--color-atelier-500)_8%,transparent)] dark:text-[var(--color-atelier-300)]"
+            >
+              Read the docs
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
+        </Container>
+      </Section>
+
       {/* PRICING — single card */}
       <Section
         id="pricing-atelier"
