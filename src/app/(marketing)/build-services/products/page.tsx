@@ -42,7 +42,7 @@ const PRODUCTS: ProductCard[] = [
       "Desktop wedding planner workspace — CRM, day-of mode, vendors, guests, seating, budget, payments, contracts. Yours forever, one-time purchase.",
     href: "/build-services/products/atelier",
     audience: "Professional wedding planners",
-    startingPrice: "From $149",
+    startingPrice: "$149 · one-time",
     badgeLabel: "Available now",
   },
 ];

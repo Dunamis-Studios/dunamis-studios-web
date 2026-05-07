@@ -1,5 +1,4 @@
 import { Resend } from "resend";
-import type { AtelierTier } from "./validation";
 
 /**
  * Atelier buy-request transactional emails.
@@ -21,13 +20,11 @@ import type { AtelierTier } from "./validation";
  * client construction mirrors src/lib/email.ts but stays local to
  * this file so the buy-request flow's email shape can evolve
  * independently.
+ *
+ * Atelier is a single-tier $149 product, so there is no tier field on
+ * the payload. Customization is a post-purchase service engagement,
+ * not a pre-pay tier — never reference tier copy in either email.
  */
-
-const ATELIER_TIER_LABELS: Record<AtelierTier, string> = {
-  "self-serve": "Self-Serve ($149)",
-  "done-for-you": "Done For You ($499)",
-  "done-for-you-custom": "Done For You + Customization ($1,499–$2,500)",
-};
 
 let resend: Resend | null = null;
 function client(): Resend {
@@ -73,11 +70,10 @@ function escape(s: string): string {
 }
 
 interface BuyRequestPayload {
-  tier: AtelierTier;
   firstName: string;
   lastName: string;
   email: string;
-  studioName: string;
+  businessName?: string;
   notes?: string;
   ip?: string;
   userAgent?: string;
@@ -86,19 +82,21 @@ interface BuyRequestPayload {
 export async function sendAtelierBuyRequestAdminEmail(
   payload: BuyRequestPayload,
 ): Promise<void> {
-  const subject = `Atelier buy-request — ${ATELIER_TIER_LABELS[payload.tier]} — ${payload.studioName}`;
+  const businessLine = payload.businessName ?? "(not provided)";
+  const subject = `Atelier buy-request — ${payload.firstName} ${payload.lastName}${
+    payload.businessName ? ` (${payload.businessName})` : ""
+  }`;
 
   const text = [
     `New Atelier buy-request:`,
     ``,
-    `Tier:    ${ATELIER_TIER_LABELS[payload.tier]}`,
-    `Name:    ${payload.firstName} ${payload.lastName}`,
-    `Email:   ${payload.email}`,
-    `Studio:  ${payload.studioName}`,
-    payload.notes ? `Notes:\n${payload.notes}` : `Notes:   (none)`,
+    `Name:     ${payload.firstName} ${payload.lastName}`,
+    `Email:    ${payload.email}`,
+    `Business: ${businessLine}`,
+    payload.notes ? `Notes:\n${payload.notes}` : `Notes:    (none)`,
     ``,
-    `IP:      ${payload.ip ?? "unknown"}`,
-    `Agent:   ${payload.userAgent ?? "unknown"}`,
+    `IP:       ${payload.ip ?? "unknown"}`,
+    `Agent:    ${payload.userAgent ?? "unknown"}`,
   ].join("\n");
 
   const html = `<!doctype html>
@@ -107,10 +105,9 @@ export async function sendAtelierBuyRequestAdminEmail(
   <div style="max-width:560px;margin:0 auto;background:#141414;border:1px solid #262626;border-radius:14px;padding:32px;">
     <div style="font-family:Georgia,serif;font-size:22px;font-weight:500;letter-spacing:-0.02em;margin-bottom:24px;">Atelier buy-request</div>
     <table style="width:100%;border-collapse:collapse;font-size:14px;">
-      <tr><td style="padding:6px 0;color:#888;width:90px;">Tier</td><td style="padding:6px 0;color:#eaeaea;">${escape(ATELIER_TIER_LABELS[payload.tier])}</td></tr>
-      <tr><td style="padding:6px 0;color:#888;">Name</td><td style="padding:6px 0;color:#eaeaea;">${escape(payload.firstName)} ${escape(payload.lastName)}</td></tr>
+      <tr><td style="padding:6px 0;color:#888;width:90px;">Name</td><td style="padding:6px 0;color:#eaeaea;">${escape(payload.firstName)} ${escape(payload.lastName)}</td></tr>
       <tr><td style="padding:6px 0;color:#888;">Email</td><td style="padding:6px 0;color:#eaeaea;"><a href="mailto:${escape(payload.email)}" style="color:#d97a7d;">${escape(payload.email)}</a></td></tr>
-      <tr><td style="padding:6px 0;color:#888;">Studio</td><td style="padding:6px 0;color:#eaeaea;">${escape(payload.studioName)}</td></tr>
+      <tr><td style="padding:6px 0;color:#888;">Business</td><td style="padding:6px 0;color:#eaeaea;">${escape(businessLine)}</td></tr>
     </table>
     ${
       payload.notes
@@ -129,7 +126,7 @@ export async function sendAtelierBuyRequestAdminEmail(
 
   if (!process.env.RESEND_API_KEY) {
     console.warn(
-      `[atelier-buy] RESEND_API_KEY missing — would notify admin about ${redact(payload.email)} (${ATELIER_TIER_LABELS[payload.tier]})`,
+      `[atelier-buy] RESEND_API_KEY missing — would notify admin about ${redact(payload.email)}`,
     );
     return;
   }
@@ -152,22 +149,14 @@ export async function sendAtelierBuyRequestCustomerConfirmation(
   payload: BuyRequestPayload,
 ): Promise<void> {
   const subject = `We received your Atelier request, ${payload.firstName}`;
-  const tierLabel = ATELIER_TIER_LABELS[payload.tier];
 
   const text = `Hi ${payload.firstName},
 
-Thanks for your Atelier request. Quick recap of what you sent us:
+Thanks for your Atelier request. We'll reach out from josh@dunamisstudios.net within one business day with payment instructions and your perpetual license. Once payment lands, you'll receive the installer, the license key, and the setup guide. You'll be running Atelier within the hour.
 
-  Tier:   ${tierLabel}
-  Studio: ${payload.studioName}
+Atelier is $149, paid once. Bug fixes are free for as long as we operate the major version you bought — there's no time limit. If you ever need help with setup, customization, or a feature scope down the line, that's a separate conversation we're happy to have once you've used the software.
 
-Here's what happens next:
-
-  - We'll reach out from josh@dunamisstudios.net within one business day with payment instructions and your perpetual license.
-  - For the Self-Serve tier, you'll receive a download link, the license key, and the setup guide. You'll be running Atelier within the hour.
-  - For Done For You or Done For You + Customization, we'll schedule a kickoff call to plan the install (and the discovery call if you picked Customization).
-
-If anything changed since you submitted the form — wrong tier, wrong email, second thoughts — just reply to this email. There's no payment yet; you're not committed to anything.
+If anything changed since you submitted the form — wrong email, second thoughts — just reply to this email. There's no payment yet; you're not committed to anything.
 
 — Josh
 Dunamis Studios`;
@@ -178,18 +167,9 @@ Dunamis Studios`;
   <div style="max-width:560px;margin:0 auto;background:#141414;border:1px solid #262626;border-radius:14px;padding:32px;">
     <div style="font-family:Georgia,serif;font-size:22px;font-weight:500;letter-spacing:-0.02em;margin-bottom:24px;">Dunamis Studios</div>
     <p style="font-size:15px;line-height:1.6;color:#eaeaea;">Hi ${escape(payload.firstName)},</p>
-    <p style="font-size:15px;line-height:1.6;color:#eaeaea;">Thanks for your Atelier request. Quick recap of what you sent us:</p>
-    <table style="margin:16px 0;width:100%;border-collapse:collapse;font-size:14px;">
-      <tr><td style="padding:6px 0;color:#888;width:90px;">Tier</td><td style="padding:6px 0;color:#eaeaea;">${escape(tierLabel)}</td></tr>
-      <tr><td style="padding:6px 0;color:#888;">Studio</td><td style="padding:6px 0;color:#eaeaea;">${escape(payload.studioName)}</td></tr>
-    </table>
-    <p style="font-size:15px;line-height:1.6;color:#eaeaea;margin-top:20px;">Here&apos;s what happens next:</p>
-    <ul style="font-size:14px;line-height:1.7;color:#cfcfcf;padding-left:18px;">
-      <li>We&apos;ll reach out from <a href="mailto:josh@dunamisstudios.net" style="color:#d97a7d;">josh@dunamisstudios.net</a> within one business day with payment instructions and your perpetual license.</li>
-      <li>For Self-Serve, you&apos;ll receive a download link, the license key, and the setup guide. You&apos;ll be running Atelier within the hour.</li>
-      <li>For Done For You or Done For You + Customization, we&apos;ll schedule a kickoff call to plan the install (and the discovery call if you picked Customization).</li>
-    </ul>
-    <p style="font-size:14px;line-height:1.6;color:#aaa;margin-top:18px;">If anything changed since you submitted the form — wrong tier, wrong email, second thoughts — just reply to this email. There&apos;s no payment yet; you&apos;re not committed to anything.</p>
+    <p style="font-size:15px;line-height:1.6;color:#eaeaea;">Thanks for your Atelier request. We&apos;ll reach out from <a href="mailto:josh@dunamisstudios.net" style="color:#d97a7d;">josh@dunamisstudios.net</a> within one business day with payment instructions and your perpetual license. Once payment lands, you&apos;ll receive the installer, the license key, and the setup guide. You&apos;ll be running Atelier within the hour.</p>
+    <p style="font-size:15px;line-height:1.6;color:#eaeaea;">Atelier is $149, paid once. Bug fixes are free for as long as we operate the major version you bought — there&apos;s no time limit. If you ever need help with setup, customization, or a feature scope down the line, that&apos;s a separate conversation we&apos;re happy to have once you&apos;ve used the software.</p>
+    <p style="font-size:14px;line-height:1.6;color:#aaa;margin-top:18px;">If anything changed since you submitted the form — wrong email, second thoughts — just reply to this email. There&apos;s no payment yet; you&apos;re not committed to anything.</p>
     <p style="font-size:14px;line-height:1.6;color:#aaa;">— Josh<br>Dunamis Studios</p>
     <div style="margin-top:32px;padding-top:24px;border-top:1px solid #262626;color:#888;font-size:12px;line-height:1.6;">
       Dunamis Studios — a software studio with a HubSpot specialty.<br>

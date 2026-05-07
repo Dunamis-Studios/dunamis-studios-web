@@ -222,19 +222,13 @@ export type ContactSubmitInput = z.infer<typeof contactSubmitSchema>;
  * Atelier buy-request form. The /build-services/products/atelier page's
  * #buy-atelier section POSTs here. This is a lead-capture surface, not
  * a Stripe checkout — the studio reaches back out within a business day
- * to collect payment + ship the installer + license. Same shape every
- * tier; the heavier tiers (Done For You, Customization) trigger more
- * follow-up but the form itself stays uniform so a buyer never has to
- * fill out more fields than necessary up-front.
+ * to collect payment + ship the installer + license.
+ *
+ * Atelier is a single-tier $149 product. There is no `tier` field on
+ * the payload; customization is a post-purchase service engagement
+ * scoped per customer, not a pre-pay tier.
  */
-export const ATELIER_TIER_SCHEMA = z.enum([
-  "self-serve",
-  "done-for-you",
-  "done-for-you-custom",
-]);
-
 export const atelierBuyRequestSchema = z.object({
-  tier: ATELIER_TIER_SCHEMA,
   firstName: z
     .string()
     .trim()
@@ -252,11 +246,12 @@ export const atelierBuyRequestSchema = z.object({
     .min(3, "Email is required")
     .max(254, "Email is too long")
     .email("Enter a valid email address"),
-  studioName: z
+  businessName: z
     .string()
     .trim()
-    .min(1, "Studio name is required")
-    .max(120, "Studio name is too long"),
+    .max(120, "Business name is too long")
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined)),
   notes: z
     .string()
     .trim()
@@ -266,4 +261,3 @@ export const atelierBuyRequestSchema = z.object({
 });
 
 export type AtelierBuyRequestInput = z.infer<typeof atelierBuyRequestSchema>;
-export type AtelierTier = z.infer<typeof ATELIER_TIER_SCHEMA>;

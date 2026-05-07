@@ -1,95 +1,67 @@
 /**
  * Atelier marketing-page content — single source of truth.
  *
- * Pricing tiers, feature copy, comparison rows, FAQ, hero block. All
- * read by /build-services/products/atelier/ and any future surface
- * that needs to talk about Atelier (footer chips, related-products
- * carousel, JSON-LD generation).
+ * Pricing, feature copy, comparison rows, FAQ, hero block. All read by
+ * /build-services/products/atelier/ and any future surface that needs
+ * to talk about Atelier (footer chips, related-products carousel,
+ * JSON-LD generation).
  *
  * Atelier is the studio's first prebuilt product (Software Projects
  * lane). It does NOT plug into the HubSpot product machinery — no
- * entitlement records, no shared Redis, no Stripe webhook. Pricing
- * here is descriptive copy, not a Stripe price ID lookup.
+ * entitlement records, no shared Redis namespace under
+ * dunamis:entitlement:*, no Stripe webhook. Pricing here is
+ * descriptive copy, not a Stripe price ID lookup.
+ *
+ * Pricing model: a single $149 perpetual license. Customization is
+ * intentionally NOT a pre-purchase tier — customers buy the software,
+ * use it, and may engage Dunamis Studios for a custom development
+ * scope after the fact. That keeps the marketing page focused on the
+ * product itself instead of selling services up front.
  */
 
 // ---------------------------------------------------------------------------
-// Pricing tiers
+// Pricing — single tier
 // ---------------------------------------------------------------------------
 
-export type AtelierTierName = "self-serve" | "done-for-you" | "done-for-you-custom";
-
-export interface AtelierTier {
-  /** Internal slug used in the buy form payload + Redis keys. */
-  name: AtelierTierName;
-  /** Display label on the pricing card. */
-  label: string;
-  /** One-line description under the label. */
-  tagline: string;
-  /** Display price string. Uses a range for the custom tier. */
+export interface AtelierPricing {
+  /** Display price string. */
   priceDisplay: string;
-  /** Numeric anchor used for JSON-LD Offer.price (low end of range). */
+  /** Numeric anchor used for JSON-LD Offer.price. */
   priceUSD: number;
-  /** What's actually delivered at this tier. */
+  /** What's actually in the box. */
   includes: string[];
-  /** Marker for the recommended tier — the middle tier in the array. */
-  recommended?: boolean;
-  /** Optional fine-print shown under the tier card. */
-  footnote?: string;
+  /** Fine-print line shown under the pricing card. */
+  footnote: string;
 }
 
-export const ATELIER_TIERS: AtelierTier[] = [
-  {
-    name: "self-serve",
-    label: "Self-Serve",
-    tagline: "The installer, the license, the docs. You take it from there.",
-    priceDisplay: "$149",
-    priceUSD: 149,
-    includes: [
-      "Atelier installer for Windows 10 / 11",
-      "Perpetual license — yours forever, no expiry",
-      "Every feature unlocked from day one",
-      "Setup wizard that gets you to a working studio profile",
-      "30 days of bug-fix support after purchase",
-      "Local-first: no account, no cloud, no telemetry",
-    ],
-    footnote: "One license per studio. Run it on as many of your own machines as you need.",
-  },
-  {
-    name: "done-for-you",
-    label: "Done For You",
-    tagline: "We install Atelier on your machine and load it with your studio's data.",
-    priceDisplay: "$499",
-    priceUSD: 499,
-    recommended: true,
-    includes: [
-      "Everything in Self-Serve",
-      "Remote install on your Windows machine via screen-share",
-      "Studio profile, logo, and team set up by us",
-      "Up to 25 existing weddings imported from your spreadsheet or current tool",
-      "Up to 50 vendors imported with categories and contact info",
-      "Two 45-min training calls — one for you, one for the team",
-      "60 days of bug-fix support after purchase",
-    ],
-    footnote: "We never receive a copy of your data. The import runs on your machine, on your call.",
-  },
-  {
-    name: "done-for-you-custom",
-    label: "Done For You + Customization",
-    tagline: "Atelier with the workflow tweaks your studio actually needs.",
-    priceDisplay: "$1,499 – $2,500",
-    priceUSD: 1499,
-    includes: [
-      "Everything in Done For You",
-      "Discovery call to scope the customization",
-      "Custom fields, templates, and report tweaks built into your install",
-      "Optional integration scripts (e.g. a Google Calendar sync, a Stripe payments importer)",
-      "Source-level changes to the Atelier code if scope warrants it",
-      "Six months of bug-fix support, plus the customizations you bought",
-      "Final price agreed up-front after discovery — no scope creep",
-    ],
-    footnote: "Quote depends on scope. Discovery call is free; you only pay if you choose to proceed.",
-  },
-];
+export const ATELIER_PRICING: AtelierPricing = {
+  priceDisplay: "$149",
+  priceUSD: 149,
+  includes: [
+    "Atelier installer for Windows 10 / 11",
+    "Perpetual license — yours forever, no expiry",
+    "Every feature unlocked from day one — CRM, day-of mode, vendors, guests, seating, budget, payments, contracts, reports, local API",
+    "Setup wizard that gets you to a working studio profile",
+    "Free bug fixes — no time limit while we operate the major version you bought",
+    "Local-first: no account, no cloud, no telemetry",
+    "Unobfuscated source ships with the install",
+  ],
+  footnote:
+    "One license per studio. Run it on as many of your own machines as you need.",
+};
+
+/**
+ * Post-purchase customization callout. Rendered as a small block under
+ * the pricing card so it's visible to a buyer comparing the price, but
+ * stays out of the way of the headline offer. Customization is a
+ * separate, scoped engagement — never bundled into the up-front
+ * purchase.
+ */
+export const ATELIER_POST_PURCHASE_CALLOUT = {
+  body: "Need help getting set up, or want custom features? Once you've used Atelier, we offer custom development engagements scoped per-customer. Reach out anytime.",
+  ctaLabel: "Talk to us",
+  ctaHref: "/contact",
+};
 
 // ---------------------------------------------------------------------------
 // Hero + answer block + problem
@@ -98,7 +70,8 @@ export const ATELIER_TIERS: AtelierTier[] = [
 export const ATELIER_HERO = {
   eyebrow: "Atelier — for wedding planners",
   name: "Atelier",
-  headline: "The wedding planner workspace that lives on your computer, not in a vendor's cloud.",
+  headline:
+    "The wedding planner workspace that lives on your computer, not in a vendor's cloud.",
   lede: "A perpetual-license Windows desktop app for professional wedding planners. CRM, day-of run-of-show, vendors, guests, seating, budget, payments, contracts — every wedding in one workspace, owned by you.",
 };
 
@@ -139,18 +112,6 @@ export const ATELIER_FEATURES: { title: string; body: string }[] = [
     title: "Calendar, reports, notifications",
     body: "Month / Week / Day calendar with a thick today indicator. Reports with a sticky filter row that re-derives each section. Bell-icon and Windows tray notifications for overdue and due-soon items, gated by quiet hours.",
   },
-  {
-    title: "Local REST API for your other tools",
-    body: "A localhost API on port 7423 exposes the data model to anything you want to wire up — Zapier, custom scripts, your own dashboards. Per-installation Bearer key. /api/docs ships in-app.",
-  },
-  {
-    title: "PDF export, milestone playbook, contracts",
-    body: "Contracts and the day-of run-of-show export to PDF straight from the app. Milestone playbook gaps surface as dashboard badges and a dismissible wedding-detail banner — the workspace tells you what's late, you don't have to ask.",
-  },
-  {
-    title: "No subscription. Ever.",
-    body: "Pay once, own the install. Atelier never expires, never disables features after a trial, and never holds your data hostage. The license is verified locally — no internet required to launch.",
-  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -170,7 +131,7 @@ export const ATELIER_COMPARISON: {
   rows: [
     {
       dimension: "Pricing model",
-      us: "One-time purchase. Three perpetual tiers from $149 to $2,500.",
+      us: "One-time purchase. $149 perpetual license, paid once.",
       them: "Monthly or annual subscription. $19–$80+ per month, every month, indefinitely.",
     },
     {
@@ -189,6 +150,11 @@ export const ATELIER_COMPARISON: {
       them: "Per-seat adders, often $10–$30 per additional user per month.",
     },
     {
+      dimension: "Updates",
+      us: "Bug fixes free indefinitely. Major version upgrades (v2, v3) are separate optional purchases at a discount for existing customers.",
+      them: "Continuous as long as you keep paying. Stop paying, stop receiving anything.",
+    },
+    {
       dimension: "If the vendor pivots",
       us: "Your install keeps working. The license verifies locally; nothing depends on a server we run.",
       them: "Service ends or pricing changes — your workflow has to follow.",
@@ -197,11 +163,6 @@ export const ATELIER_COMPARISON: {
       dimension: "Telemetry and tracking",
       us: "None. The only outbound call is an opt-out GitHub update check.",
       them: "Standard SaaS analytics — usage tracked, behavior logged, often shared with third parties.",
-    },
-    {
-      dimension: "Customization",
-      us: "Done For You + Customization tier ships source-level tweaks built into your install.",
-      them: "Whatever the vendor's roadmap allows. Feature requests go in a queue.",
     },
   ],
 };
@@ -213,7 +174,11 @@ export const ATELIER_COMPARISON: {
 export const ATELIER_FAQ: { q: string; a: string }[] = [
   {
     q: "Is this really a one-time purchase?",
-    a: "Yes. You buy Atelier once, receive an installer and a perpetual license, and that license is verified offline against a key embedded in the app. There's no subscription, no expiry, no renewal email. Future major versions (v2, v3) will be offered as separate optional purchases at a discount, never as a forced upgrade.",
+    a: "Yes. You buy Atelier once for $149, receive an installer and a perpetual license, and that license is verified offline against a key embedded in the app. There's no subscription, no expiry, no renewal email. Future major versions (v2, v3) will be offered as separate optional purchases at a discount for existing customers, never as a forced upgrade.",
+  },
+  {
+    q: "Does support ever expire?",
+    a: "No. Bug fixes are free for as long as Dunamis Studios operates the major version you bought — there's no 30-day, 90-day, or 12-month window. If a bug stops Atelier from running on a supported Windows configuration, we fix it, regardless of when you purchased. Major version upgrades (v2, v3) are a separate optional purchase with loyalty pricing for existing customers; the major you own keeps receiving bug fixes.",
   },
   {
     q: "Does Atelier work without an internet connection?",
@@ -232,16 +197,12 @@ export const ATELIER_FAQ: { q: string; a: string }[] = [
     a: "Atelier is single-machine in v1 — the SQLite file lives on one PC. Studios with multiple planners typically install Atelier on a shared workstation in the office, or use a synced folder (OneDrive, Dropbox) pointed at the data directory. A multi-user sync mode is on the roadmap.",
   },
   {
-    q: "What happens if I need help after the support window ends?",
-    a: "Email us. We're not going to ignore a paying customer because the calendar moved. The 30 / 60 / 180-day windows on the tiers are the included support — beyond that, bug fixes for issues that prevent the app from running on a supported configuration are still on us.",
-  },
-  {
     q: "Can I import my existing weddings from another tool?",
-    a: "Yes — that's the Done For You tier. We screen-share with you, run the import on your machine from your spreadsheet or current tool's export, and the data never leaves your laptop. For Self-Serve, the localhost REST API ships with the install and is documented at /api/docs in the running app, so a developer can write a one-off import script.",
+    a: "Yes — the localhost REST API ships with the install and is documented at /api/docs in the running app, so any developer (yours or ours) can write a one-off import script from a spreadsheet or another tool's export. The data never leaves your laptop. If you'd rather pay us to do the import, that's a post-purchase custom-development engagement we can scope after you have Atelier in hand.",
   },
   {
     q: "What if I need a feature that isn't in the box?",
-    a: "Done For You + Customization is the answer. We scope the work in a free discovery call, agree on a fixed price, and ship the customization built into your install. Source-level changes are on the table — Atelier ships with unobfuscated source.",
+    a: "Buy Atelier first, use it, then talk to us. Customization is a post-purchase service we scope per customer — not a tier you pre-pay for. Once you've spent time in the app and know exactly what you'd change, a discovery call turns that list into a fixed-price scope, and the customization ships built into your install. Atelier ships with unobfuscated source, so source-level changes are on the table.",
   },
   {
     q: "Is there a free trial?",

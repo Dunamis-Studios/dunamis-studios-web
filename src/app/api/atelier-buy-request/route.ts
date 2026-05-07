@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { redis, KEY } from "@/lib/redis";
-import { atelierBuyRequestSchema, type AtelierTier } from "@/lib/validation";
+import { atelierBuyRequestSchema } from "@/lib/validation";
 import {
   sendAtelierBuyRequestAdminEmail,
   sendAtelierBuyRequestCustomerConfirmation,
@@ -15,11 +15,10 @@ import {
  * shape /api/notify uses:
  *
  *   1. Redis SET dunamis:atelier-buy-request:{hash(email)}:{ts}.
- *      The timestamp suffix means a buyer who submits twice (first
- *      Self-Serve, then Done For You) generates two distinct
- *      records rather than overwriting the prior one. If this
- *      write fails, the request fails with 500 — the studio cannot
- *      follow up on a lead it never recorded.
+ *      The timestamp suffix means a buyer who submits twice
+ *      generates two distinct records rather than overwriting the
+ *      prior one. If this write fails, the request fails with 500 —
+ *      the studio cannot follow up on a lead it never recorded.
  *   2. Best-effort admin notification email (Josh). Resend hiccups
  *      are logged but do not surface to the visitor; their lead is
  *      already captured.
@@ -29,14 +28,17 @@ import {
  * No HubSpot mirror because Atelier is a Software Projects prebuilt
  * product, not a HubSpot product. Nothing here writes to the
  * HubSpot Forms API and nothing reads the hubspotutk cookie.
+ *
+ * Atelier is a single-tier $149 product — there is no `tier` field
+ * on the payload or the persisted record. Customization is a
+ * post-purchase service engagement, not a pre-pay tier.
  */
 
 interface BuyRequestRecord {
-  tier: AtelierTier;
   firstName: string;
   lastName: string;
   email: string;
-  studioName: string;
+  businessName?: string;
   notes?: string;
   signedUpAt: string;
   ip: string;
@@ -82,11 +84,10 @@ export async function POST(req: NextRequest) {
   const signedUpAt = new Date().toISOString();
 
   const record: BuyRequestRecord = {
-    tier: input.tier,
     firstName: input.firstName,
     lastName: input.lastName,
     email: input.email,
-    studioName: input.studioName,
+    businessName: input.businessName,
     notes: input.notes,
     signedUpAt,
     ip: ipAddress,
@@ -95,9 +96,9 @@ export async function POST(req: NextRequest) {
 
   // Source-of-truth Redis write. The key is multi-write per email
   // because the timestamp suffix is unique per request — a buyer who
-  // changes tiers and re-submits creates a new record rather than
-  // overwriting the first one. The studio's follow-up workflow needs
-  // both, since the second submission is meaningful information.
+  // re-submits creates a new record rather than overwriting the
+  // first one. The studio's follow-up workflow needs both, since the
+  // second submission is meaningful information.
   try {
     const r = redis();
     // Compact ISO-ish timestamp safe for use as a Redis key segment.
@@ -115,11 +116,10 @@ export async function POST(req: NextRequest) {
   }
 
   const emailPayload = {
-    tier: input.tier,
     firstName: input.firstName,
     lastName: input.lastName,
     email: input.email,
-    studioName: input.studioName,
+    businessName: input.businessName,
     notes: input.notes,
     ip: ipAddress !== "unknown" ? ipAddress : undefined,
     userAgent: userAgent !== "unknown" ? userAgent : undefined,

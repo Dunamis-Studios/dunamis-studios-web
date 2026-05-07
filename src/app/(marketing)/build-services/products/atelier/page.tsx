@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Check } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Check } from "lucide-react";
 import { ProductPageShell } from "@/components/marketing/product-page-shell";
 import { AtelierBuyForm } from "@/components/marketing/atelier-buy-form";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container, Section } from "@/components/ui/primitives";
-import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
 import { siteFreshness } from "@/lib/schema-freshness";
-import { cn } from "@/lib/utils";
 import {
-  ATELIER_TIERS,
+  ATELIER_PRICING,
+  ATELIER_POST_PURCHASE_CALLOUT,
   ATELIER_HERO,
   ATELIER_ANSWER_BLOCK,
   ATELIER_PROBLEM,
@@ -65,14 +65,13 @@ const atelierSchema = {
     name: "Dunamis Studios",
     url: SITE_URL,
   },
-  offers: ATELIER_TIERS.map((t) => ({
+  offers: {
     "@type": "Offer",
-    name: t.label,
-    price: String(t.priceUSD),
+    price: String(ATELIER_PRICING.priceUSD),
     priceCurrency: "USD",
     category: "OneTime",
     availability: "https://schema.org/InStock",
-  })),
+  },
 };
 
 const faqPageSchema = {
@@ -100,7 +99,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Atelier: desktop wedding planner workspace, owned forever",
     description:
-      "A perpetual-license Windows desktop app for professional wedding planners. No subscription, no cloud, no telemetry. From $149.",
+      "A perpetual-license Windows desktop app for professional wedding planners. No subscription, no cloud, no telemetry. $149, paid once.",
     url: PAGE_PATH,
     type: "website",
     images: [
@@ -117,7 +116,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Atelier: desktop wedding planner workspace, owned forever",
     description:
-      "A perpetual-license Windows desktop app for professional wedding planners. No subscription, no cloud, no telemetry. From $149.",
+      "A perpetual-license Windows desktop app for professional wedding planners. No subscription, no cloud, no telemetry. $149, paid once.",
     images: [
       {
         url: "/twitter-image",
@@ -166,94 +165,86 @@ export default function AtelierPage() {
         faq={ATELIER_FAQ}
         pricingTeaser={{
           eyebrow: "Pricing",
-          headline: "Three tiers. One purchase each.",
-          body: "Self-Serve, Done For You, or Done For You + Customization. Pick the lift you want; the install is yours forever either way.",
-          ctaLabel: "See the tiers",
+          headline: "$149. One-time. Yours forever.",
+          body: "One price, every feature unlocked, no subscription. Bug fixes free indefinitely while we operate the major version you bought.",
+          ctaLabel: "See what's in the box",
         }}
         buyCta={{
           anchorId: "buy-atelier",
           pricingAnchorId: "pricing-atelier",
           label: "Get Atelier",
           finalLede:
-            "Atelier ships today. Pick a tier below and we'll send the installer plus your perpetual license.",
+            "Atelier ships today. $149, paid once, perpetual license. Drop your details below and we'll send the installer.",
         }}
       />
 
-      {/* PRICING TIER CARDS */}
+      {/* PRICING — single card */}
       <Section
         id="pricing-atelier"
         className="border-t border-[var(--border)] scroll-mt-24"
       >
-        <Container size="xl">
-          <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-            Pricing
+        <Container size="md">
+          <div className="text-center">
+            <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+              Pricing
+            </div>
+            <h2 className="mt-3 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
+              One price. Every feature.
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-[var(--fg-muted)] leading-relaxed">
+              Atelier is $149, paid once. The same install runs on as many of
+              your own machines as you need. Bug fixes are free for as long as
+              we operate the major version you bought — no time limit.
+            </p>
           </div>
-          <h2 className="mt-3 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
-            One-time purchase. Pick the lift you want.
-          </h2>
-          <p className="mt-4 max-w-2xl text-[var(--fg-muted)] leading-relaxed">
-            Every tier ships the same Atelier — every feature, every workspace
-            tab, every export, the local REST API, the day-of mode. The
-            difference is how much of the setup work we do with you.
-          </p>
 
-          <div className="mt-12 grid gap-6 lg:grid-cols-3">
-            {ATELIER_TIERS.map((tier) => (
-              <div
-                key={tier.name}
-                className={cn(
-                  "relative flex flex-col rounded-2xl border bg-[var(--bg-elevated)] p-7",
-                  tier.recommended
-                    ? "border-[var(--color-atelier-500)] shadow-[0_0_0_1px_var(--color-atelier-500)]"
-                    : "border-[var(--border)]",
-                )}
-              >
-                {tier.recommended ? (
-                  <div className="absolute -top-3 left-7">
-                    <Badge variant="atelier">Recommended</Badge>
-                  </div>
-                ) : null}
-                <div>
-                  <h3 className="font-[var(--font-display)] text-2xl font-medium tracking-tight">
-                    {tier.label}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--fg-muted)]">
-                    {tier.tagline}
-                  </p>
-                </div>
-                <div className="mt-6 flex items-baseline gap-2">
-                  <span className="font-[var(--font-display)] text-4xl font-medium tracking-tight">
-                    {tier.priceDisplay}
+          <div className="mt-12">
+            <div className="relative mx-auto max-w-xl rounded-2xl border border-[var(--color-atelier-500)] bg-[var(--bg-elevated)] p-8 shadow-[0_0_0_1px_var(--color-atelier-500)] sm:p-10">
+              <div className="text-center">
+                <h3 className="font-[var(--font-display)] text-2xl font-medium tracking-tight">
+                  Atelier
+                </h3>
+                <div className="mt-4 flex items-baseline justify-center gap-2">
+                  <span className="font-[var(--font-display)] text-5xl font-medium tracking-tight">
+                    {ATELIER_PRICING.priceDisplay}
                   </span>
-                  <span className="text-sm text-[var(--fg-subtle)]">one-time</span>
+                  <span className="text-sm text-[var(--fg-subtle)]">
+                    one-time
+                  </span>
                 </div>
-                <ul className="mt-7 flex-1 space-y-3">
-                  {tier.includes.map((line, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-sm">
-                      <Check
-                        className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-atelier-500)]"
-                        aria-hidden
-                      />
-                      <span className="text-[var(--fg)] leading-relaxed">
-                        {line}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                {tier.footnote ? (
-                  <p className="mt-6 border-t border-[var(--border)] pt-4 text-xs leading-relaxed text-[var(--fg-subtle)]">
-                    {tier.footnote}
-                  </p>
-                ) : null}
               </div>
-            ))}
+              <ul className="mt-8 space-y-3">
+                {ATELIER_PRICING.includes.map((line, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-sm">
+                    <Check
+                      className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-atelier-500)]"
+                      aria-hidden
+                    />
+                    <span className="text-[var(--fg)] leading-relaxed">
+                      {line}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-8 border-t border-[var(--border)] pt-5 text-center text-xs leading-relaxed text-[var(--fg-subtle)]">
+                {ATELIER_PRICING.footnote}
+              </p>
+            </div>
           </div>
 
-          <p className="mt-10 text-center text-sm text-[var(--fg-muted)]">
-            All tiers are one-time purchases. No subscription, no renewal,
-            no per-seat adders. Future major versions are separate optional
-            purchases at a discount, never forced upgrades.
-          </p>
+          {/* Post-purchase customization callout */}
+          <div className="mx-auto mt-8 max-w-xl rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg-subtle)] p-5 sm:p-6">
+            <p className="text-sm leading-relaxed text-[var(--fg-muted)]">
+              {ATELIER_POST_PURCHASE_CALLOUT.body}
+            </p>
+            <Link
+              href={ATELIER_POST_PURCHASE_CALLOUT.ctaHref}
+              className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[var(--color-atelier-600)] hover:text-[var(--color-atelier-700)] dark:text-[var(--color-atelier-400)] dark:hover:text-[var(--color-atelier-300)]"
+            >
+              {ATELIER_POST_PURCHASE_CALLOUT.ctaLabel}
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
         </Container>
       </Section>
 

@@ -10,41 +10,33 @@ import {
   RequiredMark,
 } from "@/components/marketing/lead-form-fields";
 import { cn } from "@/lib/utils";
-import { ATELIER_TIERS, type AtelierTierName } from "@/lib/atelier-content";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
 interface AtelierBuyFormProps {
-  /**
-   * Tier pre-selected when the form mounts. Defaults to the recommended
-   * tier in ATELIER_TIERS so the form opens on a sensible choice rather
-   * than always landing on the cheapest one.
-   */
-  defaultTier?: AtelierTierName;
   className?: string;
 }
 
 /**
  * Lead-capture form for the Atelier marketing page's #buy-atelier
- * section. POSTs to /api/atelier-buy-request with tier + name + email +
- * studio name + optional notes. The studio reaches out within one
- * business day with payment instructions and the perpetual license —
- * this form is intentionally not a Stripe checkout (Atelier is a
- * Software Projects prebuilt product, not a HubSpot per-portal
- * entitlement, and the studio handles each sale individually for v1).
+ * section. POSTs to /api/atelier-buy-request with name + email +
+ * optional business name + optional notes. The studio reaches out
+ * within one business day with payment instructions and the
+ * perpetual license — this form is intentionally not a Stripe
+ * checkout (Atelier is a Software Projects prebuilt product, not a
+ * HubSpot per-portal entitlement, and the studio handles each sale
+ * individually for v1).
+ *
+ * Atelier is a single-tier $149 product. There is no tier selection
+ * here; customization is a post-purchase service engagement, not a
+ * pre-pay tier.
  */
 
-const FALLBACK_TIER: AtelierTierName =
-  ATELIER_TIERS.find((t) => t.recommended)?.name ?? ATELIER_TIERS[0].name;
-
-export function AtelierBuyForm({ defaultTier, className }: AtelierBuyFormProps) {
-  const [tier, setTier] = React.useState<AtelierTierName>(
-    defaultTier ?? FALLBACK_TIER,
-  );
+export function AtelierBuyForm({ className }: AtelierBuyFormProps) {
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
-  const [studioName, setStudioName] = React.useState("");
+  const [businessName, setBusinessName] = React.useState("");
   const [notes, setNotes] = React.useState("");
   const [status, setStatus] = React.useState<Status>("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
@@ -56,11 +48,10 @@ export function AtelierBuyForm({ defaultTier, className }: AtelierBuyFormProps) 
     setErrorMessage(null);
     try {
       const payload = {
-        tier,
         firstName,
         lastName,
         email,
-        studioName,
+        businessName: businessName.trim().length > 0 ? businessName : undefined,
         notes: notes.trim().length > 0 ? notes : undefined,
       };
       const res = await fetch("/api/atelier-buy-request", {
@@ -114,56 +105,6 @@ export function AtelierBuyForm({ defaultTier, className }: AtelierBuyFormProps) 
 
   return (
     <form onSubmit={onSubmit} className={cn("flex flex-col gap-5", className)}>
-      <fieldset className="flex flex-col gap-3" disabled={status === "submitting"}>
-        <legend className="mb-1 block text-sm font-medium text-[var(--fg)]">
-          Pick a tier
-          <RequiredMark />
-        </legend>
-        <div className="grid gap-2 sm:grid-cols-3">
-          {ATELIER_TIERS.map((t) => {
-            const checked = tier === t.name;
-            return (
-              <label
-                key={t.name}
-                className={cn(
-                  "relative flex cursor-pointer flex-col gap-1 rounded-lg border p-3 text-left transition-colors",
-                  checked
-                    ? "border-[var(--color-atelier-500)] bg-[color-mix(in_oklch,var(--color-atelier-500)_8%,var(--bg-elevated))]"
-                    : "border-[var(--border)] bg-[var(--bg-elevated)] hover:border-[var(--border-strong)]",
-                )}
-              >
-                <input
-                  type="radio"
-                  name="atelier-tier"
-                  value={t.name}
-                  checked={checked}
-                  onChange={() => setTier(t.name)}
-                  className="sr-only"
-                />
-                <span className="flex items-baseline justify-between gap-2">
-                  <span className="font-[var(--font-display)] text-base font-medium tracking-tight text-[var(--fg)]">
-                    {t.label}
-                  </span>
-                  <span
-                    className={cn(
-                      "font-mono text-xs",
-                      checked
-                        ? "text-[var(--color-atelier-500)]"
-                        : "text-[var(--fg-subtle)]",
-                    )}
-                  >
-                    {t.priceDisplay}
-                  </span>
-                </span>
-                <span className="text-xs leading-relaxed text-[var(--fg-muted)]">
-                  {t.tagline}
-                </span>
-              </label>
-            );
-          })}
-        </div>
-      </fieldset>
-
       <LeadNameFields
         idPrefix="atelier-buy"
         firstName={firstName}
@@ -194,19 +135,19 @@ export function AtelierBuyForm({ defaultTier, className }: AtelierBuyFormProps) 
           />
         </div>
         <div>
-          <Label htmlFor="atelier-buy-studio">
-            Studio name
-            <RequiredMark />
+          <Label htmlFor="atelier-buy-business">
+            Business name{" "}
+            <span className="font-normal text-[var(--fg-subtle)]">
+              (optional)
+            </span>
           </Label>
           <Input
-            id="atelier-buy-studio"
+            id="atelier-buy-business"
             type="text"
-            required
-            aria-required="true"
             autoComplete="organization"
             placeholder="Northstar Weddings & Co."
-            value={studioName}
-            onChange={(e) => setStudioName(e.target.value)}
+            value={businessName}
+            onChange={(e) => setBusinessName(e.target.value)}
             disabled={status === "submitting"}
             className="mt-1.5"
           />
@@ -216,13 +157,15 @@ export function AtelierBuyForm({ defaultTier, className }: AtelierBuyFormProps) 
       <div>
         <Label htmlFor="atelier-buy-notes">
           Anything we should know?{" "}
-          <span className="font-normal text-[var(--fg-subtle)]">(optional)</span>
+          <span className="font-normal text-[var(--fg-subtle)]">
+            (optional)
+          </span>
         </Label>
         <textarea
           id="atelier-buy-notes"
           rows={4}
           maxLength={2000}
-          placeholder="If you picked Done For You + Customization, sketch the workflow tweaks you have in mind. Otherwise leave blank."
+          placeholder="Questions, context, or anything else you'd like us to know before we follow up. Otherwise leave blank."
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           disabled={status === "submitting"}
