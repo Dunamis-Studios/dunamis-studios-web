@@ -12,6 +12,7 @@ import {
   ATELIER_POST_PURCHASE_CALLOUT,
   ATELIER_HERO,
   ATELIER_ANSWER_BLOCK,
+  ATELIER_ANSWER_BLOCK_FOOTNOTE,
   ATELIER_PROBLEM,
   ATELIER_FEATURES,
   ATELIER_COMPARISON,
@@ -163,6 +164,7 @@ export default function AtelierPage() {
         headline={ATELIER_HERO.headline}
         lede={ATELIER_HERO.lede}
         answerBlock={ATELIER_ANSWER_BLOCK}
+        answerBlockFootnote={ATELIER_ANSWER_BLOCK_FOOTNOTE}
         problem={ATELIER_PROBLEM}
         features={ATELIER_FEATURES}
         comparison={ATELIER_COMPARISON}

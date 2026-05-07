@@ -55,6 +55,13 @@ export interface ProductPageProps {
   // tighter slab so it reads as an authoritative one-line answer
   // for AEO extraction. Currently only Property Pulse uses this.
   answerBlock?: string;
+  // Optional small clarifier rendered directly under the answer
+  // block in muted footnote-style type. Useful when the answer
+  // block makes a strong privacy claim that needs a one-line
+  // honest exception (e.g. Atelier's "wedding data stays local"
+  // alongside "license activation phones home"). Only rendered
+  // when answerBlock is also set.
+  answerBlockFootnote?: string;
   // Optional comparison block rendered between Features and the
   // pricing teaser. Three columns on desktop (Dimension, this
   // product, the comparator); a card-per-dimension stack on mobile.
@@ -229,6 +236,11 @@ export function ProductPageShell(p: ProductPageProps) {
             <p className="mx-auto max-w-3xl text-center font-[var(--font-display)] text-xl font-normal leading-relaxed text-[var(--fg)] sm:text-2xl">
               {p.answerBlock}
             </p>
+            {p.answerBlockFootnote ? (
+              <p className="mx-auto mt-5 max-w-2xl text-center text-sm text-[var(--fg-subtle)]">
+                {p.answerBlockFootnote}
+              </p>
+            ) : null}
           </Container>
         </Section>
       ) : null}

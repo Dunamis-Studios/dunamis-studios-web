@@ -80,7 +80,18 @@ export const ATELIER_HERO = {
 };
 
 export const ATELIER_ANSWER_BLOCK =
-  "Atelier is desktop software for wedding planners, sold once and yours forever. It runs on your Windows PC, stores every wedding in a single SQLite file you control, and never phones home. No subscription, no per-seat fees, no data leaving your machine.";
+  "Atelier is desktop software for wedding planners, sold once and yours forever. It runs on your Windows PC and stores every wedding in a single SQLite file you control. No subscription, no per-seat fees, no business data leaving your machine.";
+
+/**
+ * Small footnote-style clarifier rendered directly under the answer
+ * block. Calls out the one thing Atelier *does* phone home for —
+ * license activation and the once-per-day heartbeat — so the answer
+ * block above can stay declarative without overstating the privacy
+ * claim. Activation traffic is documented in the privacy notice
+ * (atelier-docs/privacy.md) and the EULA (§§6.6–6.10, §15.5).
+ */
+export const ATELIER_ANSWER_BLOCK_FOOTNOTE =
+  "License verification phones home periodically. Wedding data never does.";
 
 export const ATELIER_PROBLEM = {
   title: "Your weddings deserve a workspace, not a rented login.",
@@ -145,8 +156,13 @@ export const ATELIER_COMPARISON: {
     },
     {
       dimension: "Internet dependency",
-      us: "Fully offline. Atelier launches and runs without a network connection.",
+      us: "Internet needed for first activation and a brief once-per-day license check. Atelier runs offline for up to 30 days between check-ins; wedding data is always local.",
       them: "Online-only. Lose your connection, lose access to your weddings.",
+    },
+    {
+      dimension: "License model",
+      us: "Perpetual, activates on up to 3 devices, customer-controlled deactivation from inside the app or the customer portal.",
+      them: "Subscription. Devices unlimited while you're paying — locked out the day you stop.",
     },
     {
       dimension: "Per-team-member fees",
@@ -165,7 +181,7 @@ export const ATELIER_COMPARISON: {
     },
     {
       dimension: "Telemetry and tracking",
-      us: "None. The only outbound call is an opt-out GitHub update check.",
+      us: "None. The only outbound calls are license activation, a ~1 KB once-per-day license heartbeat, and an opt-out GitHub update check. No usage data, no business data, ever.",
       them: "Standard SaaS analytics — usage tracked, behavior logged, often shared with third parties.",
     },
   ],
@@ -189,8 +205,16 @@ export const ATELIER_FAQ: { q: string; a: string }[] = [
     a: "No. Bug fixes are free for as long as Dunamis Studios operates the major version you bought — there's no 30-day, 90-day, or 12-month window. If a bug stops Atelier from running on a supported Windows configuration, we fix it, regardless of when you purchased. Major version upgrades (v2, v3) are a separate optional purchase with loyalty pricing for existing customers; the major you own keeps receiving bug fixes.",
   },
   {
-    q: "Does Atelier work without an internet connection?",
-    a: "Yes. Atelier launches, opens weddings, and runs day-of mode without a network. The only outbound call the app makes is an optional GitHub update check, which you can turn off in Settings → Software Updates.",
+    q: "Does Atelier need internet?",
+    a: "Internet is required for first activation and for a brief once-per-day license check. After activation, Atelier works fully offline for up to 30 days between successful check-ins — destination weddings, working from a venue, traveling: all fine. Wedding data is never sent to Dunamis Studios; the heartbeat carries only the license ID, a hashed hardware fingerprint, and the running version.",
+  },
+  {
+    q: "Can I install Atelier on multiple computers?",
+    a: "Yes — on up to 3 devices per license. You can deactivate any device at any time from inside Atelier (Settings → License) or from the customer portal at dunamisstudios.net/account/atelier-licenses to free a slot for a new machine. Hitting the 3-device cap shows an inline list of your active devices with per-row deactivate buttons, so swapping in a new computer takes one click.",
+  },
+  {
+    q: "What if Dunamis Studios disappears? Will Atelier stop working?",
+    a: "Honest answer: if the activation server stays down, Atelier eventually locks at the 30-day offline grace cliff. We won't pretend otherwise — that's the trade-off of a phone-home license model. The mitigation: if Dunamis Studios ever winds down operations, we will publish a final perpetual offline-mode license file that disables the activation check entirely. The plan is documented in the EULA. Your wedding data, sitting in a SQLite file on your machine, is never at risk regardless — it's yours, in a standard format, readable by any tool.",
   },
   {
     q: "Where does my data live?",
