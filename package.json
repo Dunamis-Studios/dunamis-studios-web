@@ -15,6 +15,7 @@
     "brand:build": "tsx scripts/build-brand-assets.ts",
     "kb:index": "tsx scripts/build-kb-index.ts",
     "atelier-docs:index": "tsx scripts/build-atelier-docs-index.ts",
+    "issue-license": "tsx scripts/issue-license-cli.ts",
     "smoke:listicle-fields": "tsx scripts/smoke-listicle-fields.ts"
   },
   "dependencies": {
