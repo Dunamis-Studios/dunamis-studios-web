@@ -58,7 +58,7 @@ export async function POST(request: Request) {
   const appUrl = process.env.APP_URL ?? "https://www.dunamisstudios.net";
   const successUrl =
     parsed.data.success_url ??
-    `${appUrl}/products/atelier/post-checkout?session_id={CHECKOUT_SESSION_ID}`;
+    `${appUrl}/build-services/products/atelier/post-checkout?session_id={CHECKOUT_SESSION_ID}`;
   const cancelUrl =
     parsed.data.cancel_url ?? `${appUrl}/build-services/products/atelier`;
 
