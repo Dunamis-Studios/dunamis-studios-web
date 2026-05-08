@@ -49,11 +49,16 @@ export class VercelBlobStorage implements SyncStorage {
     metadata: BlobMetadata,
   ): Promise<void> {
     const payload = encodeBlobPayload(data, metadata);
-    // Vercel Blob's PutBody type doesn't include Uint8Array directly;
-    // Buffer is the Node-side path.
+    // - access: "private" matches the store's configured access mode; "public"
+    //   produces a "Cannot use public access on a private store" error.
+    // - allowOverwrite: true is required for re-uploads (same record, new
+    //   version) — the default rejects matching paths.
+    // - Buffer wrap because Vercel Blob's PutBody type doesn't include
+    //   Uint8Array directly on the Node-side path.
     await vercelBlobPut(key, Buffer.from(payload), {
-      access: "public",
+      access: "private",
       addRandomSuffix: false,
+      allowOverwrite: true,
       contentType: "application/octet-stream",
       cacheControlMaxAge: 0,
     });

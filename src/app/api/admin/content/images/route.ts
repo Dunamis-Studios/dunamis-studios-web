@@ -13,8 +13,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No valid image file provided" }, { status: 400 });
   }
 
+  // Store is configured as "private"; "public" returns a 500 error from the
+  // Vercel Blob API. Filenames carry a Date.now() prefix so re-uploads can't
+  // collide, removing the need for allowOverwrite.
   const blob = await put(`content/${Date.now()}-${file.name}`, file, {
-    access: "public",
+    access: "private",
     contentType: file.type,
   });
 
