@@ -104,10 +104,15 @@ export class VercelBlobStorage implements SyncStorage {
       const h = await vercelBlobHead(key);
       return { url: h.url, size: h.size };
     } catch (err) {
-      if (
-        err instanceof Error &&
-        /BlobNotFoundError|404|not.found/i.test(err.message)
-      ) {
+      // Vercel Blob raises a BlobNotFoundError class with a message like
+      // "Vercel Blob: The requested blob does not exist". Earlier
+      // iterations matched on a regex that missed the "does not exist"
+      // wording. Match the class name (more durable across SDK
+      // wording changes) plus the message variants we've seen.
+      if (err && (err as { name?: string }).name === "BlobNotFoundError") {
+        return null;
+      }
+      if (err instanceof Error && /not.exist|not.found|404/i.test(err.message)) {
         return null;
       }
       throw err;
