@@ -16,7 +16,7 @@ import {
 import { createSession, setSessionCookie } from "@/lib/session";
 import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
 import { verifyClaimState } from "@/lib/claim-state";
-import { PRODUCT_META, type Account, type Entitlement } from "@/lib/types";
+import { PRODUCT_META, toPublicAccount, type Account, type Entitlement } from "@/lib/types";
 import {
   buildAccountContactPatch,
   trackEvents,
@@ -209,10 +209,26 @@ export async function POST(req: Request) {
   //   { ok: true }                                   — no claim attempted
   //   { ok: true, claim: { ok: true, ...}}          — linked
   //   { ok: true, claim: { ok: false, error: "..."}}— account created, link failed
-  return NextResponse.json({
-    ok: true,
+  //
+  // Native clients (Atelier desktop) opt into the header-gated body
+  // extension by sending `X-Atelier-Client: 1`; mirrors the login
+  // route. Cookie is still set so the same response works for hybrid
+  // browser/desktop shells.
+  const wantsBody = req.headers.get("x-atelier-client") === "1";
+  const baseBody = {
+    ok: true as const,
     ...(claim ? { claim } : {}),
-  });
+  };
+  if (wantsBody) {
+    const expiresAt = new Date(Date.now() + lifetimeSec * 1000).toISOString();
+    return NextResponse.json({
+      ...baseBody,
+      jwt,
+      expiresAt,
+      account: toPublicAccount(account),
+    });
+  }
+  return NextResponse.json(baseBody);
 }
 
 async function tryLinkClaim(

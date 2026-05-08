@@ -5,6 +5,7 @@ import { verifyPassword } from "@/lib/password";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { getAccountByEmail } from "@/lib/accounts";
 import { createSession, setSessionCookie } from "@/lib/session";
+import { toPublicAccount } from "@/lib/types";
 
 // Pre-computed bcryptjs hash at cost 12. Used to burn the same ~200-400ms
 // of CPU on login attempts where the email does not exist, so the response
@@ -46,5 +47,22 @@ export async function POST(req: Request) {
   });
   await setSessionCookie(jwt, lifetimeSec);
 
+  // Native clients (Atelier desktop, future PWA shell) cannot consume
+  // the HttpOnly cookie that the browser flow uses. They opt into the
+  // header-gated extension by sending `X-Atelier-Client: 1`, in which
+  // case the response body carries the JWT + expiry + public account
+  // projection. The cookie is still set so the same response can drive
+  // both shells if a hybrid case ever lands. Browser callers without
+  // the header continue to receive the previous `{ ok: true }` shape.
+  const wantsBody = req.headers.get("x-atelier-client") === "1";
+  if (wantsBody) {
+    const expiresAt = new Date(Date.now() + lifetimeSec * 1000).toISOString();
+    return NextResponse.json({
+      ok: true,
+      jwt,
+      expiresAt,
+      account: toPublicAccount(account),
+    });
+  }
   return NextResponse.json({ ok: true });
 }

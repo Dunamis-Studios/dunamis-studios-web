@@ -12,6 +12,9 @@ import {
   matchesMachine,
   refreshActivationHeartbeat,
 } from "@/lib/atelier-activation";
+import { getSessionFromBearer } from "@/lib/session";
+import { redis, KEY } from "@/lib/redis";
+import { hashEmail } from "@/lib/email-hash";
 
 /**
  * POST /api/atelier/activate
@@ -51,14 +54,32 @@ const machineIdSchema = z.object({
   cpu_id: z.string().regex(/^[0-9a-f]{64}$/i, "must be a sha256 hex digest"),
 });
 
-const bodySchema = z.object({
+// The endpoint accepts two body shapes that share the slot-allocation
+// pipeline downstream:
+//
+//   1) license-string body (the original path, used by license-string
+//      paste flows): { license_string, machine_id, device_label,
+//      atelier_version }
+//
+//   2) account-bearer body (Phase 2.1): { lid, machine_id, device_label,
+//      atelier_version } plus `Authorization: Bearer <jwt>`. Server
+//      verifies the lid is owned by the bearer's account email.
+//
+// Both shapes converge on identical refunded/revoked/slot_full /
+// hardware-fingerprint matching logic — there is no auth-path bypass
+// of the 3-device cap. See dunamis-sync-v1-final-spec.md / the Phase
+// 2.1 plan §3.4 for the explicit invariant.
+const legacyBodySchema = z.object({
   license_string: z.string().min(1).max(4096),
   machine_id: machineIdSchema,
-  // Free-text label, defaulted client-side to the Windows hostname.
-  // Length cap matches the textbox in the customer portal rename UI.
   device_label: z.string().trim().min(1).max(80),
-  // Atelier semver string. We don't strictly validate the format —
-  // the client controls what it sends and we record whatever lands.
+  atelier_version: z.string().min(1).max(40),
+});
+
+const bearerBodySchema = z.object({
+  lid: z.string().min(1).max(256),
+  machine_id: machineIdSchema,
+  device_label: z.string().trim().min(1).max(80),
   atelier_version: z.string().min(1).max(40),
 });
 
@@ -95,39 +116,99 @@ export async function POST(request: Request) {
     );
   }
 
-  const parsed = bodySchema.safeParse(raw);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { ok: false, error: "invalid_request", issues: parsed.error.issues },
-      { status: 400 },
-    );
-  }
-  const body = parsed.data;
+  // Discriminate by shape: a body carrying `license_string` is the
+  // legacy path; a body carrying `lid` (and no license_string) is
+  // the account-bearer path. We try the strict schemas in order rather
+  // than a discriminated union so a malformed payload doesn't get
+  // mapped to the wrong error.
+  const isBearerShape =
+    raw !== null &&
+    typeof raw === "object" &&
+    "lid" in (raw as Record<string, unknown>) &&
+    !("license_string" in (raw as Record<string, unknown>));
 
-  const lid = parseLicenseId(body.license_string);
-  if (!lid) {
-    return NextResponse.json(
-      { ok: false, error: "license_not_found" },
-      { status: 404 },
-    );
-  }
+  let lid: string;
+  let body: z.infer<typeof legacyBodySchema> | z.infer<typeof bearerBodySchema>;
+  let license: Awaited<ReturnType<typeof getLicense>>;
 
-  const license = await getLicense(lid);
-  if (!license) {
-    return NextResponse.json(
-      { ok: false, error: "license_not_found" },
-      { status: 404 },
-    );
-  }
+  if (isBearerShape) {
+    const session = await getSessionFromBearer(request);
+    if (!session) {
+      return NextResponse.json(
+        { ok: false, error: "unauthorized" },
+        { status: 401 },
+      );
+    }
+    const parsed = bearerBodySchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { ok: false, error: "invalid_request", issues: parsed.error.issues },
+        { status: 400 },
+      );
+    }
+    body = parsed.data;
+    lid = body.lid;
 
-  // Byte-for-byte equality. A malformed payload that happens to embed
-  // a real lid still fails here because the signature half (and thus
-  // the full string) won't match what we issued.
-  if (license.key_string !== body.license_string) {
-    return NextResponse.json(
-      { ok: false, error: "license_not_found" },
-      { status: 404 },
-    );
+    // Ownership check — the lid must be in the session-account's
+    // email-indexed license set. 403 (not 404) so we don't leak
+    // whether arbitrary lids exist on the platform.
+    const r = redis();
+    const ownedLids =
+      (await r.smembers<string[]>(
+        KEY.atelierLicensesByEmail(hashEmail(session.account.email)),
+      )) ?? [];
+    if (!ownedLids.includes(lid)) {
+      return NextResponse.json(
+        { ok: false, error: "lid_not_owned" },
+        { status: 403 },
+      );
+    }
+
+    license = await getLicense(lid);
+    if (!license) {
+      // Lid was in the email index but the canonical record was
+      // missing — index drift, treat as not found.
+      return NextResponse.json(
+        { ok: false, error: "license_not_found" },
+        { status: 404 },
+      );
+    }
+  } else {
+    const parsed = legacyBodySchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { ok: false, error: "invalid_request", issues: parsed.error.issues },
+        { status: 400 },
+      );
+    }
+    body = parsed.data;
+
+    const parsedLid = parseLicenseId(body.license_string);
+    if (!parsedLid) {
+      return NextResponse.json(
+        { ok: false, error: "license_not_found" },
+        { status: 404 },
+      );
+    }
+    lid = parsedLid;
+
+    license = await getLicense(lid);
+    if (!license) {
+      return NextResponse.json(
+        { ok: false, error: "license_not_found" },
+        { status: 404 },
+      );
+    }
+
+    // Byte-for-byte equality. A malformed payload that happens to embed
+    // a real lid still fails here because the signature half (and thus
+    // the full string) won't match what we issued.
+    if (license.key_string !== body.license_string) {
+      return NextResponse.json(
+        { ok: false, error: "license_not_found" },
+        { status: 404 },
+      );
+    }
   }
 
   if (license.status === "refunded") {

@@ -185,6 +185,79 @@ export async function requireSession() {
 }
 
 // ---------------------------------------------------------------------------
+// Bearer-token ingress (Atelier desktop client + future native clients)
+// ---------------------------------------------------------------------------
+//
+// The Atelier desktop client cannot consume the HttpOnly `__Host-session`
+// cookie path the browser uses, so it presents the same JWT in an
+// `Authorization: Bearer <jwt>` header instead. Crucially, the JWT and
+// the secret are identical — Bearer ingress is purely an ingress shape;
+// no new auth model, no new key material, no parallel session store.
+//
+// `getSessionFromBearer` mirrors `getCurrentSession`: verify JWT, look
+// up the Redis session record at `dunamis:session:{sid}`, refresh its
+// TTL clamped to remaining wall-clock until expiresAt, return
+// `{ account, session }` or null.
+
+export async function getSessionFromBearer(req: Request): Promise<{
+  account: Account;
+  session: Session;
+} | null> {
+  const auth = req.headers.get("authorization");
+  if (!auth) return null;
+  if (!auth.startsWith("Bearer ")) return null;
+  const jwt = auth.slice("Bearer ".length).trim();
+  if (!jwt) return null;
+
+  const decoded = await verifySessionJwt(jwt);
+  if (!decoded) return null;
+
+  const r = redis();
+  const session = await r.get<Session>(KEY.session(decoded.sid));
+  if (!session) return null;
+
+  if (new Date(session.expiresAt).getTime() < Date.now()) {
+    await destroySession(decoded.sid);
+    return null;
+  }
+
+  const account = await getAccountById(session.accountId);
+  if (!account) {
+    await destroySession(decoded.sid);
+    return null;
+  }
+
+  const remainingSec = Math.max(
+    1,
+    Math.floor(
+      (new Date(session.expiresAt).getTime() - Date.now()) / 1000,
+    ),
+  );
+  await r.expire(KEY.session(decoded.sid), remainingSec);
+
+  return { account, session };
+}
+
+/**
+ * Try cookie ingress first, then Bearer header. Used by endpoints that
+ * should accept either — the customer portal site reads cookies; the
+ * Atelier desktop client and any future native client reads Bearer.
+ */
+export async function getCurrentSessionAny(
+  req: Request,
+): Promise<{ account: Account; session: Session } | null> {
+  const cookie = await getCurrentSession();
+  if (cookie) return cookie;
+  return getSessionFromBearer(req);
+}
+
+export async function requireSessionAny(req: Request) {
+  const s = await getCurrentSessionAny(req);
+  if (!s) throw new Response("Unauthorized", { status: 401 });
+  return s;
+}
+
+// ---------------------------------------------------------------------------
 // Admin gate — env-var-as-ACL, no role field on Account
 // ---------------------------------------------------------------------------
 
