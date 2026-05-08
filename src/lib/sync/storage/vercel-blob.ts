@@ -37,7 +37,14 @@ export class VercelBlobStorage implements SyncStorage {
     const exists = await this.head(key);
     if (!exists) return null;
 
-    const res = await fetch(exists.url);
+    // Private blob stores return 403 on a bare fetch — the URL is real
+    // but requires the read-write token in the Authorization header.
+    // Public stores would also accept this header, so the branch is
+    // unconditional.
+    const token = process.env.BLOB_READ_WRITE_TOKEN ?? "";
+    const res = await fetch(exists.url, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     if (!res.ok) return null;
     const buf = await res.arrayBuffer();
     return parseBlobPayload(new Uint8Array(buf));
