@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "path": "/api/cron/sync-grace-cleanup",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/sync-trial-expiry",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/sync-tombstone-sweep",
+      "schedule": "0 4 * * *"
+    }
+  ]
+}

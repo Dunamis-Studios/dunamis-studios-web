@@ -6,6 +6,7 @@ import {
   saveEntitlement,
   getEntitlement,
 } from "./accounts";
+import { tryHandleSyncEvent } from "./sync/stripe-webhook-handlers";
 import { accountConsentArgs } from "./account-consent";
 import { withEntitlementLock } from "./entitlement-lock";
 import { stripe } from "./stripe";
@@ -50,6 +51,14 @@ export async function handleStripeEvent(event: Stripe.Event): Promise<void> {
     console.log(`[stripe-webhook] duplicate event ${event.id}, skipping`);
     return;
   }
+
+  // Dunamis Sync events have their own state machine (sync customer
+  // record + tombstones + key generation) and must not pass through
+  // the Debrief / Property Pulse handlers below. The router checks
+  // metadata.product === "dunamis-sync" and returns true if the event
+  // belongs to Sync (handled or intentionally skipped).
+  const handledBySync = await tryHandleSyncEvent(event);
+  if (handledBySync) return;
 
   switch (event.type) {
     case "customer.subscription.created": {
