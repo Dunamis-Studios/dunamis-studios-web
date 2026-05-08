@@ -32,6 +32,13 @@ import {
   type HubspotTier,
   type ProductAppName,
 } from "./hubspot";
+import {
+  ATELIER_PRODUCT_NAME,
+  signAndPersistLicense,
+  type AtelierLicenseRecord,
+} from "./atelier-license-signing";
+import { atelierLookupKeyForSession } from "./atelier-pricing";
+import { sendAtelierLicenseEmail } from "./email-atelier-license";
 
 const IDEMPOTENCY_TTL_SEC = 7 * 24 * 3600;
 
@@ -511,6 +518,17 @@ async function onCheckoutSessionCompleted(
   session: Stripe.Checkout.Session,
 ): Promise<void> {
   const md = session.metadata ?? {};
+
+  // Atelier perpetual purchase. Mints an Ed25519-signed license,
+  // indexes it under the customer's account, and emails the key.
+  // Distinct from the Property Pulse path below — Atelier has no
+  // entitlement/portalId tuple; it's a per-account license keyed by
+  // email hash.
+  if (md.product === ATELIER_PRODUCT_NAME) {
+    await onAtelierCheckoutCompleted(session);
+    return;
+  }
+
   const product = productFromMetadata(md);
   const portalId = md.portalId;
   if (product !== "property-pulse" || !portalId) {
@@ -557,6 +575,139 @@ async function onCheckoutSessionCompleted(
       purchaseCtx,
     );
   }
+}
+
+/**
+ * Handle checkout.session.completed for Atelier perpetual purchase.
+ * Mints an Ed25519-signed license, indexes it under the customer's
+ * email + account, and emails the key. Idempotent: the
+ * `dunamis:atelier-checkout:{session_id}:lid` redis key pins the
+ * minted license to its session so a re-delivered event finds the
+ * same license and skips the side effects.
+ *
+ * The Atelier desktop's deep-link handler picks up the license on the
+ * next `/api/atelier/entitlements` fetch — no portal id, no
+ * activation slot reservation here. Activation runs through the
+ * existing `/api/atelier/activate` path with the same 3-device cap +
+ * 2-of-3 hardware match logic.
+ */
+async function onAtelierCheckoutCompleted(
+  session: Stripe.Checkout.Session,
+): Promise<void> {
+  if (session.payment_status !== "paid") {
+    console.warn(
+      `[stripe-webhook] atelier checkout ${session.id}: payment_status=${session.payment_status}, not paid — skipping`,
+    );
+    return;
+  }
+
+  const r = redis();
+  const idempotencyKey = KEY.atelierCheckoutSessionLid(session.id);
+  const existingLid = await r.get<string>(idempotencyKey);
+  if (existingLid) {
+    console.log(
+      `[stripe-webhook] atelier checkout ${session.id}: already minted lid=${existingLid}, skipping`,
+    );
+    return;
+  }
+
+  // Resolve the customer email — checkout sessions for direct purchase
+  // carry it on either the explicit customer_email field or the
+  // customer_details.email Stripe stamps after collecting payment.
+  const email =
+    session.customer_email ?? session.customer_details?.email ?? null;
+  if (!email) {
+    console.error(
+      `[stripe-webhook] atelier checkout ${session.id}: no email (customer_email + customer_details.email both null)`,
+    );
+    return;
+  }
+
+  // Resolve the dunamis account id. Metadata is the primary path
+  // (set by /api/atelier/checkout); client_reference_id is the
+  // backup (Stripe surfaces it as a top-level field that survives
+  // some edge cases where metadata is dropped).
+  const accountIdMeta =
+    session.metadata?.dunamisAccountId ??
+    session.metadata?.dunamisaccountid ??
+    null;
+  const accountId = accountIdMeta ?? session.client_reference_id ?? null;
+
+  // Optional: pull the customer's first name from their account record
+  // for a nicer email greeting. Falls back to the generic "Hi there,".
+  let firstName: string | null = null;
+  if (accountId) {
+    const account = await getAccountById(accountId);
+    if (account) firstName = account.firstName ?? null;
+  }
+
+  // Validate the line item against the canonical Atelier price (defense
+  // against a misconfigured checkout session pointing at the wrong SKU).
+  const lookupKey = await atelierLookupKeyForSession(session);
+  if (!lookupKey) {
+    console.warn(
+      `[stripe-webhook] atelier checkout ${session.id}: line item is not the canonical atelier_perpetual price — minting anyway, but flagging`,
+    );
+  }
+
+  const customerId =
+    typeof session.customer === "string"
+      ? session.customer
+      : (session.customer?.id ?? null);
+  const paymentIntentId =
+    typeof session.payment_intent === "string"
+      ? session.payment_intent
+      : (session.payment_intent?.id ?? null);
+
+  let record: AtelierLicenseRecord;
+  let licenseString: string;
+  try {
+    const result = await signAndPersistLicense({
+      email,
+      product: ATELIER_PRODUCT_NAME,
+      // At launch, Atelier ships v1.x — the Atelier desktop's
+      // CURRENT_MAJOR_VERSION constant must match. Bump in lockstep
+      // when v2 ships.
+      versionMajor: 1,
+      tier: "self-serve",
+      stripeCustomerId: customerId,
+      stripePaymentIntentId: paymentIntentId,
+    });
+    record = result.record;
+    licenseString = result.signed.licenseString;
+  } catch (err) {
+    console.error(
+      `[stripe-webhook] atelier checkout ${session.id}: license mint failed`,
+      err,
+    );
+    throw err;
+  }
+
+  // Pin the session→lid mapping AFTER the license is persisted, so a
+  // mid-mint failure (e.g. signing key unavailable) doesn't leave a
+  // stale "already handled" marker that suppresses the retry.
+  await r.set(idempotencyKey, record.lid);
+
+  try {
+    await sendAtelierLicenseEmail({
+      to: email,
+      firstName,
+      licenseString,
+      isResend: false,
+    });
+  } catch (err) {
+    // Email is best-effort. The license exists; the customer can
+    // resend from /account/atelier-licenses or contact support. We
+    // log loudly so operator can act.
+    console.error(
+      `[stripe-webhook] atelier checkout ${session.id}: license email failed for ${email}`,
+      err,
+    );
+  }
+
+  console.log(
+    `[stripe-webhook] atelier checkout ${session.id}: minted lid=${record.lid} for ${email} accountId=${accountId ?? "<unbound>"}`,
+  );
 }
 
 async function onPaymentIntentSucceeded(

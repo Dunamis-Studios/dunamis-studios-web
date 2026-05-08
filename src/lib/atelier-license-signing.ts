@@ -307,7 +307,11 @@ export async function persistLicense(
 
 /** Convenience wrapper combining sign + persist. */
 export async function signAndPersistLicense(
-  input: SignLicenseInput & { issuedByAdminEmail?: string | null },
+  input: SignLicenseInput & {
+    issuedByAdminEmail?: string | null;
+    stripeCustomerId?: string | null;
+    stripePaymentIntentId?: string | null;
+  },
 ): Promise<{ signed: SignedLicense; record: AtelierLicenseRecord }> {
   const signed = signLicense(input);
   const record = await persistLicense({
@@ -317,6 +321,8 @@ export async function signAndPersistLicense(
     versionMajor: input.versionMajor,
     tier: input.tier,
     issuedByAdminEmail: input.issuedByAdminEmail ?? null,
+    stripeCustomerId: input.stripeCustomerId ?? null,
+    stripePaymentIntentId: input.stripePaymentIntentId ?? null,
   });
   return { signed, record };
 }

@@ -128,6 +128,19 @@ export const KEY = {
   atelierLicense: (lid: string) => `dunamis:atelier-license:${lid}`,
 
   /**
+   * Idempotency record for /api/atelier/checkout webhook fulfillment.
+   * Stores the lid that was minted for a given Stripe Checkout session
+   * id, so a re-delivered checkout.session.completed event finds the
+   * existing license and skips the mint+email side effects. Distinct
+   * from the dunamis:stripe-event:* idempotency cache (which is keyed
+   * by event_id) — Stripe occasionally generates new event_ids for the
+   * same logical session, so we double-pin the de-dupe to session_id
+   * to keep "one purchase = one license" intact.
+   */
+  atelierCheckoutSessionLid: (sessionId: string) =>
+    `dunamis:atelier-checkout:${sessionId}:lid`,
+
+  /**
    * Lookup index from email → set of lid values. One email may hold
    * multiple licenses (re-purchases, business-assigned-to-individual
    * scenarios), so this is a SET not a string. The lost-license
