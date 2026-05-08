@@ -90,7 +90,7 @@ What to do with this:
 
   1. Save this email. The key is the only proof of your purchase, and we issue from a database — re-issuance is possible but slower than digging up your inbox.
   2. Install Atelier — instructions at ${installUrl}.
-  3. On first launch, paste the key into the License Entry screen. First activation needs internet (a quick license check); after that Atelier works offline for up to 30 days between license check-ins.
+  3. On first launch, paste the key into the License Entry screen — or click "Choose license file…" on that screen and select the attached .atlr-license file. First activation needs internet (a quick license check); after that Atelier works offline for up to 30 days between license check-ins.
 
 Activation, in plain terms:
 
@@ -124,7 +124,7 @@ Dunamis Studios`;
     <p style="font-size:14px;line-height:1.6;color:#cfcfcf;margin-top:18px;">Next steps:</p>
     <ol style="font-size:14px;line-height:1.7;color:#cfcfcf;padding-left:18px;">
       <li>Install Atelier — <a href="${installUrl}" style="color:#d97a7d;">setup walkthrough</a>.</li>
-      <li>Open Atelier; on first launch, paste this key into the License Entry screen.</li>
+      <li>On the License Entry screen, paste the key above — or click <strong>Choose license file…</strong> and select the attached <code style="font-family:Menlo,Consolas,monospace;font-size:12px;">.atlr-license</code> file.</li>
       <li>First activation needs internet for a quick license check. After that Atelier works offline for up to 30 days between check-ins.</li>
     </ol>
 
@@ -153,12 +153,28 @@ Dunamis Studios`;
     return;
   }
 
+  // Attach the license string as a .atlr-license file so customers
+  // can drive Atelier's "Choose license file…" picker on the License
+  // Entry screen instead of copy-pasting the long ATLR-… string out
+  // of the email body. Resend expects content as a base64 string for
+  // raw attachments. The trailing newline gives the file a clean
+  // "one line + EOL" shape when opened in any text editor; Atelier's
+  // file reader trims it on the way in.
+  const licenseFile = `${input.licenseString}\n`;
+  const licenseFileBase64 = Buffer.from(licenseFile, "utf8").toString("base64");
+
   const { error } = await client().emails.send({
     from: `Dunamis Studios <${fromAddress()}>`,
     to: input.to,
     subject,
     html,
     text,
+    attachments: [
+      {
+        filename: "atelier.atlr-license",
+        content: licenseFileBase64,
+      },
+    ],
   });
   if (error) {
     console.error("[atelier-license] license-delivery email failed", error);
