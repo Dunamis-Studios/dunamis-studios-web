@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { requireSessionAny } from "@/lib/session";
+import { getCurrentSessionAny } from "@/lib/session";
 import {
   type AtelierLicenseRecord,
   listLicensesByEmail,
@@ -94,7 +94,13 @@ function projectSlot(
 }
 
 export async function GET(request: Request) {
-  const session = await requireSessionAny(request);
+  const session = await getCurrentSessionAny(request);
+  if (!session) {
+    return NextResponse.json(
+      { ok: false, error: "unauthorized" },
+      { status: 401 },
+    );
+  }
 
   const url = new URL(request.url);
   const windows_guid = url.searchParams.get("windows_guid");

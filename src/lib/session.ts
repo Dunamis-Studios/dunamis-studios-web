@@ -204,25 +204,42 @@ export async function getSessionFromBearer(req: Request): Promise<{
   session: Session;
 } | null> {
   const auth = req.headers.get("authorization");
-  if (!auth) return null;
-  if (!auth.startsWith("Bearer ")) return null;
+  if (!auth) {
+    console.warn("[bearer-auth] no Authorization header");
+    return null;
+  }
+  if (!auth.startsWith("Bearer ")) {
+    console.warn("[bearer-auth] header not Bearer scheme");
+    return null;
+  }
   const jwt = auth.slice("Bearer ".length).trim();
-  if (!jwt) return null;
+  if (!jwt) {
+    console.warn("[bearer-auth] empty bearer token");
+    return null;
+  }
 
   const decoded = await verifySessionJwt(jwt);
-  if (!decoded) return null;
+  if (!decoded) {
+    console.warn("[bearer-auth] JWT verify failed (signature/issuer/audience/expiry)");
+    return null;
+  }
 
   const r = redis();
   const session = await r.get<Session>(KEY.session(decoded.sid));
-  if (!session) return null;
+  if (!session) {
+    console.warn(`[bearer-auth] no session record at sid=${decoded.sid}`);
+    return null;
+  }
 
   if (new Date(session.expiresAt).getTime() < Date.now()) {
+    console.warn(`[bearer-auth] session expired sid=${decoded.sid} expiresAt=${session.expiresAt}`);
     await destroySession(decoded.sid);
     return null;
   }
 
   const account = await getAccountById(session.accountId);
   if (!account) {
+    console.warn(`[bearer-auth] account ${session.accountId} not found for sid=${decoded.sid}`);
     await destroySession(decoded.sid);
     return null;
   }
@@ -242,6 +259,12 @@ export async function getSessionFromBearer(req: Request): Promise<{
  * Try cookie ingress first, then Bearer header. Used by endpoints that
  * should accept either — the customer portal site reads cookies; the
  * Atelier desktop client and any future native client reads Bearer.
+ *
+ * Returns `null` on any auth failure. Callers MUST check and return
+ * their own 401 response — never throw a Response in a route handler;
+ * Next.js App Router does not auto-catch thrown Response objects and
+ * the throw bubbles up as an unhandled error, returning 500 instead
+ * of the intended 401.
  */
 export async function getCurrentSessionAny(
   req: Request,
@@ -249,12 +272,6 @@ export async function getCurrentSessionAny(
   const cookie = await getCurrentSession();
   if (cookie) return cookie;
   return getSessionFromBearer(req);
-}
-
-export async function requireSessionAny(req: Request) {
-  const s = await getCurrentSessionAny(req);
-  if (!s) throw new Response("Unauthorized", { status: 401 });
-  return s;
 }
 
 // ---------------------------------------------------------------------------
