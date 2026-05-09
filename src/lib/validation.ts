@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isValidIanaTimeZone } from "./timezones";
 
 const emailSchema = z
   .string()
@@ -64,6 +65,35 @@ const companyNameRequiredSchema = companyNameMaxSchema.pipe(
 // field if they mis-entered it at signup.
 const companyNameOptionalSchema = companyNameMaxSchema.nullable();
 
+// IANA time zone identifier (e.g., "America/New_York"). Validated
+// against the platform's IANA list — we don't accept free-form
+// strings because downstream consumers (Atelier dashboards, future
+// scheduling features) rely on Intl.DateTimeFormat being able to
+// resolve the value. Nullable so accounts can leave it unset until
+// a product asks (Atelier setup screen is the first such product).
+const timeZoneOptionalSchema = z
+  .string()
+  .max(80, "Too long")
+  .refine(isValidIanaTimeZone, "Not a recognized time zone")
+  .nullable();
+
+// Logo URL. Always optional. The /api/account/logo endpoint owns
+// the upload + the URL value; the profile-update endpoint accepts
+// it primarily so the Atelier setup-screen save can include the
+// URL alongside the rest of the fields in one PATCH after a
+// successful upload. Accepts only HTTPS URLs on the Vercel Blob
+// host — defense in depth against a customer pasting an arbitrary
+// URL into the field.
+const logoUrlOptionalSchema = z
+  .string()
+  .url("Must be a URL")
+  .max(2000, "Too long")
+  .refine(
+    (u) => /^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\//i.test(u),
+    "Logo must be hosted on Vercel Blob",
+  )
+  .nullable();
+
 export const signupSchema = z
   .object({
     email: emailSchema,
@@ -107,6 +137,8 @@ export const profileUpdateSchema = z.object({
   lastName: nameSchema,
   email: emailSchema,
   companyName: companyNameOptionalSchema,
+  timeZone: timeZoneOptionalSchema.optional(),
+  logoUrl: logoUrlOptionalSchema.optional(),
 });
 
 export const changePasswordSchema = z

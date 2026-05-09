@@ -19,9 +19,9 @@ export interface Account {
    * Customer-supplied company / studio / business name. Required at
    * signup for new accounts; nullable on accounts created before
    * this field shipped — those customers fill it manually via
-   * /account/settings. Empty / whitespace-only is coerced to null at
-   * the route layer so missing-value checks stay a clean
-   * `companyName == null` test.
+   * /account/settings or via the Atelier setup screen. Empty /
+   * whitespace-only is coerced to null at the route layer so
+   * missing-value checks stay a clean `companyName == null` test.
    *
    * Stays on the Dunamis Account only — this slice deliberately does
    * NOT mirror the value to HubSpot's `company` contact property.
@@ -29,6 +29,22 @@ export interface Account {
    * and a customer-facing disclosure.
    */
   companyName?: string | null;
+  /**
+   * IANA time zone identifier (e.g., "America/New_York"). Optional
+   * at signup; the Atelier setup screen defaults from the OS locale
+   * when this is null and prompts the customer to confirm. Future
+   * Dunamis products read this and never re-ask. Validated server-
+   * side against the platform's IANA list — no free-form strings.
+   */
+  timeZone?: string | null;
+  /**
+   * Public Vercel Blob URL of the customer's uploaded logo. Always
+   * optional. Replacing the logo deletes the prior blob from storage
+   * to avoid orphans (see /api/account/logo POST). Cleared via the
+   * DELETE on the same endpoint. Future Dunamis products read this
+   * and never re-ask.
+   */
+  logoUrl?: string | null;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
@@ -77,6 +93,8 @@ export interface PublicAccount {
   firstName: string;
   lastName: string;
   companyName: string | null;
+  timeZone: string | null;
+  logoUrl: string | null;
   createdAt: string;
 }
 
@@ -277,6 +295,8 @@ export function toPublicAccount(a: Account): PublicAccount {
     firstName: a.firstName,
     lastName: a.lastName,
     companyName: a.companyName ?? null,
+    timeZone: a.timeZone ?? null,
+    logoUrl: a.logoUrl ?? null,
     createdAt: a.createdAt,
   };
 }

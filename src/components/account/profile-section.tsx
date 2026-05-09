@@ -13,22 +13,30 @@ interface Props {
   firstName: string;
   lastName: string;
   companyName: string | null;
+  timeZone: string | null;
   email: string;
   emailVerified: boolean;
+  /** IANA time zones available on the host. Server-rendered from
+   *  Intl.supportedValuesOf so the client doesn't ship a vendored
+   *  list. Sorted ascending. */
+  timeZoneOptions: string[];
 }
 
 export function ProfileSection({
   firstName: initialFirst,
   lastName: initialLast,
   companyName: initialCompany,
+  timeZone: initialTimeZone,
   email: initialEmail,
   emailVerified,
+  timeZoneOptions,
 }: Props) {
   const router = useRouter();
   const { push } = useToast();
   const [firstName, setFirstName] = React.useState(initialFirst);
   const [lastName, setLastName] = React.useState(initialLast);
   const [companyName, setCompanyName] = React.useState(initialCompany ?? "");
+  const [timeZone, setTimeZone] = React.useState(initialTimeZone ?? "");
   const [email, setEmail] = React.useState(initialEmail);
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
@@ -36,12 +44,14 @@ export function ProfileSection({
 
   // Treat null and "" as the same empty state so the Save button
   // doesn't flicker on accounts that land here without a company
-  // name set yet.
+  // name or time zone set yet.
   const initialCompanyTrimmed = (initialCompany ?? "").trim();
+  const initialTimeZoneNorm = initialTimeZone ?? "";
   const dirty =
     firstName.trim() !== initialFirst ||
     lastName.trim() !== initialLast ||
     companyName.trim() !== initialCompanyTrimmed ||
+    timeZone !== initialTimeZoneNorm ||
     email.trim().toLowerCase() !== initialEmail.toLowerCase();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -59,6 +69,9 @@ export function ProfileSection({
           // Server coerces empty / whitespace-only to null; sending
           // the trimmed string here keeps the wire payload clean.
           companyName: companyName.trim(),
+          // Empty selection sends null so the customer can clear a
+          // mistakenly-set time zone.
+          timeZone: timeZone === "" ? null : timeZone,
           email,
         }),
       });
@@ -126,6 +139,23 @@ export function ProfileSection({
             error={errors.companyName}
           />
           <FieldError>{errors.companyName}</FieldError>
+        </div>
+        <div>
+          <Label htmlFor="timeZone">Time zone</Label>
+          <select
+            id="timeZone"
+            value={timeZone}
+            onChange={(e) => setTimeZone(e.target.value)}
+            className="mt-1.5 w-full rounded-md border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm text-[var(--fg)] focus:border-[var(--ring)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)]/40"
+          >
+            <option value="">Not set</option>
+            {timeZoneOptions.map((tz) => (
+              <option key={tz} value={tz}>
+                {tz}
+              </option>
+            ))}
+          </select>
+          <FieldError>{errors.timeZone}</FieldError>
         </div>
         <div>
           <div className="flex items-center justify-between">

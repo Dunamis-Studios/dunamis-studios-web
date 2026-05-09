@@ -6,9 +6,11 @@ import {
 } from "@/lib/session";
 import { PageHeader } from "@/components/ui/primitives";
 import { ProfileSection } from "@/components/account/profile-section";
+import { LogoSection } from "@/components/account/logo-section";
 import { PasswordSection } from "@/components/account/password-section";
 import { SessionsSection } from "@/components/account/sessions-section";
 import { DangerZone } from "@/components/account/danger-zone";
+import { listIanaTimeZones } from "@/lib/timezones";
 
 export const dynamic = "force-dynamic";
 
@@ -32,9 +34,12 @@ export default async function SettingsPage() {
           firstName={s.account.firstName}
           lastName={s.account.lastName}
           companyName={s.account.companyName ?? null}
+          timeZone={s.account.timeZone ?? null}
           email={s.account.email}
           emailVerified={s.account.emailVerified}
+          timeZoneOptions={listIanaTimeZones()}
         />
+        <LogoSection logoUrl={s.account.logoUrl ?? null} />
         <PasswordSection />
         <SessionsSection
           currentSessionId={s.session.sessionId}

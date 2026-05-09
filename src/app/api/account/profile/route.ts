@@ -9,6 +9,7 @@ import {
 } from "@/lib/accounts";
 import { getCurrentSession } from "@/lib/session";
 import { sendVerificationEmail } from "@/lib/email";
+import { toPublicAccount } from "@/lib/types";
 
 export async function PATCH(req: Request) {
   const current = await getCurrentSession();
@@ -18,7 +19,8 @@ export async function PATCH(req: Request) {
 
   const parsed = await parseJson(req, profileUpdateSchema);
   if (!parsed.ok) return parsed.response;
-  const { firstName, lastName, email, companyName } = parsed.data;
+  const { firstName, lastName, email, companyName, timeZone, logoUrl } =
+    parsed.data;
 
   const account = current.account;
   const oldEmail = account.email;
@@ -43,6 +45,15 @@ export async function PATCH(req: Request) {
   // customer can clear a mis-entered value.
   const trimmedCompany = companyName?.trim() ?? "";
   account.companyName = trimmedCompany.length === 0 ? null : trimmedCompany;
+  // timeZone and logoUrl are optional in the request body — `undefined`
+  // means "don't touch this field" so partial updates from the
+  // settings page (which doesn't always rewrite every field) and from
+  // the Atelier setup screen don't accidentally clobber values the
+  // form didn't show. An explicit `null` is the customer clearing the
+  // field. The schema has already validated `timeZone` against the
+  // IANA list and `logoUrl` against the Vercel Blob host.
+  if (timeZone !== undefined) account.timeZone = timeZone;
+  if (logoUrl !== undefined) account.logoUrl = logoUrl;
   if (emailChanged) account.emailVerified = false;
   account.updatedAt = new Date().toISOString();
 
@@ -66,5 +77,9 @@ export async function PATCH(req: Request) {
     }
   }
 
-  return NextResponse.json({ ok: true, emailChanged });
+  return NextResponse.json({
+    ok: true,
+    emailChanged,
+    account: toPublicAccount(account),
+  });
 }
