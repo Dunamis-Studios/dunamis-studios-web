@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       fieldsFromZod(signupParsed.error),
     );
   }
-  const { email, firstName, lastName, password } = signupParsed.data;
+  const { email, firstName, lastName, companyName, password } = signupParsed.data;
 
   const rawClaim =
     typeof rawObj.claim === "string" ? rawObj.claim.trim() : "";
@@ -98,6 +98,7 @@ export async function POST(req: Request) {
     passwordHash: await hashPassword(password),
     firstName: firstName.trim(),
     lastName: lastName.trim(),
+    companyName: companyName.trim(),
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

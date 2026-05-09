@@ -15,6 +15,20 @@ export interface Account {
   passwordHash: string;
   firstName: string;
   lastName: string;
+  /**
+   * Customer-supplied company / studio / business name. Required at
+   * signup for new accounts; nullable on existing accounts created
+   * before this field shipped, surfaced via the backfill banner on
+   * /account and /account/settings until the customer fills it.
+   * Empty string is coerced to null at the route layer so downstream
+   * "needs backfill?" checks stay a clean `companyName == null` test.
+   *
+   * Stays on the Dunamis Account only — this slice deliberately does
+   * NOT mirror the value to HubSpot's `company` contact property.
+   * Cross-system sync would need its own slice with a feature flag
+   * and a customer-facing disclosure.
+   */
+  companyName?: string | null;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
@@ -62,6 +76,7 @@ export interface PublicAccount {
   emailVerified: boolean;
   firstName: string;
   lastName: string;
+  companyName: string | null;
   createdAt: string;
 }
 
@@ -261,6 +276,7 @@ export function toPublicAccount(a: Account): PublicAccount {
     emailVerified: a.emailVerified,
     firstName: a.firstName,
     lastName: a.lastName,
+    companyName: a.companyName ?? null,
     createdAt: a.createdAt,
   };
 }

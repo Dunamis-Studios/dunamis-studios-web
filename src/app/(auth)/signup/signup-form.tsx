@@ -12,6 +12,7 @@ interface Fields {
   email?: string;
   firstName?: string;
   lastName?: string;
+  companyName?: string;
   password?: string;
   confirmPassword?: string;
 }
@@ -79,6 +80,7 @@ export function SignupForm({
     const body: Record<string, string> = {
       firstName: String(fd.get("firstName") ?? ""),
       lastName: String(fd.get("lastName") ?? ""),
+      companyName: String(fd.get("companyName") ?? ""),
       email: String(fd.get("email") ?? ""),
       password: String(fd.get("password") ?? ""),
       confirmPassword: String(fd.get("confirmPassword") ?? ""),
@@ -178,6 +180,20 @@ export function SignupForm({
           />
           <FieldError>{errors.lastName}</FieldError>
         </div>
+      </div>
+
+      <div>
+        <Label htmlFor="companyName">Company name</Label>
+        <Input
+          id="companyName"
+          name="companyName"
+          autoComplete="organization"
+          required
+          maxLength={100}
+          className="mt-1.5"
+          error={errors.companyName}
+        />
+        <FieldError>{errors.companyName}</FieldError>
       </div>
 
       <div>

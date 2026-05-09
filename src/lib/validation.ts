@@ -36,11 +36,40 @@ const nameSchema = z
       ),
   );
 
+// Company / studio / business names. Wider character set than
+// person names — companies legitimately use ampersands, parens,
+// commas, digits, slashes ("Smith & Co.", "AT&T", "Studio 24",
+// "Doe (Wedding Planning)"). Reject only `<` / `>` to keep obvious
+// HTML/script payloads out of the stored value; React handles
+// render-time escaping for everything else, so we don't need an
+// aggressive allow-list that would reject legitimate names.
+const companyNameMaxSchema = z
+  .string()
+  .trim()
+  .transform((s) => s.normalize("NFC"))
+  .pipe(
+    z
+      .string()
+      .max(100, "Too long")
+      .regex(/^[^<>]*$/, "Cannot contain < or >"),
+  );
+
+// Required at signup. Empty (after trim) rejects with "Required".
+const companyNameRequiredSchema = companyNameMaxSchema.pipe(
+  z.string().min(1, "Required"),
+);
+
+// Profile-update path. Accepts a string or null; the route handler
+// coerces an empty string to null so the customer can clear the
+// field if they mis-entered it at signup.
+const companyNameOptionalSchema = companyNameMaxSchema.nullable();
+
 export const signupSchema = z
   .object({
     email: emailSchema,
     firstName: nameSchema,
     lastName: nameSchema,
+    companyName: companyNameRequiredSchema,
     password: passwordSchema,
     confirmPassword: z.string(),
   })
@@ -77,6 +106,7 @@ export const profileUpdateSchema = z.object({
   firstName: nameSchema,
   lastName: nameSchema,
   email: emailSchema,
+  companyName: companyNameOptionalSchema,
 });
 
 export const changePasswordSchema = z

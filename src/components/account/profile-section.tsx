@@ -12,6 +12,7 @@ import { useToast } from "@/components/ui/toast";
 interface Props {
   firstName: string;
   lastName: string;
+  companyName: string | null;
   email: string;
   emailVerified: boolean;
 }
@@ -19,6 +20,7 @@ interface Props {
 export function ProfileSection({
   firstName: initialFirst,
   lastName: initialLast,
+  companyName: initialCompany,
   email: initialEmail,
   emailVerified,
 }: Props) {
@@ -26,14 +28,20 @@ export function ProfileSection({
   const { push } = useToast();
   const [firstName, setFirstName] = React.useState(initialFirst);
   const [lastName, setLastName] = React.useState(initialLast);
+  const [companyName, setCompanyName] = React.useState(initialCompany ?? "");
   const [email, setEmail] = React.useState(initialEmail);
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   const [error, setError] = React.useState<string | null>(null);
 
+  // Treat null and "" as the same backfill state so the dirty check
+  // doesn't flicker on customers who land here from the backfill
+  // banner with an empty companyName.
+  const initialCompanyTrimmed = (initialCompany ?? "").trim();
   const dirty =
     firstName.trim() !== initialFirst ||
     lastName.trim() !== initialLast ||
+    companyName.trim() !== initialCompanyTrimmed ||
     email.trim().toLowerCase() !== initialEmail.toLowerCase();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -45,7 +53,14 @@ export function ProfileSection({
       const res = await fetch("/api/account/profile", {
         method: "PATCH",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email }),
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          // Server coerces empty / whitespace-only to null; sending
+          // the trimmed string here keeps the wire payload clean.
+          companyName: companyName.trim(),
+          email,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -97,6 +112,20 @@ export function ProfileSection({
             />
             <FieldError>{errors.lastName}</FieldError>
           </div>
+        </div>
+        <div>
+          <Label htmlFor="companyName">Company name</Label>
+          <Input
+            id="companyName"
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            maxLength={100}
+            autoComplete="organization"
+            placeholder="Acme Studio"
+            className="mt-1.5"
+            error={errors.companyName}
+          />
+          <FieldError>{errors.companyName}</FieldError>
         </div>
         <div>
           <div className="flex items-center justify-between">
