@@ -5,7 +5,6 @@ import {
   listSessionsForAccount,
 } from "@/lib/session";
 import { PageHeader } from "@/components/ui/primitives";
-import { CompanyNamePrompt } from "@/components/account/company-name-prompt";
 import { ProfileSection } from "@/components/account/profile-section";
 import { PasswordSection } from "@/components/account/password-section";
 import { SessionsSection } from "@/components/account/sessions-section";
@@ -22,10 +21,6 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <CompanyNamePrompt
-        accountId={s.account.accountId}
-        companyName={s.account.companyName ?? null}
-      />
       <PageHeader
         eyebrow="Settings"
         title="Account settings"

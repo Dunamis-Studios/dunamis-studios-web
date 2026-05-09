@@ -38,9 +38,9 @@ export async function PATCH(req: Request) {
   account.firstName = firstName.trim();
   account.lastName = lastName.trim();
   account.email = email;
-  // Empty / whitespace-only / null all collapse to null so the
-  // backfill banner check stays a clean `companyName == null` test
-  // and the customer can clear a mis-entered value.
+  // Empty / whitespace-only / null all collapse to null so missing-
+  // value checks stay a clean `companyName == null` test and the
+  // customer can clear a mis-entered value.
   const trimmedCompany = companyName?.trim() ?? "";
   account.companyName = trimmedCompany.length === 0 ? null : trimmedCompany;
   if (emailChanged) account.emailVerified = false;

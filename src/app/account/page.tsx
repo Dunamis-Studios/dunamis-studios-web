@@ -6,7 +6,6 @@ import { listLicensesByEmail } from "@/lib/atelier-license-signing";
 import { PageHeader } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
-import { CompanyNamePrompt } from "@/components/account/company-name-prompt";
 import { EntitlementsTable } from "@/components/account/entitlements-table";
 import { AtelierLicensesSection } from "@/components/account/atelier-licenses-section";
 import { PRODUCT_META } from "@/lib/types";
@@ -34,10 +33,6 @@ export default async function AccountDashboard() {
 
   return (
     <>
-      <CompanyNamePrompt
-        accountId={s.account.accountId}
-        companyName={s.account.companyName ?? null}
-      />
       <PageHeader
         eyebrow="Dashboard"
         title={`Hey, ${s.account.firstName}.`}
@@ -76,7 +71,17 @@ export default async function AccountDashboard() {
         ) : (
           <>
             {entitlements.length > 0 && (
-              <EntitlementsTable entitlements={entitlements} />
+              <section aria-labelledby="hubspot-section-heading">
+                <header className="mb-4">
+                  <h2
+                    id="hubspot-section-heading"
+                    className="text-sm font-medium uppercase tracking-wider text-[var(--fg-subtle)]"
+                  >
+                    HubSpot apps
+                  </h2>
+                </header>
+                <EntitlementsTable entitlements={entitlements} />
+              </section>
             )}
             {atelierLicenses.length > 0 && (
               <AtelierLicensesSection licenses={atelierLicenses} />

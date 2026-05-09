@@ -34,9 +34,9 @@ export function ProfileSection({
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   const [error, setError] = React.useState<string | null>(null);
 
-  // Treat null and "" as the same backfill state so the dirty check
-  // doesn't flicker on customers who land here from the backfill
-  // banner with an empty companyName.
+  // Treat null and "" as the same empty state so the Save button
+  // doesn't flicker on accounts that land here without a company
+  // name set yet.
   const initialCompanyTrimmed = (initialCompany ?? "").trim();
   const dirty =
     firstName.trim() !== initialFirst ||
