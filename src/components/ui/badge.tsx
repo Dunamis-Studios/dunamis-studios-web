@@ -50,6 +50,9 @@ export function StatusBadge({ status }: { status: string }) {
     incomplete: "warning",
     past_due: "danger",
     canceled: "neutral",
+    // Atelier license statuses (perpetual, no renewal cycle).
+    refunded: "neutral",
+    revoked: "danger",
   };
   const label = status.replace("_", " ");
   const variant = map[status] ?? "neutral";
