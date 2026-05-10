@@ -1,4 +1,5 @@
 import { redis, KEY } from "./redis";
+import { loadAtelierEulaTemplate } from "./eula-renderer";
 
 /**
  * Atelier EULA acceptance records — server-side persistence of the
@@ -147,9 +148,13 @@ export async function listEulaAcceptancesForLicense(
 }
 
 /**
- * Current EULA version. Constant for now — a future slice can lift
- * this to a build-time read from atelier-docs/eula.md frontmatter
- * (or from a versioned constant module shared with the desktop). For
- * the slice that ships the acceptance pipeline, "1.0" is fine.
+ * Current EULA version. Read from the canonical renderable template's
+ * frontmatter `version:` field at module load. Locking the version to
+ * the template means a template edit + frontmatter version bump is
+ * the single source of truth for "what version of the EULA do we
+ * record acceptances against." Eliminates the typo class where the
+ * template said one version and the acceptance pipeline stamped
+ * another.
  */
-export const CURRENT_ATELIER_EULA_VERSION = "1.0";
+export const CURRENT_ATELIER_EULA_VERSION =
+  loadAtelierEulaTemplate().metadata.version;
