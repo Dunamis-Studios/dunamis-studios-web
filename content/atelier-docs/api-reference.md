@@ -238,7 +238,7 @@ Lists every vendor in the studio-wide database.
       "name": "Lila's Florals",
       "category": "florist",
       "contact_email": "lila@lilasflorals.com",
-      "contact_phone": "+15551234567",
+      "contact_phone": null,
       "preferred": true,
       "do_not_use": false,
       "do_not_use_reason": null,
@@ -259,7 +259,7 @@ Create a new vendor.
   "name": "Lila's Florals",
   "category": "florist",
   "contact_email": "lila@lilasflorals.com",
-  "contact_phone": "+15551234567",
+  "contact_phone": null,
   "notes": "Best for fall palettes; bills net-30."
 }
 ```
