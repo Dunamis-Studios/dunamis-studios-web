@@ -3,7 +3,7 @@ title: "Install guide"
 description: "How to install Atelier on Windows 10 or 11, from download to first launch."
 category: getting-started
 order: 1
-updated: "2026-05-08"
+updated: "2026-05-09"
 ---
 
 This guide walks through installing Atelier on a Windows machine and getting to the first launch. Allow about ten minutes the first time through.
@@ -56,15 +56,15 @@ The installer is a standard Windows wizard with a few decisions to make:
 - **Desktop shortcut.** Off by default. Turn on if you'd rather click an icon on the desktop than open Start.
 - **Launch on install.** On by default. Atelier opens to the EULA acceptance screen as soon as the install finishes.
 
-The installer does not modify the registry beyond what's required for uninstall registration. It does not install drivers, services, or background tasks.
+The installer's only mandatory registry write is the standard uninstall registration entry. The optional **Launch Atelier when Windows starts** task, if you tick it during install, also adds a per-user `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` entry that re-runs the binary at logon. Both writes are unwound by the uninstaller. The installer does not install drivers, services, or background tasks.
 
 ## First launch
 
 The first time Atelier opens, three things happen in order:
 
-1. **EULA acceptance.** A scrollable view of the [End User License Agreement](doc:eula). Read it, scroll to the bottom, and click **Accept**. Atelier records the acceptance in your local database; you won't be asked again unless the EULA version changes (in which case the same view re-appears after the update lands).
-2. **License key entry.** Paste the license key you received in your purchase confirmation email. The key starts with `ATLR-` and is a single line of base64-style text. Atelier verifies the signature locally — there's no network call, no phone-home — and saves the verified license to your local database. Once activated, the license is permanent for this install of this major version.
-3. **Setup wizard.** Studio name, business name, time zone, and an optional logo file. See the [first-time setup guide](doc:first-run) for the details on each step.
+1. **License key entry.** Paste the license key you received in your purchase confirmation email. The key starts with `ATLR-` and is a single line of base64-style text. On first paste, Atelier verifies the signature locally and then makes one HTTPS call to `dunamisstudios.net/api/atelier/activate` carrying the license string, hashed machine fingerprint, and Atelier version. The activation server records the slot, returns an activation token, and includes a snapshot of your Dunamis Studios profile (name, business, email) for the next step. See [what's included § What network calls Atelier makes](doc:whats-included) for the full activation surface.
+2. **EULA acceptance.** A scrollable view of the [End User License Agreement](doc:eula) with an "Accepting as:" block pre-populated from the customer profile snapshot. Read it, scroll to the bottom, tick the acknowledgement, and click **Accept**. The acceptance is recorded both locally and against your Dunamis Studios account so the audit trail survives reinstalls.
+3. **Setup screen.** Display name, business name, time zone, and an optional logo, mostly pre-filled from the same Dunamis Studios profile. Editable. See the [first-time setup guide](doc:first-run) for the details on each field.
 
 After the wizard, Atelier opens to the multi-wedding dashboard. The first time it's empty — that's expected.
 
@@ -72,7 +72,7 @@ After the wizard, Atelier opens to the multi-wedding dashboard. The first time i
 
 Atelier checks for updates on launch by default, against the GitHub Releases for the current major version. When a new minor version is available, you'll see a small badge in **Settings → Software Updates**. Click through, read the release notes, and click **Download and install**. The updater downloads the patch, verifies the signature against an embedded public key, and re-launches Atelier into the updated build.
 
-You can disable update checks in **Settings → Software Updates**. Toggling that off stops every outbound network call from Atelier — see the [privacy notice](doc:privacy) for the full list of what does and doesn't leave your machine.
+You can disable update checks in **Settings → Software Updates**. Toggling that off stops the daily GitHub release check. Atelier's licensing check-in (the daily heartbeat to `dunamisstudios.net/api/atelier/heartbeat`) continues regardless — it's required for license enforcement and is independent of the update toggle. See the [privacy notice](doc:privacy) for the full list of what does and doesn't leave your machine.
 
 Major version upgrades (v2, v3) are separate paid purchases and are not delivered through the auto-updater. When a new major version is available, you'll receive an email with a discount code and a link — see the [bug fix policy](doc:bug-fix-policy) for the major-version policy.
 

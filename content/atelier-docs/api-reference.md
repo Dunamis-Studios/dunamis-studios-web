@@ -3,10 +3,12 @@ title: "API reference"
 description: "Atelier's localhost REST API — authentication, error shapes, and worked examples for the most common endpoints across leads, weddings, vendors, payments, tasks, and reports."
 category: reference
 order: 1
-updated: "2026-05-07"
+updated: "2026-05-09"
 ---
 
-This page is the customer-facing API reference. The authoritative version of every endpoint, with full request/response shapes and live response examples, ships in the running app at **`http://127.0.0.1:7423/api/docs`** — open it in any browser when the local API is enabled.
+> **API surface ships in a later v1 slice.** This reference describes the localhost REST API as it will land on port 7423 once the local API slice ships. The endpoints below are the planned surface; the in-app `/api/docs` page becomes the live source of truth at that point. The current Atelier build does not expose this API or the **Settings → Local API** panel referenced throughout the page. Use this reference today as a preview of the data model and integration patterns; come back to it once the API is live for live verification.
+
+This page is the customer-facing API reference. The authoritative version of every endpoint, with full request/response shapes and live response examples, will ship in the running app at **`http://127.0.0.1:7423/api/docs`** — open it in any browser when the local API is enabled.
 
 The reference below is the curated, narrative version of the most common endpoints, organized by domain. For an endpoint not covered here, the in-app docs are the source of truth.
 

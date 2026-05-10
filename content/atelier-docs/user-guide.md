@@ -3,8 +3,10 @@ title: "User guide"
 description: "Day-to-day Atelier — the dashboard, weddings, timelines, vendors, budgets, payments, contracts, and the day-of mode."
 category: using-atelier
 order: 1
-updated: "2026-05-08"
+updated: "2026-05-09"
 ---
+
+> **What ships today vs. what's on the v1 roadmap.** This guide is the v1 product vision and most of it is in active development. The current Atelier build supports the multi-wedding **dashboard**, the **add-wedding** form, the wedding **detail** view, **license activation and management** (Settings → License), and the **first-time setup screen**. The eleven-tab wedding workspace (Timeline, Vendors, Guests, Seating, Style, Budget, Payments, Documents, Contracts, Tasks, Notes), **day-of mode**, the **vendor database**, **templates**, the **milestone playbook**, the **calendar view**, **reports**, **notifications**, and the **local REST API panel** ship in subsequent v1 slices in roughly the order they appear below. Sections describing those features are accurate descriptions of how they will work — but if you install Atelier today, you won't see them yet. The release notes for each minor version flag which guide section newly went live.
 
 This guide walks through Atelier as a working planner uses it. Read it cover to cover the first week to build a mental model; come back to specific sections as needed.
 

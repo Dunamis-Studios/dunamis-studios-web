@@ -3,7 +3,7 @@ title: "What's included"
 description: "What ships with an Atelier license, what doesn't, and what's deliberately not on the roadmap."
 category: getting-started
 order: 3
-updated: "2026-05-08"
+updated: "2026-05-09"
 ---
 
 A perpetual Atelier license is $149, paid once. This page is the canonical list of what that buys you and, just as importantly, what it doesn't.
@@ -14,7 +14,7 @@ A perpetual Atelier license is $149, paid once. This page is the canonical list 
 - **Activation on up to 3 devices, customer-controlled deactivation.** A single license activates on up to three computers concurrently. You can deactivate any device at any time from inside Atelier (**Settings → License**) or from the customer portal at `dunamisstudios.net/account/atelier-licenses`. See the [user guide § License management](doc:user-guide#license-management) for the full surface and [EULA §6](doc:eula) for the legal version.
 - **Source code.** Atelier ships with unobfuscated source. You can read it, audit it, modify it for your own internal business use. You cannot redistribute it or use it as the foundation for a competing product — see [EULA §5](doc:eula) for the full restrictions.
 - **Local REST API.** A localhost-bound HTTP API on port 7423 exposes Atelier's data model to anything that can make HTTP requests. Per-installation Bearer key, documented at `/api/docs` inside the running app. See the [API reference](doc:api-reference) for the customer-facing version of those docs.
-- **Perpetual license for the current major version.** Yours forever. The license verifies offline against a key embedded in the app — no server check-in, no online activation, no kill switch.
+- **Perpetual license for the current major version.** Yours forever. Your purchase binds the license to your Dunamis Studios account; first launch activates it against the activation server (one HTTPS call), and Atelier checks in once a day after that. See [Network requirements](#network-requirements) below for the full activation surface and the offline-grace numbers.
 - **Free bug fixes for as long as we operate the major version you bought.** No 30-day window, no 12-month cliff. See the [bug fix policy](doc:bug-fix-policy) for the full statement and how to report bugs.
 - **Free minor updates for as long as we operate the major version you bought.** New features added within a major version land in your install via the auto-updater (which you can turn off in **Settings → Software Updates** if you'd rather pin a specific build).
 

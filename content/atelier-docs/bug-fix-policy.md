@@ -3,10 +3,10 @@ title: "Bug fix policy"
 description: "Atelier's commitment to free bug fixes for the lifetime of the major version, the major-version upgrade model, and how to report a bug."
 category: policies
 order: 1
-updated: "2026-05-08"
+updated: "2026-05-09"
 ---
 
-This page is the canonical statement of how Atelier's bug-fix support works. It supersedes any "12-month support window," "first-year free updates," or similar language anywhere else on the site. The current policy is **indefinite free bug fixes**, no time limit.
+The current policy is **indefinite free bug fixes** for the major version you purchased — no time limit, no support-renewal cycle.
 
 ## The commitment
 

@@ -3,7 +3,7 @@ title: "Troubleshooting"
 description: "Common Atelier issues — startup failures, activation errors, SmartScreen, auto-update, database recovery, lost keys, device limits, and offline-grace lockdowns."
 category: reference
 order: 2
-updated: "2026-05-08"
+updated: "2026-05-09"
 ---
 
 If you're hitting something not covered here, email **legal@dunamisstudios.com** with what you were trying to do and what happened. We respond.
@@ -46,7 +46,7 @@ The output should match the SHA-256 published next to the download link.
 
 The auto-updater can fail for a few reasons:
 
-- **No internet at update time.** Atelier needs to reach `releases.github.com` to check for updates. If you're offline, the check is skipped and you'll see "Could not check for updates" in **Settings → Software Updates**. Re-try when you're back online.
+- **No internet at update time.** Atelier reads its updater manifest from `https://github.com/Dunamis-Studios/atelier/releases/latest/download/latest.json` and pulls the installer asset from GitHub's release CDN (`objects.githubusercontent.com`). If you're offline, the check is skipped and you'll see "Could not check for updates" in **Settings → Software Updates**. Re-try when you're back online.
 - **Disk full.** The update downloads the new build into a temp directory before swapping it in. If your disk is at capacity, the download fails. Free up space and retry.
 - **Locked binary.** If Atelier was open when the swap happened, the binary may be locked by a still-running process. Close every Atelier window (check the system tray for hidden instances) and re-try the update.
 - **Signature verification failed.** The downloaded build's minisign signature didn't verify against the embedded public key. This is rare and points at a corrupted download or, in the worst case, a tampered release. The updater refuses to install in this case and you'll see an error toast. Email us — we'll investigate.

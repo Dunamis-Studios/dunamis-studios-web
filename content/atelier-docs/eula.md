@@ -3,7 +3,7 @@ title: "End User License Agreement"
 description: "The legal terms governing Atelier — the perpetual license, restrictions, support commitment, warranty, and dispute resolution."
 category: policies
 order: 3
-updated: "2026-05-08"
+updated: "2026-05-09"
 ---
 
 > **Draft — Not Final.** This End User License Agreement is a working draft prepared for Dunamis Studios products. It has not yet been reviewed by a licensed attorney. The final version will be reviewed and approved by counsel prior to commercial release of any product using this agreement.
@@ -73,7 +73,7 @@ A breach of any restriction in this Section 5 is a material breach of this Agree
 4. Dunamis Studios may revoke a License Key that has been distributed or used in breach of this Agreement, including License Keys that appear in publicly accessible locations or that have been used by parties other than the Licensee and its Authorized Users. Revocation does not entitle the Licensee to a refund.
 5. The License Key is tied to the Licensee identified at the time of purchase. Transfer of the License Key follows the rules in Section 18 (Transfer and Assignment).
 6. License activation requires an active internet connection on first launch and periodically thereafter for ongoing operation. The Software phones home to verify license status and update the activation record.
-7. Each License entitles the Licensee to activate the Software on up to three (3) devices. The Licensee may deactivate any device at any time via the in-app Settings menu or the customer portal at dunamisstudios.com to free an activation slot for use on another device.
+7. Each License entitles the Licensee to activate the Software on up to three (3) devices. The Licensee may deactivate any device at any time via the in-app Settings menu or the customer portal at dunamisstudios.net to free an activation slot for use on another device.
 8. After successful first activation, the Software will function offline for up to thirty (30) days between successful heartbeat checks. After thirty days without a successful heartbeat, the Software will lock until the next successful activation check.
 9. First-launch activation requires internet connectivity within seven (7) days of license entry. If no successful activation occurs within seven days, the provisional license expires and a new activation must be performed.
 10. Dunamis Studios may revoke a License Key at any time for breach of this Agreement, refund, or other cause. Revocation may be effective immediately or after a grace period at Dunamis Studios' discretion.
@@ -206,3 +206,5 @@ Questions regarding this Agreement should be directed to:
 ## 24. Acceptance Acknowledgment
 
 By clicking "I Agree" during installation, by installing the Software, or by using the Software in any way, Licensee acknowledges that Licensee has read, understood, and agreed to be bound by this Agreement.
+
+Licensee's acceptance is recorded against Licensee's Dunamis Studios account at the moment of acceptance. The recorded data set comprises the EULA version, the Dunamis account identifier, the Atelier license identifier, the Atelier client version, the timestamp of acceptance, and the IP address and user-agent of the client that posted the acceptance. The record contains no business data, no wedding data, and no usage data. Licensee may request a copy of every acceptance record bound to Licensee's account at any time by contacting legal@dunamisstudios.com.

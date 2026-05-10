@@ -3,7 +3,7 @@ title: "Privacy notice"
 description: "What Atelier collects (no business data, ever), what leaves your machine (license activation + heartbeat + an optional update check), and how Dunamis Studios relates to your data under GDPR and CCPA."
 category: policies
 order: 4
-updated: "2026-05-08"
+updated: "2026-05-09"
 ---
 
 This privacy notice describes how Atelier handles data. The headline: your wedding data never leaves your machine. License activation does — exactly what gets sent and why is described below. The legal version is in [EULA §15](doc:eula).
@@ -35,7 +35,7 @@ When you paste your license key on first launch, Atelier sends a single request 
 - **A hardware fingerprint hash** — a SHA-256 of your Windows machine GUID, motherboard serial, and CPU ID. Hashed locally before being sent; the raw values never leave your machine.
 - **The Atelier version you're running** (e.g. `1.0.3`)
 
-That's the entire payload. The server records the activation and returns a confirmation. If your license is already activated on three devices, the server returns the list of active devices so you can deactivate one inline (the device labels and activation dates only — nothing else).
+That's the entire payload. The server records the activation and returns a confirmation. The response also includes a snapshot of your Dunamis Studios profile (your first name, last name, business name, and email) so the in-app EULA acceptance screen can render an "Accepting as:" block without making a separate authenticated round-trip. The snapshot is not retransmitted on the daily heartbeat. If your license is already activated on three devices, the server returns the list of active devices so you can deactivate one inline (the device labels and activation dates only — nothing else).
 
 ### 2. License heartbeat (once per day)
 
@@ -62,6 +62,10 @@ The wedding data architectural commitment stands: it stays on your machine, in a
 ## Activation and heartbeat data retention
 
 Per [EULA §15.6](doc:eula), license activation and heartbeat records are retained by Dunamis Studios for the lifetime of your license plus seven years for tax and audit purposes. The records contain: your license ID, the hashed device fingerprints of the devices you've activated, timestamps of first activation and last heartbeat, and the Atelier versions seen. Nothing more.
+
+## EULA acceptance records
+
+When you accept the End User License Agreement on first launch, Atelier posts the acceptance to `dunamisstudios.net/api/atelier/record-eula-acceptance`. The server stores one record per (license, EULA version) pair containing: the EULA version string, your Dunamis account ID, your Atelier license ID, the timestamp of acceptance, the Atelier client version that posted it, and the IP address and user-agent of the request. A snapshot of your name, business name, and email at the moment of acceptance is included so a later account-email rotation doesn't rewrite the audit trail. No business data, no wedding data. Records are append-only — a re-acceptance after an EULA version bump adds a new row alongside the prior one. You can request a copy of every record bound to your account by emailing legal@dunamisstudios.com.
 
 ## Where your data lives
 

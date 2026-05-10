@@ -3,8 +3,10 @@ title: "Integration examples"
 description: "Working code examples for Atelier's local REST API — curl, a Python CSV importer, a webhook example, and a task-automation example."
 category: using-atelier
 order: 2
-updated: "2026-05-07"
+updated: "2026-05-09"
 ---
+
+> **Examples target an API that ships in a later v1 slice.** The localhost REST API on port 7423 and the **Settings → Local API** panel referenced throughout the page have not yet shipped. The examples below are the patterns that will work the moment the API slice is live; today they're a planning resource, not runnable code. The [API reference](doc:api-reference) carries the same admonition and the same scope.
 
 Atelier's localhost REST API on port 7423 is what makes the data model accessible to the rest of your toolchain. Every endpoint returns JSON, every endpoint is authenticated with a per-installation Bearer key, and the whole thing runs on `127.0.0.1` — nothing crosses your network boundary.
 
