@@ -101,6 +101,11 @@ async function walkMarkdown(dir: string): Promise<string[]> {
     throw err;
   }
   for (const entry of entries) {
+    // Skip files / directories whose name starts with "_". The
+    // convention is that leading-underscore files are internal working
+    // docs (audit drafts, ground-truth notes, scratch) that live next
+    // to published content but are gitignored and never rendered.
+    if (entry.name.startsWith("_")) continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       out.push(...(await walkMarkdown(full)));

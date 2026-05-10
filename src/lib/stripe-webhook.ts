@@ -670,6 +670,13 @@ async function onAtelierCheckoutCompleted(
       // when v2 ships.
       versionMajor: 1,
       tier: "self-serve",
+      // Bind the license to the paying Dunamis account when checkout
+      // came through the site purchase gate (the common path now —
+      // the gate enforces login before the Stripe redirect). accountId
+      // may be null for legacy direct-to-Stripe purchase paths that
+      // bypassed the dunamisAccountId metadata; the backfill script
+      // resolves those after the fact.
+      accountId,
       stripeCustomerId: customerId,
       stripePaymentIntentId: paymentIntentId,
     });

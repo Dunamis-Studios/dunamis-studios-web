@@ -9,6 +9,12 @@
  *
  * Args:
  *   --email <addr>          Customer email (required)
+ *   --account-id <id>       Dunamis account id binding (optional but
+ *                           strongly preferred — leaving it unset means
+ *                           the issued license has account_id:null and
+ *                           must be picked up by the backfill script
+ *                           (scripts/backfill-license-account-id.ts)
+ *                           before the customer portal can show it)
  *   --product <slug>        Defaults to "atelier"
  *   --major <n>             Major version (default 1)
  *   --tier <name>           Tier (default "self-serve")
@@ -40,6 +46,7 @@ import { sendAtelierLicenseEmail } from "../src/lib/email-atelier-license";
 
 interface Args {
   email: string;
+  accountId: string | null;
   product: "atelier";
   major: number;
   tier: AtelierLicenseTier;
@@ -56,6 +63,7 @@ function parseArgs(argv: string[]): Args {
     firstName: null,
     sendEmail: false,
     issuedBy: null,
+    accountId: null,
   };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
@@ -63,6 +71,10 @@ function parseArgs(argv: string[]): Args {
     switch (arg) {
       case "--email":
         out.email = next;
+        i++;
+        break;
+      case "--account-id":
+        out.accountId = next;
         i++;
         break;
       case "--product":
@@ -118,12 +130,13 @@ function printHelp(): void {
 Atelier license CLI
 
 Usage:
-  npm run issue-license -- --email <addr> [--major N] [--tier T]
-                            [--first-name NAME] [--send-email]
+  npm run issue-license -- --email <addr> [--account-id <id>] [--major N]
+                            [--tier T] [--first-name NAME] [--send-email]
                             [--issued-by ADMIN_EMAIL]
 
 Options:
   --email        Customer email (required)
+  --account-id   Dunamis account id binding (strongly preferred)
   --product      Defaults to "atelier"
   --major        Major version (default 1)
   --tier         ${VALID_TIERS.join(" | ")} (default "self-serve")
@@ -177,6 +190,7 @@ async function main(): Promise<void> {
 
   const { signed, record } = await signAndPersistLicense({
     email: args.email,
+    accountId: args.accountId,
     product: args.product,
     versionMajor: args.major,
     tier: args.tier,

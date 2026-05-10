@@ -160,6 +160,26 @@ export const KEY = {
   atelierLicensesByProduct: (product: string) =>
     `dunamis:atelier-licenses-by-product:${product}`,
 
+  /**
+   * Lookup index from Dunamis account id → set of lid values. The
+   * account_id binding is the canonical owner of a license once the
+   * site purchase gate is in force; every license issued through
+   * Stripe checkout, the admin issuance UI, or the CLI carries the
+   * paying account's id. The customer portal at
+   * /account/atelier-licenses queries this index instead of the email
+   * index because email is mutable on the account record (a customer
+   * who rotates their address shouldn't lose visibility of their
+   * licenses) while account_id is stable.
+   *
+   * Pre-existing licenses that pre-date the account_id field carry
+   * `account_id: null` until the backfill script
+   * (scripts/backfill-license-account-id.ts) resolves them by email
+   * and writes the index entry. The email index stays in place as a
+   * fallback for the lost-license public lookup endpoint.
+   */
+  atelierLicensesByAccount: (accountId: string) =>
+    `dunamis:atelier-licenses-by-account:${accountId}`,
+
   // -----------------------------------------------------------------
   // Atelier online activation (Online Activation Slice — Part 2)
   // -----------------------------------------------------------------

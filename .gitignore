@@ -19,3 +19,9 @@ next-env.d.ts.backup
 
 .vercel
 .env*.local
+
+# Internal audit drafts kept alongside the docs they audit. The leading
+# underscore + date stamp is the convention; published docs never start
+# with "_".
+content/atelier-docs/_audit-*.md
+content/kb/**/_audit-*.md

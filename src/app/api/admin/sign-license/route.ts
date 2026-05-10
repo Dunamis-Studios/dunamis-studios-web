@@ -32,6 +32,12 @@ const bodySchema = z.object({
     .min(3)
     .max(254)
     .email("Enter a valid email address"),
+  /**
+   * Dunamis account id binding. Optional during the migration window
+   * for parity with /api/admin/issue-license. Net-new admin issuance
+   * via the picker UI sends both fields together.
+   */
+  account_id: z.string().trim().min(1).max(128).optional(),
   product: z.literal("atelier"),
   version_major: z.number().int().min(1).max(99),
   tier: z.enum(VALID_TIERS),
@@ -71,6 +77,7 @@ export async function POST(request: Request) {
   try {
     const { signed, record } = await signAndPersistLicense({
       email: parsed.data.email,
+      accountId: parsed.data.account_id ?? null,
       product: parsed.data.product,
       versionMajor: parsed.data.version_major,
       tier: parsed.data.tier,

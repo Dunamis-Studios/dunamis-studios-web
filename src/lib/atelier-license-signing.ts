@@ -234,6 +234,19 @@ export interface AtelierLicenseRecord {
   lid: string;
   key_string: string;
   email: string;
+  /**
+   * Dunamis Studios account id of the paying / owning customer. Every
+   * license issued after the site-purchase-gate slice carries an
+   * account_id; pre-existing records carry null until the backfill
+   * script (scripts/backfill-license-account-id.ts) resolves them.
+   *
+   * The account_id binding is the canonical owner of the license. The
+   * email field is preserved for back-compat with the lost-license
+   * lookup, the issuance email, and pre-account-bound records — but
+   * customer-portal reads, account-bound activation, and admin
+   * tooling all key off account_id.
+   */
+  account_id?: string | null;
   product: "atelier";
   version_major: number;
   tier: AtelierLicenseTier;
@@ -258,6 +271,13 @@ export interface AtelierLicenseRecord {
 export interface PersistLicenseInput {
   signed: SignedLicense;
   email: string;
+  /**
+   * Dunamis Studios account id binding. Required for net-new
+   * issuance once the site purchase gate is in force; nullable so
+   * the type permits the historical no-account-bound shape during
+   * the migration window. Backfill resolves remaining nulls.
+   */
+  accountId?: string | null;
   product: "atelier";
   versionMajor: number;
   tier: AtelierLicenseTier;
@@ -284,10 +304,12 @@ export interface PersistLicenseInput {
 export async function persistLicense(
   input: PersistLicenseInput,
 ): Promise<AtelierLicenseRecord> {
+  const accountId = input.accountId ?? null;
   const record: AtelierLicenseRecord = {
     lid: input.signed.lid,
     key_string: input.signed.licenseString,
     email: input.email,
+    account_id: accountId,
     product: input.product,
     version_major: input.versionMajor,
     tier: input.tier,
@@ -302,12 +324,16 @@ export async function persistLicense(
   await r.set(KEY.atelierLicense(record.lid), record);
   await r.sadd(KEY.atelierLicensesByEmail(emailHashed), record.lid);
   await r.sadd(KEY.atelierLicensesByProduct(record.product), record.lid);
+  if (accountId) {
+    await r.sadd(KEY.atelierLicensesByAccount(accountId), record.lid);
+  }
   return record;
 }
 
 /** Convenience wrapper combining sign + persist. */
 export async function signAndPersistLicense(
   input: SignLicenseInput & {
+    accountId?: string | null;
     issuedByAdminEmail?: string | null;
     stripeCustomerId?: string | null;
     stripePaymentIntentId?: string | null;
@@ -317,6 +343,7 @@ export async function signAndPersistLicense(
   const record = await persistLicense({
     signed,
     email: input.email,
+    accountId: input.accountId ?? null,
     product: input.product,
     versionMajor: input.versionMajor,
     tier: input.tier,
@@ -353,6 +380,30 @@ export async function listLicensesByProduct(
 ): Promise<AtelierLicenseRecord[]> {
   const r = redis();
   const lids = await r.smembers(KEY.atelierLicensesByProduct(product));
+  if (lids.length === 0) return [];
+  const records = await Promise.all(
+    lids.map((lid) => r.get<AtelierLicenseRecord>(KEY.atelierLicense(lid))),
+  );
+  return records.filter((r): r is AtelierLicenseRecord => r != null);
+}
+
+/**
+ * Read every license belonging to a Dunamis Studios account, by
+ * account_id index. Returns active + refunded + revoked records — the
+ * caller filters as needed (the customer portal hides refunded
+ * licenses, the admin tooling shows them all).
+ *
+ * Returns [] for an account with no licenses or one whose licenses
+ * pre-date the account_id binding and haven't been backfilled yet.
+ * Callers that must support the migration window should also fall
+ * back to listLicensesByEmail when this returns []; once the backfill
+ * has run in production, the email fallback can be removed.
+ */
+export async function listLicensesByAccount(
+  accountId: string,
+): Promise<AtelierLicenseRecord[]> {
+  const r = redis();
+  const lids = await r.smembers(KEY.atelierLicensesByAccount(accountId));
   if (lids.length === 0) return [];
   const records = await Promise.all(
     lids.map((lid) => r.get<AtelierLicenseRecord>(KEY.atelierLicense(lid))),

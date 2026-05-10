@@ -17,6 +17,7 @@
     "atelier-docs:index": "tsx scripts/build-atelier-docs-index.ts",
     "issue-license": "tsx scripts/issue-license-cli.ts",
     "revoke-license": "tsx scripts/revoke-license-cli.ts",
+    "backfill:license-account-id": "tsx scripts/backfill-license-account-id.ts",
     "smoke:listicle-fields": "tsx scripts/smoke-listicle-fields.ts"
   },
   "dependencies": {

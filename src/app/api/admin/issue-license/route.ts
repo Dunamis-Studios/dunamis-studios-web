@@ -34,6 +34,17 @@ const bodySchema = z.object({
     .min(3)
     .max(254)
     .email("Enter a valid email address"),
+  /**
+   * Dunamis account id of the recipient. Optional during the
+   * migration window; commit 2 wires the admin issuance UI's account
+   * picker to send this for every new issuance, and the picker shows
+   * the account's email in a read-only field below it (so email and
+   * account_id are always derived from the same selected account
+   * record). Older callers — the `issue-license-cli.ts` script and
+   * any out-of-band PATCH to this endpoint — are still permitted to
+   * omit account_id; the backfill script will resolve them.
+   */
+  account_id: z.string().trim().min(1).max(128).optional(),
   product: z.literal("atelier"),
   version_major: z.number().int().min(1).max(99),
   tier: z.enum(VALID_TIERS),
@@ -76,6 +87,7 @@ export async function POST(request: Request) {
   try {
     const result = await signAndPersistLicense({
       email: parsed.data.email,
+      accountId: parsed.data.account_id ?? null,
       product: parsed.data.product,
       versionMajor: parsed.data.version_major,
       tier: parsed.data.tier,

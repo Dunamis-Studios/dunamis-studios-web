@@ -101,6 +101,10 @@ async function walkMarkdown(dir: string): Promise<string[]> {
     throw err;
   }
   for (const entry of entries) {
+    // Skip leading-underscore files / directories. Same convention as
+    // atelier-docs: internal working drafts (audits, ground-truth
+    // notes, scratch) live next to published content but never render.
+    if (entry.name.startsWith("_")) continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       out.push(...(await walkMarkdown(full)));
