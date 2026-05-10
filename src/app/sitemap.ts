@@ -121,6 +121,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${base}/atelier/download`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
       url: `${base}${ATELIER_DOCS_BASE_PATH}`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "weekly",
