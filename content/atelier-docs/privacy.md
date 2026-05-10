@@ -65,7 +65,11 @@ Per [EULA §15.6](doc:eula), license activation and heartbeat records are retain
 
 ## EULA acceptance records
 
-When you accept the End User License Agreement on first launch, Atelier posts the acceptance to `dunamisstudios.net/api/atelier/record-eula-acceptance`. The server stores one record per (license, EULA version) pair containing: the EULA version string, your Dunamis account ID, your Atelier license ID, the timestamp of acceptance, the Atelier client version that posted it, and the IP address and user-agent of the request. A snapshot of your name, business name, and email at the moment of acceptance is included so a later account-email rotation doesn't rewrite the audit trail. No business data, no wedding data. Records are append-only — a re-acceptance after an EULA version bump adds a new row alongside the prior one. You can request a copy of every record bound to your account by emailing legal@dunamisstudios.com.
+When you accept the End User License Agreement on first launch, Atelier posts the acceptance to `dunamisstudios.net/api/atelier/record-eula-acceptance`. The server renders your personalized EULA — the document with your name, email, business name, license ID, device fingerprint, and acceptance date baked into it — and stores **the verbatim text of that document** as the legal artifact. Stored once at acceptance, never re-rendered.
+
+The full record contains: the EULA version, your Dunamis account ID, your Atelier license ID, the timestamp of acceptance, the Atelier client version that posted it, the IP address and user-agent of the request, the device fingerprint of the activated machine, the SHA-256 of the rendered text, the substitution values used to render it, and the rendered text itself. A snapshot of your name, business name, and email at the moment of acceptance is included so a later account-email rotation doesn't rewrite the audit trail. No business data, no wedding data.
+
+Records are append-only — a re-acceptance after an EULA version bump adds a new row alongside the prior one. You can download the verbatim accepted document for any of your acceptances directly from your customer portal at [dunamisstudios.net/account/atelier-licenses](https://dunamisstudios.net/account/atelier-licenses), or email legal@dunamisstudios.com for a copy of every record bound to your account.
 
 ## Where your data lives
 
