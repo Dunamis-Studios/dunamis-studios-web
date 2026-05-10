@@ -41,6 +41,21 @@ type IssueState =
     }
   | { kind: "error"; message: string };
 
+interface ResolvedAccount {
+  accountId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  companyName: string | null;
+}
+
+type AccountLookupState =
+  | { kind: "idle" }
+  | { kind: "loading" }
+  | { kind: "found"; account: ResolvedAccount }
+  | { kind: "missing" }
+  | { kind: "error"; message: string };
+
 const STATUS_BADGE: Record<AtelierLicenseStatus, "success" | "warning" | "danger"> = {
   active: "success",
   refunded: "warning",
@@ -59,7 +74,9 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
   const [licenses, setLicenses] = React.useState(initialLicenses);
   const [issueState, setIssueState] = React.useState<IssueState>({ kind: "idle" });
   const [issueEmail, setIssueEmail] = React.useState("");
-  const [issueFirstName, setIssueFirstName] = React.useState("");
+  const [accountLookup, setAccountLookup] = React.useState<AccountLookupState>({
+    kind: "idle",
+  });
   const [issueVersionMajor, setIssueVersionMajor] = React.useState(1);
   const [statusFilter, setStatusFilter] = React.useState<StatusFilter>("all");
   const [searchEmail, setSearchEmail] = React.useState("");
@@ -86,20 +103,73 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
     });
   }, [licenses, statusFilter, searchEmail]);
 
+  async function onLookupAccount() {
+    const trimmed = issueEmail.trim().toLowerCase();
+    if (!trimmed) {
+      setAccountLookup({ kind: "idle" });
+      return;
+    }
+    setAccountLookup({ kind: "loading" });
+    try {
+      const res = await fetch(
+        `/api/admin/lookup-account?email=${encodeURIComponent(trimmed)}`,
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        setAccountLookup({
+          kind: "error",
+          message: data?.error ?? "Lookup failed.",
+        });
+        return;
+      }
+      if (!data.found) {
+        setAccountLookup({ kind: "missing" });
+        return;
+      }
+      setAccountLookup({ kind: "found", account: data.account });
+      // Snap the email field to the canonical account email so issuance
+      // and the account record agree byte-for-byte (the lookup
+      // lowercases and trims; reflect that back into the input).
+      setIssueEmail(data.account.email);
+    } catch (err) {
+      setAccountLookup({
+        kind: "error",
+        message: err instanceof Error ? err.message : "Network error.",
+      });
+    }
+  }
+
   async function onIssueSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (issueState.kind === "submitting") return;
+    if (accountLookup.kind !== "found") {
+      // Belt-and-suspenders — the submit button is disabled until a
+      // resolved account is in hand, but if a quick-clicker beats the
+      // disabled state we surface the same message inline.
+      setIssueState({
+        kind: "error",
+        message: "Resolve a Dunamis account before issuing.",
+      });
+      return;
+    }
+    const account = accountLookup.account;
     setIssueState({ kind: "submitting" });
     try {
       const res = await fetch("/api/admin/issue-license", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: issueEmail,
+          email: account.email,
+          account_id: account.accountId,
           product: "atelier",
           version_major: issueVersionMajor,
           tier: "self-serve",
-          first_name: issueFirstName.trim() || undefined,
+          // Pull the customer's first name straight off the resolved
+          // account so the email greeting is correct without an
+          // admin-typed copy. Falls back to undefined if the account
+          // didn't capture one (legacy records pre-firstName field
+          // shouldn't exist, but the type is permissive).
+          first_name: account.firstName || undefined,
         }),
       });
       const data = await res.json();
@@ -117,7 +187,7 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
       // Optimistically prepend the new record to the table.
       setLicenses((prev) => [data.record, ...prev]);
       setIssueEmail("");
-      setIssueFirstName("");
+      setAccountLookup({ kind: "idle" });
     } catch (err) {
       setIssueState({
         kind: "error",
@@ -237,31 +307,57 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
           issuer (<code className="rounded bg-[var(--bg-muted)] px-1 text-xs">{adminEmail}</code>).
         </p>
 
-        <form onSubmit={onIssueSubmit} className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="lg:col-span-2">
-            <Label htmlFor="issue-email">Customer email</Label>
-            <Input
-              id="issue-email"
-              type="email"
-              required
-              value={issueEmail}
-              onChange={(e) => setIssueEmail(e.target.value)}
-              disabled={issueState.kind === "submitting"}
-              placeholder="customer@example.com"
-              className="mt-1.5"
-            />
-          </div>
-          <div>
-            <Label htmlFor="issue-first-name">First name (optional)</Label>
-            <Input
-              id="issue-first-name"
-              type="text"
-              value={issueFirstName}
-              onChange={(e) => setIssueFirstName(e.target.value)}
-              disabled={issueState.kind === "submitting"}
-              placeholder="Pat"
-              className="mt-1.5"
-            />
+        <form onSubmit={onIssueSubmit} className="mt-6 grid gap-4 sm:grid-cols-3">
+          <div className="sm:col-span-2">
+            <Label htmlFor="issue-email">Find Dunamis account by email</Label>
+            <div className="mt-1.5 flex gap-2">
+              <Input
+                id="issue-email"
+                type="email"
+                required
+                value={issueEmail}
+                onChange={(e) => {
+                  setIssueEmail(e.target.value);
+                  // Any edit invalidates the resolved account — the
+                  // picker must re-resolve before issuance can proceed.
+                  if (accountLookup.kind !== "idle") {
+                    setAccountLookup({ kind: "idle" });
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    void onLookupAccount();
+                  }
+                }}
+                disabled={
+                  issueState.kind === "submitting" ||
+                  accountLookup.kind === "loading"
+                }
+                placeholder="customer@example.com"
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => void onLookupAccount()}
+                disabled={
+                  !issueEmail.trim() ||
+                  issueState.kind === "submitting" ||
+                  accountLookup.kind === "loading"
+                }
+              >
+                {accountLookup.kind === "loading" ? "Finding…" : "Find account"}
+              </Button>
+            </div>
+            <p className="mt-1.5 text-xs text-[var(--fg-subtle)]">
+              Every license must bind to an existing Dunamis Studios account.
+              If the customer hasn&apos;t signed up yet, send them to{" "}
+              <code className="rounded bg-[var(--bg-muted)] px-1 text-[10px]">
+                /signup
+              </code>{" "}
+              first.
+            </p>
           </div>
           <div>
             <Label htmlFor="issue-major">Major version</Label>
@@ -276,14 +372,78 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
               className="mt-1.5"
             />
           </div>
-          <div className="sm:col-span-2 lg:col-span-4 flex items-center justify-between gap-3">
+
+          {/* Resolved account chip / lookup feedback */}
+          {accountLookup.kind === "found" ? (
+            <div className="sm:col-span-3 rounded-md border border-[var(--color-success)]/40 bg-[color-mix(in_oklch,var(--color-success)_8%,var(--bg-elevated))] p-3 text-sm">
+              <div className="flex items-center gap-2 font-medium text-[var(--fg)]">
+                <CheckIcon
+                  className="h-4 w-4 text-[var(--color-success)]"
+                  aria-hidden
+                />
+                {accountLookup.account.firstName}{" "}
+                {accountLookup.account.lastName}
+                {accountLookup.account.companyName ? (
+                  <span className="font-normal text-[var(--fg-muted)]">
+                    · {accountLookup.account.companyName}
+                  </span>
+                ) : null}
+              </div>
+              <div className="mt-1 grid gap-1 text-xs text-[var(--fg-muted)] sm:grid-cols-2">
+                <div>
+                  Email:{" "}
+                  <code className="rounded bg-[var(--bg-muted)] px-1 text-[11px]">
+                    {accountLookup.account.email}
+                  </code>
+                </div>
+                <div>
+                  Account id:{" "}
+                  <code className="rounded bg-[var(--bg-muted)] px-1 text-[11px]">
+                    {accountLookup.account.accountId}
+                  </code>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {accountLookup.kind === "missing" ? (
+            <div
+              role="alert"
+              className="sm:col-span-3 rounded-md border border-[var(--color-warning)]/40 bg-[color-mix(in_oklch,var(--color-warning)_8%,var(--bg-elevated))] p-3 text-sm text-[var(--fg)]"
+            >
+              <div className="font-medium">No Dunamis account exists for that email.</div>
+              <p className="mt-1 text-xs text-[var(--fg-muted)]">
+                Have the customer sign up at{" "}
+                <code className="rounded bg-[var(--bg-muted)] px-1 text-[11px]">
+                  /signup
+                </code>
+                , then come back and re-resolve. Issuance is gated on a
+                resolved account so the license binds to the same id the
+                customer portal uses.
+              </p>
+            </div>
+          ) : null}
+
+          {accountLookup.kind === "error" ? (
+            <p
+              role="alert"
+              className="sm:col-span-3 rounded-md border border-[var(--color-danger)]/40 bg-[color-mix(in_oklch,var(--color-danger)_8%,var(--bg-elevated))] p-3 text-sm text-[var(--color-danger)]"
+            >
+              {accountLookup.message}
+            </p>
+          ) : null}
+
+          <div className="sm:col-span-3 flex items-center justify-between gap-3">
             <p className="text-xs text-[var(--fg-subtle)]">
               Product: atelier · Tier: self-serve
             </p>
             <Button
               type="submit"
               size="lg"
-              disabled={issueState.kind === "submitting"}
+              disabled={
+                issueState.kind === "submitting" ||
+                accountLookup.kind !== "found"
+              }
             >
               {issueState.kind === "submitting" ? "Issuing…" : "Issue license"}
             </Button>
