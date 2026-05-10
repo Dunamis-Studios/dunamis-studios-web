@@ -211,4 +211,44 @@ export const KEY = {
    */
   atelierActivationsByLicense: (lid: string) =>
     `dunamis:atelier-activations-by-license:${lid}`,
+
+  // -----------------------------------------------------------------
+   // Atelier EULA acceptance records (account-bound purchase slice)
+  // -----------------------------------------------------------------
+
+  /**
+   * Server-side record that a specific Atelier license's owner
+   * accepted a specific EULA version. Keyed by lid + eula_version so
+   * a re-acceptance of a bumped EULA on the same license is a fresh
+   * record alongside the prior one (audit-friendly: the admin
+   * history modal renders every accept event for a license, not just
+   * the most recent).
+   *
+   * Value shape (JSON):
+   *   {
+   *     lid: string,
+   *     account_id: string,
+   *     eula_version: string,
+   *     accepted_at: string (ISO-8601 UTC, second precision),
+   *     atelier_version: string,
+   *     ip_at_accept: string | null,
+   *     user_agent_at_accept: string | null,
+   *   }
+   *
+   * No customer business data, no wedding data, no telemetry. Just
+   * proof that the customer accepted the legal terms at a specific
+   * moment from a specific install. Documented in atelier-docs/
+   * privacy.md and atelier-docs/eula.md.
+   */
+  atelierEulaAcceptance: (lid: string, eulaVersion: string) =>
+    `dunamis:atelier-eula-acceptance:${lid}:${eulaVersion}`,
+
+  /**
+   * SET of {eula_version} strings that have an acceptance record for
+   * a given lid. The admin history modal walks this set to fetch
+   * every record for a license (one Redis read per version) without
+   * needing to scan the namespace.
+   */
+  atelierEulaAcceptancesByLicense: (lid: string) =>
+    `dunamis:atelier-eula-acceptances-by-license:${lid}`,
 } as const;

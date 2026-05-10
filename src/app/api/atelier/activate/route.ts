@@ -15,6 +15,8 @@ import {
 import { getSessionFromBearer } from "@/lib/session";
 import { redis, KEY } from "@/lib/redis";
 import { hashEmail } from "@/lib/email-hash";
+import { getAccountById } from "@/lib/accounts";
+import { CURRENT_ATELIER_EULA_VERSION } from "@/lib/atelier-eula";
 
 /**
  * POST /api/atelier/activate
@@ -102,6 +104,39 @@ function publicSlot(a: {
     first_activated_at: a.first_activated_at,
     last_heartbeat_at: a.last_heartbeat_at,
     atelier_version: a.atelier_version,
+  };
+}
+
+/**
+ * Build the customer_profile snapshot returned with every successful
+ * activate response. Powers the EULA screen's "Accepting as:" block
+ * without forcing the desktop to make a second authenticated round-
+ * trip for the account record.
+ *
+ * Returns null when the license has no account_id (legacy /
+ * unbacked record). The desktop renders the EULA screen in a
+ * degraded "license unbound" state that points the customer at
+ * support — the EULA still has to be accepted but the post-acceptance
+ * server call surfaces a structured license_unbound error.
+ */
+async function customerProfileForLicense(
+  accountId: string | null | undefined,
+): Promise<{
+  account_id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  company_name: string | null;
+} | null> {
+  if (!accountId) return null;
+  const account = await getAccountById(accountId);
+  if (!account) return null;
+  return {
+    account_id: account.accountId,
+    email: account.email,
+    first_name: account.firstName,
+    last_name: account.lastName,
+    company_name: account.companyName ?? null,
   };
 }
 
@@ -235,6 +270,12 @@ export async function POST(request: Request) {
     (a) => a.status === "active",
   );
 
+  // Customer profile snapshot — same shape on both refresh and
+  // first-activation paths. Resolved once per request and reused so
+  // the two response branches stay byte-identical on the
+  // customer-profile field.
+  const customerProfile = await customerProfileForLicense(license.account_id);
+
   // 2-of-3 hardware match → refresh existing slot, no new slot consumed.
   const existing = activeActivations.find((a) =>
     matchesMachine(a.machine_id, body.machine_id),
@@ -250,6 +291,8 @@ export async function POST(request: Request) {
       slot_count: activeActivations.length,
       max_slots: MAX_ACTIVATIONS_PER_LICENSE,
       first_activation: false,
+      customer_profile: customerProfile,
+      eula_version: CURRENT_ATELIER_EULA_VERSION,
     });
   }
 
@@ -275,5 +318,7 @@ export async function POST(request: Request) {
     slot_count: activeActivations.length + 1,
     max_slots: MAX_ACTIVATIONS_PER_LICENSE,
     first_activation: allActivations.length === 0,
+    customer_profile: customerProfile,
+    eula_version: CURRENT_ATELIER_EULA_VERSION,
   });
 }
