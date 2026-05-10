@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 import { ProductPageShell } from "@/components/marketing/product-page-shell";
-import { AtelierBuyForm } from "@/components/marketing/atelier-buy-form";
+import { AtelierPurchaseGate } from "@/components/marketing/atelier-purchase-gate";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container, Section } from "@/components/ui/primitives";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -283,7 +283,7 @@ export default function AtelierPage() {
         </Container>
       </Section>
 
-      {/* INTEREST / NOTIFY-ON-LAUNCH FORM */}
+      {/* PURCHASE GATE — sign-in-then-Stripe checkout */}
       <Section
         id="buy-atelier"
         className="border-t border-[var(--border)] scroll-mt-24"
@@ -292,19 +292,19 @@ export default function AtelierPage() {
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-7 sm:p-10">
             <div className="mx-auto max-w-2xl text-center">
               <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-                Get notified
+                Buy Atelier
               </div>
               <h2 className="mt-3 font-[var(--font-display)] text-2xl font-medium tracking-tight sm:text-3xl">
-                Be first in line when Atelier ships.
+                One-time payment. Yours forever.
               </h2>
               <p className="mx-auto mt-3 max-w-md text-[var(--fg-muted)]">
-                Drop your details and we&apos;ll send the installer plus your
-                perpetual license the moment Atelier is ready. No payment
-                today, no newsletter, no follow-ups beyond launch.
+                Atelier licenses bind to your Dunamis Studios account at the
+                moment of purchase, so they show up automatically across
+                every Atelier install you sign into.
               </p>
             </div>
             <div className="mx-auto mt-8 max-w-2xl">
-              <AtelierBuyForm />
+              <AtelierPurchaseGate />
             </div>
           </div>
         </Container>
