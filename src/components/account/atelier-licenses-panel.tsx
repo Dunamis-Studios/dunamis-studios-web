@@ -14,6 +14,14 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type {
   PortalEulaAcceptance,
   PortalLicense,
@@ -259,6 +267,7 @@ function SlotRow({ slot }: { slot: PortalSlot }) {
   const [draftLabel, setDraftLabel] = React.useState(slot.device_label);
   const [busy, setBusy] = React.useState<"rename" | "deactivate" | null>(null);
   const [error, setError] = React.useState<string | null>(null);
+  const [confirmingDeactivate, setConfirmingDeactivate] = React.useState(false);
 
   async function commitRename() {
     if (!draftLabel.trim() || draftLabel.trim() === slot.device_label) {
@@ -293,13 +302,7 @@ function SlotRow({ slot }: { slot: PortalSlot }) {
   }
 
   async function deactivate() {
-    if (
-      !confirm(
-        `Deactivate "${slot.device_label}"? The slot will free immediately and that device will lock within a day of its next heartbeat.`,
-      )
-    ) {
-      return;
-    }
+    setConfirmingDeactivate(false);
     setBusy("deactivate");
     setError(null);
     try {
@@ -407,7 +410,7 @@ function SlotRow({ slot }: { slot: PortalSlot }) {
       <Button
         size="sm"
         variant="secondary"
-        onClick={deactivate}
+        onClick={() => setConfirmingDeactivate(true)}
         disabled={busy === "deactivate"}
         className="shrink-0"
       >
@@ -418,6 +421,40 @@ function SlotRow({ slot }: { slot: PortalSlot }) {
         )}
         Deactivate
       </Button>
+
+      <Dialog
+        open={confirmingDeactivate}
+        onOpenChange={(open) => {
+          if (!open && busy !== "deactivate") setConfirmingDeactivate(false);
+        }}
+      >
+        <DialogContent className="lane-atelier">
+          <DialogHeader>
+            <DialogTitle>Deactivate {slot.device_label}?</DialogTitle>
+            <DialogDescription>
+              This will free the activation slot immediately. The device will
+              lock within a day of its next heartbeat. The customer (you) can
+              re-activate on this device or any other device anytime.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setConfirmingDeactivate(false)}
+              disabled={busy === "deactivate"}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={deactivate}
+              disabled={busy === "deactivate"}
+              className="bg-[var(--color-danger)] text-white hover:bg-[var(--color-danger)]/90"
+            >
+              {busy === "deactivate" ? "Deactivating…" : "Deactivate"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </li>
   );
 }
