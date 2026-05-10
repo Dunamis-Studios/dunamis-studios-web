@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { createHash } from "node:crypto";
 
 import { getLicense, parseLicenseId } from "@/lib/atelier-license-signing";
 import { getActivation } from "@/lib/atelier-activation";
@@ -8,20 +9,35 @@ import {
   CURRENT_ATELIER_EULA_VERSION,
   recordEulaAcceptance,
 } from "@/lib/atelier-eula";
+import {
+  loadAtelierEulaTemplate,
+  renderEulaForCustomer,
+  type EulaSubstitutions,
+} from "@/lib/eula-renderer";
 
 /**
  * POST /api/atelier/record-eula-acceptance
  *
- * Persist the customer's acceptance of the Atelier EULA. The desktop
- * calls this immediately after the user clicks the EULA-accept
- * checkbox; on transient failure (no internet, server 5xx) the
- * desktop queues the call into the local pending_eula_sync table and
- * retries on next launch.
+ * Persist the customer's acceptance of the personalized Atelier EULA.
+ * The Atelier desktop calls this immediately after the customer
+ * clicks Accept on the in-app EULA screen; the call carries the same
+ * inputs that produced the preview so the server can re-render the
+ * EXACT bytes the customer just saw and store them as the legal
+ * artifact.
  *
- * Authentication is "license_string + activation_id pair, byte-for-
- * byte equal to the canonical Redis records." Same threat model as
- * /api/atelier/heartbeat — defense-in-depth on top of the Rust
- * client's local Ed25519 verification.
+ * Determinism contract: the server re-renders using the same
+ * (license, activation, atelier_version, acceptance_date) tuple that
+ * /api/atelier/preview-eula used. The desktop passes the exact
+ * acceptance_date string from the preview response in the accept
+ * call to guarantee byte equality across midnight boundaries. The
+ * desktop also passes the rendered_eula_sha256 it saw; the server
+ * cross-checks the recomputed sha256 matches and refuses the accept
+ * if they diverge (defense against a desktop posting a doctored
+ * substitution map).
+ *
+ * Idempotent on (lid, eula_version) at the persistence layer — see
+ * recordEulaAcceptance(). A retry from the desktop after a
+ * partially-failed accept returns the original record verbatim.
  *
  * Request body:
  *   {
@@ -29,38 +45,33 @@ import {
  *     activation_id: uuid,
  *     atelier_version: string,
  *     eula_version: string,
+ *     acceptance_date: string,           // echoed from preview
+ *     expected_sha256: string,           // echoed from preview
  *   }
  *
- * Response:
- *   200 { ok: true, record: {...} } on success
- *   200 { ok: true, record: {...}, idempotent: true } when re-posting
- *     an already-recorded (lid, eula_version) pair
- *   400 invalid_request / invalid_json
- *   404 license_not_found / activation_not_found
- *   409 license_unbound — license has no account_id, can't bind an
- *     acceptance record (caller should run the backfill or have an
- *     admin reissue)
- *   410 license_refunded / license_revoked / activation_deactivated
+ * Response: 200 { ok: true, record: {...} }
+ *           400 invalid_request / sha256_mismatch
+ *           404 license_not_found / activation_not_found
+ *           409 license_unbound / account_missing / eula_version_mismatch
+ *           410 license_refunded / license_revoked / activation_deactivated
+ *           500 render_failed
  */
 
 const bodySchema = z.object({
   license_string: z.string().min(1).max(4096),
   activation_id: z.string().uuid(),
   atelier_version: z.string().min(1).max(40),
-  /**
-   * Echoed back in the response. The Atelier desktop sends the
-   * version string from its bundled EULA-TEMPLATE.md frontmatter; we
-   * cross-check against the server-side current version to refuse
-   * acceptance of a version the server doesn't recognize (rotated /
-   * retired) — that prevents a stale Atelier build from claiming
-   * acceptance of a version the legal team has already deprecated.
-   */
   eula_version: z.string().min(1).max(40),
+  /** The acceptance_date string from the preview response. The
+   *  server pinned this format ("Month D, YYYY" en-US); the desktop
+   *  must echo it verbatim. */
+  acceptance_date: z.string().min(1).max(64),
+  /** SHA-256 of the rendered EULA the desktop displayed to the
+   *  customer. Server recomputes its own and compares. */
+  expected_sha256: z.string().regex(/^[0-9a-f]{64}$/i, "must be sha256 hex"),
 });
 
 function ipFromRequest(request: Request): string | null {
-  // Vercel exposes x-forwarded-for; the leftmost entry is the
-  // originating client. Fall back to x-real-ip.
   const xff = request.headers.get("x-forwarded-for");
   if (xff) {
     const first = xff.split(",")[0]?.trim();
@@ -115,7 +126,6 @@ export async function POST(request: Request) {
       { status: 404 },
     );
   }
-
   if (license.status === "refunded") {
     return NextResponse.json(
       { ok: false, error: "license_refunded" },
@@ -144,25 +154,73 @@ export async function POST(request: Request) {
   }
 
   if (!license.account_id) {
-    // Edge: a license predates the account_id field and the backfill
-    // hasn't run. Refuse rather than write an orphan acceptance —
-    // the admin's job is to run the backfill (or reissue) before the
-    // customer's EULA flow can complete. The desktop renders a
-    // structured error pointing the user at support.
     return NextResponse.json(
       { ok: false, error: "license_unbound" },
       { status: 409 },
     );
   }
-
   const account = await getAccountById(license.account_id);
   if (!account) {
-    // Account was hard-deleted (very rare — soft delete is the
-    // default). Treat as unbound; the customer needs an admin to
-    // restore or reissue.
     return NextResponse.json(
       { ok: false, error: "account_missing" },
       { status: 409 },
+    );
+  }
+
+  const template = loadAtelierEulaTemplate();
+
+  const device_fingerprint = [
+    activation.machine_id.windows_guid,
+    activation.machine_id.motherboard_serial,
+    activation.machine_id.cpu_id,
+  ].join("-");
+
+  const substitutions: EulaSubstitutions = {
+    PRODUCT_NAME: template.metadata.productName,
+    PRODUCT_VERSION: template.metadata.productVersion,
+    EFFECTIVE_DATE: template.metadata.effectiveDate,
+    LICENSOR: template.metadata.licensor,
+    LICENSEE_FULL_NAME: `${account.firstName} ${account.lastName}`.trim(),
+    LICENSEE_EMAIL: account.email,
+    LICENSEE_COMPANY:
+      account.companyName && account.companyName.trim().length > 0
+        ? account.companyName
+        : "Not specified",
+    LICENSE_ID: lid,
+    ACCEPTANCE_DATE: body.acceptance_date,
+    DEVICE_FINGERPRINT: device_fingerprint,
+    ATELIER_VERSION: body.atelier_version,
+  };
+
+  let rendered_eula_text: string;
+  try {
+    rendered_eula_text = renderEulaForCustomer(substitutions);
+  } catch (err) {
+    console.error("[record-eula-acceptance] render failed", err);
+    return NextResponse.json(
+      { ok: false, error: "render_failed" },
+      { status: 500 },
+    );
+  }
+  const rendered_eula_sha256 = createHash("sha256")
+    .update(rendered_eula_text, "utf8")
+    .digest("hex");
+
+  // Cross-check: the desktop must have shown the same bytes the
+  // server is about to record. If the sha256 diverges, refuse —
+  // either the desktop is on a stale template version, the
+  // acceptance_date got mangled in transit, or someone tampered
+  // with the client. Either way, the legal artifact would be
+  // wrong; better to fail loudly and force a fresh preview.
+  if (rendered_eula_sha256 !== body.expected_sha256.toLowerCase()) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "sha256_mismatch",
+        expected: body.expected_sha256.toLowerCase(),
+        recomputed: rendered_eula_sha256,
+      },
+      { status: 400 },
     );
   }
 
@@ -177,6 +235,10 @@ export async function POST(request: Request) {
     company_name_at_accept: account.companyName ?? null,
     ip_at_accept: ipFromRequest(request),
     user_agent_at_accept: request.headers.get("user-agent"),
+    rendered_eula_text,
+    substitution_values: substitutions,
+    rendered_eula_sha256,
+    device_fingerprint,
   });
 
   return NextResponse.json({ ok: true, record });

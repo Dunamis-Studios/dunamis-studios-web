@@ -35,10 +35,10 @@ export interface AtelierEulaAcceptanceRecord {
    */
   account_id: string;
   /**
-   * EULA version string at acceptance time. The desktop reads this
-   * from the bundled EULA-TEMPLATE.md frontmatter, the site reads
-   * it from atelier-docs/eula.md frontmatter / a build-time
-   * constant. Same string on both sides.
+   * EULA version string at acceptance time, read from the
+   * canonical template's frontmatter at render time. Stamped onto
+   * the record alongside the rendered text so an audit can verify
+   * which template version produced the bytes.
    */
   eula_version: string;
   /** ISO-8601 UTC timestamp at second precision. */
@@ -70,6 +70,43 @@ export interface AtelierEulaAcceptanceRecord {
    */
   ip_at_accept: string | null;
   user_agent_at_accept: string | null;
+  /**
+   * The verbatim rendered EULA text the customer accepted. This is
+   * the authoritative legal artifact — stored once at acceptance
+   * time, never re-rendered. Audit reads return this byte-for-byte;
+   * the substitution_values field below is a sanity-check companion
+   * but the rendered_eula_text is what the customer actually agreed
+   * to.
+   *
+   * Optional in the type for back-compat with the pre-renderer
+   * record shape; new records always populate it. A read path that
+   * encounters a record with rendered_eula_text:null is reading a
+   * pre-renderer record and should surface that explicitly rather
+   * than synthesizing one.
+   */
+  rendered_eula_text?: string | null;
+  /**
+   * Exact substitution values used to render rendered_eula_text.
+   * Lets a future audit verify the rendering was correct. Distinct
+   * from the snapshot fields above (email_at_accept etc.) because
+   * those track customer state at accept time even when no rendering
+   * was performed; substitution_values is rendering-specific.
+   */
+  substitution_values?: Record<string, string> | null;
+  /**
+   * SHA-256 hash of rendered_eula_text. Stored alongside the text so
+   * a later integrity audit can verify storage hasn't been mutated.
+   * Recomputed by callers; the persistence layer just stores what
+   * it's given.
+   */
+  rendered_eula_sha256?: string | null;
+  /**
+   * Device fingerprint full SHA-256 (NOT truncated) tied to the
+   * activation that posted the acceptance. Per the addendum: this
+   * is the same fingerprint used in the Parties block, stored for
+   * audit cross-check.
+   */
+  device_fingerprint?: string | null;
 }
 
 export interface RecordEulaAcceptanceInput {
@@ -83,6 +120,10 @@ export interface RecordEulaAcceptanceInput {
   company_name_at_accept: string | null;
   ip_at_accept: string | null;
   user_agent_at_accept: string | null;
+  rendered_eula_text: string;
+  substitution_values: Record<string, string>;
+  rendered_eula_sha256: string;
+  device_fingerprint: string;
 }
 
 /**
@@ -111,19 +152,33 @@ export async function recordEulaAcceptance(
     company_name_at_accept: input.company_name_at_accept,
     ip_at_accept: input.ip_at_accept,
     user_agent_at_accept: input.user_agent_at_accept,
+    rendered_eula_text: input.rendered_eula_text,
+    substitution_values: input.substitution_values,
+    rendered_eula_sha256: input.rendered_eula_sha256,
+    device_fingerprint: input.device_fingerprint,
   };
   const r = redis();
   // If a prior record exists for this (lid, version), preserve its
-  // original accepted_at — re-acceptance of an unchanged version
-  // shouldn't shift the legal moment forward. The retry semantics
-  // expect this: a desktop that POSTed once successfully but failed
-  // to mark the local accept-flag retries; the server returns the
-  // same record without rewriting accepted_at.
+  // original accepted_at AND its original rendered_eula_text /
+  // substitution_values / sha256 — the rendered text is the legal
+  // artifact, immutable once stored. A retry from the desktop must
+  // not overwrite the original bytes the customer accepted.
+  // Re-acceptance of an unchanged version doesn't shift the legal
+  // moment forward and doesn't re-render.
   const existing = (await r.get<AtelierEulaAcceptanceRecord>(
     KEY.atelierEulaAcceptance(input.lid, input.eula_version),
   )) as AtelierEulaAcceptanceRecord | null;
   if (existing) {
     record.accepted_at = existing.accepted_at;
+    if (existing.rendered_eula_text) {
+      record.rendered_eula_text = existing.rendered_eula_text;
+      record.substitution_values =
+        existing.substitution_values ?? input.substitution_values;
+      record.rendered_eula_sha256 =
+        existing.rendered_eula_sha256 ?? input.rendered_eula_sha256;
+      record.device_fingerprint =
+        existing.device_fingerprint ?? input.device_fingerprint;
+    }
   }
   await r.set(KEY.atelierEulaAcceptance(input.lid, input.eula_version), record);
   await r.sadd(KEY.atelierEulaAcceptancesByLicense(input.lid), input.eula_version);
