@@ -10,6 +10,7 @@ import {
   MAX_ACTIVATIONS_PER_LICENSE,
   getActivationsForLicense,
 } from "@/lib/atelier-activation";
+import { listEulaAcceptancesForLicense } from "@/lib/atelier-eula";
 import { PageHeader } from "@/components/ui/primitives";
 import { EmptyState } from "@/components/ui/empty-state";
 import { AtelierLicensesPanel } from "@/components/account/atelier-licenses-panel";
@@ -79,6 +80,7 @@ export interface PortalLicense {
   max_slots: number;
   active_slots: PortalSlot[];
   deactivated_slots: PortalSlot[];
+  eula_acceptances: PortalEulaAcceptance[];
 }
 
 export interface PortalSlot {
@@ -87,6 +89,13 @@ export interface PortalSlot {
   atelier_version: string;
   first_activated_at: string;
   last_heartbeat_at: string;
+}
+
+export interface PortalEulaAcceptance {
+  eula_version: string;
+  accepted_at: string;
+  atelier_version: string;
+  has_rendered_text: boolean;
 }
 
 function projectSlot(a: AtelierActivation): PortalSlot {
@@ -102,7 +111,10 @@ function projectSlot(a: AtelierActivation): PortalSlot {
 async function projectLicense(
   license: AtelierLicenseRecord,
 ): Promise<PortalLicense> {
-  const activations = await getActivationsForLicense(license.lid);
+  const [activations, acceptances] = await Promise.all([
+    getActivationsForLicense(license.lid),
+    listEulaAcceptancesForLicense(license.lid),
+  ]);
   const active = activations.filter((a) => a.status === "active");
   const deactivated = activations.filter((a) => a.status === "deactivated");
   return {
@@ -118,5 +130,13 @@ async function projectLicense(
     max_slots: MAX_ACTIVATIONS_PER_LICENSE,
     active_slots: active.map(projectSlot),
     deactivated_slots: deactivated.map(projectSlot),
+    eula_acceptances: acceptances.map((a) => ({
+      eula_version: a.eula_version,
+      accepted_at: a.accepted_at,
+      atelier_version: a.atelier_version,
+      has_rendered_text:
+        typeof a.rendered_eula_text === "string" &&
+        a.rendered_eula_text.length > 0,
+    })),
   };
 }

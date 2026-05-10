@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
   Check,
+  Download,
   Loader2,
   Monitor,
   Pencil,
@@ -14,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type {
+  PortalEulaAcceptance,
   PortalLicense,
   PortalSlot,
 } from "@/app/account/atelier-licenses/page";
@@ -107,7 +109,110 @@ function LicenseCard({ license }: { license: PortalLicense }) {
           </ul>
         </details>
       ) : null}
+
+      {license.eula_acceptances.length > 0 ? (
+        <details className="border-t border-[var(--border)] px-6 py-4 text-sm">
+          <summary className="cursor-pointer text-[var(--fg-muted)] hover:text-[var(--fg)]">
+            EULA acceptance history ({license.eula_acceptances.length})
+          </summary>
+          <ul className="mt-3 space-y-2">
+            {license.eula_acceptances.map((a) => (
+              <EulaAcceptanceRow
+                key={`${license.lid}:${a.eula_version}`}
+                lid={license.lid}
+                acceptance={a}
+              />
+            ))}
+          </ul>
+        </details>
+      ) : null}
     </div>
+  );
+}
+
+function EulaAcceptanceRow({
+  lid,
+  acceptance,
+}: {
+  lid: string;
+  acceptance: PortalEulaAcceptance;
+}) {
+  const [busy, setBusy] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  async function downloadAccepted() {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch(
+        `/api/atelier/eula-acceptance/${encodeURIComponent(
+          lid,
+        )}/${encodeURIComponent(acceptance.eula_version)}`,
+      );
+      const data = await res.json();
+      if (!res.ok || !data?.acceptance?.rendered_eula_text) {
+        throw new Error(data?.error ?? "download_failed");
+      }
+      const text = data.acceptance.rendered_eula_text as string;
+      // Filename: atelier-eula-accepted-YYYY-MM-DD.md, with the date
+      // from accepted_at so a customer with multiple acceptances ends
+      // up with distinct filenames.
+      const datePart = acceptance.accepted_at.slice(0, 10);
+      const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `atelier-eula-accepted-${datePart}.md`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "download_failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <li className="rounded-md border border-[var(--border)] bg-[var(--bg)] px-3 py-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-xs text-[var(--fg-muted)]">
+          <span className="text-[var(--fg)]">EULA v{acceptance.eula_version}</span>
+          {" · accepted "}
+          {formatDate(acceptance.accepted_at)}
+          {" · Atelier v"}
+          {acceptance.atelier_version}
+        </div>
+        {acceptance.has_rendered_text ? (
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={downloadAccepted}
+            disabled={busy}
+            className="shrink-0"
+          >
+            {busy ? (
+              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" aria-hidden />
+            ) : (
+              <Download className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+            )}
+            Download my accepted EULA
+          </Button>
+        ) : (
+          <span className="text-[11px] text-[var(--fg-subtle)]">
+            Verbatim text not stored for this older record
+          </span>
+        )}
+      </div>
+      {error ? (
+        <p className="mt-1 text-xs text-[var(--color-danger)]">
+          Couldn&apos;t download — {error}. Try again or email
+          legal@dunamisstudios.com.
+        </p>
+      ) : null}
+    </li>
   );
 }
 
