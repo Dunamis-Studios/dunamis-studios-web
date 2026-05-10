@@ -3,7 +3,7 @@ import { KeyRound } from "lucide-react";
 import { getCurrentSession } from "@/lib/session";
 import {
   type AtelierLicenseRecord,
-  listLicensesByEmail,
+  listLicensesForAccountWithFallback,
 } from "@/lib/atelier-license-signing";
 import {
   type AtelierActivation,
@@ -34,7 +34,10 @@ export default async function AtelierLicensesPage() {
   const s = await getCurrentSession();
   if (!s) return null;
 
-  const licenses = await listLicensesByEmail(s.account.email);
+  const licenses = await listLicensesForAccountWithFallback(
+    s.account.accountId,
+    s.account.email,
+  );
   const data = await Promise.all(
     licenses.map(async (license) => projectLicense(license)),
   );

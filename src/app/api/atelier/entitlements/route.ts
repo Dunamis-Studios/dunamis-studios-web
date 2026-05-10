@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getCurrentSessionAny } from "@/lib/session";
 import {
   type AtelierLicenseRecord,
-  listLicensesByEmail,
+  listLicensesForAccountWithFallback,
 } from "@/lib/atelier-license-signing";
 import {
   type AtelierActivation,
@@ -111,7 +111,10 @@ export async function GET(request: Request) {
       ? { windows_guid, motherboard_serial, cpu_id }
       : null;
 
-  const licenses = await listLicensesByEmail(session.account.email);
+  const licenses = await listLicensesForAccountWithFallback(
+    session.account.accountId,
+    session.account.email,
+  );
   const projected: EntitlementLicense[] = await Promise.all(
     licenses.map(async (license) => {
       const activations = await getActivationsForLicense(license.lid);

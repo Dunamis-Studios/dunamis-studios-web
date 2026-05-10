@@ -395,9 +395,8 @@ export async function listLicensesByProduct(
  *
  * Returns [] for an account with no licenses or one whose licenses
  * pre-date the account_id binding and haven't been backfilled yet.
- * Callers that must support the migration window should also fall
- * back to listLicensesByEmail when this returns []; once the backfill
- * has run in production, the email fallback can be removed.
+ * Callers that must support the migration window should use
+ * listLicensesForAccountWithFallback (below) instead.
  */
 export async function listLicensesByAccount(
   accountId: string,
@@ -409,6 +408,32 @@ export async function listLicensesByAccount(
     lids.map((lid) => r.get<AtelierLicenseRecord>(KEY.atelierLicense(lid))),
   );
   return records.filter((r): r is AtelierLicenseRecord => r != null);
+}
+
+/**
+ * Account-bound license list with email-index fallback for the
+ * migration window. Reads the account-id index first; if it returns
+ * nothing AND an email is provided, falls back to the email index
+ * and filters to records whose account_id is null OR equal to the
+ * passed accountId (so a stale email-index entry from a different
+ * account doesn't leak across).
+ *
+ * Once the backfill script has run across all Atelier licenses and
+ * confirmed zero account_id:null records remain, callers should
+ * collapse to listLicensesByAccount and the email-index code path
+ * can be deleted. Until then, this is the function customer-facing
+ * surfaces should call so the portal stays correct mid-migration.
+ */
+export async function listLicensesForAccountWithFallback(
+  accountId: string,
+  email: string | null | undefined,
+): Promise<AtelierLicenseRecord[]> {
+  const byAccount = await listLicensesByAccount(accountId);
+  if (byAccount.length > 0 || !email) return byAccount;
+  const byEmail = await listLicensesByEmail(email);
+  return byEmail.filter(
+    (l) => l.account_id == null || l.account_id === accountId,
+  );
 }
 
 /**

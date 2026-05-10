@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inbox } from "lucide-react";
 import { getCurrentSession } from "@/lib/session";
 import { getEntitlementsForAccount } from "@/lib/accounts";
-import { listLicensesByEmail } from "@/lib/atelier-license-signing";
+import { listLicensesForAccountWithFallback } from "@/lib/atelier-license-signing";
 import { PageHeader } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -19,13 +19,15 @@ export default async function AccountDashboard() {
   // Layout has already guarded; narrow for TS:
   if (!s) return null;
   // Two distinct indexes back the dashboard: HubSpot entitlements
-  // (per-portal subscriptions for Property Pulse / Debrief) live under
-  // the account id; Atelier perpetual licenses live under a hashed
-  // email key. Both surface here so the customer sees every Dunamis
-  // purchase in one place. Empty section is hidden per side.
+  // (per-portal subscriptions for Property Pulse / Debrief) live
+  // under the account id; Atelier perpetual licenses live under the
+  // account_id index (with email-index fallback for unbacked
+  // pre-migration records). Both surface here so the customer sees
+  // every Dunamis purchase in one place. Empty section is hidden
+  // per side.
   const [entitlements, atelierLicenses] = await Promise.all([
     getEntitlementsForAccount(s.account.accountId),
-    listLicensesByEmail(s.account.email),
+    listLicensesForAccountWithFallback(s.account.accountId, s.account.email),
   ]);
 
   const showEmptyState =

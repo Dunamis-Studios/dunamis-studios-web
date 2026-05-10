@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import {
   getLicense,
+  listLicensesForAccountWithFallback,
   parseLicenseId,
 } from "@/lib/atelier-license-signing";
 import {
@@ -13,8 +14,6 @@ import {
   refreshActivationHeartbeat,
 } from "@/lib/atelier-activation";
 import { getSessionFromBearer } from "@/lib/session";
-import { redis, KEY } from "@/lib/redis";
-import { hashEmail } from "@/lib/email-hash";
 import { getAccountById } from "@/lib/accounts";
 import { CURRENT_ATELIER_EULA_VERSION } from "@/lib/atelier-eula";
 
@@ -185,13 +184,14 @@ export async function POST(request: Request) {
     lid = body.lid;
 
     // Ownership check — the lid must be in the session-account's
-    // email-indexed license set. 403 (not 404) so we don't leak
-    // whether arbitrary lids exist on the platform.
-    const r = redis();
-    const ownedLids =
-      (await r.smembers<string[]>(
-        KEY.atelierLicensesByEmail(hashEmail(session.account.email)),
-      )) ?? [];
+    // license set, looked up by account_id (with email-index
+    // fallback for unbacked migration-window records). 403 (not 404)
+    // so we don't leak whether arbitrary lids exist on the platform.
+    const owned = await listLicensesForAccountWithFallback(
+      session.account.accountId,
+      session.account.email,
+    );
+    const ownedLids = owned.map((l) => l.lid);
     if (!ownedLids.includes(lid)) {
       return NextResponse.json(
         { ok: false, error: "lid_not_owned" },
@@ -201,7 +201,7 @@ export async function POST(request: Request) {
 
     license = await getLicense(lid);
     if (!license) {
-      // Lid was in the email index but the canonical record was
+      // Lid was in the owner index but the canonical record was
       // missing — index drift, treat as not found.
       return NextResponse.json(
         { ok: false, error: "license_not_found" },
