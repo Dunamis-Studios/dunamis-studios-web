@@ -8,6 +8,7 @@ import {
   Ban,
   Send,
   ScrollText,
+  FileText,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -75,6 +76,10 @@ interface EulaAcceptanceRow {
   company_name_at_accept: string | null;
   ip_at_accept: string | null;
   user_agent_at_accept: string | null;
+  rendered_eula_text?: string | null;
+  substitution_values?: Record<string, string> | null;
+  rendered_eula_sha256?: string | null;
+  device_fingerprint?: string | null;
 }
 
 type EulaHistoryState =
@@ -123,6 +128,8 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
   const [eulaHistory, setEulaHistory] = React.useState<EulaHistoryState>({
     kind: "loading",
   });
+  const [viewAcceptedDoc, setViewAcceptedDoc] =
+    React.useState<EulaAcceptanceRow | null>(null);
 
   const filtered = React.useMemo(() => {
     return licenses.filter((l) => {
@@ -928,6 +935,45 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
                             </span>
                           </div>
                         ) : null}
+                        {a.device_fingerprint ? (
+                          <div className="mt-2 text-[var(--fg-subtle)]">
+                            Device fingerprint:{" "}
+                            <span className="break-all font-mono text-[11px]">
+                              {a.device_fingerprint}
+                            </span>
+                          </div>
+                        ) : null}
+                        {a.rendered_eula_sha256 ? (
+                          <div className="mt-2 text-[var(--fg-subtle)]">
+                            Rendered SHA-256:{" "}
+                            <span className="break-all font-mono text-[11px]">
+                              {a.rendered_eula_sha256}
+                            </span>
+                          </div>
+                        ) : null}
+                        {a.rendered_eula_text ? (
+                          <div className="mt-3 flex justify-end">
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => setViewAcceptedDoc(a)}
+                            >
+                              <FileText
+                                className="h-3.5 w-3.5"
+                                aria-hidden
+                              />
+                              View accepted document
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="mt-3 rounded border border-dashed border-[var(--border)] p-2 text-[11px] text-[var(--fg-subtle)]">
+                            This record predates server-side rendered-text
+                            storage. The acceptance is real; the verbatim
+                            document the customer saw is not retrievable for
+                            this record.
+                          </div>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -944,6 +990,101 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
                 setEulaHistory({ kind: "loading" });
               }}
             >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={viewAcceptedDoc != null}
+        onOpenChange={(open) => {
+          if (!open) setViewAcceptedDoc(null);
+        }}
+      >
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Accepted document — verbatim</DialogTitle>
+            <DialogDescription>
+              The exact bytes the customer saw and accepted. Stored once at
+              acceptance time, never re-rendered.
+            </DialogDescription>
+          </DialogHeader>
+
+          {viewAcceptedDoc ? (
+            <div className="space-y-4 text-sm">
+              <div className="rounded-md border border-[var(--border)] bg-[var(--bg-subtle)] p-3 text-xs">
+                <div className="grid gap-1 sm:grid-cols-2">
+                  <div className="text-[var(--fg-muted)]">
+                    EULA version:{" "}
+                    <code className="rounded bg-[var(--bg-muted)] px-1 text-[11px]">
+                      {viewAcceptedDoc.eula_version}
+                    </code>
+                  </div>
+                  <div className="text-[var(--fg-muted)]">
+                    Accepted at:{" "}
+                    <code className="rounded bg-[var(--bg-muted)] px-1 text-[11px]">
+                      {viewAcceptedDoc.accepted_at}
+                    </code>
+                  </div>
+                  {viewAcceptedDoc.ip_at_accept ? (
+                    <div className="text-[var(--fg-muted)]">
+                      IP at accept:{" "}
+                      <code className="rounded bg-[var(--bg-muted)] px-1 text-[11px]">
+                        {viewAcceptedDoc.ip_at_accept}
+                      </code>
+                    </div>
+                  ) : null}
+                  {viewAcceptedDoc.rendered_eula_sha256 ? (
+                    <div className="text-[var(--fg-muted)]">
+                      SHA-256:{" "}
+                      <code className="break-all rounded bg-[var(--bg-muted)] px-1 text-[10px]">
+                        {viewAcceptedDoc.rendered_eula_sha256}
+                      </code>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+
+              {viewAcceptedDoc.substitution_values ? (
+                <details className="rounded-md border border-[var(--border)] bg-[var(--bg-subtle)] p-3 text-xs">
+                  <summary className="cursor-pointer font-medium text-[var(--fg)]">
+                    Substitution values used
+                  </summary>
+                  <table className="mt-3 w-full text-left text-[11px]">
+                    <tbody className="divide-y divide-[var(--border)]">
+                      {Object.entries(viewAcceptedDoc.substitution_values).map(
+                        ([key, val]) => (
+                          <tr key={key}>
+                            <td className="py-1 pr-3 align-top font-mono text-[var(--fg-subtle)]">
+                              {key}
+                            </td>
+                            <td className="py-1 align-top text-[var(--fg)]">
+                              <code className="break-all rounded bg-[var(--bg-muted)] px-1">
+                                {val}
+                              </code>
+                            </td>
+                          </tr>
+                        ),
+                      )}
+                    </tbody>
+                  </table>
+                </details>
+              ) : null}
+
+              <div>
+                <div className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-[var(--fg-subtle)]">
+                  Rendered EULA text
+                </div>
+                <pre className="max-h-[60vh] overflow-auto rounded-md border border-[var(--border)] bg-[var(--bg)] p-4 font-mono text-[11px] leading-relaxed text-[var(--fg)] whitespace-pre-wrap">
+                  {viewAcceptedDoc.rendered_eula_text}
+                </pre>
+              </div>
+            </div>
+          ) : null}
+
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setViewAcceptedDoc(null)}>
               Close
             </Button>
           </DialogFooter>
