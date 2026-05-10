@@ -1,7 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Copy, Check as CheckIcon, RefreshCw, Ban, Send } from "lucide-react";
+import {
+  Copy,
+  Check as CheckIcon,
+  RefreshCw,
+  Ban,
+  Send,
+  ScrollText,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,6 +63,28 @@ type AccountLookupState =
   | { kind: "missing" }
   | { kind: "error"; message: string };
 
+interface EulaAcceptanceRow {
+  lid: string;
+  account_id: string;
+  eula_version: string;
+  accepted_at: string;
+  atelier_version: string;
+  email_at_accept: string;
+  first_name_at_accept: string;
+  last_name_at_accept: string;
+  company_name_at_accept: string | null;
+  ip_at_accept: string | null;
+  user_agent_at_accept: string | null;
+}
+
+type EulaHistoryState =
+  | { kind: "loading" }
+  | {
+      kind: "loaded";
+      acceptances: EulaAcceptanceRow[];
+    }
+  | { kind: "error"; message: string };
+
 const STATUS_BADGE: Record<AtelierLicenseStatus, "success" | "warning" | "danger"> = {
   active: "success",
   refunded: "warning",
@@ -89,6 +118,11 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
   const [revokeReason, setRevokeReason] = React.useState("");
   const [revokeBusy, setRevokeBusy] = React.useState(false);
   const [revokeError, setRevokeError] = React.useState<string | null>(null);
+  const [eulaTarget, setEulaTarget] =
+    React.useState<AtelierLicenseRecord | null>(null);
+  const [eulaHistory, setEulaHistory] = React.useState<EulaHistoryState>({
+    kind: "loading",
+  });
 
   const filtered = React.useMemo(() => {
     return licenses.filter((l) => {
@@ -282,6 +316,33 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
       setRevokeError(err instanceof Error ? err.message : "Network error.");
     } finally {
       setRevokeBusy(false);
+    }
+  }
+
+  async function onOpenEulaHistory(license: AtelierLicenseRecord) {
+    setEulaTarget(license);
+    setEulaHistory({ kind: "loading" });
+    try {
+      const res = await fetch(
+        `/api/admin/eula-acceptances/${encodeURIComponent(license.lid)}`,
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        setEulaHistory({
+          kind: "error",
+          message: data?.error ?? "Lookup failed.",
+        });
+        return;
+      }
+      setEulaHistory({
+        kind: "loaded",
+        acceptances: data.acceptances as EulaAcceptanceRow[],
+      });
+    } catch (err) {
+      setEulaHistory({
+        kind: "error",
+        message: err instanceof Error ? err.message : "Network error.",
+      });
     }
   }
 
@@ -599,6 +660,15 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
                           <Send className="h-4 w-4" aria-hidden />
                           <span className="sr-only">Resend email</span>
                         </button>
+                        <button
+                          type="button"
+                          onClick={() => onOpenEulaHistory(l)}
+                          title="View EULA acceptance history"
+                          className="rounded-md p-1.5 text-[var(--fg-muted)] hover:bg-[var(--bg-muted)] hover:text-[var(--fg)]"
+                        >
+                          <ScrollText className="h-4 w-4" aria-hidden />
+                          <span className="sr-only">EULA history</span>
+                        </button>
                         {l.status === "active" ? (
                           <>
                             <button
@@ -749,6 +819,132 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
               className="bg-[var(--color-danger)] text-white hover:bg-[var(--color-danger)]/90"
             >
               {revokeBusy ? "Revoking…" : "Revoke license"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={eulaTarget != null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEulaTarget(null);
+            setEulaHistory({ kind: "loading" });
+          }
+        }}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>EULA acceptance history</DialogTitle>
+            <DialogDescription>
+              Every server-recorded EULA acceptance event for this license.
+              Records are append-only — version bumps add a new row alongside
+              the older one.
+            </DialogDescription>
+          </DialogHeader>
+
+          {eulaTarget ? (
+            <div className="space-y-4 text-sm">
+              <div className="rounded-md border border-[var(--border)] bg-[var(--bg-subtle)] p-3 text-xs">
+                <div className="font-medium text-[var(--fg)]">
+                  {eulaTarget.email}
+                </div>
+                <div className="font-mono text-[var(--fg-subtle)]">
+                  {eulaTarget.lid}
+                </div>
+              </div>
+
+              {eulaHistory.kind === "loading" ? (
+                <p className="text-sm text-[var(--fg-muted)]">Loading…</p>
+              ) : null}
+
+              {eulaHistory.kind === "error" ? (
+                <p
+                  role="alert"
+                  className="rounded-md border border-[var(--color-danger)]/40 bg-[color-mix(in_oklch,var(--color-danger)_8%,var(--bg-elevated))] p-3 text-sm text-[var(--color-danger)]"
+                >
+                  {eulaHistory.message}
+                </p>
+              ) : null}
+
+              {eulaHistory.kind === "loaded" ? (
+                eulaHistory.acceptances.length === 0 ? (
+                  <p className="rounded-md border border-[var(--border)] bg-[var(--bg-subtle)] p-3 text-sm text-[var(--fg-muted)]">
+                    No EULA acceptance records yet. Either the customer
+                    hasn&apos;t completed onboarding, or this license predates
+                    server-side acceptance recording.
+                  </p>
+                ) : (
+                  <ul className="space-y-3">
+                    {eulaHistory.acceptances.map((a) => (
+                      <li
+                        key={`${a.lid}:${a.eula_version}`}
+                        className="rounded-md border border-[var(--border)] bg-[var(--bg-elevated)] p-3 text-xs"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="font-medium text-[var(--fg)]">
+                            EULA v{a.eula_version}
+                          </div>
+                          <div className="font-mono text-[var(--fg-subtle)]">
+                            {a.accepted_at}
+                          </div>
+                        </div>
+                        <div className="mt-2 grid gap-1 sm:grid-cols-2">
+                          <div className="text-[var(--fg-muted)]">
+                            Accepted as:{" "}
+                            <span className="text-[var(--fg)]">
+                              {a.first_name_at_accept} {a.last_name_at_accept}
+                              {a.company_name_at_accept
+                                ? ` · ${a.company_name_at_accept}`
+                                : ""}
+                            </span>
+                          </div>
+                          <div className="text-[var(--fg-muted)]">
+                            Email at accept:{" "}
+                            <code className="rounded bg-[var(--bg-muted)] px-1 text-[11px]">
+                              {a.email_at_accept}
+                            </code>
+                          </div>
+                          <div className="text-[var(--fg-muted)]">
+                            Atelier version:{" "}
+                            <code className="rounded bg-[var(--bg-muted)] px-1 text-[11px]">
+                              {a.atelier_version}
+                            </code>
+                          </div>
+                          {a.ip_at_accept ? (
+                            <div className="text-[var(--fg-muted)]">
+                              IP:{" "}
+                              <code className="rounded bg-[var(--bg-muted)] px-1 text-[11px]">
+                                {a.ip_at_accept}
+                              </code>
+                            </div>
+                          ) : null}
+                        </div>
+                        {a.user_agent_at_accept ? (
+                          <div className="mt-2 text-[var(--fg-subtle)]">
+                            UA:{" "}
+                            <span className="break-all font-mono text-[11px]">
+                              {a.user_agent_at_accept}
+                            </span>
+                          </div>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+                )
+              ) : null}
+            </div>
+          ) : null}
+
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setEulaTarget(null);
+                setEulaHistory({ kind: "loading" });
+              }}
+            >
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>
