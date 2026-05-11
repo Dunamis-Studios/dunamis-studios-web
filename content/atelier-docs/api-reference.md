@@ -534,6 +534,123 @@ Returns the current state of the daily heartbeat scheduler. Useful for monitorin
 
 `last_outcome` is one of `ok`, `ok_with_grace_warning`, `license_revoked`, `license_refunded`, `unreachable`, `deactivated`, `not_found`, or `unexpected_response`. If the scheduler has not yet completed its first tick, the value is `null` and `last_tick_at` is also `null`. If the scheduler is not running (no activation stored yet, or shutdown in progress), the endpoint returns `503 Service Unavailable`.
 
+## Online activation
+
+The five endpoints below pair 1:1 with the same-named Tauri commands in `commands/activation.rs`. Each pair shares one `service_*` function, so the localhost API and the desktop UI surface identical behavior. Authoritative server responses (slot full, revoked, refunded, license not found, unreachable) flow as **`200 OK` with a structured `{ "kind": "...", ... }` payload** so callers branch on the `kind` discriminant rather than on HTTP status; only request-validation failures use `400 Bad Request`.
+
+### `POST /api/licensing/activate-online`
+
+Activates a license against the activation server and persists the slot locally on success. Verifies the license cryptographically against the embedded public key before the network call so a malformed key short-circuits without round-tripping.
+
+**Body**
+
+```json
+{
+  "licenseString": "ATLR-...",
+  "deviceLabel": "Atelier on Studio Desktop"
+}
+```
+
+`deviceLabel` is optional; when omitted, the server-side label defaults to the Windows hostname (`COMPUTERNAME`), with a final fallback of `"Atelier device"`.
+
+**Response** (`200 OK`)
+
+A discriminated union via `kind`:
+
+```json
+{ "kind": "granted", "activation_id": "...", "slot_count": 1, "max_slots": 3, "first_activation": true }
+```
+
+Other `kind` values: `slot_full` (carries `max_slots` + `active_devices: PublicSlot[]`), `license_refunded`, `license_revoked` (carries `mode`, `revoked_at`), `license_not_found`, `unreachable` (carries `message`), `unexpected_response` (carries `status`, `body`).
+
+**Errors** (`400 Bad Request`)
+
+- `validation_failed` with `field_errors: { licenseString: "..." }` when the license fails signature, format, or major-version checks.
+- Plain `error` message when `licenseString` is missing or empty, or when the hardware fingerprint can't be computed.
+
+### `POST /api/licensing/heartbeat-now`
+
+Manually triggers a heartbeat against the activation server. The daily scheduler covers automatic heartbeats; this endpoint exists for the Settings → License "Reconnect now" button and for integration scripts that want to force a check.
+
+**Body**: none.
+
+**Response** (`200 OK`)
+
+A discriminated union via `kind`:
+
+```json
+{ "kind": "ok", "heartbeat_at": "2026-05-10T14:00:00Z" }
+```
+
+Other `kind` values: `ok_with_grace_warning`, `deactivated`, `license_refunded`, `license_revoked`, `license_not_found`, `unreachable`, `unexpected_response`. Each carries the fields appropriate to the outcome (e.g. `revoked_at`, `grace_remaining_days`, `deactivated_reason`).
+
+**Errors**
+
+- `503 Service Unavailable` when no activation row exists (fresh install, post-deactivation, or pre-activation grace).
+
+### `GET /api/licensing/activation-status`
+
+Returns the local cached `activation` row that the scheduler and lockdown UI read.
+
+**Response** (`200 OK`)
+
+```json
+{
+  "activation_id": "...",
+  "lid": "...",
+  "first_activated_at": "2026-05-01T18:30:00Z",
+  "last_heartbeat_at": "2026-05-10T08:00:00Z",
+  "first_launch_grace_started_at": null,
+  "revocation_state": "none",
+  "revoked_at": null,
+  "grace_remaining_days": null
+}
+```
+
+Returns `null` (not an error) when no activation row exists. `revocation_state` is one of `none`, `grace_14d`, `immediate`, `locked`, or `refunded`.
+
+### `POST /api/licensing/deactivate-this-device`
+
+Self-eviction. Posts to the activation server to release the current install's slot, then clears the local `activation` + `license` rows so the next launch returns to License Entry.
+
+**Body**: none.
+
+**Response** (`200 OK`)
+
+```json
+{ "kind": "ok" }
+```
+
+Other `kind` values: `forbidden`, `not_found` (treated the same as `ok` for local cleanup), `unreachable`, `unexpected_response`.
+
+**Errors**
+
+- `503 Service Unavailable` when no activation row exists.
+
+### `POST /api/licensing/deactivate-other-device`
+
+Slot-full picker eviction. Used to free a slot held by a different device when activation returns `slot_full` and the user picks one from the list to kick. Does not touch local state; the caller follows up with `activate-online`.
+
+**Body**
+
+```json
+{
+  "licenseString": "ATLR-...",
+  "activationId": "..."
+}
+```
+
+`licenseString` is verified cryptographically against the embedded public key before the network call so a hostile caller can't drive this surface against an arbitrary license.
+
+**Response** (`200 OK`)
+
+Same `DeactivateOutcome` discriminator as `deactivate-this-device`.
+
+**Errors** (`400 Bad Request`)
+
+- `validation_failed` with `field_errors: { licenseString: "..." }` on signature/format/version failure.
+- Plain `error` when `licenseString` or `activationId` is empty.
+
 ---
 
 ## Phone-friendly day-of view (LAN listener)
