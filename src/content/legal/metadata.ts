@@ -23,9 +23,14 @@ export interface LegalDocumentMetadata {
 
 export const LEGAL_METADATA = {
   termsMaster: {
-    title: "Terms of Service",
-    lastUpdated: "April 23, 2026",
-    version: "2.0",
+    title: "Terms of Sale",
+    lastUpdated: "May 11, 2026",
+    version: "3.0",
+  },
+  atelierAddendum: {
+    title: "Atelier Terms Addendum",
+    lastUpdated: "May 11, 2026",
+    version: "1.0",
   },
   debriefAddendum: {
     title: "Debrief Service Addendum",

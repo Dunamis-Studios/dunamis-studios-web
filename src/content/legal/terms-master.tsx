@@ -18,42 +18,59 @@ export const termsMaster: LegalDocument = {
       body: (
         <>
           <p>
-            These Terms of Service (this &ldquo;<strong>Agreement</strong>&rdquo;) govern your
-            access to and use of the services offered by{" "}
+            These Terms of Sale (this &ldquo;<strong>Agreement</strong>&rdquo;) govern your
+            purchase and use of products and services offered by{" "}
             <strong>Joshua Robert Bradford</strong>, an individual resident of the State of
             Florida, United States, doing business under the name{" "}
             <strong>Dunamis Studios</strong> (&ldquo;<strong>Company</strong>,&rdquo;{" "}
             &ldquo;<strong>Dunamis Studios</strong>,&rdquo; &ldquo;<strong>we</strong>,&rdquo;{" "}
             &ldquo;<strong>us</strong>,&rdquo; or &ldquo;<strong>our</strong>&rdquo;),
-            including the HubSpot marketplace applications published by Dunamis Studios (each
-            a &ldquo;<strong>Service</strong>&rdquo; and collectively the{" "}
-            &ldquo;<strong>Services</strong>&rdquo;), the dunamisstudios.net website, the
-            Dunamis Studios account system, and any related APIs or documentation.
+            including the dunamisstudios.com website, the Dunamis Studios account system, all
+            software products and services sold or distributed by Dunamis Studios, and any
+            related APIs or documentation (each a &ldquo;<strong>Product</strong>&rdquo; and
+            collectively the &ldquo;<strong>Products</strong>&rdquo;).
           </p>
           <p className="mt-3">
-            The Services currently include <strong>Debrief</strong> and{" "}
-            <strong>Property Pulse</strong>. Additional Services released by Dunamis Studios
-            from time to time are covered by this Agreement upon their release. Service-specific
-            terms for each Service are set forth in the applicable addendum incorporated by
-            reference in <a className="underline" href={X("addenda")}>§19</a>.
+            This Agreement is the master Terms of Sale and applies to every Product. Each
+            Product also has a product-specific addendum that sets out terms unique to that
+            Product. The current set of addendums is listed in{" "}
+            <a className="underline" href={X("addenda")}>§20</a> and at the top of the{" "}
+            <Link href="/terms" className="underline">
+              /terms
+            </Link>{" "}
+            page. Where an addendum addresses a topic, the addendum controls for the Product
+            it covers; on all other topics the master Terms of Sale govern.
           </p>
           <p className="mt-3">
-            By clicking &ldquo;I agree,&rdquo; creating an account, installing any Service, or
-            using any of the Services, you agree to this Agreement, the applicable Service
-            addendum(a), the{" "}
+            By clicking &ldquo;I agree,&rdquo; creating an account, purchasing, installing,
+            activating, or using a Product, you agree to this Agreement, the applicable
+            Product addendum, the{" "}
             <Link href="/privacy" className="underline">
               Privacy Policy
             </Link>
-            , and the{" "}
+            , the{" "}
+            <Link href="/refund-policy" className="underline">
+              Refund Policy
+            </Link>
+            , and (where applicable) the{" "}
             <Link href="/legal/dpa" className="underline">
               Data Processing Addendum
             </Link>
-            , which are incorporated by reference. If you are entering this Agreement on behalf
-            of an entity, you represent that you have authority to bind that entity and
-            &ldquo;<strong>Customer</strong>&rdquo; or &ldquo;<strong>you</strong>&rdquo;
-            refers to that entity. If you do not have authority, or if you do not agree, do not
-            use the Services.
+            , each of which is incorporated by reference. If you are entering this Agreement
+            on behalf of an entity, you represent that you have authority to bind that entity
+            and &ldquo;<strong>Customer</strong>&rdquo; or &ldquo;<strong>you</strong>&rdquo;
+            refers to that entity. If you do not have authority, or if you do not agree, do
+            not purchase or use the Products.
           </p>
+          <div className={CALLOUT}>
+            <p>
+              <strong>Draft, not final.</strong> This document is in draft form pending review
+              by outside counsel. It reflects Dunamis Studios&rsquo; intended commercial
+              terms and is published for transparency, but is not yet finalized legal copy.
+              The version currently in effect for any executed transaction is the version
+              displayed on the date of that transaction.
+            </p>
+          </div>
         </>
       ),
     },
@@ -64,209 +81,185 @@ export const termsMaster: LegalDocument = {
       body: (
         <ul className="list-disc space-y-2 pl-5">
           <li>
-            &ldquo;<strong>Anthropic</strong>&rdquo; means Anthropic, PBC, the operator of the
-            Claude large language model API used by certain Services.
+            &ldquo;<strong>Addendum</strong>&rdquo; means a product-specific terms document
+            that supplements this Agreement for a particular Product, including those listed
+            at <a className="underline" href={X("addenda")}>§20</a>.
           </li>
           <li>
             &ldquo;<strong>Customer Data</strong>&rdquo; means the data, including personal
-            data, that Customer or its users cause to be transmitted into a Service, including
-            HubSpot Data, prompts, configuration, and Output Customer chooses to persist.
+            data, that Customer or its end users cause to be transmitted into, stored within,
+            or processed by a Product. Customer Data does not include data Dunamis Studios
+            generates about Customer&rsquo;s use of the Products for billing, security, or
+            operational purposes.
           </li>
           <li>
             &ldquo;<strong>Documentation</strong>&rdquo; means the user-facing product
             documentation published at{" "}
             <Link href="/help" className="underline">
-              dunamisstudios.net/help
+              dunamisstudios.com/help
             </Link>{" "}
-            and within each Service, as updated from time to time.
+            and any product-specific docs linked from a Product&rsquo;s landing page.
           </li>
           <li>
-            &ldquo;<strong>HubSpot Data</strong>&rdquo; means data retrieved from Customer&rsquo;s
-            HubSpot portal via the OAuth authorization Customer grants at install, within the
-            scopes Customer approved.
+            &ldquo;<strong>EULA</strong>&rdquo; means an end-user license agreement that a
+            given Product presents on first use, install, or activation. The EULA is a
+            standalone agreement governing the licensed use of the software for that Product
+            and is in addition to this Agreement and the applicable Addendum.
           </li>
           <li>
-            &ldquo;<strong>Output</strong>&rdquo; means data, content, or material a Service
-            produces from Customer Data in the course of delivering its functionality,
-            including AI-generated content where applicable. Service-specific forms of Output
-            are defined in the applicable addendum.
+            &ldquo;<strong>Order</strong>&rdquo; means a purchase, subscription start, or
+            license activation completed through the Dunamis Studios website, an authorized
+            reseller, or another sales channel approved by Dunamis Studios.
           </li>
           <li>
-            &ldquo;<strong>Service Addendum</strong>&rdquo; means the Service-specific terms
-            incorporated into this Agreement under{" "}
-            <a className="underline" href={X("addenda")}>§19</a>.
+            &ldquo;<strong>Output</strong>&rdquo; means content generated by a Product in
+            response to Customer input, including, where the applicable Product uses
+            artificial intelligence, content returned by an upstream AI Sub-processor.
           </li>
           <li>
-            &ldquo;<strong>Sub-processor</strong>&rdquo; means a third party engaged by Dunamis
-            Studios that processes Customer Data as part of delivering a Service, as listed at{" "}
+            &ldquo;<strong>Sub-processor</strong>&rdquo; means a third party engaged by
+            Dunamis Studios to process Customer Data on its behalf in connection with the
+            Products. The current list of Sub-processors is published at{" "}
             <Link href="/legal/subprocessors" className="underline">
               /legal/subprocessors
             </Link>
             .
-          </li>
-          <li>
-            &ldquo;<strong>Usage Policy</strong>&rdquo; means Anthropic&rsquo;s Usage Policy,
-            currently at{" "}
-            <a
-              href="https://www.anthropic.com/legal/aup"
-              target="_blank"
-              rel="noreferrer"
-              className="underline"
-            >
-              anthropic.com/legal/aup
-            </a>
-            , as updated by Anthropic from time to time.
           </li>
         </ul>
       ),
     },
     {
       n: "3",
-      id: "m-service",
-      title: "Services and license grant",
+      id: "m-account",
+      title: "Account registration and access",
       body: (
         <>
           <p>
-            Each Service reads Customer&rsquo;s HubSpot Data under the OAuth authorization
-            Customer grants at install and provides functionality as described in that
-            Service&rsquo;s Documentation and addendum. Where a Service uses artificial
-            intelligence, it transmits relevant records to Anthropic&rsquo;s Claude API over an
-            encrypted connection, as described in{" "}
-            <a className="underline" href={X("ai-output")}>§7</a> and the applicable addendum.
+            Some Products require a Dunamis Studios account. Customer agrees to provide
+            accurate registration information, to keep it current, and to safeguard account
+            credentials. Customer is responsible for all activity that occurs under its
+            account, whether or not authorized.
           </p>
           <p className="mt-3">
-            Subject to this Agreement, the applicable Service addendum, and Customer&rsquo;s
-            payment of applicable fees, Dunamis Studios grants Customer a limited,
-            non-exclusive, non-transferable, non-sublicensable right during the subscription or
-            license term to access and use the applicable Service solely for Customer&rsquo;s
-            internal business purposes. All rights not expressly granted are reserved.
+            Customer may delete its account at{" "}
+            <Link href="/account" className="underline">
+              dunamisstudios.com/account
+            </Link>{" "}
+            at any time. Account deletion ends Customer&rsquo;s access to active
+            subscriptions, terminates the right to use unactivated license keys still tied to
+            the account, and triggers the data-deletion process described in the Privacy
+            Policy. Account deletion does not, by itself, constitute a refund request; see{" "}
+            <a className="underline" href={X("refunds")}>§15</a>.
+          </p>
+          <p className="mt-3">
+            Dunamis Studios sends transactional email related to Orders, licenses, security,
+            and account changes regardless of marketing preferences. Customer may opt out of
+            marketing email at any time through the unsubscribe link in each marketing
+            message or by emailing{" "}
+            <a className="underline" href="mailto:support@dunamisstudios.com">
+              support@dunamisstudios.com
+            </a>
+            .
           </p>
         </>
       ),
     },
     {
       n: "4",
-      id: "m-customer-responsibilities",
-      title: "Customer responsibilities",
+      id: "m-services",
+      title: "Products and license framework",
       body: (
         <>
-          <p>Customer represents, warrants, and covenants that:</p>
+          <p>
+            Dunamis Studios offers Products in two general shapes:
+          </p>
           <ul className="mt-3 list-disc space-y-2 pl-5">
             <li>
-              Customer has the right and lawful basis (including any required consents, notices,
-              and legitimate interests) to share HubSpot Data and any other Customer Data with
-              Dunamis Studios, Anthropic (where applicable), and the Sub-processors, for the
-              purposes described in the{" "}
-              <Link href="/privacy" className="underline">
-                Privacy Policy
-              </Link>{" "}
-              and DPA.
+              <strong>Software licenses.</strong> Dunamis Studios grants Customer a limited,
+              non-exclusive, non-transferable, non-sublicensable license to install and use
+              the licensed software in accordance with the applicable EULA, the applicable
+              Addendum, and this Agreement. The scope, duration, and device or seat limits
+              of each license are set in the applicable Addendum and EULA.
             </li>
             <li>
-              Customer will maintain the confidentiality of its account credentials and is
-              responsible for all activity under its account and within its HubSpot portal as to
-              each Service.
-            </li>
-            <li>
-              Customer will comply with all applicable laws in its access and use of the
-              Services, including export-control, sanctions, data protection, consumer
-              protection, anti-spam, and employment laws.
-            </li>
-            <li>
-              <strong>Sensitive-data prohibition.</strong> Customer will not submit or cause
-              any Service to process any of the following: (a) &ldquo;special categories of
-              personal data&rdquo; under GDPR Article 9 (health, genetic, biometric, racial or
-              ethnic origin, political opinions, religious or philosophical beliefs,
-              trade-union membership, sex life or sexual orientation data); (b) &ldquo;sensitive
-              personal information&rdquo; under the CCPA as amended by the CPRA (including
-              government-issued identifiers, financial account, precise geolocation, genetic,
-              biometric identification, health, sex life or sexual orientation,
-              mail/email/text-message content, and union membership); (c) protected health
-              information (PHI) subject to HIPAA; (d) payment card data within the scope of
-              PCI DSS; (e) information about individuals known or reasonably believed to be
-              under age 16; or (f) any other category of sensitive, restricted, or regulated
-              personal data for which Customer lacks the legal right to transfer to a US
-              processor under the Services&rsquo; described data flow.
-            </li>
-            <li>
-              Customer will not use any Service in any HubSpot-restricted industry or in a way
-              that would cause Customer or Dunamis Studios to breach HubSpot&rsquo;s Customer
-              Terms of Service, Acceptable Use Policy, or Data Processing Agreement.
-            </li>
-            <li>
-              Customer is solely responsible for its HubSpot configuration, including which
-              users have access, which properties are populated, which are considered sensitive,
-              and for keeping its HubSpot account in good standing.
+              <strong>Hosted services.</strong> Dunamis Studios provides Customer access to
+              the hosted Service for the subscription term or one-time access term set in
+              the applicable Order and Addendum, subject to this Agreement.
             </li>
           </ul>
+          <p className="mt-3">
+            All right, title, and interest in and to the Products, including the software,
+            the Documentation, the dunamisstudios.com website, and all associated
+            intellectual property, remain with Dunamis Studios and its licensors. The
+            applicable Addendum or a separately executed Statement of Work may grant
+            additional rights in deliverables produced for Customer; absent such an express
+            grant, no Product transfers ownership of intellectual property to Customer.
+          </p>
+          <p className="mt-3">
+            Activation of a software license constitutes Customer&rsquo;s acceptance of the
+            EULA for that Product. The EULA, the applicable Addendum, and this Agreement
+            apply together; see <a className="underline" href={X("misc")}>§21</a> for order
+            of precedence.
+          </p>
         </>
       ),
     },
     {
       n: "5",
       id: "m-subscriptions",
-      title: "Subscriptions, billing, renewal, and cancellation",
+      title: "Fees, taxes, and payment",
       body: (
         <>
           <p>
-            <strong>Plans and pricing.</strong> Each Service is offered on pricing terms set
-            forth in the applicable Service addendum and published at the Service&rsquo;s
-            product page. Fees and plan structures may be updated on notice as described below.
+            Customer pays fees for the Products in the amounts and at the cadence stated on
+            the applicable Product page, in the Order, and in the applicable Addendum. Fees
+            are quoted in United States dollars unless otherwise stated.
           </p>
           <p className="mt-3">
-            <strong>Recurring subscriptions.</strong> For Services sold on a recurring
-            subscription basis (including Debrief), subscriptions renew automatically at the
-            end of each billing period at the then-current rate unless cancelled. At checkout,
-            Customer provides affirmative consent to auto-renewal and will receive a retainable
-            confirmation email summarizing the plan, price, renewal cadence, and the
-            cancellation path. Customer may cancel auto-renewal at any time from the Dunamis
-            Studios account dashboard &mdash; the cancellation path is at least as easy as
-            signup. Dunamis Studios implements this practice to comply with ROSCA and applicable
-            state automatic-renewal laws (ARLs), notwithstanding the 8th Circuit&rsquo;s July
-            2025 vacatur of the FTC&rsquo;s &ldquo;Click-to-Cancel&rdquo; rule.
+            <strong>Payment processor.</strong> Dunamis Studios uses Stripe, Inc. as its
+            payment processor. By providing payment information, Customer authorizes Dunamis
+            Studios and Stripe to charge the payment method for amounts due. Dunamis Studios
+            does not receive or store full payment card numbers; card-data handling is
+            performed by Stripe under its own terms and PCI obligations.
           </p>
           <p className="mt-3">
-            <strong>One-time licenses.</strong> For Services sold on a one-time fee basis
-            (including Property Pulse), Customer pays a single fee per HubSpot portal at
-            install. Service-specific refund terms are set forth in the applicable addendum.
+            <strong>Subscriptions.</strong> Subscription Products renew automatically at the
+            end of each billing period at the then-current price for the applicable tier
+            until canceled. Customer may cancel at{" "}
+            <Link href="/account" className="underline">
+              dunamisstudios.com/account
+            </Link>{" "}
+            at any time; cancellation takes effect at the end of the current billing period.
+            Mid-cycle cancellations do not generate pro-rata refunds for the remainder of
+            the period unless the applicable Addendum states otherwise or applicable law
+            requires it.
           </p>
           <p className="mt-3">
-            <strong>Annual plans and reminders.</strong> If annual plans are offered for any
-            Service, Dunamis Studios will send a pre-renewal reminder 15 to 45 days before the
-            renewal date, as required by applicable ARLs and card-network rules.
+            <strong>One-time fees.</strong> One-time license purchases are billed in full at
+            checkout. Refund eligibility is governed by{" "}
+            <a className="underline" href={X("refunds")}>§15</a> and the applicable Addendum.
           </p>
           <p className="mt-3">
-            <strong>Price changes.</strong> Dunamis Studios may change fees for a Service on at
-            least thirty (30) days&rsquo; email notice to the administrative contact on the
-            account. Price changes for recurring subscriptions take effect at the next renewal;
-            if Customer does not agree, Customer may cancel before the renewal date. One-time
-            license prices apply to new installations only; prior paid installations are not
-            re-billed.
+            <strong>Taxes.</strong> Fees are exclusive of taxes. Customer is responsible for
+            all sales, use, value-added, goods-and-services, withholding, and similar taxes
+            imposed on Customer&rsquo;s purchase or use of a Product, other than taxes based
+            on Dunamis Studios&rsquo;s net income. Where Dunamis Studios is required by law
+            to collect a tax, Dunamis Studios will add the tax to the invoice and remit it
+            to the appropriate authority.
           </p>
           <p className="mt-3">
-            <strong>Cancellation.</strong> For recurring subscriptions, Customer may cancel at
-            any time. The subscription remains active, and any applicable usage allotment
-            remains available, through the end of the current paid period. No pro-rata refunds
-            are issued for partial periods except as required by law or as set forth in the
-            applicable Service addendum. For one-time licenses, refund eligibility is defined in
-            the applicable Service addendum.
+            <strong>Price changes.</strong> Dunamis Studios may change subscription prices
+            on at least thirty (30) days&rsquo; prior notice to the email address on file.
+            Price changes take effect on the next renewal that begins after the notice
+            period. Customer&rsquo;s continued use after the effective date constitutes
+            acceptance of the new price. Customer may cancel before the effective date to
+            avoid the new price.
           </p>
           <p className="mt-3">
-            <strong>Payment processing and taxes.</strong> Payments are processed by{" "}
-            <strong>Stripe, Inc.</strong>; Customer&rsquo;s payment is subject to Stripe&rsquo;s
-            terms. Fees are stated exclusive of applicable taxes. Customer is responsible for
-            all VAT, GST, sales tax, use tax, and similar taxes levied on the purchase,
-            excluding taxes on Dunamis Studios&rsquo;s net income. Dunamis Studios uses{" "}
-            <strong>Stripe Tax</strong> to calculate and collect these amounts where applicable.
-            Business customers in the EU with a valid VAT identification number may be subject
-            to the reverse charge, in which case Customer is responsible for self-accounting for
-            VAT under its local rules.
-          </p>
-          <p className="mt-3">
-            <strong>Non-payment.</strong> If a charge is declined or fails, Dunamis Studios may
-            suspend the affected Service after reasonable notice and may terminate the
-            subscription or license for cause if the failure persists (see{" "}
-            <a className="underline" href={X("term")}>§13</a>).
+            <strong>Failed payments.</strong> If a charge is declined, Dunamis Studios may
+            retry the charge, suspend access to the Product, and, after reasonable notice,
+            terminate the subscription or license under{" "}
+            <a className="underline" href={X("term")}>§13</a>.
           </p>
         </>
       ),
@@ -274,77 +267,57 @@ export const termsMaster: LegalDocument = {
     {
       n: "6",
       id: "m-aup",
-      title: "Acceptable Use Policy",
+      title: "Acceptable use",
       body: (
         <>
           <p>
-            <strong>Anthropic flow-through.</strong> For any Service that transmits data to
-            Anthropic&rsquo;s Claude API, Anthropic&rsquo;s Usage Policy (available at{" "}
-            <a
-              href="https://www.anthropic.com/legal/aup"
-              target="_blank"
-              rel="noreferrer"
-              className="underline"
-            >
-              anthropic.com/legal/aup
-            </a>
-            ) is incorporated into this Agreement by reference. Customer will comply with it as
-            if Customer were a direct Anthropic customer. The applicable Service addendum
-            identifies which Services transmit data to Anthropic.
+            Customer will use the Products in compliance with this Agreement, the applicable
+            Addendum, the applicable EULA, the Documentation, and all applicable laws.
           </p>
           <p className="mt-3">
-            In addition, Customer will not, and will not permit its users or any third party to:
+            <strong>Sub-processor flow-through.</strong> Where a Product transmits data to a
+            Sub-processor, that Sub-processor&rsquo;s acceptable-use policy is incorporated
+            into this Agreement by reference. Customer will comply with each such policy as
+            if Customer were a direct customer of the Sub-processor. The applicable Addendum
+            identifies which Sub-processors a Product uses.
+          </p>
+          <p className="mt-3">
+            Customer will not, and will not permit its users or third parties to:
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5">
             <li>
-              use any Service for any unlawful purpose, or to infringe or misappropriate the
-              intellectual property, privacy, publicity, or other rights of any person;
+              use a Product for an unlawful purpose, or to infringe or misappropriate the
+              intellectual property, privacy, publicity, or other rights of another person;
             </li>
             <li>
               reverse engineer, decompile, disassemble, or otherwise attempt to derive the
-              source code, model weights, prompts, or underlying components of any Service,
+              source code, model weights, prompts, or underlying components of a Product,
               except to the extent permitted by non-waivable law;
             </li>
             <li>
-              share credentials, resell, sublicense, or provide the Services to any third party
-              on a service-bureau basis;
+              share credentials, resell, sublicense, or provide a Product to a third party
+              on a service-bureau basis, except as expressly permitted by an applicable
+              Addendum or a separately executed agreement with Dunamis Studios;
             </li>
             <li>
-              use any Service in a manner that imposes an unreasonable or disproportionately
-              large load on Service or Sub-processor infrastructure, or that interferes with or
-              disrupts Service integrity or performance;
+              use a Product in a way that imposes an unreasonable or disproportionately
+              large load on Product or Sub-processor infrastructure, or that interferes with
+              or disrupts Product integrity or performance;
             </li>
             <li>
-              use any Output or data obtained from a Service to develop, train, fine-tune, or
-              improve any artificial-intelligence or machine-learning model that competes with
-              Anthropic&rsquo;s models or any Service (flow-through of Anthropic Commercial
-              Terms §D.4 where applicable);
+              use Output or data obtained from a Product to develop, train, fine-tune, or
+              improve an artificial-intelligence or machine-learning model that competes
+              with the Products;
             </li>
             <li>
-              attempt to circumvent, jailbreak, or prompt-inject any AI-enabled Service, or
-              induce such a Service to generate content that violates the Usage Policy or
-              applicable law;
-            </li>
-            <li>
-              use any Service to generate, transmit, or facilitate child sexual abuse material;
-              non-consensual intimate imagery; election disinformation; harassment or targeted
-              intimidation of individuals; impersonation of a person or entity; malicious
-              cyber-operations (malware, phishing, intrusions); or terror-facilitating content;
-            </li>
-            <li>
-              use any AI-generated Output as the sole basis for an employment, credit,
-              healthcare, insurance, housing, education, legal-advice, or similarly significant
-              decision about an identifiable individual without qualified human review (see{" "}
-              <a className="underline" href={X("ai-output")}>§7</a>);
-            </li>
-            <li>
-              submit data in violation of the sensitive-data prohibition in{" "}
-              <a className="underline" href={X("customer-responsibilities")}>§4</a>.
+              remove, obscure, or alter proprietary notices in the Products or the
+              Documentation.
             </li>
           </ul>
           <p className="mt-3">
-            Violation of this Acceptable Use Policy is a material breach and grounds for
-            immediate suspension or termination under{" "}
+            Dunamis Studios may investigate suspected violations and may suspend the
+            affected account or instance pending investigation, with notice where
+            practicable. Material or repeated violations are grounds for termination under{" "}
             <a className="underline" href={X("term")}>§13</a>.
           </p>
         </>
@@ -353,144 +326,93 @@ export const termsMaster: LegalDocument = {
     {
       n: "7",
       id: "m-ai-output",
-      title: "AI Output terms",
+      title: "AI Output framework",
       body: (
         <>
           <p>
-            <strong>Scope.</strong> This Section applies only to Services that use artificial
-            intelligence to generate Output. The applicable Service addendum identifies which
-            Services use AI and defines the form of AI-generated Output for that Service.
+            Where a Product uses artificial intelligence to generate Output, the following
+            framework applies. The applicable Addendum identifies which Products use AI and
+            which upstream Sub-processor they transmit data to.
           </p>
           <p className="mt-3">
-            <strong>Ownership.</strong> As between the parties, and subject to Customer&rsquo;s
-            payment of applicable fees and compliance with this Agreement, Customer owns the
-            AI-generated Output produced for its account. Dunamis Studios assigns to Customer
-            all right, title, and interest (if any) Dunamis Studios may have in such Output.
-            Customer grants Dunamis Studios a worldwide, non-exclusive, royalty-free license to
-            host, store, transmit, and display the Output solely as necessary to operate the
-            applicable Service and to comply with law. Dunamis Studios does not claim any
-            ownership or proprietary right in the HubSpot Data or other Customer Data used to
-            generate Output.
+            <strong>Nature of AI Output.</strong> AI Output is probabilistic and may be
+            inaccurate, incomplete, or otherwise unsuitable for a particular purpose.
+            Customer is responsible for reviewing AI Output before relying on it, for the
+            decisions Customer makes based on AI Output, and for any action taken on AI
+            Output that has legal, financial, safety, or operational consequences.
           </p>
           <p className="mt-3">
-            <strong>No exclusivity.</strong> Large language models generate probabilistically.
-            Substantially similar Output may be generated for other customers operating on
-            comparable input. Customer does not have an exclusive right to any specific
-            phrasing, fact, or structural element of AI-generated Output except to the extent of
-            the copyright or other right Customer independently holds in the underlying
-            material.
+            <strong>No warranty.</strong> Dunamis Studios makes no warranty that AI Output
+            will be accurate, complete, current, free of bias, or suitable for a particular
+            purpose. The disclaimers in{" "}
+            <a className="underline" href={X("warranties")}>§10</a> apply with full force to
+            AI Output. The sub-cap on AI-Output liability in{" "}
+            <a className="underline" href={X("liability")}>§12</a> applies to all claims
+            arising out of or relating to AI Output.
           </p>
           <p className="mt-3">
-            <strong>Copyrightability caveat.</strong> AI-generated Output that lacks meaningful
-            human creative contribution may not be protectable by copyright under{" "}
-            <em>Thaler v. Perlmutter</em> (D.C. Cir. 2025) and the US Copyright Office&rsquo;s
-            January 2025 report on AI-assisted authorship. If Customer wants copyright
-            protection, Customer should add human creative editing to the Output before use.
+            <strong>Ownership of Output.</strong> As between Customer and Dunamis Studios,
+            Customer owns the Output generated for Customer&rsquo;s account, subject to (i)
+            the rights of the upstream AI Sub-processor and the limits in its terms, and
+            (ii) Dunamis Studios&rsquo;s retained rights in the Products themselves.
           </p>
-          <p className="mt-3">
-            <strong>No training of competing models.</strong> Customer will not use AI-generated
-            Output, or any data obtained from a Service, to develop, train, fine-tune, or
-            improve any AI or machine-learning model that competes with Anthropic&rsquo;s
-            models or any Service. This restriction is a flow-through of Anthropic Commercial
-            Terms §D.4.
-          </p>
-          <div className={CALLOUT}>
-            <p>
-              <strong>AI OUTPUT DISCLAIMER.</strong>
-            </p>
-            <p className="mt-2 uppercase">
-              AI-generated output is produced by artificial intelligence models (including
-              Anthropic&rsquo;s Claude) based on CRM data Customer provides. AI outputs may
-              contain errors, inaccuracies, omissions, or fabricated information
-              (&ldquo;hallucinations&rdquo;). Customer is solely responsible for reviewing,
-              verifying, and editing AI-generated output before relying on or acting upon it.
-              Customer will not use AI-generated output as the sole basis for any legally
-              binding decision, regulatory filing, financial transaction, medical, legal, or
-              employment determination, or any decision having a significant effect on any
-              individual, without qualified human review. Dunamis expressly disclaims all
-              warranties regarding the accuracy, completeness, reliability, or fitness for
-              purpose of AI outputs. Dunamis&rsquo;s liability for any claim arising from
-              inaccurate or misleading AI output is subject to the AI output sub-cap in{" "}
-              <a className="underline" href={X("liability")}>§12</a>.
-            </p>
-          </div>
         </>
       ),
     },
     {
       n: "8",
-      id: "m-data-protection",
-      title: "Data protection and DPA",
+      id: "m-customer-data",
+      title: "Customer Data",
       body: (
         <>
           <p>
-            To the extent Dunamis Studios processes personal data on behalf of Customer in
-            providing any Service, the{" "}
+            As between the parties, Customer owns the Customer Data. Customer grants Dunamis
+            Studios a worldwide, non-exclusive, royalty-free license to host, process,
+            transmit, display, and otherwise use the Customer Data solely to provide the
+            Products to Customer, to maintain and improve the Products, to comply with law,
+            and to enforce this Agreement.
+          </p>
+          <p className="mt-3">
+            Customer represents and warrants that it has the legal right to provide the
+            Customer Data to Dunamis Studios, that the Customer Data does not infringe or
+            violate third-party rights, and that Customer has obtained the consents or
+            provided the notices required by applicable privacy law in connection with the
+            Customer Data.
+          </p>
+          <p className="mt-3">
+            Where Dunamis Studios processes personal data on behalf of Customer, the{" "}
             <Link href="/legal/dpa" className="underline">
-              Dunamis Studios Data Processing Addendum
+              Data Processing Addendum
             </Link>{" "}
-            (the &ldquo;<strong>DPA</strong>&rdquo;) is incorporated into this Agreement by
-            reference. The DPA governs Dunamis Studios&rsquo;s processing of personal data as a
-            processor / service provider, including international transfer mechanisms (EU
-            Standard Contractual Clauses Modules 2 and 3, UK International Data Transfer
-            Addendum, Swiss Addendum, and the Data Privacy Framework for DPF-certified
-            Sub-processors).
-          </p>
-          <p className="mt-3">
-            Dunamis Studios publishes its current list of Sub-processors at{" "}
-            <Link href="/legal/subprocessors" className="underline">
-              /legal/subprocessors
-            </Link>{" "}
-            and commits to thirty (30) days&rsquo; advance notice of new Sub-processors that
-            will process Customer Personal Data, subject to the upstream asymmetry disclosed on
-            that page.
-          </p>
-          <p className="mt-3">
-            Dunamis Studios will assist Customer with data-subject requests as required by the
-            DPA, notify Customer of any personal-data breach without undue delay and in any
-            event within 48 hours of confirmed discovery (see DPA §9), and, on termination,
-            delete or return Customer Data as described in{" "}
-            <a className="underline" href={X("term")}>§13</a>.
+            governs that processing. Customer Data handling, retention, and the rights of
+            data subjects are described in the{" "}
+            <Link href="/privacy" className="underline">
+              Privacy Policy
+            </Link>
+            .
           </p>
         </>
       ),
     },
     {
       n: "9",
-      id: "m-confidentiality",
-      title: "Confidentiality",
+      id: "m-ip",
+      title: "Intellectual property",
       body: (
         <>
           <p>
-            Each party (the &ldquo;<strong>Receiving Party</strong>&rdquo;) may be exposed to
-            non-public information of the other party (the &ldquo;<strong>Disclosing Party</strong>
-            &rdquo;) that is marked or identified as confidential, or that a reasonable person
-            would understand to be confidential given its nature and the circumstances of
-            disclosure (&ldquo;<strong>Confidential Information</strong>&rdquo;). Confidential
-            Information includes Customer Data, non-public business and technical information,
-            pricing, and roadmap.
+            Dunamis Studios and its licensors retain all right, title, and interest in and
+            to the Products and all intellectual property in the Products, including
+            software, source code, models, prompts, Documentation, marks, trade dress, and
+            improvements to the Products. No Product grants Customer ownership of Dunamis
+            Studios intellectual property. Customer is granted only the licenses expressly
+            stated in this Agreement, the applicable Addendum, and the applicable EULA.
           </p>
           <p className="mt-3">
-            The Receiving Party will: (a) protect the Confidential Information using at least
-            the same degree of care it uses to protect its own confidential information of like
-            importance, but in no event less than reasonable care; (b) use it only as necessary
-            to exercise rights and perform obligations under this Agreement; and (c) limit
-            access to personnel and contractors who need to know it and who are bound by
-            confidentiality obligations at least as protective as this Section.
-          </p>
-          <p className="mt-3">
-            Obligations of confidentiality continue for <strong>five (5) years</strong> after
-            disclosure, except that obligations as to trade secrets continue for so long as the
-            information qualifies as a trade secret under applicable law.
-          </p>
-          <p className="mt-3">
-            Customary exceptions apply: information that is or becomes public without breach;
-            was rightfully in the Receiving Party&rsquo;s possession without obligation of
-            confidentiality; is independently developed without use of Confidential Information;
-            or is rightfully obtained from a third party without restriction. Either party may
-            disclose Confidential Information to the extent required by law or lawful process,
-            provided that, where legally permitted, it gives the Disclosing Party prompt notice
-            and reasonable cooperation to seek a protective order.
+            Customer may submit feedback, suggestions, ideas, and requests regarding the
+            Products. Dunamis Studios may use, disclose, reproduce, and exploit feedback
+            without restriction or compensation, provided that the feedback is not used in a
+            way that identifies Customer as the source without Customer&rsquo;s consent.
           </p>
         </>
       ),
@@ -502,31 +424,27 @@ export const termsMaster: LegalDocument = {
       body: (
         <>
           <p>
-            <strong>Limited service warranty.</strong> Dunamis Studios warrants that each
-            Service will perform in material conformance with its Documentation during the
-            subscription or license term. Customer&rsquo;s sole and exclusive remedy, and
-            Dunamis Studios&rsquo;s entire liability, for breach of this warranty is, at
-            Dunamis Studios&rsquo;s option, (a) re-performance of the non-conforming Service,
-            or (b) refund of the pro-rated fees for the non-conformance period (for recurring
-            subscriptions) or a pro-rated refund of the one-time fee (for one-time licenses,
-            calculated based on the lesser of time remaining in the refund window or Dunamis
-            Studios&rsquo;s reasonable determination of impaired use). This warranty is void to
-            the extent non-conformance is caused by Customer&rsquo;s breach, third-party
-            products, force majeure, or use outside the Documentation.
+            <strong>Limited warranty.</strong> Dunamis Studios warrants that during the
+            applicable warranty window stated in the applicable Addendum (or, if no window
+            is stated, for thirty (30) days from the date of first activation or first
+            access for the relevant Product), the Product will perform materially in
+            accordance with its Documentation. Customer&rsquo;s sole and exclusive remedy
+            for breach of this warranty is, at Dunamis Studios&rsquo;s option, (i) repair,
+            (ii) replacement, or (iii) refund of the fees paid for the Product in the
+            twelve (12) months preceding the claim, with prorated calculation for
+            subscription Products. The warranty does not apply to issues caused by
+            unauthorized modifications, use contrary to the Documentation, or Customer or
+            third-party infrastructure.
           </p>
-          <div className={CALLOUT}>
-            <p className="uppercase">
-              Except for the limited service warranty above, the services are provided
-              &ldquo;as is&rdquo; and &ldquo;as available.&rdquo; Dunamis studios disclaims all
-              warranties, express or implied, including implied warranties of merchantability,
-              fitness for a particular purpose, title, non-infringement, and any warranty
-              arising from course of dealing or usage of trade. Dunamis studios does not warrant
-              that any service will be uninterrupted or error-free, that it will meet
-              customer&rsquo;s requirements, or that defects will be corrected. Dunamis studios
-              does not warrant that AI-generated outputs will be accurate, complete, reliable,
-              non-infringing, or fit for any particular purpose.
-            </p>
-          </div>
+          <p className="mt-3">
+            <strong>Disclaimer.</strong> Except for the limited warranty above, and to the
+            maximum extent permitted by law, the Products are provided &ldquo;as is&rdquo;
+            and &ldquo;as available&rdquo; without warranty of every kind, whether express,
+            implied, or statutory, including the implied warranties of merchantability,
+            fitness for a particular purpose, title, accuracy, and non-infringement.
+            Dunamis Studios does not warrant that the Products will be uninterrupted,
+            error-free, or secure, or that defects will be corrected.
+          </p>
         </>
       ),
     },
@@ -537,56 +455,38 @@ export const termsMaster: LegalDocument = {
       body: (
         <>
           <p>
-            <strong>Customer indemnity.</strong> Customer will defend, indemnify, and hold
-            harmless Dunamis Studios, Joshua Robert Bradford personally, and their respective
-            affiliates, officers, employees, contractors, and agents from and against any
-            third-party claim, action, proceeding, or demand, and all resulting damages, fines,
-            judgments, settlements, and reasonable attorneys&rsquo; fees, arising out of or
-            relating to: (a) Customer&rsquo;s Customer Data, including claims that such data
-            was collected, used, or shared without legal basis or required consents; (b)
-            Customer&rsquo;s breach of{" "}
-            <a className="underline" href={X("customer-responsibilities")}>§4</a> or{" "}
-            <a className="underline" href={X("aup")}>§6</a>, including any submission of
-            sensitive data categories; (c) Customer&rsquo;s or its users&rsquo; reliance on or
-            acting upon AI-generated Output without qualified human review; (d) Customer&rsquo;s
-            combination of any Service with any product, service, data, or content not provided
-            by Dunamis Studios; or (e) Customer&rsquo;s violation of applicable law.
+            <strong>By Dunamis Studios.</strong> Dunamis Studios will defend Customer
+            against a third-party claim alleging that Customer&rsquo;s authorized use of a
+            Product, as delivered by Dunamis Studios and in accordance with this Agreement,
+            infringes the third party&rsquo;s United States patent, copyright, or registered
+            trademark, and will pay damages and costs finally awarded against Customer (or
+            agreed in settlement by Dunamis Studios) on such a claim. Dunamis Studios has
+            no obligation under this paragraph to the extent the claim arises from (i)
+            modification of the Product not made by Dunamis Studios, (ii) combination of
+            the Product with non-Dunamis-Studios material where the claim would not have
+            arisen without the combination, (iii) use of a non-current version after
+            Dunamis Studios has made a non-infringing update available, or (iv) Customer
+            Data.
           </p>
           <p className="mt-3">
-            <strong>Dunamis IP indemnity (narrow).</strong> Dunamis Studios will defend Customer
-            from and against any third-party claim that Customer&rsquo;s authorized use of a
-            Service, strictly in accordance with this Agreement and the Documentation, infringes
-            that third party&rsquo;s US patent, copyright, trademark, or trade secret, and will
-            pay resulting damages finally awarded against Customer by a court of competent
-            jurisdiction or a settlement Dunamis Studios agrees to in writing. This obligation
-            does not apply to claims arising from or related to: (i) Customer Data, AI-generated
-            Output, or any combination thereof; (ii) use of a Service after notice to
-            discontinue; (iii) Customer&rsquo;s modifications or use not in accordance with the
-            Documentation; (iv) combinations with non-Dunamis products, services, or data; or
-            (v) Customer&rsquo;s specifications or instructions.{" "}
-            <strong>AI-generated Output is expressly excluded from the Dunamis IP indemnity</strong>
-            ; upstream Anthropic does not indemnify Dunamis Studios for Output IP claims at this
-            tier, and Customer acknowledges that Dunamis Studios cannot offer an indemnity it
-            does not itself hold.
+            <strong>By Customer.</strong> Customer will defend Dunamis Studios against a
+            third-party claim arising out of (i) Customer Data, (ii) Customer&rsquo;s use
+            of a Product in violation of this Agreement, the applicable Addendum, the
+            applicable EULA, or applicable law, or (iii) the combination of a Product with
+            Customer or third-party systems not provided by Dunamis Studios, and will pay
+            damages and costs finally awarded against Dunamis Studios (or agreed in
+            settlement by Customer) on such a claim.
           </p>
           <p className="mt-3">
-            <strong>Dunamis options on an IP claim.</strong> If a Service, or any component, is
-            or in Dunamis Studios&rsquo;s reasonable opinion is likely to become the subject of
-            an IP claim, Dunamis Studios may, at its option and expense: (x) procure the right
-            for Customer to continue using the Service; (y) modify the Service to be
-            non-infringing while substantially preserving its functionality; or (z) terminate
-            the affected subscription or license and refund any unused pre-paid fees for the
-            period after termination (for recurring subscriptions) or a pro-rated refund of the
-            one-time fee (for one-time licenses). The preceding options and the defense
-            described in this Section state the entire liability of Dunamis Studios, and
-            Customer&rsquo;s exclusive remedy, for IP infringement claims.
-          </p>
-          <p className="mt-3">
-            <strong>Procedure.</strong> The indemnified party will promptly notify the
-            indemnifying party of the claim, give the indemnifying party sole control of the
-            defense and settlement (provided the settlement does not impose monetary obligations
-            or admissions of liability on the indemnified party without its consent), and
-            provide reasonable cooperation at the indemnifying party&rsquo;s expense.
+            <strong>Procedure.</strong> The indemnified party will give the indemnifying
+            party prompt written notice of the claim, sole control of the defense and
+            settlement (provided that no settlement that imposes liability or obligation on
+            the indemnified party may be entered without its written consent, not to be
+            unreasonably withheld), and reasonable cooperation at the indemnifying
+            party&rsquo;s expense. This{" "}
+            <a className="underline" href={X("indemnification")}>§11</a> states the
+            indemnifying party&rsquo;s sole liability, and the indemnified party&rsquo;s
+            exclusive remedy, for the claims described in this Section.
           </p>
         </>
       ),
@@ -597,59 +497,38 @@ export const termsMaster: LegalDocument = {
       title: "Limitation of liability",
       body: (
         <>
-          <div className={CALLOUT}>
-            <p className="uppercase">
-              To the maximum extent permitted by applicable law, neither party will be liable to
-              the other for any indirect, incidental, consequential, special, exemplary, or
-              punitive damages; loss of profits; loss of revenue; loss of data; loss of
-              goodwill; or cost of procurement of substitute goods or services, arising out of
-              or relating to this agreement or any service, whether in contract, tort (including
-              negligence), strict liability, or otherwise, and whether or not the party has been
-              advised of the possibility of such damages.
-            </p>
-            <p className="mt-3 uppercase">
-              Each party&rsquo;s aggregate liability arising out of or relating to this
-              agreement is capped at the greater of (a) US$500, or (b) the total fees paid by
-              customer to dunamis studios for the applicable service in the twelve (12) months
-              preceding the event giving rise to the liability (the &ldquo;general cap&rdquo;).
-            </p>
-            <p className="mt-3 uppercase">
-              Notwithstanding the general cap, dunamis studios&rsquo;s aggregate liability for
-              any claim arising out of or relating to inaccurate, incomplete, misleading, or
-              fabricated AI-generated output is capped at the lesser of (a) the fees paid by
-              customer in the three (3) months preceding the claim, or (b) US$500 (the &ldquo;AI
-              output sub-cap&rdquo;). The AI output sub-cap is included within, and not in
-              addition to, the general cap.
-            </p>
-          </div>
-          <p className="mt-4">
-            <strong>Carve-outs from the cap.</strong> The foregoing limits do not apply to: (i)
-            a party&rsquo;s indemnification obligations under{" "}
-            <a className="underline" href={X("indemnification")}>§11</a>; (ii) breach of{" "}
-            <a className="underline" href={X("confidentiality")}>§9</a> (Confidentiality); (iii)
-            Customer&rsquo;s failure to pay undisputed fees; (iv) Customer&rsquo;s breach of{" "}
-            <a className="underline" href={X("aup")}>§6</a> (Acceptable Use Policy) or the
-            sensitive-data prohibition in{" "}
-            <a className="underline" href={X("customer-responsibilities")}>§4</a>; (v)
-            infringement or misappropriation of the other party&rsquo;s intellectual property;
-            or (vi) liability that, under Florida law or other applicable non-waivable law,
-            cannot be limited or excluded, including liability for{" "}
-            <strong>fraud, gross negligence, or willful misconduct</strong>, and liability for
-            personal injury or death. For those carve-outs, liability is determined by
-            applicable law without the above caps.
+          <p>
+            <strong>Exclusion of indirect damages.</strong> To the maximum extent permitted
+            by law, neither party will be liable to the other for indirect, incidental,
+            consequential, special, exemplary, or punitive damages, or for loss of profits,
+            revenue, business, goodwill, data, or substitute goods or services, arising out
+            of or relating to this Agreement or the Products, even if advised of the
+            possibility of such damages.
           </p>
           <p className="mt-3">
-            <strong>Non-waivable consumer rights.</strong> Nothing in this Section limits any
-            non-waivable right of a consumer under applicable law. Where a consumer law of a
-            jurisdiction (including UK UCTA, EU consumer law, or a US state consumer-protection
-            law) requires broader liability than stated above, that law governs to the minimum
-            extent required.
+            <strong>Cap.</strong> Except for amounts owed under{" "}
+            <a className="underline" href={X("indemnification")}>§11</a> and Customer&rsquo;s
+            payment obligations, each party&rsquo;s aggregate liability arising out of or
+            relating to this Agreement and the Products will not exceed the fees paid by
+            Customer to Dunamis Studios for the affected Product in the twelve (12) months
+            preceding the event giving rise to the claim. For Products sold for a one-time
+            license fee, the cap is the amount paid for that license.
           </p>
           <p className="mt-3">
-            <strong>Basis of the bargain.</strong> Customer acknowledges that the limits and
-            allocations of risk in this Agreement are fundamental elements of the bargain
-            between the parties and a material inducement to Dunamis Studios to provide the
-            Services at the fees charged.
+            <strong>AI Output sub-cap.</strong> For claims arising out of or relating to AI
+            Output (as described in{" "}
+            <a className="underline" href={X("ai-output")}>§7</a>), Dunamis Studios&rsquo;s
+            aggregate liability will not exceed the lesser of (i) the cap in the preceding
+            paragraph, or (ii) the fees paid by Customer to Dunamis Studios in the three
+            (3) months preceding the event giving rise to the claim for the Product that
+            generated the affected AI Output.
+          </p>
+          <p className="mt-3">
+            <strong>Carve-outs.</strong> Nothing in this{" "}
+            <a className="underline" href={X("liability")}>§12</a> limits a party&rsquo;s
+            liability for (a) death or personal injury caused by negligence, (b) fraud or
+            fraudulent misrepresentation, (c) gross negligence or willful misconduct, or
+            (d) liability that cannot be limited or excluded under applicable law.
           </p>
         </>
       ),
@@ -657,313 +536,401 @@ export const termsMaster: LegalDocument = {
     {
       n: "13",
       id: "m-term",
-      title: "Term, termination, and effect of termination",
+      title: "Term and termination",
       body: (
         <>
           <p>
-            <strong>Term.</strong> This Agreement begins when Customer first accepts it and
-            continues until all subscriptions and licenses have expired or been terminated.
+            This Agreement starts when Customer first accepts it (whether by purchase,
+            account creation, license activation, or use of a Product) and continues until
+            terminated as set out in this Section.
           </p>
           <p className="mt-3">
-            <strong>Customer cancellation.</strong> For recurring subscriptions, Customer may
-            cancel from the account dashboard at any time; the subscription remains active
-            through the end of the current paid period. For one-time licenses, the license
-            continues in perpetuity per HubSpot portal subject to this Agreement, but Customer
-            may uninstall from HubSpot at any time. Refund terms are governed by the applicable
-            Service addendum and <a className="underline" href={X("subscriptions")}>§5</a>.
+            <strong>Termination for convenience.</strong> Customer may stop using the
+            Products at any time by canceling subscriptions, deleting the account, and
+            uninstalling licensed software. Customer&rsquo;s refund eligibility is governed
+            by <a className="underline" href={X("refunds")}>§15</a> and the applicable
+            Addendum.
           </p>
           <p className="mt-3">
-            <strong>Termination by Dunamis Studios.</strong> Dunamis Studios may terminate this
-            Agreement or any subscription or license: (a) for cause on{" "}
-            <strong>fifteen (15) days&rsquo; notice</strong> of non-payment that remains uncured
-            after the notice period; (b) for cause on{" "}
-            <strong>thirty (30) days&rsquo; notice</strong> of any other material breach that
-            remains uncured after the notice period; (c) for convenience on thirty (30)
-            days&rsquo; notice, with a refund of any unused, pre-paid fees for the period after
-            termination (for recurring subscriptions) or a reasonable pro-rated refund (for
-            one-time licenses); or (d) <strong>immediately</strong> on notice for a violation
-            of <a className="underline" href={X("aup")}>§6</a> (Acceptable Use Policy), for a
-            security risk presented by Customer&rsquo;s use, or if required by Anthropic or any
-            other Sub-processor or by law.
+            <strong>Termination for cause.</strong> Either party may terminate this
+            Agreement on written notice if the other party materially breaches and fails to
+            cure the breach within thirty (30) days of written notice of the breach (or
+            immediately, in the case of a breach incapable of cure, including a breach of{" "}
+            <a className="underline" href={X("aup")}>§6</a>,{" "}
+            <a className="underline" href={X("customer-data")}>§8</a>, or{" "}
+            <a className="underline" href={X("confidentiality")}>§14</a>).
           </p>
           <p className="mt-3">
-            <strong>Effect of termination &mdash; data.</strong> On termination or expiration,
-            Customer has a <strong>thirty (30)-day export window</strong> during which Customer
-            may export its data through the applicable Service&rsquo;s export tooling (where
-            available). After the export window, Dunamis Studios will delete Customer Data from
-            active production systems within sixty (60) days of termination; data residing in
-            backups is deleted on its natural backup-rotation cycle (generally within 30&ndash;90
-            days). Customer retains ownership of Output it has previously exported; those
-            exports are outside the Service and are Customer&rsquo;s responsibility.
-          </p>
-          <p className="mt-3">
-            <strong>Survival.</strong> The following Sections survive termination or expiration:{" "}
-            <a className="underline" href={X("definitions")}>§2</a> (Definitions, as needed to
-            interpret surviving Sections), <a className="underline" href={X("ai-output")}>§7</a>{" "}
-            (AI Output, including the sub-cap),{" "}
-            <a className="underline" href={X("confidentiality")}>§9</a> (Confidentiality),{" "}
-            <a className="underline" href={X("warranties")}>§10</a> (Warranty disclaimer),{" "}
-            <a className="underline" href={X("indemnification")}>§11</a> (Indemnification),{" "}
-            <a className="underline" href={X("liability")}>§12</a> (Limitation of Liability),{" "}
-            <a className="underline" href={X("governing-law")}>§15</a> (Governing Law and
-            Disputes), <a className="underline" href={X("assignment")}>§16</a> (Assignment), and{" "}
-            <a className="underline" href={X("general")}>§18</a> (General), along with any
-            surviving provisions set forth in the applicable Service addendum.
+            <strong>Effect of termination.</strong> On termination, Customer&rsquo;s right
+            to use the Products ends. Each party will return or destroy the other&rsquo;s
+            Confidential Information. Dunamis Studios will follow the data-deletion process
+            described in the Privacy Policy, subject to retention required by law. Sections
+            that by their nature survive termination (including warranties given as to past
+            performance, indemnification, limitation of liability, governing law, and the
+            general provisions in{" "}
+            <a className="underline" href={X("misc")}>§21</a>) will survive.
           </p>
         </>
       ),
     },
     {
       n: "14",
-      id: "m-hubspot",
-      title: "HubSpot-specific terms",
+      id: "m-confidentiality",
+      title: "Confidentiality",
       body: (
         <>
           <p>
-            <strong>Non-affiliation.</strong> HubSpot&reg; is a registered trademark of HubSpot,
-            Inc. The Services are independently developed and operated by Dunamis Studios and
-            are not affiliated with, endorsed by, sponsored by, or certified by HubSpot, Inc.
+            &ldquo;<strong>Confidential Information</strong>&rdquo; means non-public
+            information disclosed by one party (&ldquo;<strong>Discloser</strong>&rdquo;) to
+            the other (&ldquo;<strong>Recipient</strong>&rdquo;) that is identified as
+            confidential or that would reasonably be considered confidential under the
+            circumstances. Customer Data is Customer&rsquo;s Confidential Information. The
+            Products, the Documentation, and Dunamis Studios&rsquo;s non-public technical,
+            business, and security information are Dunamis Studios&rsquo;s Confidential
+            Information.
           </p>
           <p className="mt-3">
-            <strong>Customer HubSpot obligations.</strong> Customer agrees that its use of any
-            Service, including the OAuth authorization Customer grants at install, will not
-            cause Customer or Dunamis Studios to breach HubSpot&rsquo;s Customer Terms of
-            Service, Acceptable Use Policy, or Data Processing Agreement. Customer will not use
-            any Service in any industry or manner HubSpot has restricted or prohibited.
+            Recipient will protect Discloser&rsquo;s Confidential Information using at
+            least the same care it uses for its own confidential information of like
+            importance (and no less than reasonable care), will use Confidential
+            Information only as needed to perform under this Agreement, and will limit
+            access to those of its personnel and contractors who need access and who are
+            bound by written confidentiality obligations at least as protective as those in
+            this Section.
           </p>
           <p className="mt-3">
-            <strong>OAuth authorization lifecycle.</strong> Customer&rsquo;s HubSpot Super Admin
-            authorizes each Service via HubSpot OAuth at install and may revoke authorization at
-            any time through the HubSpot Connected Apps interface. On uninstall or revocation,
-            Dunamis Studios will treat the event as termination of the subscription or license
-            for the affected portal and will follow the deletion process described in{" "}
-            <a className="underline" href={X("term")}>§13</a>.
+            Confidential Information does not include information that (i) is or becomes
+            generally available without Recipient&rsquo;s breach, (ii) was rightfully in
+            Recipient&rsquo;s possession without confidentiality obligation before
+            disclosure, (iii) is independently developed by Recipient without use of
+            Discloser&rsquo;s Confidential Information, or (iv) is rightfully obtained by
+            Recipient from a third party without confidentiality obligation. Recipient may
+            disclose Confidential Information to the extent required by law or legal
+            process, provided that Recipient gives Discloser prompt written notice (where
+            legally permitted) and reasonable cooperation in seeking a protective order.
           </p>
         </>
       ),
     },
     {
       n: "15",
-      id: "m-governing-law",
-      title: "Governing law, dispute resolution, and arbitration",
+      id: "m-refunds",
+      title: "Refunds",
       body: (
         <>
           <p>
-            <strong>Governing law.</strong> This Agreement is governed by the laws of the{" "}
-            <strong>State of Florida</strong>, United States, without regard to its
-            conflict-of-laws principles. The United Nations Convention on Contracts for the
-            International Sale of Goods does not apply.
+            The general refund framework is described at{" "}
+            <Link href="/refund-policy" className="underline">
+              dunamisstudios.com/refund-policy
+            </Link>
+            . Product-specific refund windows, conditions, and exceptions are set in the
+            applicable Addendum and on the product-specific refund-policy page at{" "}
+            <Link href="/refund-policy" className="underline">
+              /refund-policy/{"{product}"}
+            </Link>
+            . Where an Addendum or product-specific refund page states a window or
+            condition, that statement controls for the affected Product.
           </p>
           <p className="mt-3">
-            <strong>Informal dispute resolution (mandatory prerequisite).</strong> Before
-            initiating arbitration or court proceedings, the party raising the dispute will send
-            a written notice to the other party describing the claim in reasonable detail. The
-            parties will then attempt in good faith, for at least{" "}
-            <strong>thirty (30) days</strong>, to resolve the dispute through direct discussion
-            between authorized representatives. Written notice to Dunamis Studios goes to{" "}
-            <a href="mailto:legal@dunamisstudios.net" className="underline">
-              legal@dunamisstudios.net
-            </a>
-            ; notice to Customer goes to the administrative contact on the account.
+            Refunds are issued to the original payment method through Stripe. Customer
+            agrees to contact Dunamis Studios at{" "}
+            <a className="underline" href="mailto:support@dunamisstudios.com">
+              support@dunamisstudios.com
+            </a>{" "}
+            before initiating a chargeback with its card issuer. See{" "}
+            <Link href="/refund-policy#chargebacks" className="underline">
+              the Refund Policy
+            </Link>{" "}
+            for the chargeback discussion.
           </p>
           <p className="mt-3">
-            <strong>Binding arbitration.</strong> Any dispute, claim, or controversy arising out
-            of or relating to this Agreement or any Service that is not resolved through the
-            informal process will be resolved by{" "}
-            <strong>
-              binding arbitration administered by the American Arbitration Association (AAA)
-              under its Commercial Arbitration Rules
-            </strong>
-            . The seat and legal place of arbitration is{" "}
-            <strong>Florida, United States</strong>. The arbitration will be conducted by one
-            arbitrator selected in accordance with AAA rules. The arbitrator&rsquo;s award is
-            final and binding, and judgment on the award may be entered in any court of
-            competent jurisdiction.
-          </p>
-          <p className="mt-3">
-            <strong>Class-action waiver.</strong> Each party agrees that disputes will be
-            resolved individually, on a non-class, non-representative basis.{" "}
-            <strong>
-              Neither party will seek to have any dispute heard as a class action, collective
-              action, or mass action, or to join or consolidate its claim with the claim of any
-              other person.
-            </strong>{" "}
-            If this waiver is held unenforceable as to any particular claim, that claim will be
-            severed and litigated in the courts identified below, while the balance of this
-            Section continues to apply.
-          </p>
-          <p className="mt-3">
-            <strong>Injunctive relief in court (carve-out).</strong> Notwithstanding the
-            arbitration agreement, either party may seek injunctive or other equitable relief in
-            a court of competent jurisdiction to prevent or enjoin actual or threatened
-            infringement, misappropriation, or violation of intellectual property rights or
-            breach of confidentiality obligations. The exclusive courts for such actions are the
-            state and federal courts located in the State of Florida, and the parties consent to
-            personal jurisdiction and venue in those courts.
-          </p>
-          <p className="mt-3">
-            <strong>Contractual statute of limitations.</strong> Any claim or action arising out
-            of or relating to this Agreement must be brought, whether in arbitration or in court
-            (for the injunctive carve-out above), within <strong>one (1) year</strong> after the
-            cause of action accrues. Claims not brought within that period are permanently
-            barred.
+            Nothing in this Section limits rights Customer has under applicable consumer
+            law that cannot be waived by contract.
           </p>
         </>
       ),
     },
     {
       n: "16",
-      id: "m-assignment",
-      title: "Assignment",
+      id: "m-export",
+      title: "Export controls and sanctions",
       body: (
         <>
           <p>
-            Customer may not assign this Agreement or any of its rights or obligations under it,
-            in whole or in part, by operation of law or otherwise, without Dunamis
-            Studios&rsquo;s prior written consent. Any attempted assignment without that consent
-            is void.
+            The Products are subject to United States export control laws and regulations,
+            including the Export Administration Regulations administered by the U.S.
+            Department of Commerce, and to economic sanctions programs administered by the
+            U.S. Department of the Treasury Office of Foreign Assets Control. Dunamis
+            Studios&rsquo;s desktop software, where it includes mass-market encryption,
+            qualifies under ECCN 5D002.c.1 and is exported under license exception ENC as
+            mass-market software.
           </p>
           <p className="mt-3">
-            <strong>Assignment by Company.</strong>{" "}
-            <strong>
-              Dunamis Studios (and Joshua Robert Bradford personally) may assign this Agreement,
-              in whole or in part, without Customer&rsquo;s consent, to (a) an affiliate; (b) a
-              successor entity formed by Company, including upon incorporation of Company as a
-              limited liability company or corporation in any US state; or (c) any acquirer of
-              all or substantially all of the assets, equity, or business relating to the
-              Services.
-            </strong>{" "}
-            On any such assignment, Dunamis Studios will notify Customer by email, and the
-            assignee will step into Dunamis Studios&rsquo;s rights and obligations going
-            forward. Subject to the foregoing, this Agreement binds and benefits the parties and
-            their permitted successors and assigns.
+            Customer represents and warrants that Customer is not located in, organized
+            under the laws of, or ordinarily resident in a country or territory subject to
+            comprehensive U.S. sanctions (currently Cuba, Iran, North Korea, Syria, and the
+            Crimea, Donetsk, Luhansk, Kherson, and Zaporizhzhia regions of Ukraine), is not
+            on the U.S. Department of Treasury Specially Designated Nationals list, the
+            U.S. Department of Commerce Denied Persons or Entity list, or another United
+            States or applicable government restricted-party list, and will not export,
+            re-export, or transfer the Products to a person or destination prohibited by
+            United States law.
+          </p>
+          <p className="mt-3">
+            Customer will comply with all applicable export control and sanctions laws in
+            connection with the Products, including any obligation to obtain a license or
+            other authorization before export or transfer.
           </p>
         </>
       ),
     },
     {
       n: "17",
-      id: "m-sla",
-      title: "Service levels",
+      id: "m-ucita",
+      title: "UCITA inapplicability",
       body: (
-        <>
-          <p>
-            Dunamis Studios uses commercially reasonable efforts to make each Service available
-            and performant, but{" "}
-            <strong>
-              does not commit to any uptime percentage or service-level credit regime under this
-              Agreement
-            </strong>
-            . Any formal service-level agreement (SLA) with uptime commitments or service
-            credits must be executed in a separate, signed enterprise agreement.
-          </p>
-          <p className="mt-3">
-            Any availability or performance commitment Dunamis Studios makes{" "}
-            <strong>expressly excludes</strong> events and conditions outside its direct
-            control, including outages, degradations, rate limits, or terms changes imposed by
-            HubSpot, Anthropic, Vercel, Upstash, Stripe, Resend, or any other Sub-processor;
-            internet, telecommunications, or utility failures; and Customer&rsquo;s systems or
-            actions.
-          </p>
-        </>
+        <p>
+          The Uniform Computer Information Transactions Act, as enacted in any United
+          States jurisdiction, does not apply to this Agreement. Florida has not adopted
+          UCITA, and the parties expressly opt out of UCITA in every jurisdiction where
+          opting out is permitted.
+        </p>
       ),
     },
     {
       n: "18",
-      id: "m-general",
-      title: "General",
+      id: "m-sla",
+      title: "No service-level commitment",
+      body: (
+        <p>
+          Unless an Addendum expressly provides a service-level agreement for the
+          applicable Product, Dunamis Studios provides the Products on commercially
+          reasonable efforts. No uptime guarantee, service credits, or failover
+          arrangements apply. Product performance may depend on Sub-processor availability
+          and response times, which are outside Dunamis Studios&rsquo;s control.
+        </p>
+      ),
+    },
+    {
+      n: "19",
+      id: "m-disputes",
+      title: "Governing law and dispute resolution",
       body: (
         <>
           <p>
-            <strong>Notices.</strong> Notices to Dunamis Studios must be sent to{" "}
-            <a href="mailto:legal@dunamisstudios.net" className="underline">
-              legal@dunamisstudios.net
+            <strong>Governing law.</strong> This Agreement and the Products are governed
+            by the laws of the State of Florida, United States, without regard to its
+            conflict-of-laws principles. The United Nations Convention on Contracts for the
+            International Sale of Goods does not apply.
+          </p>
+          <p className="mt-3">
+            <strong>FDUTPA pre-suit notice.</strong> Before bringing a claim under the
+            Florida Deceptive and Unfair Trade Practices Act (Fla. Stat. §501.201 et seq.)
+            against Dunamis Studios, Customer will deliver written notice describing the
+            alleged conduct and the relief sought to{" "}
+            <a className="underline" href="mailto:legal@dunamisstudios.com">
+              legal@dunamisstudios.com
             </a>{" "}
-            with postal copy to Joshua Robert Bradford d/b/a Dunamis Studios, 2269 Twin Fox
-            Trail, St. Augustine, FL 32086, United States. Notices to Customer may be sent to
-            the administrative email on the account and are deemed given on transmission.
+            and will allow Dunamis Studios thirty (30) days to respond and, where
+            appropriate, cure or settle.
           </p>
           <p className="mt-3">
-            <strong>Severability.</strong> If any provision of this Agreement is held invalid or
-            unenforceable, the remaining provisions continue in full force, and the invalid
-            provision will be modified to the minimum extent necessary to be enforceable while
-            preserving the parties&rsquo; original intent.
+            <strong>Arbitration.</strong> Except for the carve-outs below, every dispute,
+            claim, or controversy arising out of or relating to this Agreement, the
+            Products, or the relationship between the parties (each a &ldquo;
+            <strong>Dispute</strong>&rdquo;) will be resolved by binding individual
+            arbitration administered by the American Arbitration Association under its
+            Consumer Arbitration Rules (for individuals) or its Commercial Arbitration
+            Rules (for entities), as applicable, by a single arbitrator. The seat of
+            arbitration is Hillsborough County, Florida. The arbitrator may proceed by
+            written submission for claims under US$25,000. The arbitrator may award the
+            same remedies a court could award on an individual basis. Judgment on the award
+            may be entered in a court of competent jurisdiction.
           </p>
           <p className="mt-3">
-            <strong>Entire agreement.</strong> This Agreement, together with the applicable
-            Service addendum(a), the Privacy Policy, the DPA, the Sub-processors list, and any
-            signed order forms, constitutes the entire agreement between the parties regarding
-            the Services and supersedes any prior or contemporaneous communications. Pre-printed
-            terms on a Customer-issued purchase order are rejected and have no effect.
+            <strong>Class action waiver.</strong> Each party may bring claims against the
+            other only in its individual capacity, and not as a plaintiff or class member
+            in a purported class, collective, representative, multi-plaintiff, or similar
+            proceeding. The arbitrator may not consolidate more than one person&rsquo;s
+            claims, may not preside over a representative or class proceeding, and may not
+            award class, collective, or representative relief. If a court determines this
+            waiver is unenforceable in a given Dispute, the arbitration provision is
+            severed for that Dispute and the Dispute will be resolved in court under the
+            Carve-out paragraph below.
           </p>
           <p className="mt-3">
-            <strong>No waiver.</strong> A failure or delay in exercising any right is not a
-            waiver of that right.
+            <strong>Federal Arbitration Act.</strong> The arbitration provision is
+            governed by the Federal Arbitration Act, 9 U.S.C. §§1 et seq., and evidences a
+            transaction involving interstate commerce. The arbitrator, not a court,
+            decides threshold questions of arbitrability, except questions about the
+            enforceability of the class-action waiver, which a court decides.
           </p>
           <p className="mt-3">
-            <strong>Force majeure.</strong> Neither party is liable for any failure or delay in
-            performance, other than the obligation to pay, caused by events beyond its
-            reasonable control, including acts of God, war, terrorism, civil unrest, pandemics,
-            labor disputes, governmental action, internet or telecommunications failures, and
-            outages or terms changes imposed by HubSpot, Anthropic, Vercel, Upstash, Stripe,
-            Resend, Amazon Web Services, Google Cloud, or any other underlying provider.
+            <strong>Carve-out.</strong> Either party may bring an individual action in
+            small-claims court for a Dispute within that court&rsquo;s jurisdiction in lieu
+            of arbitration, and either party may seek injunctive or other equitable relief
+            in a court of competent jurisdiction to protect its intellectual property or
+            Confidential Information. Disputes excluded from arbitration are subject to the
+            exclusive jurisdiction of the state and federal courts located in Hillsborough
+            County, Florida, and the parties consent to personal jurisdiction in those
+            courts.
           </p>
           <p className="mt-3">
-            <strong>Export control and sanctions.</strong> Customer will comply with all US
-            export-control, sanctions, and anti-boycott laws, including those administered by
-            OFAC and BIS. Customer represents it is not located in, under the control of, or a
-            national or resident of any country or entity subject to comprehensive US sanctions.
-          </p>
-          <p className="mt-3">
-            <strong>Relationship of the parties.</strong> The parties are independent
-            contractors. This Agreement creates no partnership, joint venture, agency, or
-            employment relationship.
-          </p>
-          <p className="mt-3">
-            <strong>Headings.</strong> Section headings are for convenience and do not affect
-            interpretation. References to &ldquo;including&rdquo; mean &ldquo;including without
-            limitation.&rdquo;
-          </p>
-          <p className="mt-3">
-            <strong>Updates to this Agreement.</strong> Dunamis Studios may update this
-            Agreement from time to time. For material changes, Dunamis Studios will provide at
-            least thirty (30) days&rsquo; email notice to the administrative contact; the
-            updated Agreement takes effect on the stated effective date. If Customer does not
-            agree to the update, Customer may cancel under{" "}
-            <a className="underline" href={X("term")}>§13</a> before the effective date.
+            <strong>Thirty-day opt-out.</strong> Customer may opt out of the arbitration
+            provision and class-action waiver by sending written notice to{" "}
+            <a className="underline" href="mailto:legal@dunamisstudios.com">
+              legal@dunamisstudios.com
+            </a>{" "}
+            within thirty (30) days of first accepting this Agreement. The opt-out notice
+            must include Customer&rsquo;s name, the email address on Customer&rsquo;s
+            Dunamis Studios account, and a clear statement that Customer wants to opt out
+            of arbitration. An opt-out does not affect the remaining provisions of this
+            Agreement.
           </p>
         </>
       ),
     },
     {
-      n: "19",
+      n: "20",
       id: "m-addenda",
-      title: "Service addenda",
+      title: "Product addendums",
       body: (
         <>
           <p>
-            Each Service is governed by a Service-specific addendum that sets forth the
-            Service&rsquo;s description, pricing, refund terms, and any Service-specific
-            data-handling, AI-use, or operational details. The following addenda are incorporated
-            into and form part of this Agreement and are reproduced below on this page:
+            The following product-specific addendums are incorporated into this Agreement
+            and apply to the corresponding Products:
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5">
             <li>
-              <a className="underline" href="#addendum-debrief">
-                Debrief Service Addendum
-              </a>
+              <Link href="/terms/atelier" className="underline">
+                Atelier Terms Addendum
+              </Link>{" "}
+              &mdash; Atelier desktop software.
             </li>
             <li>
-              <a className="underline" href="#addendum-property-pulse">
+              <Link href="/terms/debrief" className="underline">
+                Debrief Service Addendum
+              </Link>{" "}
+              &mdash; Debrief HubSpot application.
+            </li>
+            <li>
+              <Link href="/terms/property-pulse" className="underline">
                 Property Pulse Service Addendum
-              </a>
+              </Link>{" "}
+              &mdash; Property Pulse HubSpot application.
             </li>
           </ul>
           <p className="mt-3">
-            Where an addendum conflicts with this master Agreement, the addendum controls as to
-            the specific Service it covers. Additional addenda may be added for new Services
-            without requiring re-acceptance of this master Agreement; Customer is bound by an
-            addendum only for Services it installs or uses.
+            Where a Product is added to the Dunamis Studios catalog after this Agreement
+            takes effect, the Addendum for that Product is incorporated upon its
+            publication at the corresponding /terms route. The current authoritative list
+            of Addendums appears at the top of the{" "}
+            <Link href="/terms" className="underline">
+              /terms
+            </Link>{" "}
+            page.
+          </p>
+        </>
+      ),
+    },
+    {
+      n: "21",
+      id: "m-misc",
+      title: "General provisions",
+      body: (
+        <>
+          <p>
+            <strong>Order of precedence.</strong> In a conflict among the documents that
+            make up the contract between Customer and Dunamis Studios, precedence runs
+            (highest to lowest): a separately executed agreement signed by both parties
+            (such as a Master Services Agreement or Statement of Work), then the applicable
+            EULA for the affected Product, then the applicable Addendum for the affected
+            Product, then this master Terms of Sale, then the Documentation. Each tier
+            controls only on the topic it specifically addresses; on other topics the next
+            tier governs.
+          </p>
+          <p className="mt-3">
+            <strong>Entire agreement.</strong> This Agreement, the applicable Addendum, the
+            applicable EULA, the Privacy Policy, the Refund Policy, the Data Processing
+            Addendum where applicable, and any Order or signed agreement constitute the
+            entire agreement between the parties regarding the Products and supersede prior
+            or contemporaneous proposals, communications, and understandings on the same
+            subject.
+          </p>
+          <p className="mt-3">
+            <strong>Changes to this Agreement.</strong> Dunamis Studios may update this
+            Agreement from time to time. Material changes will be announced by email to
+            account holders, by an in-product notice, or by a notice on the dunamisstudios.com
+            website at least thirty (30) days before they take effect. Continued use of the
+            Products after the effective date constitutes acceptance of the updated terms.
+            If Customer objects to a material change, Customer may stop using the Products
+            and (where eligible) request a refund under the then-current Refund Policy.
+          </p>
+          <p className="mt-3">
+            <strong>Severability.</strong> If a provision of this Agreement is found
+            unenforceable, the remaining provisions remain in full force. The parties
+            intend that the unenforceable provision be replaced by an enforceable provision
+            that comes closest to expressing the original intent.
+          </p>
+          <p className="mt-3">
+            <strong>No waiver.</strong> A party&rsquo;s failure to enforce a provision does
+            not waive its right to enforce the provision later.
+          </p>
+          <p className="mt-3">
+            <strong>Assignment.</strong> Customer may not assign or transfer this Agreement
+            (including by operation of law or change of control) without Dunamis
+            Studios&rsquo;s prior written consent, not to be unreasonably withheld. Dunamis
+            Studios may assign this Agreement to a successor in connection with a merger,
+            acquisition, reorganization, or sale of substantially all assets.
+          </p>
+          <p className="mt-3">
+            <strong>Force majeure.</strong> Neither party is liable for delay or failure to
+            perform caused by events beyond its reasonable control, including acts of God,
+            war, terrorism, civil disorder, labor dispute, governmental action, internet
+            or utility outage, or Sub-processor failure, provided that the affected party
+            uses commercially reasonable efforts to resume performance.
+          </p>
+          <p className="mt-3">
+            <strong>Independent contractors.</strong> The parties are independent
+            contractors. This Agreement does not create a partnership, joint venture,
+            agency, franchise, fiduciary, or employment relationship.
+          </p>
+          <p className="mt-3">
+            <strong>Notices.</strong> Notices to Dunamis Studios must be sent to{" "}
+            <a className="underline" href="mailto:legal@dunamisstudios.com">
+              legal@dunamisstudios.com
+            </a>
+            . Notices to Customer will be sent to the email address on Customer&rsquo;s
+            account and are effective when sent. Either party may change its notice address
+            on written notice.
+          </p>
+          <p className="mt-3">
+            <strong>Electronic signatures and records.</strong> The parties consent to do
+            business electronically. Clicking &ldquo;I agree,&rdquo; creating an account,
+            or otherwise indicating assent constitutes an electronic signature with the
+            same effect as a handwritten signature. Records of the parties&rsquo;
+            transactions may be kept in electronic form.
+          </p>
+          <p className="mt-3">
+            <strong>U.S. federal customers.</strong> The Products are commercial computer
+            software and commercial computer software documentation under FAR 12.212 and
+            DFARS 227.7202. U.S. federal government end users acquire the Products with
+            only the rights stated in this Agreement.
+          </p>
+          <p className="mt-3">
+            <strong>Contact.</strong> For questions about this Agreement, email{" "}
+            <a className="underline" href="mailto:legal@dunamisstudios.com">
+              legal@dunamisstudios.com
+            </a>
+            . For product support, email{" "}
+            <a className="underline" href="mailto:support@dunamisstudios.com">
+              support@dunamisstudios.com
+            </a>
+            . For security issues, see{" "}
+            <Link href="/security" className="underline">
+              dunamisstudios.com/security
+            </Link>
+            .
           </p>
         </>
       ),
