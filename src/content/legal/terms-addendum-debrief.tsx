@@ -3,10 +3,39 @@ import { DEBRIEF_TIERS } from "@/lib/pricing";
 import { LEGAL_METADATA } from "./metadata";
 import type { LegalDocument } from "./types";
 
-export const termsDebrief: LegalDocument = {
+const CALLOUT =
+  "mt-4 rounded-md border border-[var(--fg-subtle)]/40 bg-[color-mix(in_oklch,var(--fg)_4%,transparent)] px-4 py-4 text-sm";
+
+export const termsAddendumDebrief: LegalDocument = {
   ...LEGAL_METADATA.debriefAddendum,
   idPrefix: "d-",
   sections: [
+    {
+      n: "D0",
+      id: "d-precedence",
+      title: "Order of precedence",
+      body: (
+        <>
+          <p>
+            This Debrief Service Addendum (this &ldquo;<strong>Addendum</strong>&rdquo;)
+            supplements the Dunamis Studios{" "}
+            <Link href="/terms" className="underline">
+              Terms of Sale
+            </Link>{" "}
+            (the &ldquo;<strong>Master Terms</strong>&rdquo;), which apply to all products
+            and services sold on dunamisstudios.com. In the event of a conflict between
+            this Addendum and the Master Terms, this Addendum controls for Debrief. On all
+            other topics, the Master Terms govern.
+          </p>
+          <div className={CALLOUT}>
+            <p>
+              <strong>Draft, not final.</strong> This Addendum is in draft form pending
+              review by outside counsel.
+            </p>
+          </div>
+        </>
+      ),
+    },
     {
       n: "D1",
       id: "d-service-description",
@@ -33,9 +62,15 @@ export const termsDebrief: LegalDocument = {
           </ul>
           <p className="mt-3">
             Briefs and Handoff Messages together constitute &ldquo;AI Output&rdquo; for purposes
-            of the Master Agreement <a className="underline" href="#m-ai-output">§7</a> and are
-            subject to the AI Output terms therein, including the AI Output sub-cap in{" "}
-            <a className="underline" href="#m-liability">§12</a>.
+            of the Master Terms{" "}
+            <Link href="/terms#m-ai-output" className="underline">
+              §7
+            </Link>{" "}
+            and are subject to the AI Output terms therein, including the AI Output sub-cap in{" "}
+            <Link href="/terms#m-liability" className="underline">
+              §12
+            </Link>
+            .
           </p>
         </>
       ),
@@ -50,8 +85,8 @@ export const termsDebrief: LegalDocument = {
           as described in the Dunamis Studios{" "}
           <Link href="/privacy" className="underline">
             Privacy Policy
-          </Link>{" "}
-          §5. Anthropic does not use API data to train its models, and Anthropic retains API
+          </Link>
+          . Anthropic does not use API data to train its models, and Anthropic retains API
           inputs and outputs for up to seven (7) days for abuse monitoring before deletion. See
           the Privacy Policy for the full data flow.
         </p>
@@ -87,8 +122,11 @@ export const termsDebrief: LegalDocument = {
           <p className="mt-3">
             A &ldquo;credit&rdquo; entitles Customer to one Brief-and-Handoff-Message
             generation. Fees, credit allotments, and feature sets are governed by the pricing
-            page and may be updated on notice as described in the Master Agreement{" "}
-            <a className="underline" href="#m-subscriptions">§5</a>.
+            page and may be updated on notice as described in the Master Terms{" "}
+            <Link href="/terms#m-subscriptions" className="underline">
+              §5
+            </Link>
+            .
           </p>
           <p className="mt-3">
             <strong>First-month bonus.</strong> Each tier includes a one-time first-month bonus
@@ -109,10 +147,19 @@ export const termsDebrief: LegalDocument = {
       body: (
         <p>
           Debrief subscriptions are billed monthly in advance and do not issue pro-rata refunds
-          for partial periods, except as required by law or as set forth in the Master
-          Agreement <a className="underline" href="#m-warranties">§10</a> (limited service
-          warranty remedy) or <a className="underline" href="#m-term">§13</a> (termination for
-          convenience remedy).
+          for partial periods, except as required by law or as set forth in the Master Terms{" "}
+          <Link href="/terms#m-warranties" className="underline">
+            §10
+          </Link>{" "}
+          (limited service warranty remedy) or{" "}
+          <Link href="/terms#m-term" className="underline">
+            §13
+          </Link>{" "}
+          (termination for convenience remedy). See{" "}
+          <Link href="/refund-policy/debrief" className="underline">
+            /refund-policy/debrief
+          </Link>{" "}
+          for the full process.
         </p>
       ),
     },
@@ -133,11 +180,16 @@ export const termsDebrief: LegalDocument = {
             one-time add-on top-ups, separate from the monthly allotment, remain in
             Customer&rsquo;s balance until consumed or until the Debrief subscription is
             terminated. Add-on credits are not pro-rated or refundable except as required by
-            law or as set forth in the Master Agreement{" "}
-            <a className="underline" href="#m-warranties">§10</a> (limited service warranty
-            remedy) or <a className="underline" href="#m-term">§13</a> (termination for
-            convenience remedy). On termination, any unused add-on credits expire with the
-            subscription and are not refunded.
+            law or as set forth in the Master Terms{" "}
+            <Link href="/terms#m-warranties" className="underline">
+              §10
+            </Link>{" "}
+            (limited service warranty remedy) or{" "}
+            <Link href="/terms#m-term" className="underline">
+              §13
+            </Link>{" "}
+            (termination for convenience remedy). On termination, any unused add-on credits
+            expire with the subscription and are not refunded.
           </p>
           <p className="mt-3">
             <strong>Consumption order.</strong> When Customer generates a Brief, Dunamis
@@ -174,12 +226,14 @@ export const termsDebrief: LegalDocument = {
       title: "Service-specific termination",
       body: (
         <p>
-          In addition to the termination rights in the Master Agreement{" "}
-          <a className="underline" href="#m-term">§13</a>, Dunamis Studios may suspend or
-          terminate Debrief access if Customer&rsquo;s use of Debrief violates
-          Anthropic&rsquo;s Usage Policy or if Anthropic terminates or restricts Dunamis
-          Studios&rsquo;s access to the Claude API such that Debrief cannot functionally
-          operate.
+          In addition to the termination rights in the Master Terms{" "}
+          <Link href="/terms#m-term" className="underline">
+            §13
+          </Link>
+          , Dunamis Studios may suspend or terminate Debrief access if Customer&rsquo;s use of
+          Debrief violates Anthropic&rsquo;s Usage Policy or if Anthropic terminates or
+          restricts Dunamis Studios&rsquo;s access to the Claude API such that Debrief cannot
+          functionally operate.
         </p>
       ),
     },
@@ -190,10 +244,12 @@ export const termsDebrief: LegalDocument = {
       body: (
         <p>
           Debrief operates on commercially reasonable efforts. No uptime guarantee, service
-          credits, or failover arrangements apply, consistent with the Master Agreement{" "}
-          <a className="underline" href="#m-sla">§17</a>. Debrief performance is materially
-          dependent on Anthropic API availability and response times, which are outside Dunamis
-          Studios&rsquo;s control.
+          credits, or failover arrangements apply, consistent with the Master Terms{" "}
+          <Link href="/terms#m-sla" className="underline">
+            §18
+          </Link>
+          . Debrief performance is materially dependent on Anthropic API availability and
+          response times, which are outside Dunamis Studios&rsquo;s control.
         </p>
       ),
     },

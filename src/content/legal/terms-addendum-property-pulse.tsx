@@ -2,10 +2,39 @@ import Link from "next/link";
 import { LEGAL_METADATA } from "./metadata";
 import type { LegalDocument } from "./types";
 
-export const termsPropertyPulse: LegalDocument = {
+const CALLOUT =
+  "mt-4 rounded-md border border-[var(--fg-subtle)]/40 bg-[color-mix(in_oklch,var(--fg)_4%,transparent)] px-4 py-4 text-sm";
+
+export const termsAddendumPropertyPulse: LegalDocument = {
   ...LEGAL_METADATA.propertyPulseAddendum,
   idPrefix: "p-",
   sections: [
+    {
+      n: "P0",
+      id: "p-precedence",
+      title: "Order of precedence",
+      body: (
+        <>
+          <p>
+            This Property Pulse Service Addendum (this &ldquo;<strong>Addendum</strong>&rdquo;)
+            supplements the Dunamis Studios{" "}
+            <Link href="/terms" className="underline">
+              Terms of Sale
+            </Link>{" "}
+            (the &ldquo;<strong>Master Terms</strong>&rdquo;), which apply to all products
+            and services sold on dunamisstudios.com. In the event of a conflict between
+            this Addendum and the Master Terms, this Addendum controls for Property Pulse.
+            On all other topics, the Master Terms govern.
+          </p>
+          <div className={CALLOUT}>
+            <p>
+              <strong>Draft, not final.</strong> This Addendum is in draft form pending
+              review by outside counsel.
+            </p>
+          </div>
+        </>
+      ),
+    },
     {
       n: "P1",
       id: "p-service-description",
@@ -57,10 +86,19 @@ export const termsPropertyPulse: LegalDocument = {
         <p>
           Property Pulse does not use artificial intelligence and does not transmit Customer
           Data to Anthropic or any other AI service provider. The AI Output provisions of
-          Master Agreement <a className="underline" href="#m-ai-output">§7</a>, the AI Output
-          sub-cap in Master Agreement <a className="underline" href="#m-liability">§12</a>, and
-          the Anthropic Usage Policy flow-through in Master Agreement{" "}
-          <a className="underline" href="#m-aup">§6</a> do not apply to Property Pulse.
+          Master Terms{" "}
+          <Link href="/terms#m-ai-output" className="underline">
+            §7
+          </Link>
+          , the AI Output sub-cap in Master Terms{" "}
+          <Link href="/terms#m-liability" className="underline">
+            §12
+          </Link>
+          , and the Sub-processor flow-through in Master Terms{" "}
+          <Link href="/terms#m-aup" className="underline">
+            §6
+          </Link>{" "}
+          do not apply to Property Pulse with respect to AI Sub-processors.
         </p>
       ),
     },
@@ -140,7 +178,7 @@ export const termsPropertyPulse: LegalDocument = {
           </p>
           <p className="mt-3">
             No recurring fees, subscription charges, or per-user fees apply. The license
-            continues in perpetuity per HubSpot portal, subject to the Master Agreement, this
+            continues in perpetuity per HubSpot portal, subject to the Master Terms, this
             Addendum, and the Customer&rsquo;s compliance with its terms.
           </p>
           <p className="mt-3">
@@ -162,19 +200,32 @@ export const termsPropertyPulse: LegalDocument = {
           <p>
             Customer may request a full refund of the one-time Property Pulse license fee
             within <strong>seven (7) days</strong> of the original install date by contacting{" "}
-            <a href="mailto:support@dunamisstudios.net" className="underline">
-              support@dunamisstudios.net
+            <a href="mailto:support@dunamisstudios.com" className="underline">
+              support@dunamisstudios.com
             </a>
             . After the seven-day window, no refund is issued, except as required by law or as
-            set forth in the Master Agreement{" "}
-            <a className="underline" href="#m-warranties">§10</a> (limited service warranty
-            remedy) or <a className="underline" href="#m-term">§13</a> (termination for
-            convenience remedy).
+            set forth in the Master Terms{" "}
+            <Link href="/terms#m-warranties" className="underline">
+              §10
+            </Link>{" "}
+            (limited service warranty remedy) or{" "}
+            <Link href="/terms#m-term" className="underline">
+              §13
+            </Link>{" "}
+            (termination for convenience remedy). See{" "}
+            <Link href="/refund-policy/property-pulse" className="underline">
+              /refund-policy/property-pulse
+            </Link>{" "}
+            for the full process.
           </p>
           <p className="mt-3">
             Refund of the one-time fee terminates the license for the affected portal. Dunamis
             Studios will disable access and follow the data-deletion process described in
-            Master Agreement <a className="underline" href="#m-term">§13</a>.
+            Master Terms{" "}
+            <Link href="/terms#m-term" className="underline">
+              §13
+            </Link>
+            .
           </p>
         </>
       ),
@@ -187,9 +238,10 @@ export const termsPropertyPulse: LegalDocument = {
         <>
           <p>
             During the beta period, Property Pulse is provided free of charge. Beta
-            participation is subject to the Master Agreement and this Addendum. The beta-period
-            pricing is <strong>$0</strong> and the <a className="underline" href="#p-refunds">§P6</a>{" "}
-            refund policy does not apply (there being no fee to refund).
+            participation is subject to the Master Terms and this Addendum. The beta-period
+            pricing is <strong>$0</strong> and the{" "}
+            <a className="underline" href="#p-refunds">§P6</a> refund policy does not apply
+            (there being no fee to refund).
           </p>
           <p className="mt-3">
             When Property Pulse exits beta, existing beta installations will be notified at
@@ -208,12 +260,14 @@ export const termsPropertyPulse: LegalDocument = {
       title: "Service-specific termination",
       body: (
         <p>
-          In addition to the termination rights in the Master Agreement{" "}
-          <a className="underline" href="#m-term">§13</a>, if HubSpot terminates or restricts
-          Dunamis Studios&rsquo;s access to its marketplace APIs such that Property Pulse
-          cannot functionally operate, Dunamis Studios may terminate the license for affected
-          portals and issue pro-rated refunds for licenses purchased within the then-current
-          refund window.
+          In addition to the termination rights in the Master Terms{" "}
+          <Link href="/terms#m-term" className="underline">
+            §13
+          </Link>
+          , if HubSpot terminates or restricts Dunamis Studios&rsquo;s access to its
+          marketplace APIs such that Property Pulse cannot functionally operate, Dunamis
+          Studios may terminate the license for affected portals and issue pro-rated refunds
+          for licenses purchased within the then-current refund window.
         </p>
       ),
     },
@@ -224,10 +278,12 @@ export const termsPropertyPulse: LegalDocument = {
       body: (
         <p>
           Property Pulse operates on commercially reasonable efforts. No uptime guarantee,
-          service credits, or failover arrangements apply, consistent with the Master Agreement{" "}
-          <a className="underline" href="#m-sla">§17</a>. Property Pulse performance is
-          materially dependent on HubSpot API availability and response times, which are
-          outside Dunamis Studios&rsquo;s control.
+          service credits, or failover arrangements apply, consistent with the Master Terms{" "}
+          <Link href="/terms#m-sla" className="underline">
+            §18
+          </Link>
+          . Property Pulse performance is materially dependent on HubSpot API availability and
+          response times, which are outside Dunamis Studios&rsquo;s control.
         </p>
       ),
     },
