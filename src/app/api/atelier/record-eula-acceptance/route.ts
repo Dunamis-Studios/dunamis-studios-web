@@ -14,6 +14,8 @@ import {
   renderEulaForCustomer,
   type EulaSubstitutions,
 } from "@/lib/eula-renderer";
+import { rateLimit } from "@/lib/ratelimit";
+import { truncatedClientIp } from "@/lib/truncate-ip";
 
 /**
  * POST /api/atelier/record-eula-acceptance
@@ -71,16 +73,10 @@ const bodySchema = z.object({
   expected_sha256: z.string().regex(/^[0-9a-f]{64}$/i, "must be sha256 hex"),
 });
 
-function ipFromRequest(request: Request): string | null {
-  const xff = request.headers.get("x-forwarded-for");
-  if (xff) {
-    const first = xff.split(",")[0]?.trim();
-    if (first) return first;
-  }
-  return request.headers.get("x-real-ip");
-}
-
 export async function POST(request: Request) {
+  const rl = await rateLimit(request, "eula");
+  if (!rl.ok) return rl.response;
+
   let raw: unknown;
   try {
     raw = await request.json();
@@ -233,7 +229,7 @@ export async function POST(request: Request) {
     first_name_at_accept: account.firstName,
     last_name_at_accept: account.lastName,
     company_name_at_accept: account.companyName ?? null,
-    ip_at_accept: ipFromRequest(request),
+    ip_at_accept: truncatedClientIp(request),
     user_agent_at_accept: request.headers.get("user-agent"),
     rendered_eula_text,
     substitution_values: substitutions,

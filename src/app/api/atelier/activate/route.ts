@@ -16,6 +16,7 @@ import {
 import { getSessionFromBearer } from "@/lib/session";
 import { getAccountById } from "@/lib/accounts";
 import { CURRENT_ATELIER_EULA_VERSION } from "@/lib/atelier-eula";
+import { rateLimit } from "@/lib/ratelimit";
 
 /**
  * POST /api/atelier/activate
@@ -140,6 +141,9 @@ async function customerProfileForLicense(
 }
 
 export async function POST(request: Request) {
+  const rl = await rateLimit(request, "activation");
+  if (!rl.ok) return rl.response;
+
   let raw: unknown;
   try {
     raw = await request.json();

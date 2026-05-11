@@ -7,6 +7,7 @@ import {
   getActivation,
   refreshActivationHeartbeat,
 } from "@/lib/atelier-activation";
+import { rateLimit } from "@/lib/ratelimit";
 
 /**
  * POST /api/atelier/heartbeat
@@ -54,6 +55,9 @@ function daysBetween(fromIso: string, to: Date): number {
 }
 
 export async function POST(request: Request) {
+  const rl = await rateLimit(request, "heartbeat");
+  if (!rl.ok) return rl.response;
+
   let raw: unknown;
   try {
     raw = await request.json();

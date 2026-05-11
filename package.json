@@ -18,6 +18,8 @@
     "issue-license": "tsx scripts/issue-license-cli.ts",
     "revoke-license": "tsx scripts/revoke-license-cli.ts",
     "backfill:license-account-id": "tsx scripts/backfill-license-account-id.ts",
+    "truncate-ips": "tsx scripts/truncate-existing-ips.ts",
+    "smoke:data-export": "tsx scripts/smoke-data-export.ts",
     "smoke:listicle-fields": "tsx scripts/smoke-listicle-fields.ts"
   },
   "dependencies": {
@@ -35,6 +37,7 @@
     "@tiptap/pm": "^3.22.4",
     "@tiptap/react": "^3.22.4",
     "@tiptap/starter-kit": "^3.22.4",
+    "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.34.3",
     "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^2.3.3",
