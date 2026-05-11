@@ -1,8 +1,8 @@
 ---
-version: "1.0"
+version: "1.1"
 productName: "Atelier"
 productVersion: "1.x"
-effectiveDate: "2026-05-09"
+effectiveDate: "2026-05-11"
 licensor: 'Dunamis Studios LLC, a Florida limited liability company (or its predecessor sole proprietorship operating as "Dunamis Studios" until LLC formation completes)'
 ---
 > **Draft — Not Final.** This End User License Agreement is a working draft prepared for Dunamis Studios products. It has not yet been reviewed by a licensed attorney. The final version will be reviewed and approved by counsel prior to commercial release of any product using this agreement.
@@ -111,8 +111,8 @@ A breach of any restriction in this Section 5 is a material breach of this Agree
 
 ## 10. Updates and Major Versions
 
-1. Bug fixes and minor version updates within the same major version are provided to {{LICENSEE_FULL_NAME}} at no additional charge for as long as Dunamis Studios continues to operate that major version. There is no time limit on bug-fix availability tied to the date of purchase.
-2. Dunamis Studios is committed to actively supporting each major version of the Software with bug fixes and security patches. Continued operation of a major version is a commercial commitment by Dunamis Studios, not an open-ended legal guarantee. Dunamis Studios reserves the right to discontinue support for a particular major version with reasonable advance notice to its licensees, in which case {{LICENSEE_FULL_NAME}} retains the right to continue using the discontinued version under this Agreement.
+1. During the period Dunamis Studios continues to make updates available for the major version of the Software identified at the top of this Agreement, bug fixes, minor version updates, and security patches within that major version are provided to {{LICENSEE_FULL_NAME}} at no additional charge. Availability of any specific update is at Dunamis Studios' discretion.
+2. Dunamis Studios provides updates and maintenance to each major version on commercially reasonable efforts. Dunamis Studios does not commit to a release schedule and does not guarantee that any specific bug, vulnerability, or compatibility issue will be addressed. Dunamis Studios may, in its discretion, declare the end of maintenance for a major version after a successor major version has been generally available for at least twelve (12) months; that declaration is published on the product page and emailed to active license holders. End of maintenance does not terminate {{LICENSEE_FULL_NAME}}'s license to continue using the Software, subject to the terms of this Agreement.
 3. Major version upgrades require purchase of a separate major version upgrade license. The terms of any such upgrade license will be those in effect at the time of upgrade purchase. Existing licensees may be eligible for loyalty pricing on major version upgrades, as described in the separate Terms of Sale.
 4. {{LICENSEE_FULL_NAME}} is not required to upgrade and may continue using the version of the Software identified at the top of this Agreement indefinitely, subject to the terms of this Agreement.
 
@@ -127,10 +127,9 @@ A breach of any restriction in this Section 5 is a material breach of this Agree
 Dunamis Studios warrants and represents that, as of the date of delivery of the Software:
 
 1. Dunamis Studios has the right, title, and authority to grant the license rights granted under this Agreement, and is not party to any agreement, covenant, or encumbrance that conflicts with this Agreement.
-2. To the best of Dunamis Studios' knowledge, the Software does not infringe upon or violate any patent, copyright, trade secret, or other proprietary right of any third party.
-3. The Software, as delivered by Dunamis Studios, is not knowingly contaminated by harmful code, including but not limited to viruses, worms, trojans, ransomware, or other self-propagating program instructions designed to damage or disrupt {{LICENSEE_FULL_NAME}}'s systems.
+2. Dunamis Studios has not knowingly included in the Software any virus, worm, trojan, ransomware, or other self-propagating program instructions designed to damage or disrupt {{LICENSEE_FULL_NAME}}'s systems.
 
-These limited warranties are the only affirmative warranties made by Dunamis Studios. They are subject to the warranty disclaimer in Section 13 and the liability limitations in Section 14.
+These two limited warranties are the only affirmative warranties made by Dunamis Studios in connection with the Software. {{LICENSEE_FULL_NAME}}'s sole and exclusive remedy for a breach of either warranty is, at Dunamis Studios' option, (a) correction of the underlying issue in the Software, or (b) refund of the license fee {{LICENSEE_FULL_NAME}} paid for the version of the Software at issue. Dunamis Studios makes no warranty regarding non-infringement of third-party intellectual property beyond the right-to-license warranty in Section 12.1; the disclaimer in Section 13 applies in full to non-infringement. The warranties in this Section 12 are subject to the warranty disclaimer in Section 13 and the liability limitations in Section 14.
 
 ## 13. Warranty Disclaimer
 
@@ -166,12 +165,14 @@ These limited warranties are the only affirmative warranties made by Dunamis Stu
 5. License activation and heartbeat traffic transmits only the License Key identifier, the device's hardware fingerprint hash, and the running version of the Software. No wedding data, no vendor data, no customer data of any kind is transmitted as part of license activation or heartbeat.
 6. License activation and heartbeat data is retained by Dunamis Studios solely for the purposes of license enforcement, fraud prevention, and customer support. Activation records are retained for the lifetime of the License plus seven (7) years for tax and audit purposes.
 
-## 16. Export Controls
+## 16. Export Controls and Sanctions
 
-1. {{LICENSEE_FULL_NAME}} may not export, re-export, ship, transfer, transmit, or otherwise distribute the Software, in whole or in part, in violation of any applicable export-control laws or regulations, including but not limited to the U.S. Export Administration Regulations issued by the U.S. Department of Commerce, the U.S. International Traffic in Arms Regulations, and any sanctions programs administered by the U.S. Department of the Treasury's Office of Foreign Assets Control (OFAC).
-2. {{LICENSEE_FULL_NAME}} represents and warrants that {{LICENSEE_FULL_NAME}} is not located in, under the control of, or a national or resident of any country or region subject to a comprehensive U.S. embargo, and is not on any U.S. government list of restricted, denied, or sanctioned parties.
-3. Unless specifically authorized in writing by Dunamis Studios and in compliance with applicable law, {{LICENSEE_FULL_NAME}} shall not export the Software under any circumstances.
-4. This Section 16 survives termination of this Agreement.
+1. The Software is subject to United States export-control laws and regulations, including the Export Administration Regulations (15 C.F.R. Parts 730-774) administered by the U.S. Department of Commerce Bureau of Industry and Security, the International Traffic in Arms Regulations, and economic sanctions programs administered by the U.S. Department of the Treasury Office of Foreign Assets Control (OFAC).
+2. The Software incorporates encryption components that qualify the Software as mass-market encryption software under Export Control Classification Number (ECCN) 5D002.c.1 of the Commerce Control List. Dunamis Studios distributes the Software under license exception ENC pursuant to 15 C.F.R. §740.17, as mass-market software meeting the criteria of §740.17(b)(1). Dunamis Studios has filed the encryption registration and any required notifications with the Bureau of Industry and Security to the extent applicable.
+3. {{LICENSEE_FULL_NAME}} represents and warrants that {{LICENSEE_FULL_NAME}} is not located in, organized under the laws of, or ordinarily resident in a country or territory subject to comprehensive U.S. sanctions (currently Cuba, Iran, North Korea, Syria, and the Crimea, Donetsk, Luhansk, Kherson, and Zaporizhzhia regions of Ukraine), is not on the OFAC Specially Designated Nationals list, the Commerce Denied Persons or Entity list, or any other restricted-party list maintained by the United States or another applicable government, and will not export, re-export, or transfer the Software to a person or destination prohibited by United States law.
+4. {{LICENSEE_FULL_NAME}} shall not export, re-export, ship, transfer, transmit, or otherwise distribute the Software, in whole or in part, in violation of any applicable export-control law or sanctions program, and shall obtain any license or other governmental authorization required for export, re-export, or transfer before performing it.
+5. {{LICENSEE_FULL_NAME}} shall promptly notify Dunamis Studios at legal@dunamisstudios.com upon learning of any actual or suspected export-control violation involving the Software.
+6. This Section 16 survives termination of this Agreement.
 
 ## 17. Marketing Reference
 
@@ -195,13 +196,15 @@ These limited warranties are the only affirmative warranties made by Dunamis Stu
 
 ## 20. Governing Law and Disputes
 
-1. This Agreement is governed by, and construed in accordance with, the laws of the State of Florida, without regard to its conflict-of-laws principles.
-2. Any dispute arising from or related to this Agreement must be brought in the state or federal courts located in Florida (specific county to be designated upon LLC formation). The parties consent to the personal jurisdiction of those courts.
-3. Before initiating litigation, the parties agree to a thirty (30) day good-faith negotiation period beginning on the date the disputing party delivers written notice of the dispute to the other party.
-4. The prevailing party in any dispute arising under this Agreement is entitled to recover its reasonable attorney fees and costs from the non-prevailing party.
-5. {{LICENSEE_FULL_NAME}} waives the right to participate in any class action, collective action, or representative action against Dunamis Studios. Disputes must be resolved on an individual basis.
-6. To the extent permitted under Florida law, {{LICENSEE_FULL_NAME}} waives the right to a trial by jury for any dispute arising under this Agreement.
-7. The parties agree that no provision of the Uniform Computer Information Transactions Act (UCITA), or any similar provision adopted by any state or other jurisdiction, shall apply to this Agreement.
+1. This Agreement is governed by, and construed in accordance with, the laws of the State of Florida, without regard to its conflict-of-laws principles. The United Nations Convention on Contracts for the International Sale of Goods does not apply.
+2. Any dispute arising from or related to this Agreement that is not subject to the arbitration provision in the separate Terms of Sale must be brought in the state or federal courts located in Hillsborough County, Florida. The parties consent to the personal jurisdiction of those courts.
+3. Before initiating litigation, the parties agree to a thirty (30) day good-faith negotiation period beginning on the date the disputing party delivers written notice of the dispute to the other party at the address in Section 23.
+4. **FDUTPA pre-suit notice.** Before bringing a claim against Dunamis Studios under the Florida Deceptive and Unfair Trade Practices Act (Fla. Stat. §501.201 et seq.), {{LICENSEE_FULL_NAME}} shall deliver written notice describing the alleged conduct and the relief sought to legal@dunamisstudios.com and shall allow Dunamis Studios thirty (30) days to respond and, where appropriate, cure or settle. The notice period under this Section 20.4 runs concurrently with the negotiation period in Section 20.3.
+5. The prevailing party in any dispute arising under this Agreement is entitled to recover its reasonable attorney fees and costs from the non-prevailing party, to the extent permitted by law.
+6. **Class action waiver.** {{LICENSEE_FULL_NAME}} may bring claims against Dunamis Studios only in {{LICENSEE_FULL_NAME}}'s individual capacity, and not as a plaintiff or class member in a purported class, collective, representative, multi-plaintiff, or similar proceeding. No court or arbitrator may consolidate more than one person's claims, preside over a representative or class proceeding, or award class, collective, or representative relief in connection with this Agreement. If a court of competent jurisdiction determines this waiver is unenforceable in a given dispute, that dispute will be resolved in court under Section 20.2, and the remaining provisions of this Section 20 remain in effect for other disputes.
+7. To the extent permitted under Florida law, {{LICENSEE_FULL_NAME}} waives the right to a trial by jury for any dispute arising under this Agreement.
+8. **UCITA inapplicability.** The Uniform Computer Information Transactions Act, as enacted in any United States jurisdiction, does not apply to this Agreement. Florida has not adopted UCITA, and the parties expressly opt out of UCITA in every jurisdiction where opting out is permitted.
+9. The arbitration provision in the separate Terms of Sale governs disputes arising out of or relating to {{LICENSEE_FULL_NAME}}'s purchase of the Software, including refund disputes, billing disputes, and consumer-protection claims. This Agreement is the controlling document for disputes about {{LICENSEE_FULL_NAME}}'s licensed use of the Software (Section 5 restrictions, Section 6 license keys, Section 7 Authorized Users); those disputes are resolved in court under Section 20.2.
 
 ## 21. Severability
 
