@@ -39,8 +39,8 @@ export const LEGAL_METADATA = {
   },
   privacy: {
     title: "Privacy Policy",
-    lastUpdated: "April 23, 2026",
-    version: "2.0",
+    lastUpdated: "May 11, 2026",
+    version: "3.0",
   },
   dpa: {
     title: "Data Processing Addendum",

@@ -178,6 +178,14 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
+              <Link
+                href="/privacy/do-not-sell"
+                className="text-[var(--fg-muted)] hover:text-[var(--fg)]"
+              >
+                Do Not Sell or Share My Personal Information
+              </Link>
+            </li>
+            <li>
               <Link href="/security" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
                 Security
               </Link>

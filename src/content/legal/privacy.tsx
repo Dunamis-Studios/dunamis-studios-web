@@ -7,625 +7,544 @@ export const privacyPolicy: LegalDocument = {
   idPrefix: "pp-",
   sections: [
     {
+      n: "0",
+      id: "pp-draft-banner",
+      title: "Draft, not final",
+      body: (
+        <>
+          <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
+            <p className="font-medium">This policy is a working draft.</p>
+            <p className="mt-2">
+              It describes Dunamis Studios&rsquo; current data-handling practices for the
+              marketing site, customer accounts, the Atelier desktop app, and our HubSpot
+              marketplace apps. It will be finalized once the underlying Dunamis Studios LLC
+              entity formation completes and counsel reviews the final draft. Where this draft
+              differs from a future final version, the final version controls from its effective
+              date forward.
+            </p>
+          </div>
+        </>
+      ),
+    },
+    {
       n: "1",
-      id: "pp-tldr",
-      title: "TL;DR",
+      id: "pp-effective-date",
+      title: "Effective date",
       body: (
         <>
           <p>
-            Dunamis Studios builds HubSpot marketplace applications. Each app reads the HubSpot
-            CRM data your admin authorizes and uses it to provide that app&rsquo;s
-            functionality.
+            This Privacy Policy is effective <strong>May 11, 2026</strong> and supersedes the
+            April 23, 2026 version (2.0).
           </p>
           <p className="mt-3">
-            Apps that use AI (currently <strong>Debrief</strong>) send relevant records to
-            Anthropic&rsquo;s Claude API over an encrypted connection. Apps that do not use AI
-            (currently <strong>Property Pulse</strong>) do not transmit data to Anthropic or
-            any other AI provider.
-          </p>
-          <p className="mt-3">
-            Your data is <strong>not used to train any AI model</strong>. Data sent to
-            Anthropic is deleted within <strong>seven (7) days</strong>. We do not sell
-            personal data and we do not share it with advertising networks. The rest of this
-            page explains exactly what we collect, why, for how long, and what rights you have.
+            Material changes are subject to the notification process in{" "}
+            <a href="#pp-changes" className="underline">
+              §14 Changes to this policy
+            </a>
+            .
           </p>
         </>
       ),
     },
     {
       n: "2",
-      id: "pp-scope",
-      title: "Scope: who this policy applies to, and who is controller",
+      id: "pp-who-we-are",
+      title: "Who we are",
       body: (
         <>
-          <div className="rounded-lg border border-[var(--fg-subtle)]/30 bg-[color-mix(in_oklch,var(--fg)_4%,transparent)] px-4 py-4 text-sm">
-            <p className="font-medium">Important: two different roles.</p>
-            <p className="mt-2">
-              Dunamis Studios plays two different legal roles depending on which data is in
-              question, and this policy is structured around that split.
-            </p>
-            <ul className="mt-3 list-disc space-y-1 pl-5">
-              <li>
-                For <strong>Customer CRM Data</strong> &mdash; the contacts, companies, deals,
-                tickets, custom objects, and related properties that Dunamis Studios apps read
-                from your HubSpot portal &mdash;{" "}
-                <strong>your organization (the HubSpot admin) is the controller</strong> under
-                GDPR and the &ldquo;business&rdquo; under CCPA/CPRA. Dunamis Studios is a{" "}
-                <strong>processor</strong> (GDPR) / <strong>service provider</strong> (CCPA).
-                If you are a data subject whose personal data sits in a Dunamis Studios
-                customer&rsquo;s HubSpot portal, your rights requests should go to that
-                customer; we will support them under our Data Processing Addendum.
-              </li>
-              <li>
-                For data we collect directly &mdash; website visitors, trial signups, Dunamis
-                Studios account holders, billing contacts, support correspondents &mdash;{" "}
-                <strong>Dunamis Studios is the controller</strong> under GDPR and the
-                &ldquo;business&rdquo; under CCPA/CPRA. This policy governs that data.
-              </li>
-            </ul>
-          </div>
-          <p className="mt-4">
-            References in this policy to &ldquo;Dunamis Studios,&rdquo; &ldquo;Dunamis,&rdquo;
-            &ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo; mean{" "}
-            <strong>Joshua Robert Bradford</strong>, an individual resident of the State of
-            Florida, United States, doing business under the name Dunamis Studios. See{" "}
+          <p>
+            References to &ldquo;Dunamis Studios,&rdquo; &ldquo;Dunamis,&rdquo; &ldquo;we,&rdquo;
+            &ldquo;us,&rdquo; or &ldquo;our&rdquo; mean <strong>Joshua Robert Bradford</strong>,
+            an individual resident of the State of Florida, United States, doing business under
+            the name Dunamis Studios. Upon completion of formation, the LLC named{" "}
+            <strong>Dunamis Studios LLC</strong>, a Florida limited liability company, will
+            assume this Privacy Policy and all associated commitments by operation of law and
+            internal transfer.
+          </p>
+          <p className="mt-3">
+            Postal address and contact channels are listed in{" "}
             <a href="#pp-contact" className="underline">
-              §14 Contact
-            </a>{" "}
-            for postal address.
+              §13 Contact
+            </a>
+            .
           </p>
         </>
       ),
     },
     {
       n: "3",
-      id: "pp-data-we-collect",
-      title: "The three categories of data we touch",
+      id: "pp-what-we-collect",
+      title: "What we collect, by surface",
       body: (
         <>
           <p>
-            The table below lists every category of personal data Dunamis Studios collects, the
-            source, the purpose, how long we keep it, and the relevant legal basis under GDPR.
-            If a field is not in this table, we do not collect it.
+            Different products and surfaces collect different data. This section enumerates
+            every collection point.
           </p>
-          <div className="mt-4 overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr className="border-b border-[var(--fg-subtle)]/40 text-left">
-                  <th className="py-2 pr-4 font-medium">Category</th>
-                  <th className="py-2 pr-4 font-medium">What&rsquo;s in it</th>
-                  <th className="py-2 pr-4 font-medium">Source</th>
-                  <th className="py-2 pr-4 font-medium">Purpose</th>
-                  <th className="py-2 pr-4 font-medium">Retention</th>
-                  <th className="py-2 font-medium">Legal basis (GDPR)</th>
-                </tr>
-              </thead>
-              <tbody className="[&_td]:py-3 [&_td]:pr-4 [&_td]:align-top [&_tr]:border-b [&_tr]:border-[var(--fg-subtle)]/20">
-                <tr>
-                  <td className="font-medium">Customer CRM Data</td>
-                  <td>
-                    HubSpot records retrieved via OAuth under scopes your admin authorized. For
-                    Debrief: contact and company names, emails, job titles, deal and ticket
-                    fields, engagement content (emails, notes, call summaries). For Property
-                    Pulse: property values and change history for admin-tracked properties
-                    across contacts, companies, deals, tickets, and custom objects, plus
-                    owner/user directory data for source attribution.
-                  </td>
-                  <td>Customer&rsquo;s HubSpot portal (OAuth)</td>
-                  <td>
-                    Deliver the requested app functionality. For Debrief, generate handoff
-                    briefs and messages on demand. For Property Pulse, display property history
-                    and enable inline editing on demand.
-                  </td>
-                  <td>
-                    For Debrief: in transit only for each generation request; cached briefly in
-                    Upstash Redis for the active session; deleted from our stack within 30 days
-                    of subscription termination. Anthropic retains inputs/outputs up to 7 days
-                    (see §5). For Property Pulse: not cached in Dunamis Studios infrastructure;
-                    fetched live per user request and discarded after response.
-                  </td>
-                  <td>
-                    Processor &mdash; controller&rsquo;s basis governs (typically Art. 6(1)(b) /
-                    6(1)(f))
-                  </td>
-                </tr>
-                <tr>
-                  <td className="font-medium">Account Data</td>
-                  <td>
-                    Account holder name, email, hashed password or OAuth identifier,
-                    entitlement state, subscription or license status, billing contact, support
-                    correspondence
-                  </td>
-                  <td>You, directly (signup, checkout, support)</td>
-                  <td>
-                    Operate the account, authenticate sessions, process billing, provide
-                    support
-                  </td>
-                  <td>
-                    Duration of the account + 90 days post-close; billing records 7 years (US
-                    tax); support tickets 2&ndash;3 years
-                  </td>
-                  <td>
-                    <em>Art. 6(1)(b)</em> Contract; <em>Art. 6(1)(f)</em> Legitimate interests
-                    (security); <em>Art. 6(1)(c)</em> Legal obligation (tax)
-                  </td>
-                </tr>
-                <tr>
-                  <td className="font-medium">Visitor / Marketing Data</td>
-                  <td>
-                    Page-view events from dunamisstudios.net (via Vercel Analytics and HubSpot
-                    tracking), approximate country, browser type; signup-form entries; emails
-                    you send us
-                  </td>
-                  <td>You, directly (browsing, forms)</td>
-                  <td>
-                    Operate the site, measure aggregate traffic, respond to inbound inquiries,
-                    understand visitor behavior
-                  </td>
-                  <td>
-                    Analytics events 13 months; form submissions 2 years from last interaction;
-                    HubSpot tracking data per HubSpot&rsquo;s retention defaults
-                  </td>
-                  <td>
-                    <em>Art. 6(1)(f)</em> Legitimate interests (site operation);{" "}
-                    <em>Art. 6(1)(a)</em> Consent (marketing emails, EU cookies)
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+
+          <p className="mt-4 font-medium">Marketing site (dunamisstudios.com)</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>
+              Vercel-default access logs (request IP truncated per{" "}
+              <a href="#pp-fingerprint" className="underline">
+                §6
+              </a>
+              , User-Agent, request path, status code, timing). 30-day retention.
+            </li>
+            <li>No web analytics tools. No advertising or tracking pixels.</li>
+            <li>
+              No cookies set by Dunamis Studios. Vercel may set a session cookie strictly to
+              route requests to the correct edge region.
+            </li>
+          </ul>
+
+          <p className="mt-4 font-medium">Atelier desktop app (local-only)</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>
+              <strong>Nothing transmitted</strong> from Atelier except the license-related calls
+              below. Wedding data, vendor data, client PII, business data: never leave the
+              customer&rsquo;s machine.
+            </li>
+          </ul>
+
+          <p className="mt-4 font-medium">Atelier license activation</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>License ID, device fingerprint hash, Atelier version, optional device label.</li>
+            <li>Request IP (truncated per §6) and User-Agent.</li>
+          </ul>
+
+          <p className="mt-4 font-medium">Atelier license heartbeat (once per day)</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>License ID, device fingerprint hash, Atelier version. Request IP truncated.</li>
+            <li>Payload is approximately 1 KB. No business data, no usage data.</li>
+          </ul>
+
+          <p className="mt-4 font-medium">Atelier crash reports</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>
+              None. Atelier ships with no crash reporter, no telemetry, no analytics. If this
+              ever changes, it will require an explicit opt-in surface in Settings.
+            </li>
+          </ul>
+
+          <p className="mt-4 font-medium">Atelier auto-update check (opt-out)</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>
+              Standard HTTP GET to{" "}
+              <code className="font-mono text-sm">
+                github.com/Dunamis-Studios/atelier/releases/latest/download/latest.json
+              </code>
+              . No payload beyond what every HTTP request carries (request IP, User-Agent).
+              GitHub, not Dunamis Studios, sees and logs this request. Disabled in Atelier
+              Settings to Software Updates.
+            </li>
+          </ul>
+
+          <p className="mt-4 font-medium">Dunamis Sync (opt-in only)</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>
+              Off by default. When the customer activates Sync, Atelier exchanges
+              client-encrypted opaque blobs with{" "}
+              <code className="font-mono text-sm">dunamisstudios.net/api/sync/*</code> and{" "}
+              <code className="font-mono text-sm">sync.dunamisstudios.net</code>. The encryption
+              key lives in Windows Credential Manager and never crosses the network.
+            </li>
+            <li>
+              Detailed practices, including blob metadata, retention, and rotation, are
+              documented separately when Dunamis Sync launches as a separately-sold product.
+              Until then, Sync is not available to customers.
+            </li>
+          </ul>
+
+          <p className="mt-4 font-medium">Stripe Checkout (license purchase, custom-build invoicing)</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>
+              Stripe is the controller for payment data (card details, billing address). Dunamis
+              Studios receives a Stripe customer ID, a payment intent reference, and the
+              customer email used at checkout. Card numbers do not transit Dunamis-controlled
+              infrastructure. See Stripe&rsquo;s Privacy Policy.
+            </li>
+          </ul>
+
+          <p className="mt-4 font-medium">Customer accounts on dunamisstudios.com</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>Email address, hashed password (bcrypt), name, optional company name.</li>
+            <li>
+              Account creation IP (truncated per §6), account creation timestamp, last-login
+              timestamp.
+            </li>
+            <li>
+              License history: every license ID associated with the account plus its issuance
+              date, current status (active / refunded / revoked), and per-device activation
+              records.
+            </li>
+            <li>EULA acceptance history: a record of every EULA version accepted on this account.</li>
+          </ul>
+
+          <p className="mt-4 font-medium">HubSpot marketplace apps (Debrief, Property Pulse)</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>
+              For Customer CRM data accessed by these apps, the customer organization is the
+              controller and Dunamis Studios is a processor. See the Data Processing Addendum
+              (linked from{" "}
+              <a href="/legal/dpa" className="underline">
+                /legal/dpa
+              </a>
+              ) for the full processor terms.
+            </li>
+          </ul>
         </>
       ),
     },
     {
       n: "4",
-      id: "pp-legal-bases",
-      title: "Legal bases for processing (GDPR / UK GDPR)",
+      id: "pp-lawful-basis",
+      title: "Why we collect each piece (GDPR lawful basis)",
       body: (
         <>
-          <p>
-            Where GDPR or UK GDPR applies, the legal basis for each processing purpose is
-            annotated inline in italics below.
-          </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5">
+          <ul className="list-disc space-y-2 pl-5">
             <li>
-              Providing Dunamis Studios apps to paying customers and our website to visitors.{" "}
-              <em>Art. 6(1)(b) Performance of a contract.</em>
+              <strong>License validation and enforcement</strong>: Article 6(1)(b),{" "}
+              <em>performance of a contract</em>. The license is the contract; validation is the
+              performance.
             </li>
             <li>
-              Keeping the services secure, detecting abuse, maintaining server logs, and
-              improving the products. <em>Art. 6(1)(f) Legitimate interests</em> &mdash; our
-              interest in operating a secure, reliable service, balanced against reasonable
-              expectations of users.
+              <strong>Anti-abuse logging on activation and heartbeat endpoints</strong>: Article
+              6(1)(f), <em>legitimate interests</em>. Detecting and blocking license-key sharing,
+              automated activation tooling, and endpoint scanning protects the perpetual-license
+              commercial model and the operational availability of the licensing service. A
+              Legitimate Interests Assessment is on file internally and is summarized in our
+              public statements; data subjects may object via{" "}
+              <code className="font-mono text-sm">dsr@dunamisstudios.com</code>.
             </li>
             <li>
-              Sending transactional emails (verification, receipts, service notices).{" "}
-              <em>Art. 6(1)(b) Contract.</em>
+              <strong>Account creation and management</strong>: Article 6(1)(b), contract
+              performance (customer-account contract enabling license management, EULA
+              acceptance, refund handling, license-deactivation self-service).
             </li>
             <li>
-              Sending marketing emails where you have opted in, and setting non-essential
-              cookies where required. <em>Art. 6(1)(a) Consent</em> &mdash; you can withdraw at
-              any time without affecting processing that already happened.
+              <strong>EULA acceptance recording</strong>: Article 6(1)(c),{" "}
+              <em>legal obligation</em>, plus 6(1)(b) contract performance. Acceptance records
+              are the legal artifact establishing the contract.
             </li>
             <li>
-              Complying with tax, accounting, and legal requests.{" "}
-              <em>Art. 6(1)(c) Legal obligation.</em>
+              <strong>Marketing emails (if any in the future)</strong>: Article 6(1)(a),{" "}
+              <em>consent</em>. No marketing email program is operating today; if one is
+              introduced, opt-in is required and opt-out is one click.
             </li>
             <li>
-              Responding to support inquiries you send us.{" "}
-              <em>Art. 6(1)(f) Legitimate interests</em> &mdash; our interest in helping you
-              and yours.
+              <strong>Stripe-administered payment processing</strong>: Article 6(1)(b),
+              performance of the sales contract. Stripe is a joint controller for payment data.
             </li>
           </ul>
-          <p className="mt-3">
-            Where we rely on legitimate interests, you have the right to object (see{" "}
-            <a href="#pp-rights" className="underline">§9</a>).
-          </p>
         </>
       ),
     },
     {
       n: "5",
-      id: "pp-ai",
-      title: "How Dunamis Studios uses AI",
+      id: "pp-do-not-collect",
+      title: "What we explicitly DO NOT collect",
       body: (
         <>
-          <p>Some Dunamis Studios applications use artificial intelligence. Currently:</p>
-          <ul className="mt-3 list-disc space-y-2 pl-5">
+          <ul className="list-disc space-y-1 pl-5">
+            <li>Wedding data, vendor data, client PII, or any business data from inside Atelier.</li>
             <li>
-              <strong>Debrief uses AI.</strong> Debrief transmits HubSpot CRM Data to
-              Anthropic&rsquo;s Claude API to generate handoff briefs and conversational
-              handoff messages.
+              Telemetry, analytics, or behavioral tracking inside Atelier. The binary has no
+              such code paths.
             </li>
-            <li>
-              <strong>Property Pulse does not use AI.</strong> Property Pulse does not transmit
-              any Customer Data to Anthropic or to any other AI or machine-learning service
-              provider.
-            </li>
+            <li>Cross-site tracking cookies on the marketing site. No third-party trackers.</li>
+            <li>Advertising or marketing pixels of any kind.</li>
+            <li>Health data, financial account numbers, or government-issued identification.</li>
+            <li>Biometric identifiers.</li>
+            <li>Precise geolocation. (Coarse country-level inference from IP only, used for tax-routing during Stripe Checkout.)</li>
+            <li>Data about minors. Our products are not directed to children under 16.</li>
           </ul>
-          <p className="mt-4">For AI-enabled applications (currently Debrief):</p>
-          <p className="mt-3">
-            <strong>What data is sent to AI.</strong> When a brief or message is requested, the
-            app retrieves the relevant records from Customer&rsquo;s HubSpot portal under the
-            OAuth authorization the admin granted, and transmits them to Anthropic&rsquo;s
-            Claude API over an encrypted TLS 1.2+ connection.
-          </p>
-          <p className="mt-3">
-            <strong>Who generates the output.</strong> Output is generated by Anthropic
-            PBC&rsquo;s Claude large language model, accessed via the Anthropic API. Anthropic
-            is our sub-processor under a written Data Processing Addendum incorporating the EU
-            Standard Contractual Clauses (Modules 2 and 3), the UK International Data Transfer
-            Addendum, and the Swiss Addendum.
-          </p>
-          <p className="mt-3">
-            <strong>What Anthropic does not do.</strong> Under Anthropic&rsquo;s Commercial
-            Terms of Service, <strong>Anthropic does not use API data to train its models.</strong>{" "}
-            Anthropic retains API inputs and outputs for up to seven (7) days for abuse
-            monitoring, after which they are deleted. Flagged content may be retained longer
-            solely for Trust &amp; Safety purposes. See Anthropic&rsquo;s documentation at{" "}
-            <a
-              href="https://privacy.claude.com"
-              target="_blank"
-              rel="noreferrer"
-              className="underline"
-            >
-              privacy.claude.com
-            </a>
-            .
-          </p>
-          <p className="mt-3">
-            <strong>No automated decisions with legal effect.</strong> AI-generated output from
-            Dunamis Studios apps is informational content intended to help a human on your team
-            prepare for a conversation, review property changes, or otherwise make an informed
-            decision. No Dunamis Studios app performs automated decision-making with legal or
-            similarly significant effects within the meaning of Article 22 of the GDPR or
-            Article 12.1 of Quebec&rsquo;s Law 25, and no Dunamis Studios app is a
-            &ldquo;high-risk&rdquo; AI system under the EU AI Act.
-          </p>
-          <p className="mt-3">
-            <strong>AI labeling and accuracy.</strong> Every piece of AI-generated content is
-            clearly labeled as AI-generated in the application interface. Large language models
-            can produce inaccurate, incomplete, or fabricated information. You are responsible
-            for reviewing and verifying each output before acting on it.
-          </p>
-          <p className="mt-3">
-            <strong>Your controls.</strong> You can disable the AI feature in the relevant
-            app&rsquo;s workspace settings (for AI-enabled apps), delete any generated output
-            at any time, and qualifying customers may request a zero-retention arrangement with
-            Anthropic. We do not train AI or machine-learning models on your Customer Data for
-            any purpose other than generating outputs for your own account.
-          </p>
         </>
       ),
     },
     {
       n: "6",
-      id: "pp-subprocessors",
-      title: "Sub-processors",
+      id: "pp-fingerprint",
+      title: "Device fingerprint composition",
       body: (
         <>
           <p>
-            Dunamis Studios relies on a short list of sub-processors to operate its
-            applications and the dunamisstudios.net website. The live list &mdash; including
-            legal name, purpose, processing location, transfer mechanism, and which Dunamis
-            Studios applications use the sub-processor &mdash; is published at{" "}
-            <Link href="/legal/subprocessors" className="underline">
-              /legal/subprocessors
-            </Link>
-            .
+            Your device is identified by a fingerprint generated from your computer&rsquo;s
+            hardware identifiers. We hash these locally on your machine before transmitting; the
+            hash cannot be reversed to identify your computer&rsquo;s components or to track you
+            across other software. The hash is purpose-bound to license-slot enforcement and is
+            not combined with any other dataset.
           </p>
           <p className="mt-3">
-            We commit to <strong>thirty (30) days&rsquo; advance notice</strong> of any new
-            sub-processor that will process Customer Personal Data. Customers may object on
-            reasonable data-protection grounds; if the objection cannot be resolved,
-            termination of the affected subscription or license is the remedy.
-          </p>
-          <p className="mt-3">
-            Honest asymmetry to disclose: Anthropic, our AI sub-processor (used by Debrief but
-            not Property Pulse), commits to only{" "}
-            <strong>fifteen (15) days&rsquo; notice</strong> of changes to its own
-            sub-processors upstream of us. We pass those changes through to customers as soon
-            as practicable, which may be shorter than our 30-day commitment if Anthropic
-            notifies us late.
+            <strong>IP truncation.</strong> Request IPs received at any
+            Dunamis-Studios-operated endpoint are truncated before persistence. IPv4 addresses
+            are truncated to a /24 (the last octet replaced with zero); IPv6 addresses are
+            truncated to a /48. Truncation occurs at ingest, prior to any log write.
           </p>
         </>
       ),
     },
     {
       n: "7",
-      id: "pp-international-transfers",
-      title: "International transfers",
+      id: "pp-retention",
+      title: "Data retention",
       body: (
         <>
-          <p>
-            Dunamis Studios is based in the United States, and most of our sub-processors
-            operate primarily in the United States. If you are in the European Economic Area,
-            the United Kingdom, or Switzerland, personal data we process about you will be
-            transferred to, and processed in, the United States.
-          </p>
-          <p className="mt-3">We rely on the following transfer mechanisms:</p>
-          <ul className="mt-3 list-disc space-y-2 pl-5">
+          <ul className="list-disc space-y-2 pl-5">
             <li>
-              <strong>EU&ndash;US Data Privacy Framework</strong>, with the UK Extension and
-              Swiss&ndash;US DPF where applicable, for sub-processors that are DPF-certified:
-              Vercel, Upstash, Stripe, Resend, and HubSpot. The DPF remains valid following the
-              CJEU&rsquo;s September 2025 Latombe ruling.
+              <strong>License activation and heartbeat records</strong>: lifetime of the license
+              plus seven (7) years for tax and audit. Contains license ID, hashed device
+              fingerprints of activated devices, first-activation and last-heartbeat timestamps,
+              and Atelier versions observed.
             </li>
             <li>
-              <strong>EU Standard Contractual Clauses</strong> (Commission Implementing
-              Decision 2021/914), Modules 2 (Controller-to-Processor) and 3
-              (Processor-to-Processor), plus the{" "}
-              <strong>UK International Data Transfer Addendum</strong> and the{" "}
-              <strong>Swiss Addendum</strong>, for Anthropic (not DPF-certified, applicable to
-              Debrief only) and as a fallback mechanism for all other sub-processors.
+              <strong>Truncated IPs in access and abuse-detection logs</strong>: 30 days, then
+              automatically deleted by Redis TTL.
+            </li>
+            <li>
+              <strong>Customer account record</strong>: until deletion request, or 3 years after
+              last login activity, whichever comes first.
+            </li>
+            <li>
+              <strong>EULA acceptance records</strong>: retained permanently. These are the
+              legal artifact establishing the contract; deletion would void the contractual
+              evidence record. Includes the verbatim rendered EULA text the customer accepted.
+            </li>
+            <li>
+              <strong>Stripe payment records</strong>: retained by Stripe per Stripe&rsquo;s
+              own policy and applicable payment-card-industry regulations.
+            </li>
+            <li>
+              <strong>Support correspondence</strong>: 3 years from the last message in the
+              thread.
             </li>
           </ul>
-          <p className="mt-3">
-            Supplementary measures consistent with EDPB recommendations: TLS 1.2 or later in
-            transit, AES-256 at rest, data minimization, role-based access controls, and a
-            documented transfer impact assessment refreshed annually. Copies of the SCCs are
-            available on request at{" "}
-            <a href="mailto:privacy@dunamisstudios.net" className="underline">
-              privacy@dunamisstudios.net
-            </a>
-            .
-          </p>
         </>
       ),
     },
     {
       n: "8",
-      id: "pp-retention",
-      title: "Data retention",
+      id: "pp-gdpr-rights",
+      title: "Your rights under GDPR",
       body: (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-[var(--fg-subtle)]/40 text-left">
-                <th className="py-2 pr-4 font-medium">Data type</th>
-                <th className="py-2 font-medium">How long we keep it</th>
-              </tr>
-            </thead>
-            <tbody className="[&_td]:py-3 [&_td]:pr-4 [&_td]:align-top [&_tr]:border-b [&_tr]:border-[var(--fg-subtle)]/20">
-              <tr>
-                <td>Customer CRM Data in transit to Anthropic (Debrief only)</td>
-                <td>
-                  Not stored in Dunamis Studios systems after the API response is returned.
-                  Anthropic retains inputs and outputs for up to 7 days for abuse monitoring
-                  per their Commercial Terms, with longer retention only for content flagged
-                  under Trust &amp; Safety.
-                </td>
-              </tr>
-              <tr>
-                <td>Customer CRM Data fetched by Property Pulse</td>
-                <td>
-                  Not cached or persisted in Dunamis Studios infrastructure; discarded
-                  immediately after the API response is returned to the HubSpot card.
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  Customer CRM Data cached in Upstash (Debrief brief metadata, session state)
-                </td>
-                <td>Duration of active subscription + 30 days post-termination</td>
-              </tr>
-              <tr>
-                <td>Account Data (profile, entitlements)</td>
-                <td>Duration of account + 90 days</td>
-              </tr>
-              <tr>
-                <td>Billing records and invoices</td>
-                <td>7 years (US tax obligation)</td>
-              </tr>
-              <tr>
-                <td>Server logs (application, audit, security)</td>
-                <td>30 days rolling</td>
-              </tr>
-              <tr>
-                <td>Support tickets and correspondence</td>
-                <td>2&ndash;3 years from last interaction</td>
-              </tr>
-              <tr>
-                <td>Marketing contact records</td>
-                <td>2 years from last interaction, or until you unsubscribe</td>
-              </tr>
-              <tr>
-                <td>Website analytics events (Vercel Analytics)</td>
-                <td>13 months</td>
-              </tr>
-              <tr>
-                <td>HubSpot tracking data (dunamisstudios.net visitor analytics)</td>
-                <td>Per HubSpot&rsquo;s retention defaults for the account</td>
-              </tr>
-              <tr>
-                <td>Backups of the above</td>
-                <td>
-                  Rolling 30&ndash;90 days depending on system; deleted on natural cycle after
-                  primary deletion
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <>
+          <p>
+            If you are located in the European Economic Area, the United Kingdom, or
+            Switzerland, you have the following rights:
+          </p>
+          <ul className="mt-3 list-disc space-y-2 pl-5">
+            <li>
+              <strong>Right to access</strong>: request a copy of the personal data we hold
+              about you. Email{" "}
+              <a href="mailto:dsr@dunamisstudios.com" className="underline">
+                dsr@dunamisstudios.com
+              </a>
+              . 30-day response SLA.
+            </li>
+            <li>
+              <strong>Right to portability</strong>: receive your data in a machine-readable
+              JSON format. Use the in-app Export feature inside Atelier for local business data;
+              for account-level data including license history, EULA acceptances, and activation
+              records, use the &ldquo;Download my data&rdquo; button on{" "}
+              <Link href="/account/atelier-licenses" className="underline">
+                /account/atelier-licenses
+              </Link>
+              .
+            </li>
+            <li>
+              <strong>Right to rectification</strong>: correct inaccurate personal data. Email{" "}
+              <code className="font-mono text-sm">dsr@dunamisstudios.com</code>.
+            </li>
+            <li>
+              <strong>Right to erasure</strong>: request deletion of your personal data. Email{" "}
+              <code className="font-mono text-sm">dsr@dunamisstudios.com</code>. Some records
+              (EULA acceptance, Stripe payment history) are retained under legal or contractual
+              obligation and cannot be deleted on request; we will tell you which records are
+              retained and why.
+            </li>
+            <li>
+              <strong>Right to object to processing</strong>: object to processing based on
+              legitimate interests (most notably the anti-abuse logging described above). Email{" "}
+              <code className="font-mono text-sm">dsr@dunamisstudios.com</code>.
+            </li>
+            <li>
+              <strong>Right to lodge a complaint</strong> with your local supervisory authority
+              (e.g., your national Data Protection Authority).
+            </li>
+          </ul>
+        </>
       ),
     },
     {
       n: "9",
-      id: "pp-rights",
-      title: "Your rights",
+      id: "pp-ccpa-rights",
+      title: "Your rights under CCPA / CPRA",
       body: (
         <>
           <p>
-            <strong>United States (19 state comprehensive privacy laws).</strong> If you reside
-            in California, Colorado, Connecticut, Delaware, Florida, Indiana, Iowa, Kentucky,
-            Maryland, Minnesota, Montana, Nebraska, New Hampshire, New Jersey, Oregon, Rhode
-            Island, Tennessee, Texas, Utah, or Virginia (and other states as new laws come into
-            force), you have the rights your state grants, which generally include: access,
-            deletion, correction, portability; opt-out of sale/sharing/targeted
-            advertising/profiling; limit use of sensitive personal information;
-            non-discrimination for exercising rights; and where adopted (including California
-            under 2026 regulations), opt-out of automated decision-making. We honor Global
-            Privacy Control (GPC) signals.{" "}
-            <strong>
-              We do not sell or share your personal information, and we do not use it for
-              cross-context behavioral advertising.
-            </strong>
+            Dunamis Studios currently operates below CCPA/CPRA&rsquo;s revenue ($26,625,000),
+            consumer (100,000 California residents), and data-sale (50% of revenue) thresholds,
+            so the statute does not strictly apply. We voluntarily extend the substantive
+            rights below to California residents.
           </p>
-          <p className="mt-3">
-            <strong>European Economic Area / United Kingdom (GDPR / UK GDPR).</strong> You have
-            the rights under Articles 15&ndash;22: access, rectification, erasure, restriction,
-            portability, objection, and not to be subject to solely automated decision-making
-            with legal or similarly significant effects. For Customer CRM Data, direct these
-            requests to the Dunamis Studios customer whose portal contains the data (the
-            controller); we will assist them. For data we collect directly as controller,
-            contact us at{" "}
-            <a href="mailto:privacy@dunamisstudios.net" className="underline">
-              privacy@dunamisstudios.net
+          <ul className="mt-3 list-disc space-y-2 pl-5">
+            <li>
+              <strong>Right to know</strong> what personal information we have collected, used,
+              shared, or sold.
+            </li>
+            <li>
+              <strong>Right to delete</strong> personal information we have collected.
+            </li>
+            <li>
+              <strong>Right to opt out of sale or share</strong> for cross-context behavioral
+              advertising. See{" "}
+              <Link href="/privacy/do-not-sell" className="underline">
+                Do Not Sell or Share My Personal Information
+              </Link>
+              . Dunamis Studios does not sell or share personal information for behavioral
+              advertising and has no plans to.
+            </li>
+            <li>
+              <strong>Right to non-discrimination</strong> for exercising any CCPA right.
+            </li>
+          </ul>
+          <p className="mt-4">
+            Exercise any of the above by emailing{" "}
+            <a href="mailto:dsr@dunamisstudios.com" className="underline">
+              dsr@dunamisstudios.com
             </a>
-            . You may also lodge a complaint with your supervisory authority.
-          </p>
-          <p className="mt-3">
-            <strong>Quebec (Law 25).</strong> We disclose that automated decision-making within
-            the meaning of Article 12.1 is not used in any Dunamis Studios service. You may
-            request information about cross-border transfers (see{" "}
-            <a href="#pp-international-transfers" className="underline">§7</a>).
-          </p>
-          <p className="mt-3">
-            <strong>Australia (Privacy Act / APPs).</strong> Australian residents may request
-            access and correction under APPs 12 and 13 via the same privacy email. Cross-border
-            disclosures to the US are covered by APP 8 reasonable steps described in{" "}
-            <a href="#pp-security" className="underline">§10</a>.
-          </p>
-          <p className="mt-3">
-            <strong>Brazil (LGPD).</strong> Brazilian data subjects may exercise rights under
-            LGPD Articles 18 and 19 via the same channel.
-          </p>
-          <p className="mt-3">
-            <strong>How to exercise rights.</strong> Email{" "}
-            <a href="mailto:privacy@dunamisstudios.net" className="underline">
-              privacy@dunamisstudios.net
-            </a>{" "}
-            with enough detail to identify you and the request. We will acknowledge within 10
-            business days and respond substantively within 30 days (or the shorter period
-            required by your jurisdiction, including 45 days under CCPA/CPRA with a 45-day
-            extension available and 30 days under GDPR). We will verify your identity before
-            disclosing or deleting data. You can also designate an authorized agent in
-            jurisdictions that recognize one.
+            . 45-day response under CCPA (we aim for 30).
           </p>
         </>
       ),
     },
     {
       n: "10",
-      id: "pp-security",
-      title: "Security",
+      id: "pp-international",
+      title: "International transfers",
       body: (
         <>
           <p>
-            We apply technical and organizational measures appropriate to the risks of
-            processing, including: TLS 1.2+ encryption in transit; AES-256 encryption at rest;
-            encrypted OAuth tokens with per-portal isolation; role-based access controls with
-            principle of least privilege; secrets management; audit logging; dependency
-            vulnerability monitoring; and a documented incident-response procedure.
+            Personal data we hold is stored on infrastructure operated by Vercel (United
+            States) and Upstash Redis (United States region). For personal data originating in
+            the European Economic Area, United Kingdom, or Switzerland, transfers to the United
+            States are made under Standard Contractual Clauses (Module 2: Controller to
+            Processor) executed with our processors. SCCs are available on request to{" "}
+            <code className="font-mono text-sm">privacy@dunamisstudios.com</code>.
           </p>
           <p className="mt-3">
-            No system is perfectly secure. If a personal-data breach affects your data, we will
-            notify affected controllers without undue delay and no later than is consistent
-            with our obligations under GDPR Article 33(2) and applicable US state
-            breach-notification laws. For Customer CRM Data, the customer whose portal is
-            affected will be notified first so that the customer, as the controller, can
-            notify its own data subjects on the required timeline.
+            We do not transfer personal data to jurisdictions that have not received a European
+            Commission adequacy decision, except under SCCs or another lawful transfer
+            mechanism.
           </p>
         </>
       ),
     },
     {
       n: "11",
-      id: "pp-cookies",
-      title: "Cookies, analytics, and in-app tracking",
+      id: "pp-breach",
+      title: "Breach notification",
       body: (
         <>
-          <p>
-            <strong>dunamisstudios.net.</strong> The marketing website uses{" "}
-            <strong>Vercel Analytics</strong> (cookieless by default but still receives minimal
-            request metadata &mdash; IP, user agent, referrer &mdash; to count aggregate
-            traffic) and <strong>HubSpot tracking</strong> (a portal-level tracking script that
-            records pageviews and visitor behavior to support our own marketing analytics). We
-            do not set advertising cookies and do not share site data with ad networks.
-            Visitors from the EU, UK, or Switzerland are shown a consent banner for any
-            non-essential cookies (including HubSpot&rsquo;s tracking cookies); essential
-            cookies used to operate the site (session, CSRF) are deployed without consent under
-            the strictly-necessary exemption.
-          </p>
-          <p className="mt-3">
-            <strong>Dunamis Studios apps inside HubSpot.</strong> Each Dunamis Studios app runs
-            as a HubSpot CRM card or UI extension inside your HubSpot portal and does not set
-            its own cookies. Any cookies present in those frames are HubSpot&rsquo;s.
-          </p>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              <strong>GDPR</strong>: notification to the relevant supervisory authority within
+              72 hours of becoming aware of a personal-data breach. Affected data subjects
+              notified without undue delay when the breach is likely to result in high risk to
+              their rights and freedoms.
+            </li>
+            <li>
+              <strong>Florida §501.171</strong>: notification to affected Florida residents
+              within 30 days of determining that a breach has occurred.
+            </li>
+            <li>
+              <strong>Customer contractual notification</strong>: 48 hours for enterprise
+              customers under SOWs that include a notification clause; check your SOW.
+            </li>
+          </ul>
         </>
       ),
     },
     {
       n: "12",
-      id: "pp-children",
-      title: "Children's data",
+      id: "pp-cookies",
+      title: "Cookies and similar technologies",
       body: (
-        <p>
-          Dunamis Studios apps are B2B products directed at business users. They are not
-          directed at children under 16, and we do not knowingly collect personal data from
-          children. Customers must not submit personal data of children to any Dunamis Studios
-          app (see our{" "}
-          <Link href="/terms" className="underline">
-            Terms of Service
-          </Link>
-          ). If you believe a child&rsquo;s personal data has been submitted to us in error,
-          contact{" "}
-          <a href="mailto:privacy@dunamisstudios.net" className="underline">
-            privacy@dunamisstudios.net
-          </a>{" "}
-          and we will delete it.
-        </p>
+        <>
+          <p>The marketing site sets the following cookies and only these:</p>
+          <ul className="mt-3 list-disc space-y-2 pl-5">
+            <li>
+              <strong>Vercel session cookie</strong>: set by the hosting platform to route
+              requests to the correct edge region. Session lifetime. No tracking.
+            </li>
+            <li>
+              <strong>Stripe Checkout cookies</strong> (only when a customer enters a Stripe
+              Checkout flow): set by Stripe&rsquo;s payment form to prevent fraud and complete
+              the transaction. Governed by Stripe&rsquo;s privacy policy.
+            </li>
+          </ul>
+          <p className="mt-4">
+            No analytics cookies (Dunamis Studios uses no web analytics). No marketing or
+            advertising cookies. No third-party cookies set directly by Dunamis Studios.
+          </p>
+        </>
       ),
     },
     {
       n: "13",
-      id: "pp-changes",
-      title: "Changes to this policy",
-      body: (
-        <p>
-          We may update this Privacy Policy as our practices change or as law requires. For
-          material changes, we will email the administrative contact on each active account at
-          least <strong>thirty (30) days</strong> before the change takes effect. The effective
-          date at the top of this page reflects the current version, and prior versions are
-          available on request.
-        </p>
-      ),
-    },
-    {
-      n: "14",
       id: "pp-contact",
       title: "Contact",
       body: (
         <>
-          <p>Privacy inquiries, rights requests, and subpoenas:</p>
-          <ul className="mt-3 list-disc space-y-1 pl-5">
+          <ul className="list-disc space-y-2 pl-5">
             <li>
-              Email:{" "}
-              <a href="mailto:privacy@dunamisstudios.net" className="underline">
-                privacy@dunamisstudios.net
+              <strong>General privacy inquiries</strong>:{" "}
+              <a href="mailto:privacy@dunamisstudios.com" className="underline">
+                privacy@dunamisstudios.com
               </a>
             </li>
             <li>
-              Postal address: Joshua Robert Bradford d/b/a Dunamis Studios, 2269 Twin Fox
-              Trail, St. Augustine, FL 32086, United States.
+              <strong>Data subject requests</strong> (access, deletion, portability, objection):{" "}
+              <a href="mailto:dsr@dunamisstudios.com" className="underline">
+                dsr@dunamisstudios.com
+              </a>
+            </li>
+            <li>
+              <strong>Security incidents</strong>:{" "}
+              <a href="mailto:security@dunamisstudios.com" className="underline">
+                security@dunamisstudios.com
+              </a>{" "}
+              (see also{" "}
+              <Link href="/security" className="underline">
+                /security
+              </Link>{" "}
+              for GPG-encrypted disclosure)
+            </li>
+            <li>
+              <strong>Postal address</strong>: to be updated upon LLC formation. Until then,
+              correspondence should go through the email channels above.
             </li>
           </ul>
-          <p className="mt-3">
-            For support or product questions unrelated to privacy, use{" "}
-            <a href="mailto:support@dunamisstudios.net" className="underline">
-              support@dunamisstudios.net
-            </a>
-            .
+        </>
+      ),
+    },
+    {
+      n: "14",
+      id: "pp-changes",
+      title: "Changes to this policy",
+      body: (
+        <>
+          <p>
+            We will provide thirty (30) days&rsquo; advance notice of any material change to
+            this Privacy Policy. Notice is delivered via:
+          </p>
+          <ul className="mt-3 list-disc space-y-1 pl-5">
+            <li>Email to all account holders at the address on file.</li>
+            <li>On-site banner on dunamisstudios.com for the duration of the notice period.</li>
+          </ul>
+          <p className="mt-4">
+            Non-material changes (typos, clarifications that do not change practices) are
+            tracked in the version history but do not trigger the notification process.
           </p>
         </>
       ),
