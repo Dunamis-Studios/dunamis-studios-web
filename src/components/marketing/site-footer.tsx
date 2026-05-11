@@ -177,6 +177,11 @@ export function SiteFooter() {
                 Privacy
               </Link>
             </li>
+            <li>
+              <Link href="/security" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
+                Security
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
