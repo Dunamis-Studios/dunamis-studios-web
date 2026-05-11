@@ -3,7 +3,7 @@ title: "What's included"
 description: "What ships with an Atelier license, what doesn't, and what's deliberately not on the roadmap."
 category: getting-started
 order: 3
-updated: "2026-05-09"
+updated: "2026-05-10"
 ---
 
 A perpetual Atelier license is $149, paid once. This page is the canonical list of what that buys you and, just as importantly, what it doesn't.
@@ -25,9 +25,12 @@ Atelier is a local-first desktop app, but it is not a fully offline app. License
 - **First-launch internet.** Required for first activation. A 7-day provisional grace period applies if you're offline at first launch — Atelier works, but it'll attempt activation on each subsequent launch and lock if it can't reach the server within 7 days.
 - **Periodic heartbeat.** About once per day after activation. Payload is roughly 1 KB and contains your license ID, a hashed hardware fingerprint, and the running Atelier version — nothing else. See the [privacy notice](doc:privacy) for the exact contract.
 - **30-day offline grace.** Once activated, Atelier works offline for up to 30 days between successful heartbeats. After 30 days, the next launch shows a "Reconnect to verify license" lockdown until the next successful check-in.
-- **Outbound HTTPS to `dunamisstudios.net`** is the only required network egress for licensing. Antivirus or firewall software that blocks the domain will surface as an activation/heartbeat failure — whitelist if needed.
+- **Outbound HTTPS to `dunamisstudios.net`** is the only required network egress for licensing. Antivirus or firewall software that blocks the domain will surface as an activation/heartbeat failure. Whitelist if needed.
+- **Update check (optional, can be disabled).** Atelier checks `https://github.com/Dunamis-Studios/atelier/releases/latest/download/latest.json` on launch and once per day to learn whether a newer version is available. Disable in **Settings → Software Updates**. The check sends no payload beyond the standard HTTP request and reads only the public release manifest.
+- **Stripe checkout return (`atelier://` deep link).** Atelier registers itself as the handler for `atelier://` URLs so a customer who finishes Stripe checkout in their browser is bounced back into the app on the activation screen. This is OS-level URL handling, not an outbound network call. If Atelier is uninstalled, the link does nothing.
+- **Dunamis Sync (opt-in only).** When a customer activates Sync from **Settings → Dunamis Sync**, Atelier exchanges encrypted blobs with `dunamisstudios.net/api/sync/*` and `sync.dunamisstudios.net`. Off by default. Sync v1 covers a defined entity scope (weddings, vendors, timeline events, budget lines, tasks); other record types are not synced today. Sync is sold separately and is never required for any normal Atelier use.
 
-Wedding data is never sent to Dunamis Studios. The activation/heartbeat traffic is a separate, narrow channel from your business data.
+Wedding data is never sent to Dunamis Studios in plaintext. The activation/heartbeat surface carries license metadata only; the optional Sync surface carries client-encrypted blobs whose key the customer holds.
 
 ## What's not included, but available separately
 

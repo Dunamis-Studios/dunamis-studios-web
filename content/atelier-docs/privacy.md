@@ -95,6 +95,18 @@ Two practical consequences:
 
 **Nothing leaves your network.** The phone view is served from your machine over local WiFi only. The day-of view never reaches the public internet, never reaches Dunamis Studios, never goes through a relay. If you turn the local API off in Settings, the phone listener also stops.
 
+## The `atelier://` URL handler
+
+Atelier registers itself as the OS handler for `atelier://` URLs so a customer who finishes Stripe checkout in their browser can be returned directly to the activation screen. This is OS-level URL handling, not a network surface: the browser tells Windows to open the link, Windows hands the URL to Atelier if installed, Atelier reads the activation parameters out of the URL. No network call happens as part of the handoff. If Atelier is not installed, the URL does nothing.
+
+## Dunamis Sync (opt-in, sold separately)
+
+Atelier's **Settings → Dunamis Sync** section is the entry point to Dunamis Sync, an optional cross-device subscription product sold separately from Atelier. Sync is **off by default**: a fresh install does no Sync work, generates no encryption key, makes no Sync network calls. Activation is a deliberate user action.
+
+When Sync is activated, Atelier exchanges client-encrypted blobs with `dunamisstudios.net/api/sync/*` and `sync.dunamisstudios.net`. The encryption key is generated on your machine, stored in Windows Credential Manager, and never crosses the network. Sync v1 covers a defined entity scope (weddings, vendors, timeline events, budget lines, tasks); other record types are not synced today.
+
+Sync has its own Terms of Service and Privacy Policy that govern the data the Sync server receives. The Atelier privacy commitments above (no business data on the activation/heartbeat surface) remain unaffected by Sync state. Cancelling Sync never affects Atelier's perpetual license; cancelling Atelier never affects a Sync subscription.
+
 ## Where your data lives
 
 In a single SQLite file at `%APPDATA%\studios.dunamis.atelier\atelier.sqlite`, on your machine. Plus any image files you uploaded to the Style or Logo features, in the same directory tree. That's it.

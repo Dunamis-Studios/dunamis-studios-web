@@ -3,7 +3,7 @@ title: "Refund policy"
 description: "Atelier refund window, how to request a refund, and how license deactivation works."
 category: policies
 order: 5
-updated: "2026-05-07"
+updated: "2026-05-10"
 ---
 
 ## The 30-day window
@@ -25,7 +25,7 @@ We respond within one business day to confirm the refund. The refund itself proc
 
 A refund includes license deactivation:
 
-1. We mark your license as **refunded** in our issuance database. The license string itself remains cryptographically valid (Atelier has no online revocation in v1 — see [EULA §6.4](doc:eula)), but it is recorded as refunded for support purposes.
+1. We mark your license as **refunded** in our issuance database. The license string itself remains cryptographically valid, but the next daily heartbeat from your install (within 24 hours) picks up the refunded state from the server and the app transitions to a lockdown screen. See EULA §6.4 for the legal version.
 2. We ask you to uninstall Atelier from your machines. The good-faith expectation is that you stop using the software once the refund is issued; this is consistent with [EULA §19.5](doc:eula) on Licensee discontinuation.
 3. Your data remains yours. Per [first-run § backing up](doc:first-run), `%APPDATA%\studios.dunamis.atelier\atelier.sqlite` is your file. Refunding the license does not entitle us to your data, and we have no way to access it remotely.
 

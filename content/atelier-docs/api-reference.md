@@ -6,7 +6,7 @@ order: 1
 updated: "2026-05-10"
 ---
 
-> **API surface ships in a later v1 slice.** This reference describes the localhost REST API as it will land on port 7423 once the local API slice ships. The endpoints below are the planned surface; the in-app `/api/docs` page becomes the live source of truth at that point. The current Atelier build does not expose this API or the **Settings → Local API** panel referenced throughout the page. Use this reference today as a preview of the data model and integration patterns; come back to it once the API is live for live verification.
+> **About this reference.** The localhost REST API and the **Settings → Local API** panel ship with Atelier today. The endpoints below are the curated surface; the in-app `/api/docs` page is the live source of truth. New endpoints continue to land alongside new Tauri commands as the API-first parity rule covers each new user action, so check the in-app docs for anything missing here.
 
 This page is the customer-facing API reference. The authoritative version of every endpoint, with full request/response shapes and live response examples, will ship in the running app at **`http://127.0.0.1:7423/api/docs`** — open it in any browser when the local API is enabled.
 
@@ -412,6 +412,127 @@ Lists every event across every wedding within a date range, suitable for renderi
 ```
 
 The `wedding_label` is pre-formatted for display in the calendar's wedding-color legend; clients should not parse it.
+
+---
+
+## Guests CSV import
+
+The Guests tab's bulk-import flow exposes two POST endpoints. They share a service layer with the Tauri command surface, so a CLI tool can drive the same import the UI does.
+
+### `POST /api/weddings/{wedding_id}/guests/import-csv`
+
+Accepts a pre-parsed array of normalized rows and persists them. The UI does the column-mapping step client-side and posts the mapped result; a script can do the same.
+
+**Body**
+
+```json
+{
+  "rows": [
+    {
+      "first_name": "Alex",
+      "last_name": "Mendez",
+      "email": "alex@example.com",
+      "rsvp_status": "yes",
+      "dietary_notes": "vegetarian",
+      "group_name": "Lee family"
+    }
+  ]
+}
+```
+
+**Response** (`200 OK`)
+
+```json
+{
+  "import": {
+    "inserted_guest_ids": ["gst_01HX..."],
+    "inserted_group_ids": ["grp_01HX..."],
+    "row_count": 1
+  }
+}
+```
+
+Group rows referenced by `group_name` are created on the fly when no matching group exists for the wedding.
+
+### `POST /api/weddings/{wedding_id}/guests/undo-csv-import`
+
+Reverses a prior import. The body is the `inserted_guest_ids` and `inserted_group_ids` from the response above.
+
+**Body**
+
+```json
+{
+  "guest_ids": ["gst_01HX..."],
+  "group_ids": ["grp_01HX..."]
+}
+```
+
+**Response** (`200 OK`) is an empty body. The undo is best-effort: rows already mutated since the import remain.
+
+---
+
+## PDF payloads
+
+Atelier's print views (Timeline, Seating, Contract) render from a Rust-built payload that bundles the header, body data, and computed labels in one shape. The same payload is exposed over REST so external tools can produce parallel renderings (third-party PDF templates, custom branded variants, etc.) without re-implementing the resolution logic.
+
+### `GET /api/weddings/{wedding_id}/pdf-payloads/timeline`
+
+Returns the bundled run-of-show shape for the Timeline print view.
+
+**Response** (`200 OK`)
+
+```json
+{
+  "payload": {
+    "header": {
+      "couple_label": "Lee / Mendez",
+      "wedding_date": "2026-09-12",
+      "venue_label": "Bayfront Estate"
+    },
+    "events": [
+      {
+        "id": "evt_01HX...",
+        "starts_at": "2026-09-12T08:00:00-04:00",
+        "duration_minutes": 60,
+        "title": "Hair and makeup",
+        "location": "Bridal suite",
+        "vendor_labels": ["Maria's Beauty"],
+        "notes": "Bride first, then bridesmaids"
+      }
+    ]
+  }
+}
+```
+
+### `GET /api/weddings/{wedding_id}/pdf-payloads/seating`
+
+Returns the bundled seating chart shape: header, per-table guest buckets, the unassigned list, capacity totals, and any overflow IDs (guests assigned to a table beyond its capacity).
+
+### `GET /api/contracts/{contract_id}/pdf-payload`
+
+Returns the bundled contract shape: header, full contract row, and an alphabetized vendor label list.
+
+---
+
+## Licensing scheduler
+
+### `GET /api/licensing/heartbeat-scheduler-status`
+
+Returns the current state of the daily heartbeat scheduler. Useful for monitoring scripts and for diagnosing why a heartbeat hasn't fired.
+
+**Response** (`200 OK`)
+
+```json
+{
+  "running": true,
+  "last_tick_at": "2026-05-10T14:02:00Z",
+  "last_outcome": "ok",
+  "next_tick_at": "2026-05-11T14:02:00Z",
+  "consecutive_failures": 0
+}
+```
+
+`last_outcome` is one of `ok`, `ok_with_grace_warning`, `license_revoked`, `license_refunded`, `unreachable`, `deactivated`, `not_found`, or `unexpected_response`. If the scheduler has not yet completed its first tick, the value is `null` and `last_tick_at` is also `null`. If the scheduler is not running (no activation stored yet, or shutdown in progress), the endpoint returns `503 Service Unavailable`.
 
 ---
 

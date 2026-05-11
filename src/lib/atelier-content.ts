@@ -113,7 +113,7 @@ export const ATELIER_FEATURES: { title: string; body: string }[] = [
   },
   {
     title: "Day-of mode for the venue",
-    body: "A phone-friendly route that flips event status with Start / Complete / Skip controls, captures incidents on the fly, and turns vendor numbers into tappable tel: links. Built for actual day-of, not for a desk.",
+    body: "Flip event status with Start / Complete / Skip controls, capture incidents on the fly, turn vendor numbers into tappable tel: links. The Open on phone button shows a QR code that opens a read-only run-of-show on any phone on the same WiFi. Built for actual day-of, not for a desk.",
   },
   {
     title: "Money in both directions",
@@ -230,7 +230,7 @@ export const ATELIER_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Can I import my existing weddings from another tool?",
-    a: "Yes — the localhost REST API ships with the install and is documented at /api/docs in the running app, so any developer (yours or ours) can write a one-off import script from a spreadsheet or another tool's export. The data never leaves your laptop. If you'd rather pay us to do the import, that's a post-purchase custom-development engagement we can scope after you have Atelier in hand.",
+    a: "For guests, yes: the Guests tab has a built-in CSV import with smart column mapping that handles exports from most planning tools out of the box. For everything else, the localhost REST API ships with the install and is documented at /api/docs in the running app, so any developer (yours or ours) can write a one-off import script from a spreadsheet or another tool's export. The data never leaves your laptop. If you'd rather pay us to do the import, that's a post-purchase custom-development engagement we can scope after you have Atelier in hand.",
   },
   {
     q: "What if I need a feature that isn't in the box?",
