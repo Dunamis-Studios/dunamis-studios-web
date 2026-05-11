@@ -25,3 +25,9 @@ next-env.d.ts.backup
 # with "_".
 content/atelier-docs/_audit-*.md
 content/kb/**/_audit-*.md
+
+# Internal docs / scratch / checklists. Same convention as the other
+# repos in this tree (atelier, HubSpot projects). Anything under
+# docs/internal/ stays local; checklists, post-launch backlogs, audit
+# notes, etc., do not need to live in version control.
+docs/internal/
