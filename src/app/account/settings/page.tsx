@@ -10,6 +10,7 @@ import { LogoSection } from "@/components/account/logo-section";
 import { PasswordSection } from "@/components/account/password-section";
 import { SessionsSection } from "@/components/account/sessions-section";
 import { DangerZone } from "@/components/account/danger-zone";
+import { DataExportSection } from "@/components/account/data-export-section";
 import { listIanaTimeZones } from "@/lib/timezones";
 
 export const dynamic = "force-dynamic";
@@ -48,6 +49,7 @@ export default async function SettingsPage() {
             s.account.sessionLifetimeDays ?? DEFAULT_SESSION_LIFETIME_DAYS
           }
         />
+        <DataExportSection />
         <DangerZone />
       </div>
     </>
