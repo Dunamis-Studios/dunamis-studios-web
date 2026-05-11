@@ -6,7 +6,7 @@ order: 5
 updated: "2026-05-11"
 ---
 
-> **Draft, not final.** This page mirrors §6 of the Terms of Sale at dunamisstudios.com/terms. The Terms of Sale are the controlling document; if anything here conflicts with the Terms of Sale, the Terms of Sale govern.
+> **Draft, not final.** This page mirrors the Atelier refund addendum at dunamisstudios.com/refund-policy/atelier, which in turn supplements the master refund framework at dunamisstudios.com/refund-policy. Those pages are the controlling documents; if anything here conflicts with them, they govern.
 
 ## Refund windows
 
@@ -23,13 +23,13 @@ updated: "2026-05-11"
 
 **Approval decision**: within 5 business days. We respond either way (yes, no, or "let's talk").
 
-**Processing**: within 7 business days of approval, refund issued to the original payment method. Bank-side settlement takes another 3 to 5 business days depending on your card issuer.
+**Processing**: within 7 business days of approval, refund issued to the original payment method through Stripe. Bank-side settlement takes another 3 to 5 business days depending on your card issuer.
 
 ## What happens to your license after refund approval
 
 Refund approval triggers a license-revocation event on the server. The next time your activated Atelier instance fires its daily heartbeat (within 24 hours of approval), it receives the revocation and transitions to the in-app lockdown screen. The Atelier binary stops working at that point on every activated device.
 
-We ask you to uninstall Atelier from your machines as a courtesy. Per EULA §19.5, the expectation is that you cease use of the software once the refund is issued.
+We ask you to uninstall Atelier from your machines as a courtesy. Per the EULA, the expectation is that you cease use of the software once the refund is issued.
 
 **Your wedding data is yours.** Atelier stores wedding, vendor, guest, and business data in a local SQLite file at `%APPDATA%\studios.dunamis.atelier\atelier.sqlite`. Refunding the license does not delete that file or entitle Dunamis Studios to access it. Back it up before uninstalling if you might want it later.
 
