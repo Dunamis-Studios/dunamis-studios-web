@@ -1,6 +1,6 @@
 ---
 title: "User guide"
-description: "Day-to-day Atelier — the dashboard, weddings, timelines, vendors, budgets, payments, contracts, and the day-of mode."
+description: "Day-to-day Atelier: the dashboard, weddings, timelines, vendors, budgets, payments, contracts, and the day-of mode."
 category: using-atelier
 order: 1
 updated: "2026-05-09"
@@ -127,18 +127,29 @@ Notes are searchable from the wedding workspace's search bar.
 
 ## Day-of mode
 
-The day-of mode is a separate phone-friendly view of a wedding's Timeline, designed for the planner working at the venue. Click **Day-of** in the wedding's top navigation to open it.
-
-Day-of mode is a different URL (`/weddings/{id}/dayof`) optimized for one-handed phone use. Atelier serves it from the same local-only HTTP server that backs the REST API; you can open the URL on your phone over the venue's WiFi if both devices are on the same network. (See [troubleshooting](doc:troubleshooting) for how to find the URL.)
+The day-of mode is the in-app run-of-show view designed for the planner working a wedding at the venue. Click **Day-of** in the wedding's top navigation to open it.
 
 What's different in day-of mode:
 
-- **Single-event focus.** The current event is large, the surrounding events are minimized.
-- **Status flips.** Each event has Start / Complete / Skip controls. Tapping flips the status and timestamps it. The timeline auto-advances to the next event when one completes.
-- **Tappable vendor numbers.** Vendor phone numbers render as `tel:` links — tap to dial.
-- **Incident capture.** A persistent "Log incident" button at the bottom records timestamped notes (DJ ran late, bridesmaid lost the boutonniere). Incidents land in the wedding's Notes tab with timestamps for the post-event debrief.
+- **Live current event.** Whichever event is in progress is bumped to the top of the page in a highlighted card. Surrounding events stay in the list at lower contrast.
+- **Status flips.** Each event has Start / Complete / Skip controls. Tapping flips the status and timestamps it; the in-progress card moves on automatically.
+- **Tappable vendor numbers.** Vendor phone numbers render as `tel:` links so tapping dials.
+- **Incident capture.** A persistent "Log incident" button records timestamped notes (DJ ran late, bridesmaid lost the boutonniere). Incidents land in the wedding's Notes tab with timestamps for the post-event debrief.
 
-Day-of mode is one of the features that sells the local-architecture story: you don't need internet at the venue, the database is local, the phone is on the same WiFi as the laptop running Atelier, and everything works regardless of cell signal.
+### Open on phone (QR code)
+
+The desktop view above is the version you'll mostly use during prep. On the actual wedding day at the venue, click **Open on phone** in the day-of mode header. Atelier shows a QR code with a URL like `http://192.168.1.42:7424/weddings/{id}/dayof?token=...`.
+
+Scan the QR with any phone on the same WiFi network and the day-of view opens in the phone's browser. The phone view is intentionally read-only (you can't edit timeline events from the phone) plus an incident-log form (so on-site staff can drop a note without grabbing the laptop). It auto-refreshes every 30 seconds, so changes you make on the desktop appear on the phone within a refresh cycle.
+
+A few things to know:
+
+- **The phone listener runs on a separate port** (default `7424`, which is your local API port plus one). It's bound to `0.0.0.0` so devices on the same network can reach it. The full Atelier API stays on `127.0.0.1:7423` and remains unreachable from any other machine.
+- **The QR URL contains your local API key.** Treat it like a password: don't take a screenshot or post the QR code anywhere it could be seen by anyone outside your trusted on-site team.
+- **Rotating the API key invalidates the URL.** If you ever suspect the URL leaked, **Settings → Local API → Regenerate API key** kills the old URL immediately. Generate a fresh QR for any phone that still needs access.
+- **If "Phone access unavailable" shows up,** Atelier couldn't detect a LAN IP for your machine. Make sure WiFi or wired networking is connected and try again.
+
+Day-of mode is one of the features that sells the local-architecture story: no internet needed at the venue, the database is local, the phone shares the same WiFi as the laptop running Atelier, and everything works regardless of cell signal.
 
 ## The vendor database
 

@@ -3,7 +3,7 @@ title: "Privacy notice"
 description: "What Atelier collects (no business data, ever), what leaves your machine (license activation + heartbeat + an optional update check), and how Dunamis Studios relates to your data under GDPR and CCPA."
 category: policies
 order: 4
-updated: "2026-05-09"
+updated: "2026-05-10"
 ---
 
 This privacy notice describes how Atelier handles data. The headline: your wedding data never leaves your machine. License activation does — exactly what gets sent and why is described below. The legal version is in [EULA §15](doc:eula).
@@ -70,6 +70,30 @@ When you accept the End User License Agreement on first launch, Atelier posts th
 The full record contains: the EULA version, your Dunamis account ID, your Atelier license ID, the timestamp of acceptance, the Atelier client version that posted it, the IP address and user-agent of the request, the device fingerprint of the activated machine, the SHA-256 of the rendered text, the substitution values used to render it, and the rendered text itself. A snapshot of your name, business name, and email at the moment of acceptance is included so a later account-email rotation doesn't rewrite the audit trail. No business data, no wedding data.
 
 Records are append-only — a re-acceptance after an EULA version bump adds a new row alongside the prior one. You can download the verbatim accepted document for any of your acceptances directly from your customer portal at [dunamisstudios.net/account/atelier-licenses](https://dunamisstudios.net/account/atelier-licenses), or email legal@dunamisstudios.com for a copy of every record bound to your account.
+
+## Phone-friendly day-of view
+
+When you click **Open on phone** in day-of mode, Atelier shows a QR code and starts serving a read-only HTML view of that wedding's day-of board on your local network. This is the only Atelier surface that's reachable from anything other than the machine you installed it on, so it's worth being explicit about how it works.
+
+**Two listeners, two scopes.** The main Atelier API is bound to `127.0.0.1` only and can't be reached from any other machine. The day-of phone view runs on a *separate* listener bound to `0.0.0.0:{api_port + 1}` (default `7424`) so devices on the same WiFi network can reach it. The two listeners share auth but not routes: the phone listener serves only two endpoints and rejects everything else.
+
+**What's reachable from the LAN listener.** Just two URLs, both gated behind your Bearer token:
+
+- `GET /weddings/:wedding_id/dayof`: read-only HTML page with the timeline, vendor list with tap-to-call links, recent incidents, and an incident-log form.
+- `POST /weddings/:wedding_id/incidents`: accepts a logged incident from the phone form and redirects back to the day-of view.
+
+That's the entire LAN surface. There is no way to read other weddings' data, edit any data outside the incident log, or query the rest of the API from a phone.
+
+**Token in the QR URL.** The QR encodes a URL of the form `http://192.168.x.x:7424/weddings/{id}/dayof?token={api_key}`. The token in the URL is the same per-installation Bearer key you can rotate from **Settings → Local API**.
+
+Two practical consequences:
+
+- **Don't screenshot or share the QR code.** Anyone who scans it can read that wedding's day-of board and log incidents from any device on the same WiFi network until you rotate the API key or close Atelier.
+- **Rotating the API key invalidates the URL.** If you rotate the key in Settings (or if you ever suspect the URL leaked), every previously-shown QR code is dead immediately. Generate a fresh one for any phone that still needs access.
+
+**Trust your venue's WiFi.** This feature assumes the WiFi network is reasonably trusted: the planner's hotspot, the venue's staff network, your studio's WiFi. It is not designed for coffee-shop WiFi or any other network where you don't trust the other devices on it.
+
+**Nothing leaves your network.** The phone view is served from your machine over local WiFi only. The day-of view never reaches the public internet, never reaches Dunamis Studios, never goes through a relay. If you turn the local API off in Settings, the phone listener also stops.
 
 ## Where your data lives
 

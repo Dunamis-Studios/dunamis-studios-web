@@ -1,9 +1,9 @@
 ---
 title: "API reference"
-description: "Atelier's localhost REST API — authentication, error shapes, and worked examples for the most common endpoints across leads, weddings, vendors, payments, tasks, and reports."
+description: "Atelier's localhost REST API: authentication, error shapes, and worked examples for the most common endpoints across leads, weddings, vendors, payments, tasks, and reports."
 category: reference
 order: 1
-updated: "2026-05-09"
+updated: "2026-05-10"
 ---
 
 > **API surface ships in a later v1 slice.** This reference describes the localhost REST API as it will land on port 7423 once the local API slice ships. The endpoints below are the planned surface; the in-app `/api/docs` page becomes the live source of truth at that point. The current Atelier build does not expose this API or the **Settings → Local API** panel referenced throughout the page. Use this reference today as a preview of the data model and integration patterns; come back to it once the API is live for live verification.
@@ -26,7 +26,7 @@ Authorization: Bearer atlr_your_api_key_here
 
 The key is generated from **Settings → Local API → Generate API key** inside Atelier. It's per-installation; regenerating invalidates the previous key.
 
-The API binds to `127.0.0.1` only — there is no way to expose it on `0.0.0.0` from Settings. If you need the API reachable from another machine on your LAN (for example, a phone running [day-of mode](doc:user-guide#day-of-mode)), you'd front it with a local reverse proxy. For most studios, the localhost-only default is the right answer.
+The main API binds to `127.0.0.1` only and cannot be exposed on `0.0.0.0` from Settings. The localhost-only default is the right answer for the full API surface; if you want a phone on the same WiFi to view the run-of-show, that's what the [phone-friendly day-of view](#phone-friendly-day-of-view-lan-listener) on the LAN listener is for.
 
 ## Response shape
 
@@ -412,6 +412,46 @@ Lists every event across every wedding within a date range, suitable for renderi
 ```
 
 The `wedding_label` is pre-formatted for display in the calendar's wedding-color legend; clients should not parse it.
+
+---
+
+## Phone-friendly day-of view (LAN listener)
+
+When the local API is enabled, Atelier also runs a **second axum listener** on `0.0.0.0:{api_port + 1}` (default `7424`) so a phone on the same WiFi network can pull up a wedding's day-of board. This listener is intentionally narrow: only two endpoints are exposed, and everything else returns 404. The full API stays on `127.0.0.1:7423` and is unreachable from the LAN.
+
+Both listeners share the same Bearer token. The phone view accepts the token either via the `Authorization: Bearer ...` header or as a `?token=...` query parameter, since QR codes carry URLs rather than headers.
+
+### `GET http://{lan-ip}:{api_port + 1}/weddings/{wedding_id}/dayof`
+
+Server-rendered HTML page (not JSON). Phone-optimized layout with the timeline events, vendor list with `tel:` links, recent incidents, and an inline incident-log form. Auto-refreshes every 30 seconds via meta refresh.
+
+The HTML inlines all CSS and has no external dependencies; it works on any reasonably modern phone browser without internet access.
+
+```
+GET /weddings/wd_01HQ8.../dayof?token=atlr_your_api_key_here
+```
+
+In Atelier, click **Open on phone** in day-of mode to display a QR code containing exactly this URL.
+
+### `POST http://{lan-ip}:{api_port + 1}/weddings/{wedding_id}/incidents`
+
+Form-encoded POST that creates an incident from the phone's incident-log form. Body fields:
+
+- `severity`: `"minor"`, `"major"`, or `"critical"`
+- `summary`: required, the incident description
+- `resolution`: optional notes on how it was handled
+- `token`: the Bearer token (same as the URL query param)
+
+On success, redirects (303) back to the day-of HTML view so the form submission round-trips without breaking the phone-friendly UX.
+
+### What's NOT on the LAN listener
+
+- Mutating any resource other than the incident log
+- Reading or writing any other wedding's data
+- Any endpoint from the main API (`/api/...`)
+- Any admin or licensing surface
+
+If you try to reach `http://{lan-ip}:7424/api/weddings`, you get a 404. The LAN listener has no such route.
 
 ---
 
