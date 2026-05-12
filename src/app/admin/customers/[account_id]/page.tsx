@@ -10,6 +10,7 @@ import type { AtelierActivation } from "@/lib/atelier-activation";
 import type { AtelierEulaAcceptanceRecord } from "@/lib/atelier-eula";
 import type { AdminActionLogEntry } from "@/lib/admin/audit-log";
 import { AccountIdCopyButton } from "@/components/admin/account-id-copy-button";
+import { CopyableId } from "@/components/admin/copyable-id";
 
 export const dynamic = "force-dynamic";
 
@@ -61,15 +62,6 @@ function formatRelative(iso: string): string {
   if (diffSec < 3600) return `${Math.round(diffSec / 60)}m ago`;
   if (diffSec < 86400) return `${Math.round(diffSec / 3600)}h ago`;
   return `${Math.round(diffSec / 86400)}d ago`;
-}
-
-function shortLid(lid: string): string {
-  return lid.length > 11 ? `${lid.slice(0, 8)}...` : lid;
-}
-
-function shortHash(hash: string | null | undefined): string {
-  if (!hash) return "n/a";
-  return hash.length > 14 ? `${hash.slice(0, 12)}...` : hash;
 }
 
 function statusBadgeClasses(status: string): string {
@@ -223,11 +215,8 @@ function LicensesSection({ licenses }: { licenses: AtelierLicenseRecord[] }) {
             <tbody className="divide-y divide-[var(--border)]">
               {licenses.map((lic) => (
                 <tr key={lic.lid}>
-                  <td
-                    className="px-4 py-3 font-mono text-xs text-[var(--fg)]"
-                    title={lic.lid}
-                  >
-                    {shortLid(lic.lid)}
+                  <td className="px-4 py-3">
+                    <CopyableId value={lic.lid} />
                   </td>
                   <td className="px-4 py-3 text-[var(--fg)]">{lic.product}</td>
                   <td className="px-4 py-3 text-[var(--fg)]">
@@ -243,13 +232,13 @@ function LicensesSection({ licenses }: { licenses: AtelierLicenseRecord[] }) {
                   <td className="px-4 py-3 text-[var(--fg-muted)]">
                     {formatShortDate(lic.issued_at)}
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-[var(--fg-muted)]">
+                  <td className="px-4 py-3">
                     {lic.stripe_payment_intent_id ? (
-                      <span title={lic.stripe_payment_intent_id}>
-                        {shortHash(lic.stripe_payment_intent_id)}
-                      </span>
+                      <CopyableId value={lic.stripe_payment_intent_id} />
                     ) : (
-                      <span className="text-[var(--fg-subtle)]">n/a</span>
+                      <span className="font-mono text-xs text-[var(--fg-subtle)]">
+                        n/a
+                      </span>
                     )}
                   </td>
                 </tr>
@@ -287,14 +276,9 @@ function ActivationsSection({
                 key={lic.lid}
                 className="overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)]"
               >
-                <div className="border-b border-[var(--border)] bg-[var(--bg-muted)] px-4 py-2 text-xs text-[var(--fg-muted)]">
-                  License{" "}
-                  <span
-                    className="font-mono text-[var(--fg)]"
-                    title={lic.lid}
-                  >
-                    {shortLid(lic.lid)}
-                  </span>
+                <div className="flex items-center gap-2 border-b border-[var(--border)] bg-[var(--bg-muted)] px-4 py-2 text-xs text-[var(--fg-muted)]">
+                  <span>License</span>
+                  <CopyableId value={lic.lid} />
                 </div>
                 {acts.length === 0 ? (
                   <p className="px-4 py-3 text-sm text-[var(--fg-muted)]">
@@ -318,11 +302,8 @@ function ActivationsSection({
                           <td className="px-4 py-3 text-[var(--fg)]">
                             {act.device_label}
                           </td>
-                          <td
-                            className="px-4 py-3 font-mono text-xs text-[var(--fg-muted)]"
-                            title={act.activation_id}
-                          >
-                            {shortHash(act.activation_id)}
+                          <td className="px-4 py-3">
+                            <CopyableId value={act.activation_id} />
                           </td>
                           <td className="px-4 py-3 text-[var(--fg-muted)]">
                             {act.atelier_version}
@@ -392,11 +373,8 @@ function EulaAcceptancesSection({
                   <td className="px-4 py-3 font-mono text-xs text-[var(--fg)]">
                     {rec.eula_version}
                   </td>
-                  <td
-                    className="px-4 py-3 font-mono text-xs text-[var(--fg-muted)]"
-                    title={rec.lid}
-                  >
-                    {shortLid(rec.lid)}
+                  <td className="px-4 py-3">
+                    <CopyableId value={rec.lid} />
                   </td>
                   <td
                     className="px-4 py-3 text-[var(--fg-muted)]"
