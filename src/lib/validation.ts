@@ -325,3 +325,213 @@ export const atelierBuyRequestSchema = z.object({
 });
 
 export type AtelierBuyRequestInput = z.infer<typeof atelierBuyRequestSchema>;
+
+/**
+ * Customer support ticket form. Posted to /api/support-submit which
+ * forwards the payload to a HubSpot form that is wired into the Help
+ * Desk pipeline, so each submission opens a ticket.
+ *
+ * Field names mirror the HubSpot property internal names exactly (no
+ * translation layer at the route boundary), matching the same
+ * convention as contactSubmitSchema. Conditional required-when logic
+ * lives in the React form's state machine; this schema treats every
+ * conditional field as `.optional()` so a misclicked Category that
+ * left a now-required field empty cannot fall through to a 500. The
+ * form UI is the enforcement layer; the schema is the catch-all
+ * shape validator.
+ *
+ * Enum option strings come straight from the HubSpot dropdown values
+ * (case-sensitive per CLAUDE.md §15). Adding an option in HubSpot
+ * without updating these tuples will reject the submission with a 400
+ * before it leaves the site.
+ */
+export const SUPPORT_CATEGORIES = [
+  "Refund Request",
+  "Bug Report",
+  "Atelier Won't Start or Won't Open",
+  "Corrupted Data or Lost Data",
+  "License or Device Transfer",
+  "Privacy or Data Request",
+  "Security Vulnerability Report",
+  "General Question",
+] as const;
+
+export const SUPPORT_OPERATING_SYSTEMS = [
+  "Windows 11",
+  "Windows 10",
+  "Windows (other / not sure)",
+  "macOS",
+  "Linux",
+  "Other",
+] as const;
+
+export const SUPPORT_REFUND_REASONS = [
+  "Changed my mind (within 14 days, license unactivated)",
+  "Reproducible defect (activated, within 30 days, bug reported)",
+  "Not what I expected",
+  "Found a better alternative",
+  "Accidental purchase or duplicate purchase",
+  "Other",
+] as const;
+
+export const SUPPORT_LICENSE_OR_DEVICE_TRANSFER_ACTIONS = [
+  "Activate Atelier on a new computer (transferring from an old one)",
+  "I lost my license key and need it re-sent",
+  "Remove an old device I no longer use (free up an activation slot)",
+  "Change the email address on my license",
+  "Other",
+] as const;
+
+export const SUPPORT_DATA_REQUEST_TYPES = [
+  "Access my data (get a copy of everything you have on me)",
+  "Delete my data (right to erasure)",
+  "Correct my data (fix something inaccurate)",
+  "Export my data (machine-readable copy for transferring elsewhere)",
+  "Object to how my data is used",
+  "Withdraw consent",
+  "Not sure / general question about my data",
+] as const;
+
+export const SUPPORT_AFFECTED_COMPONENTS = [
+  "Atelier desktop application",
+  "dunamisstudios.com (marketing site)",
+  "api.dunamisstudios.com (activation server)",
+  "Customer account portal",
+  "Other / Not sure",
+] as const;
+
+export const SUPPORT_SEVERITIES = [
+  "Critical (remote code execution, mass data exposure, authentication bypass)",
+  "High (privilege escalation, sensitive data exposure, account takeover)",
+  "Medium (limited data exposure, denial of service, CSRF)",
+  "Low (information disclosure, minor configuration issue)",
+  "Informational (best-practice suggestion, hardening recommendation)",
+  "Not sure",
+] as const;
+
+export const SUPPORT_PUBLIC_DISCLOSURE_STATUSES = [
+  "Not disclosed anywhere (only known to me and Dunamis)",
+  "Reported to CERT, MITRE, or similar coordination body",
+  "Shared privately with other researchers",
+  "Publicly posted (blog, social media, conference talk, etc.)",
+  "Planning to publish on a specific date (please specify in the description)",
+] as const;
+
+export type SupportCategory = (typeof SUPPORT_CATEGORIES)[number];
+
+export const supportTicketSchema = z.object({
+  firstname: z
+    .string()
+    .trim()
+    .min(1, "First name is required")
+    .max(80, "First name is too long"),
+  lastname: z
+    .string()
+    .trim()
+    .min(1, "Last name is required")
+    .max(80, "Last name is too long"),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(3, "Email is required")
+    .max(254, "Email is too long")
+    .email("Enter a valid email address"),
+  subject: z
+    .string()
+    .trim()
+    .min(1, "Subject is required")
+    .max(255, "Subject is too long"),
+  category: z.enum(SUPPORT_CATEGORIES, {
+    error: "Choose a category",
+  }),
+  what_happened: z
+    .string()
+    .trim()
+    .min(1, "Tell us what happened")
+    .max(10000, "Too long"),
+  /**
+   * Required GDPR consent. The route rejects `false`; the React form
+   * disables Submit until the box is checked. The verbatim consent
+   * text is forwarded into HubSpot's legalConsentOptions block so the
+   * submission record carries proof of what the visitor saw.
+   */
+  consent: z.literal(true, {
+    error: "We need your consent before we can submit your message",
+  }),
+  // Optional conditional fields. UI enforces required-when based on
+  // category; the schema accepts any subset. Empty strings normalize
+  // to undefined so they're absent from the HubSpot payload entirely
+  // rather than sent as empty values.
+  order_email: z
+    .string()
+    .trim()
+    .max(254, "Too long")
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v.toLowerCase() : undefined)),
+  license_key: z
+    .string()
+    .trim()
+    .max(400, "Too long")
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined)),
+  order_or_transaction_id: z
+    .string()
+    .trim()
+    .max(120, "Too long")
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined)),
+  refund_reason: z.enum(SUPPORT_REFUND_REASONS).optional(),
+  atelier_version: z
+    .string()
+    .trim()
+    .max(80, "Too long")
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined)),
+  operating_system: z.enum(SUPPORT_OPERATING_SYSTEMS).optional(),
+  os_version_or_build: z
+    .string()
+    .trim()
+    .max(120, "Too long")
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined)),
+  steps_to_reproduce: z
+    .string()
+    .trim()
+    .max(10000, "Too long")
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined)),
+  /**
+   * Approximate date the issue first surfaced. Stored as an ISO date
+   * (YYYY-MM-DD) on the HubSpot side so a date input in the form
+   * maps cleanly. The native <input type="date"> emits this format
+   * already.
+   */
+  issue_first_occurred: z
+    .string()
+    .trim()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Use a YYYY-MM-DD date")
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined)),
+  license_or_device_transfer_action: z
+    .enum(SUPPORT_LICENSE_OR_DEVICE_TRANSFER_ACTIONS)
+    .optional(),
+  data_request_type: z.enum(SUPPORT_DATA_REQUEST_TYPES).optional(),
+  affected_component: z.enum(SUPPORT_AFFECTED_COMPONENTS).optional(),
+  suggested_severity: z.enum(SUPPORT_SEVERITIES).optional(),
+  public_disclosure_status: z
+    .enum(SUPPORT_PUBLIC_DISCLOSURE_STATUSES)
+    .optional(),
+});
+
+export type SupportTicketInput = z.infer<typeof supportTicketSchema>;
+
+/**
+ * Verbatim consent text shown on the support form. Forwarded into
+ * HubSpot's legalConsentOptions.consent.text so the submission record
+ * preserves exactly what the visitor agreed to. Update both this
+ * string and the HubSpot form's consent text in lockstep; HubSpot's
+ * audit trail relies on them matching.
+ */
+export const SUPPORT_CONSENT_TEXT =
+  "I agree to Dunamis Studios processing the information in this message to respond to my request. I have read the privacy policy and understand how my data will be used.";
