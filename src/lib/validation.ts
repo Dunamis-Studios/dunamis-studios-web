@@ -459,6 +459,21 @@ export const supportTicketSchema = z.object({
   consent: z.literal(true, {
     error: "We need your consent before we can submit your message",
   }),
+  /**
+   * Verification key the customer pasted into the form's
+   * Verification Key field. UUID-shaped (8-4-4-4-12 lowercase hex),
+   * derived server-side from the customer's email and the current
+   * 30-minute window. The /api/support-submit route re-verifies the
+   * key against the form's email before forwarding to HubSpot;
+   * mismatch returns 400 without touching the helpdesk pipeline.
+   */
+  identity_verification_reference: z
+    .string()
+    .trim()
+    .regex(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      "Verification key looks wrong. Generate a new one above.",
+    ),
   // Optional conditional fields. UI enforces required-when based on
   // category; the schema accepts any subset. Empty strings normalize
   // to undefined so they're absent from the HubSpot payload entirely

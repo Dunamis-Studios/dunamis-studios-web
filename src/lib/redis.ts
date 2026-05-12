@@ -299,4 +299,16 @@ export const KEY = {
    * per-entry lookups.
    */
   adminActionLogStream: "dunamis:admin-action-log:_all",
+
+  /**
+   * 5-minute admin-page cache of a customer's HubSpot tickets with
+   * their identity_verification_reference values. Used by the
+   * Verification Keys section on /admin/customers/[account_id] so a
+   * repeat page view does not pay the HubSpot Search API round-trip
+   * on every refresh. Value is JSON: the HubSpotTicketSummary[] the
+   * tickets helper returns. The Refresh button on the page DELs this
+   * key so the next render re-fetches from HubSpot.
+   */
+  adminVerificationKeyTickets: (accountId: string) =>
+    `dunamis:admin-verification-key-tickets:${accountId}`,
 } as const;

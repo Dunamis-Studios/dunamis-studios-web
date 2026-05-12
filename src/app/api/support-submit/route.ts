@@ -12,6 +12,7 @@ import {
   submitToHubspotForm,
   type HubspotFormField,
 } from "@/lib/hubspot/submit-form";
+import { verifyKey } from "@/lib/verification-key/service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -64,6 +65,10 @@ function buildFields(data: SupportTicketInput): HubspotFormField[] {
     { name: "subject", value: data.subject },
     { name: "category", value: data.category },
     { name: "what_happened", value: data.what_happened },
+    {
+      name: "identity_verification_reference",
+      value: data.identity_verification_reference,
+    },
   ];
 
   const conditional: Array<{ name: string; value: string | undefined }> = [
@@ -102,6 +107,24 @@ export async function POST(req: Request) {
 
   const parsed = await parseJson(req, supportTicketSchema);
   if (!parsed.ok) return parsed.response;
+
+  // Verification key gate. The widget already enforced the
+  // (key, email) pairing client-side; this is the load-bearing
+  // server-side re-check that prevents anyone from POSTing directly
+  // to /api/support-submit without a key (or with a key derived for a
+  // different email). A ±1 window tolerance is built into verifyKey
+  // for clock-skew and the natural edge-of-window submit.
+  const keyOk = verifyKey(
+    parsed.data.email,
+    parsed.data.identity_verification_reference,
+  );
+  if (!keyOk) {
+    return apiError(
+      400,
+      "verification_failed",
+      "Verification key does not match this email. Generate a fresh key from the verification panel and try again.",
+    );
+  }
 
   const formId = process.env.HUBSPOT_SUPPORT_FORM_GUID;
   if (!formId) {
