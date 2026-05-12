@@ -16,6 +16,12 @@ import { LicenseRowActions } from "@/components/admin/license-row-actions";
 import { ActivationRowActions } from "@/components/admin/activation-row-actions";
 import { LocalTime } from "@/components/admin/local-time";
 import { ActivityLogLoader } from "@/components/admin/activity-log-loader";
+import { RefreshVerificationKeysButton } from "@/components/admin/refresh-verification-keys-button";
+import {
+  getCustomerVerificationKeyRows,
+  type VerificationKeyRow,
+  type VerificationKeyStatus,
+} from "@/lib/admin/verification-keys";
 
 export const dynamic = "force-dynamic";
 
@@ -62,6 +68,20 @@ export default async function CustomerDetailPage({
   const { account_id } = await params;
   const detail = await loadCustomerDetail(account_id);
   if (!detail) notFound();
+
+  // Verification key rows pull from HubSpot, which can be slow or
+  // down. Don't let a HubSpot blip take out the whole customer page.
+  let verificationKeyRows: VerificationKeyRow[] = [];
+  let verificationKeyError: string | null = null;
+  try {
+    verificationKeyRows = await getCustomerVerificationKeyRows(
+      detail.account.accountId,
+      detail.account.email,
+    );
+  } catch (err) {
+    verificationKeyError =
+      err instanceof Error ? err.message : "Failed to load verification keys";
+  }
 
   const fullName =
     [detail.account.firstName, detail.account.lastName]
@@ -125,7 +145,11 @@ export default async function CustomerDetailPage({
         eulaByLid={detail.eulaAcceptancesByLid}
       />
       <DataExportsSection />
-      <VerificationKeysSection />
+      <VerificationKeysSection
+        accountId={detail.account.accountId}
+        rows={verificationKeyRows}
+        error={verificationKeyError}
+      />
       <ActivityLogSection
         accountId={detail.account.accountId}
         entries={detail.recentAuditLog}
@@ -423,17 +447,102 @@ function DataExportsSection() {
   );
 }
 
-function VerificationKeysSection() {
+function verificationStatusBadgeClasses(
+  status: VerificationKeyStatus,
+): string {
+  switch (status) {
+    case "matches":
+      return "bg-[color-mix(in_oklch,var(--color-success-500,#10b981)_15%,transparent)] text-[var(--color-success-700,#047857)] dark:text-[#6ee7b7]";
+    case "mismatch":
+      return "bg-[color-mix(in_oklch,var(--color-danger-500,#ef4444)_15%,transparent)] text-[var(--color-danger-700,#991b1b)] dark:text-[#fca5a5]";
+    case "missing":
+    default:
+      return "bg-[var(--bg-muted)] text-[var(--fg-muted)]";
+  }
+}
+
+function VerificationKeysSection({
+  accountId,
+  rows,
+  error,
+}: {
+  accountId: string;
+  rows: VerificationKeyRow[];
+  error: string | null;
+}) {
   return (
     <section aria-labelledby="verification-heading">
-      <SectionHeader
-        id="verification-heading"
-        title="Verification keys"
-        description="Customer identity-confirmation tokens used during support flows."
-      />
-      <EmptyState>
-        Verification key tool not yet built. Coming in the next slice.
-      </EmptyState>
+      <header className="mb-3 flex items-start justify-between gap-3">
+        <div>
+          <h2
+            id="verification-heading"
+            className="font-[var(--font-display)] text-lg font-medium text-[var(--fg)]"
+          >
+            Verification keys
+          </h2>
+          <p className="mt-0.5 text-xs text-[var(--fg-muted)]">
+            Identity-verification tokens submitted with this
+            customer&apos;s support tickets. Re-verified against the
+            account email at the ticket&apos;s created-at on every
+            render.
+          </p>
+        </div>
+        <RefreshVerificationKeysButton accountId={accountId} />
+      </header>
+      {error ? (
+        <EmptyState>
+          Could not load tickets from HubSpot: {error}. Try Refresh.
+        </EmptyState>
+      ) : rows.length === 0 ? (
+        <EmptyState>No support tickets on file for this customer.</EmptyState>
+      ) : (
+        <div className="overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)]">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-[var(--border)] text-left text-xs uppercase tracking-wider text-[var(--fg-subtle)]">
+                <th className="px-4 py-2 font-medium">Ticket</th>
+                <th className="px-4 py-2 font-medium">Subject</th>
+                <th className="px-4 py-2 font-medium">Submitted</th>
+                <th className="px-4 py-2 font-medium">Verification key</th>
+                <th className="px-4 py-2 font-medium">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[var(--border)]">
+              {rows.map((row) => (
+                <tr key={row.ticketId}>
+                  <td className="px-4 py-3">
+                    <CopyableId value={row.ticketId} />
+                  </td>
+                  <td className="px-4 py-3 text-[var(--fg)]">
+                    {row.subject ?? (
+                      <span className="text-[var(--fg-subtle)]">no subject</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-[var(--fg-muted)]">
+                    <LocalTime iso={row.createdAt} variant="short" />
+                  </td>
+                  <td className="px-4 py-3">
+                    {row.verificationKey ? (
+                      <CopyableId value={row.verificationKey} />
+                    ) : (
+                      <span className="font-mono text-xs text-[var(--fg-subtle)]">
+                        n/a
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${verificationStatusBadgeClasses(row.status)}`}
+                    >
+                      {row.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </section>
   );
 }
