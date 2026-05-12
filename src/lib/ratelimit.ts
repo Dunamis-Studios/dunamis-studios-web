@@ -31,7 +31,7 @@ interface LimiterSpec {
 }
 
 const SPECS: Record<
-  "activation" | "heartbeat" | "eula" | "admin",
+  "activation" | "heartbeat" | "eula" | "admin" | "support",
   LimiterSpec
 > = {
   activation: { limit: 20, window: "10 m", prefix: "atelier:activate" },
@@ -44,6 +44,13 @@ const SPECS: Record<
   // dimension. 30/1m gives the customers search page room to fire on
   // every keystroke during legitimate triage without throttling.
   admin: { limit: 30, window: "1 m", prefix: "admin" },
+  // Public support ticket submissions. Keyed by truncated IP since the
+  // route is unauthenticated. 10/1h is enough headroom for a customer
+  // who genuinely needs to retry a few times (network blip, validation
+  // back-and-forth) without letting a malicious script spray the help
+  // desk pipeline. A captive-portal NAT customer who hits the cap can
+  // email josh@dunamisstudios.net per the route's failure message.
+  support: { limit: 10, window: "1 h", prefix: "support:submit" },
 };
 
 export type LimiterName = keyof typeof SPECS;

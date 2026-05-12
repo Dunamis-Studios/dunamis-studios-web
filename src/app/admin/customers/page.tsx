@@ -26,7 +26,7 @@ export default async function AdminCustomersPage() {
           Customers
         </h1>
         <p className="mt-1 text-sm text-[var(--fg-muted)]">
-          Search by email. Selecting a result opens that customer's account
+          Search by email. Selecting a result opens that customer&apos;s account
           with their licenses, devices, EULA acceptances, and audit history.
         </p>
       </header>
