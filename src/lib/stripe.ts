@@ -9,7 +9,7 @@ import Stripe from "stripe";
  * must never ship in the browser bundle.
  */
 
-const API_VERSION = "2026-03-25.dahlia" as const;
+const API_VERSION = "2026-04-22.dahlia" as const;
 
 let client: Stripe | null = null;
 
