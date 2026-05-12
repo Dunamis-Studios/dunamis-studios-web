@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { SupportForm } from "@/components/help/support-form";
+import { AnchorScrollOnMount } from "@/components/help/anchor-scroll-on-mount";
 
 export const metadata: Metadata = {
   title: "Contact Support · Dunamis Studios help center",
@@ -45,6 +46,7 @@ export default function ContactSupportPage() {
             className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6 shadow-[var(--shadow-md)] sm:p-8"
           >
             <SupportForm />
+            <AnchorScrollOnMount targetId="support-form" />
           </div>
         </Container>
       </Section>
