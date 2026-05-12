@@ -11,6 +11,10 @@ import type { AtelierEulaAcceptanceRecord } from "@/lib/atelier-eula";
 import type { AdminActionLogEntry } from "@/lib/admin/audit-log";
 import { AccountIdCopyButton } from "@/components/admin/account-id-copy-button";
 import { CopyableId } from "@/components/admin/copyable-id";
+import { CustomerActionsMenu } from "@/components/admin/customer-actions-menu";
+import { LicenseRowActions } from "@/components/admin/license-row-actions";
+import { ActivationRowActions } from "@/components/admin/activation-row-actions";
+import { LocalTime } from "@/components/admin/local-time";
 
 export const dynamic = "force-dynamic";
 
@@ -29,30 +33,6 @@ const ACTION_LABELS: Record<string, string> = {
   refresh_from_stripe: "Refreshed from Stripe",
   set_refund_flag: "Set refund flag",
 };
-
-function formatLongDate(iso: string | null | undefined): string {
-  if (!iso) return "never";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function formatShortDate(iso: string | null | undefined): string {
-  if (!iso) return "n/a";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
 
 function formatRelative(iso: string): string {
   const t = new Date(iso).getTime();
@@ -123,23 +103,30 @@ export default async function CustomerDetailPage({
               ) : null}
             </p>
             <p className="mt-1 text-xs text-[var(--fg-subtle)]">
-              Created {formatLongDate(detail.account.createdAt)}
+              Created <LocalTime iso={detail.account.createdAt} />
               {" · "}
-              Last sign-in {formatLongDate(detail.lastLoginAt)}
+              Last sign-in <LocalTime iso={detail.lastLoginAt} />
             </p>
             <AccountIdCopyButton accountId={detail.account.accountId} />
           </div>
-          <div
-            className="shrink-0 rounded-md border border-dashed border-[var(--border)] bg-[var(--bg-muted)] px-3 py-2 text-xs text-[var(--fg-muted)]"
-            aria-label="Actions menu placeholder"
-          >
-            Actions menu lands with the read-write slice
+          <div className="shrink-0">
+            <CustomerActionsMenu
+              accountId={detail.account.accountId}
+              accountEmail={detail.account.email}
+              firstName={detail.account.firstName}
+              lastName={detail.account.lastName}
+              companyName={detail.account.companyName ?? null}
+            />
           </div>
         </div>
       </header>
 
-      <LicensesSection licenses={detail.licenses} />
+      <LicensesSection
+        accountId={detail.account.accountId}
+        licenses={detail.licenses}
+      />
       <ActivationsSection
+        accountId={detail.account.accountId}
         licenses={detail.licenses}
         activationsByLid={detail.activationsByLid}
       />
@@ -189,7 +176,13 @@ function EmptyState({ children }: { children: React.ReactNode }) {
   );
 }
 
-function LicensesSection({ licenses }: { licenses: AtelierLicenseRecord[] }) {
+function LicensesSection({
+  accountId,
+  licenses,
+}: {
+  accountId: string;
+  licenses: AtelierLicenseRecord[];
+}) {
   return (
     <section aria-labelledby="licenses-heading">
       <SectionHeader
@@ -210,6 +203,7 @@ function LicensesSection({ licenses }: { licenses: AtelierLicenseRecord[] }) {
                 <th className="px-4 py-2 font-medium">Status</th>
                 <th className="px-4 py-2 font-medium">Issued</th>
                 <th className="px-4 py-2 font-medium">Stripe payment</th>
+                <th className="px-4 py-2 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)]">
@@ -230,7 +224,7 @@ function LicensesSection({ licenses }: { licenses: AtelierLicenseRecord[] }) {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-[var(--fg-muted)]">
-                    {formatShortDate(lic.issued_at)}
+                    <LocalTime iso={lic.issued_at} variant="short" />
                   </td>
                   <td className="px-4 py-3">
                     {lic.stripe_payment_intent_id ? (
@@ -240,6 +234,14 @@ function LicensesSection({ licenses }: { licenses: AtelierLicenseRecord[] }) {
                         n/a
                       </span>
                     )}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <LicenseRowActions
+                      accountId={accountId}
+                      lid={lic.lid}
+                      status={lic.status}
+                      product={lic.product}
+                    />
                   </td>
                 </tr>
               ))}
@@ -252,9 +254,11 @@ function LicensesSection({ licenses }: { licenses: AtelierLicenseRecord[] }) {
 }
 
 function ActivationsSection({
+  accountId,
   licenses,
   activationsByLid,
 }: {
+  accountId: string;
   licenses: AtelierLicenseRecord[];
   activationsByLid: Record<string, AtelierActivation[]>;
 }) {
@@ -294,6 +298,9 @@ function ActivationsSection({
                         <th className="px-4 py-2 font-medium">Status</th>
                         <th className="px-4 py-2 font-medium">First</th>
                         <th className="px-4 py-2 font-medium">Last seen</th>
+                        <th className="px-4 py-2 font-medium text-right">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--border)]">
@@ -316,13 +323,24 @@ function ActivationsSection({
                             </span>
                           </td>
                           <td className="px-4 py-3 text-[var(--fg-muted)]">
-                            {formatShortDate(act.first_activated_at)}
+                            <LocalTime
+                              iso={act.first_activated_at}
+                              variant="short"
+                            />
                           </td>
                           <td
                             className="px-4 py-3 text-[var(--fg-muted)]"
                             title={act.last_heartbeat_at}
                           >
                             {formatRelative(act.last_heartbeat_at)}
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <ActivationRowActions
+                              accountId={accountId}
+                              activationId={act.activation_id}
+                              deviceLabel={act.device_label}
+                              status={act.status}
+                            />
                           </td>
                         </tr>
                       ))}
@@ -376,11 +394,8 @@ function EulaAcceptancesSection({
                   <td className="px-4 py-3">
                     <CopyableId value={rec.lid} />
                   </td>
-                  <td
-                    className="px-4 py-3 text-[var(--fg-muted)]"
-                    title={rec.accepted_at}
-                  >
-                    {formatLongDate(rec.accepted_at)}
+                  <td className="px-4 py-3 text-[var(--fg-muted)]">
+                    <LocalTime iso={rec.accepted_at} />
                   </td>
                   <td className="px-4 py-3 text-[var(--fg-muted)]">
                     {rec.atelier_version}
