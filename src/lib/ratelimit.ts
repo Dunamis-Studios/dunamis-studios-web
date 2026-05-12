@@ -31,7 +31,14 @@ interface LimiterSpec {
 }
 
 const SPECS: Record<
-  "activation" | "heartbeat" | "eula" | "admin" | "support",
+  | "activation"
+  | "heartbeat"
+  | "eula"
+  | "admin"
+  | "support"
+  | "verify-key-account"
+  | "verify-key-email"
+  | "verify-key-email-ip",
   LimiterSpec
 > = {
   activation: { limit: 20, window: "10 m", prefix: "atelier:activate" },
@@ -51,6 +58,32 @@ const SPECS: Record<
   // desk pipeline. A captive-portal NAT customer who hits the cap can
   // email josh@dunamisstudios.net per the route's failure message.
   support: { limit: 10, window: "1 h", prefix: "support:submit" },
+  // Verification-key issuance for authenticated customers. Keyed by
+  // accountId. 6/1h is generous for a customer who needs to regenerate
+  // a couple of times within a session; well under what would let a
+  // compromised session flood the helpdesk pipeline.
+  "verify-key-account": {
+    limit: 6,
+    window: "1 h",
+    prefix: "verify-key:account",
+  },
+  // Verification-key email issuance, keyed per submitted email.
+  // 3/1h keeps a spammer from torching one inbox with key emails
+  // without making the legitimate "I lost the previous email, send
+  // again" UX painful.
+  "verify-key-email": {
+    limit: 3,
+    window: "1 h",
+    prefix: "verify-key:email",
+  },
+  // Verification-key email issuance, keyed per truncated IP. 10/1h
+  // catches the spray-many-emails-from-one-sender case the per-email
+  // limiter cannot.
+  "verify-key-email-ip": {
+    limit: 10,
+    window: "1 h",
+    prefix: "verify-key:email-ip",
+  },
 };
 
 export type LimiterName = keyof typeof SPECS;
