@@ -22,6 +22,13 @@ import {
   type SupportCategory,
   type SupportTicketInput,
 } from "@/lib/validation";
+import {
+  VerificationKeyWidget,
+  type VerificationKeyUser,
+} from "@/components/help/verification-key-widget";
+
+const VERIFICATION_KEY_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 /**
  * Customer support ticket form. POSTs to /api/support-submit which
@@ -133,6 +140,15 @@ interface FormState {
   category: SupportCategory | "";
   what_happened: string;
   consent: boolean;
+  identity_verification_reference: string;
+  /**
+   * Email the verification key was issued against. Tracked so we can
+   * warn the customer if they edit the Email field after the widget
+   * already published a (key, email) pair. The key is bound to that
+   * exact address and the server-side check would reject a mismatch.
+   * Not submitted to HubSpot; UI-only.
+   */
+  verifiedKeyEmail: string;
   order_email: string;
   license_key: string;
   order_or_transaction_id: string;
@@ -157,6 +173,8 @@ const INITIAL_STATE: FormState = {
   category: "",
   what_happened: "",
   consent: false,
+  identity_verification_reference: "",
+  verifiedKeyEmail: "",
   order_email: "",
   license_key: "",
   order_or_transaction_id: "",
@@ -207,6 +225,7 @@ function buildSubmitPayload(
     category: state.category,
     what_happened: state.what_happened,
     consent: state.consent,
+    identity_verification_reference: state.identity_verification_reference,
   } as const;
   const config = CATEGORY_CONFIG[state.category];
   const visible: ConditionalFieldName[] = [
@@ -239,11 +258,23 @@ export interface SupportFormProps {
    * couldn't find..."). Falls back to no placeholder when omitted.
    */
   whatHappenedPlaceholder?: string;
+  /**
+   * Pre-resolved viewer context forwarded to the verification key
+   * widget. Pass `null` for "definitely not authenticated", a concrete
+   * object for "definitely authenticated", or omit to let the widget
+   * self-resolve via /api/support/verification-key/whoami on mount.
+   * The standalone /help/contact-support page is already a dynamic
+   * server component and can pass the value directly; the KB article
+   * inline form is statically prerendered and leaves this undefined
+   * so the widget self-resolves.
+   */
+  user?: VerificationKeyUser | null;
 }
 
 export function SupportForm({
   initialValues,
   whatHappenedPlaceholder,
+  user,
 }: SupportFormProps = {}) {
   const [state, setState] = React.useState<FormState>(() => ({
     ...INITIAL_STATE,
@@ -264,6 +295,52 @@ export function SupportForm({
     });
   }
 
+  /**
+   * Widget published a (key, email) pair: the customer either clicked
+   * "Use this key" in Mode A or pasted a valid UUID into Mode B. Both
+   * the verification key and the email it was issued against need to
+   * land in form state so the submit payload matches what the server
+   * will verify against.
+   */
+  function onWidgetKeyAvailable(key: string, email: string) {
+    setState((prev) => ({
+      ...prev,
+      identity_verification_reference: key,
+      email,
+      verifiedKeyEmail: email,
+    }));
+    setFieldErrors((prev) => {
+      if (
+        !prev.identity_verification_reference &&
+        !prev.email &&
+        !prev.verifiedKeyEmail
+      ) {
+        return prev;
+      }
+      const next = { ...prev };
+      delete next.identity_verification_reference;
+      delete next.email;
+      delete next.verifiedKeyEmail;
+      return next;
+    });
+  }
+
+  /**
+   * Mode B email input changed while the customer is typing toward
+   * "Send Key to Email". Mirror the typed value into the form's main
+   * Email field so they don't have to retype it. Does NOT touch
+   * verifiedKeyEmail because nothing has been issued yet.
+   */
+  function onWidgetEmailChange(email: string) {
+    setState((prev) => ({ ...prev, email }));
+    setFieldErrors((prev) => {
+      if (!prev.email) return prev;
+      const next = { ...prev };
+      delete next.email;
+      return next;
+    });
+  }
+
   function validateAll(): { ok: boolean; errors: FieldErrors } {
     const errors: FieldErrors = {};
 
@@ -277,6 +354,22 @@ export function SupportForm({
     if (!state.consent)
       errors.consent =
         "We need your consent before we can submit your message";
+
+    const keyTrimmed = state.identity_verification_reference.trim();
+    if (!keyTrimmed) {
+      errors.identity_verification_reference =
+        "Generate a verification key above before submitting.";
+    } else if (!VERIFICATION_KEY_PATTERN.test(keyTrimmed)) {
+      errors.identity_verification_reference =
+        "Verification key looks wrong. Generate a new one above.";
+    } else if (
+      state.verifiedKeyEmail &&
+      state.email.trim().toLowerCase() !==
+        state.verifiedKeyEmail.trim().toLowerCase()
+    ) {
+      errors.identity_verification_reference =
+        "Your email no longer matches the verification key. Generate a new one above.";
+    }
 
     if (state.category !== "") {
       const config = CATEGORY_CONFIG[state.category];
@@ -441,6 +534,14 @@ export function SupportForm({
           error={fieldErrors.email}
         />
         <FieldError>{fieldErrors.email}</FieldError>
+        {state.verifiedKeyEmail &&
+        state.email.trim().toLowerCase() !==
+          state.verifiedKeyEmail.trim().toLowerCase() ? (
+          <p className="mt-1.5 text-xs text-[var(--color-warning,#b45309)]">
+            Changing your email invalidates the verification key.
+            Generate a new one in the verification panel below.
+          </p>
+        ) : null}
       </div>
 
       <div>
@@ -854,6 +955,39 @@ export function SupportForm({
           <FieldError>{fieldErrors.public_disclosure_status}</FieldError>
         </div>
       ) : null}
+
+      <VerificationKeyWidget
+        user={user}
+        onKeyAvailable={onWidgetKeyAvailable}
+        onEmailChange={onWidgetEmailChange}
+      />
+
+      <div>
+        <Label htmlFor="sf-verification-key">
+          Verification Key <Required />
+        </Label>
+        <FieldHint>
+          Use the verification tool above to get your key, then paste
+          it here. The key is valid for 30 minutes.
+        </FieldHint>
+        <Input
+          id="sf-verification-key"
+          name="identity_verification_reference"
+          autoComplete="off"
+          spellCheck={false}
+          disabled={submitting}
+          className="mt-1.5 font-mono"
+          value={state.identity_verification_reference}
+          onChange={(e) =>
+            setField("identity_verification_reference", e.target.value)
+          }
+          placeholder="00000000-0000-0000-0000-000000000000"
+          error={fieldErrors.identity_verification_reference}
+        />
+        <FieldError>
+          {fieldErrors.identity_verification_reference}
+        </FieldError>
+      </div>
 
       <div>
         <label className="flex items-start gap-3 text-sm text-[var(--fg)]">
