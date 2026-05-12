@@ -463,7 +463,9 @@ export function SupportForm() {
         </Label>
         <FieldHint>
           What you tried, what you expected, what you got. The more
-          context the better.
+          context the better. If you have screenshots or other files
+          that would help, mention that here and reply to the ticket
+          email after you receive our response, with the attachments.
         </FieldHint>
         <textarea
           id="sf-what-happened"
