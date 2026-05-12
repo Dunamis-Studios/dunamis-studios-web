@@ -1,5 +1,7 @@
 import "server-only";
 
+import { submitToHubspotForm } from "@/lib/hubspot/submit-form";
+
 /**
  * HubSpot side of the /api/notify capture flow. Mirrors the visitor's
  * signup into the "Notify Interests" HubSpot form so the contact gets
@@ -10,17 +12,17 @@ import "server-only";
  *   1. GET  /crm/v3/objects/contacts/{email}?idProperty=email
  *      reads the contact's existing notify_interests so we can append
  *      the new product name without clobbering prior interests.
- *   2. POST https://api.hsforms.com/submissions/v3/integration/submit/...
- *      submits the merged notify_interests through the public form
- *      endpoint, which handles contact upsert, list membership, and
- *      legal-basis tracking on HubSpot's side. The form submission
- *      endpoint is unauthenticated (no Bearer token).
+ *      Stays inline here because the lookup uses a different endpoint
+ *      and an authenticated Bearer token; the shared submit helper
+ *      only covers the unauthenticated v3 form submissions endpoint.
+ *   2. submitToHubspotForm() submits the merged notify_interests
+ *      through the public form endpoint, which handles contact upsert,
+ *      list membership, and legal-basis tracking on HubSpot's side.
  *
  * Failure policy: every error is logged and swallowed. The caller has
  * already written the signup to Redis, which is the source of truth;
  * a HubSpot outage must never bubble back to the visitor as a failed
- * form submission. Logs include enough context (step, status, slug,
- * truncated body) to debug after the fact.
+ * form submission.
  */
 
 interface SubmitArgs {
@@ -50,7 +52,6 @@ interface SubmitArgs {
 }
 
 const HUBSPOT_API_BASE = "https://api.hubapi.com";
-const HUBSPOT_FORMS_BASE = "https://api.hsforms.com";
 const PUBLIC_PAGE_BASE = "https://www.dunamisstudios.net";
 
 interface ContactLookupResponse {
@@ -67,13 +68,13 @@ export async function submitToHubSpotNotifyForm({
   ipAddress,
 }: SubmitArgs): Promise<void> {
   const accessToken = process.env.HUBSPOT_ACCESS_TOKEN;
-  const portalId = process.env.HUBSPOT_PORTAL_ID;
   const formGuid = process.env.HUBSPOT_NOTIFY_FORM_GUID;
 
-  if (!accessToken || !portalId || !formGuid) {
-    console.warn("[hubspot-notify] env vars missing; skipping HubSpot mirror", {
+  if (!accessToken || !formGuid) {
+    // Config-missing case in dev / preview envs: skip the HubSpot
+    // mirror entirely. Redis already captured the signup.
+    console.warn("[hubspot-notify] env vars missing; skipping HubSpot mirror", { // claude-code:allow-console
       hasAccessToken: !!accessToken,
-      hasPortalId: !!portalId,
       hasFormGuid: !!formGuid,
       slug,
     });
@@ -118,51 +119,31 @@ export async function submitToHubSpotNotifyForm({
 
   const merged = mergeInterests(existingInterests, productName);
 
-  // Step 2: submit to the public form endpoint. This endpoint upserts
-  // the contact, applies any list memberships configured on the form,
-  // and sets the multi-select notify_interests property to the merged
-  // semicolon-joined value. No Authorization header.
-  //
-  // hutk and ipAddress are added to the context only when present.
-  // HubSpot expects either a real value or no field at all; passing
-  // an empty string for hutk produces the same "missing cookie"
-  // warning we are trying to fix, and an empty ipAddress would log
-  // a sentinel value on the contact.
-  try {
-    const submitUrl = `${HUBSPOT_FORMS_BASE}/submissions/v3/integration/submit/${portalId}/${formGuid}`;
-    const context: Record<string, string> = {
+  // Step 2: submit through the shared helper. Upserts the contact on
+  // HubSpot's side, applies any list memberships configured on the
+  // form, and writes the merged semicolon-joined notify_interests
+  // multi-select. Log-and-swallow on any non-ok result so a HubSpot
+  // brownout never bubbles back to the visitor (Redis is truth).
+  const result = await submitToHubspotForm({
+    formId: formGuid,
+    fields: [
+      { name: "email", value: email },
+      { name: "firstname", value: firstName },
+      { name: "lastname", value: lastName },
+      { name: "notify_interests", value: merged },
+    ],
+    context: {
+      ...(hubspotutk ? { hutk: hubspotutk } : {}),
+      ...(ipAddress ? { ipAddress } : {}),
       pageUri: `${PUBLIC_PAGE_BASE}/custom-development/products/${slug}`,
       pageName: `${productName} notify signup`,
-    };
-    if (hubspotutk) context.hutk = hubspotutk;
-    if (ipAddress) context.ipAddress = ipAddress;
-    const res = await fetch(submitUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        fields: [
-          { name: "email", value: email },
-          { name: "firstname", value: firstName },
-          { name: "lastname", value: lastName },
-          { name: "notify_interests", value: merged },
-        ],
-        context,
-      }),
-    });
-    if (!res.ok) {
-      const body = await safeReadText(res);
-      console.error("[hubspot-notify] form submission failed", {
-        step: "submit",
-        status: res.status,
-        body: body.slice(0, 500),
-        slug,
-      });
-      return;
-    }
-  } catch (err) {
-    console.error("[hubspot-notify] form submission threw", {
+    },
+  });
+  if (!result.ok) {
+    console.error("[hubspot-notify] form submission failed", {
       step: "submit",
-      error: err instanceof Error ? err.message : String(err),
+      status: result.status,
+      error: result.error,
       slug,
     });
   }

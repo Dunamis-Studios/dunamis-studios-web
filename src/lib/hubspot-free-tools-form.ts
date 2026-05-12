@@ -1,5 +1,7 @@
 import "server-only";
 
+import { submitToHubspotForm } from "@/lib/hubspot/submit-form";
+
 /**
  * HubSpot mirror for /custom-development/tools/* email captures. Submits to the dedicated
  * "Free Tools - Lead Capture" form (GUID in HUBSPOT_FREE_TOOLS_FORM_GUID).
@@ -8,17 +10,15 @@ import "server-only";
  * single-line text field on the form so HubSpot segmentation can route
  * by tool downstream.
  *
- * The public form endpoint at api.hsforms.com is unauthenticated, so
- * unlike the notify-interests mirror this helper does NOT need
- * HUBSPOT_ACCESS_TOKEN. It only needs HUBSPOT_PORTAL_ID and
- * HUBSPOT_FREE_TOOLS_FORM_GUID.
+ * Delegates the actual HTTP call to the shared submitToHubspotForm()
+ * helper so URL building, timeouts, and response parsing live in one
+ * place. The helper reads HUBSPOT_PORTAL_ID; this module only owns
+ * HUBSPOT_FREE_TOOLS_FORM_GUID and the field mapping.
  *
  * Failure policy: every error is logged and swallowed. The caller has
  * already written the lead to Redis as source of truth; a HubSpot
  * outage must never bubble back to the visitor as a failed submit.
  */
-
-const HUBSPOT_FORMS_BASE = "https://api.hsforms.com";
 
 /**
  * Internal name of the hidden "Free Tool Used" property on the form.
@@ -71,13 +71,11 @@ export interface SubmitFreeToolLeadArgs {
 export async function submitFreeToolLead(
   args: SubmitFreeToolLeadArgs,
 ): Promise<void> {
-  const portalId = process.env.HUBSPOT_PORTAL_ID;
   const formGuid = process.env.HUBSPOT_FREE_TOOLS_FORM_GUID;
 
-  if (!portalId || !formGuid) {
-    console.warn("[hubspot-free-tools] env vars missing; skipping mirror", {
-      hasPortalId: !!portalId,
-      hasFormGuid: !!formGuid,
+  if (!formGuid) {
+    console.warn("[hubspot-free-tools] env var missing; skipping mirror", { // claude-code:allow-console
+      hasFormGuid: false,
       tool: args.toolName,
     });
     return;
@@ -91,45 +89,25 @@ export async function submitFreeToolLead(
   if (args.lastName) fields.push({ name: "lastname", value: args.lastName });
   if (args.company) fields.push({ name: "company", value: args.company });
 
-  const context: Record<string, string> = {
-    pageUri: args.pageUri,
-    pageName: args.pageName,
-  };
-  if (args.hubspotutk) context.hutk = args.hubspotutk;
-  if (args.ipAddress) context.ipAddress = args.ipAddress;
-
-  const submitUrl = `${HUBSPOT_FORMS_BASE}/submissions/v3/integration/submit/${portalId}/${formGuid}`;
-
-  try {
-    const res = await fetch(submitUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fields, context }),
-    });
-    if (!res.ok) {
-      // Surface enough body for field-name mismatches to debug. The
-      // most likely 400 cause is the free_tool_used internal name not
-      // matching what HubSpot generated for the hidden field; a 400
-      // body usually names the offending field.
-      const body = await safeReadText(res);
-      console.error("[hubspot-free-tools] form submission failed", {
-        status: res.status,
-        body: body.slice(0, 500),
-        tool: args.toolName,
-      });
-    }
-  } catch (err) {
-    console.error("[hubspot-free-tools] form submission threw", {
-      error: err instanceof Error ? err.message : String(err),
+  const result = await submitToHubspotForm({
+    formId: formGuid,
+    fields,
+    context: {
+      ...(args.hubspotutk ? { hutk: args.hubspotutk } : {}),
+      ...(args.ipAddress ? { ipAddress: args.ipAddress } : {}),
+      pageUri: args.pageUri,
+      pageName: args.pageName,
+    },
+  });
+  if (!result.ok) {
+    // The most likely 400 cause is the free_tool_used internal name
+    // not matching what HubSpot generated for the hidden field; the
+    // helper logs the truncated body to runtime logs already, so we
+    // just attach the tool name here for fan-out grep.
+    console.error("[hubspot-free-tools] form submission failed", {
+      status: result.status,
+      error: result.error,
       tool: args.toolName,
     });
-  }
-}
-
-async function safeReadText(res: Response): Promise<string> {
-  try {
-    return await res.text();
-  } catch {
-    return "";
   }
 }

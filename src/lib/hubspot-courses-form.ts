@@ -1,5 +1,7 @@
 import "server-only";
 
+import { submitToHubspotForm } from "@/lib/hubspot/submit-form";
+
 /**
  * HubSpot mirror for /api/courses/signup. Submits to the dedicated
  * "Email Courses - Signup" form (GUID in HUBSPOT_COURSES_FORM_GUID).
@@ -7,16 +9,14 @@ import "server-only";
  * drip emails; this site just hands the contact off and lets HubSpot
  * branch on the hidden course_name field.
  *
- * The public form endpoint at api.hsforms.com is unauthenticated, so
- * this helper does NOT need HUBSPOT_ACCESS_TOKEN. It only needs
- * HUBSPOT_PORTAL_ID and HUBSPOT_COURSES_FORM_GUID.
+ * Delegates the actual HTTP call to the shared submitToHubspotForm()
+ * helper. This module owns the field mapping for the course_name
+ * hidden field and the form GUID, nothing else.
  *
  * Failure policy: every error is logged and swallowed. The caller has
  * already written the signup to Redis as source of truth; a HubSpot
  * outage must never bubble back to the visitor as a failed submit.
  */
-
-const HUBSPOT_FORMS_BASE = "https://api.hsforms.com";
 
 /**
  * Internal name of the hidden "Course Name" property on the form. Per
@@ -67,13 +67,11 @@ export interface SubmitCourseSignupArgs {
 export async function submitCourseSignup(
   args: SubmitCourseSignupArgs,
 ): Promise<void> {
-  const portalId = process.env.HUBSPOT_PORTAL_ID;
   const formGuid = process.env.HUBSPOT_COURSES_FORM_GUID;
 
-  if (!portalId || !formGuid) {
-    console.warn("[hubspot-courses] env vars missing; skipping mirror", {
-      hasPortalId: !!portalId,
-      hasFormGuid: !!formGuid,
+  if (!formGuid) {
+    console.warn("[hubspot-courses] env var missing; skipping mirror", { // claude-code:allow-console
+      hasFormGuid: false,
       course: args.courseName,
     });
     return;
@@ -86,41 +84,21 @@ export async function submitCourseSignup(
   if (args.firstName) fields.push({ name: "firstname", value: args.firstName });
   if (args.lastName) fields.push({ name: "lastname", value: args.lastName });
 
-  const context: Record<string, string> = {
-    pageUri: args.pageUri,
-    pageName: args.pageName,
-  };
-  if (args.hubspotutk) context.hutk = args.hubspotutk;
-  if (args.ipAddress) context.ipAddress = args.ipAddress;
-
-  const submitUrl = `${HUBSPOT_FORMS_BASE}/submissions/v3/integration/submit/${portalId}/${formGuid}`;
-
-  try {
-    const res = await fetch(submitUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fields, context }),
-    });
-    if (!res.ok) {
-      const body = await safeReadText(res);
-      console.error("[hubspot-courses] form submission failed", {
-        status: res.status,
-        body: body.slice(0, 500),
-        course: args.courseName,
-      });
-    }
-  } catch (err) {
-    console.error("[hubspot-courses] form submission threw", {
-      error: err instanceof Error ? err.message : String(err),
+  const result = await submitToHubspotForm({
+    formId: formGuid,
+    fields,
+    context: {
+      ...(args.hubspotutk ? { hutk: args.hubspotutk } : {}),
+      ...(args.ipAddress ? { ipAddress: args.ipAddress } : {}),
+      pageUri: args.pageUri,
+      pageName: args.pageName,
+    },
+  });
+  if (!result.ok) {
+    console.error("[hubspot-courses] form submission failed", {
+      status: result.status,
+      error: result.error,
       course: args.courseName,
     });
-  }
-}
-
-async function safeReadText(res: Response): Promise<string> {
-  try {
-    return await res.text();
-  } catch {
-    return "";
   }
 }

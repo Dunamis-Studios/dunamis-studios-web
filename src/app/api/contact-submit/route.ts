@@ -5,10 +5,7 @@ import {
   type ContactSource,
   type ContactSubmitInput,
 } from "@/lib/validation";
-
-const HUBSPOT_PORTAL_ID = "20867488";
-const HUBSPOT_FORM_GUID = "cfda52bd-4573-4e7e-9057-68d2aea2a10a";
-const HUBSPOT_SUBMIT_URL = `https://api.hsforms.com/submissions/v3/integration/submit/${HUBSPOT_PORTAL_ID}/${HUBSPOT_FORM_GUID}`;
+import { submitToHubspotForm } from "@/lib/hubspot/submit-form";
 
 const SITE_ORIGIN = "https://www.dunamisstudios.net";
 
@@ -44,55 +41,60 @@ function getHubspotUtk(req: Request): string | undefined {
   }
 }
 
-function buildHubspotPayload(data: ContactSubmitInput, hutk: string | undefined) {
-  const pageMeta =
-    (data.source && SOURCE_PAGE_META[data.source]) ?? DEFAULT_PAGE_META;
-  return {
-    fields: [
-      { objectTypeId: "0-1", name: "firstname", value: data.firstname },
-      { objectTypeId: "0-1", name: "lastname", value: data.lastname },
-      { objectTypeId: "0-1", name: "email", value: data.email },
-      { objectTypeId: "0-1", name: "company", value: data.company },
-      {
-        objectTypeId: "0-1",
-        name: "what_are_you_trying_to_solve",
-        value: data.what_are_you_trying_to_solve,
-      },
-      {
-        objectTypeId: "0-1",
-        name: "custom_dev_budget_range",
-        value: data.custom_dev_budget_range,
-      },
-      {
-        objectTypeId: "0-1",
-        name: "custom_dev_timeline",
-        value: data.custom_dev_timeline,
-      },
-    ],
-    context: {
-      ...(hutk ? { hutk } : {}),
-      pageUri: pageMeta.pageUri,
-      pageName: pageMeta.pageName,
+function buildFields(data: ContactSubmitInput) {
+  return [
+    { name: "firstname", value: data.firstname },
+    { name: "lastname", value: data.lastname },
+    { name: "email", value: data.email },
+    { name: "company", value: data.company },
+    {
+      name: "what_are_you_trying_to_solve",
+      value: data.what_are_you_trying_to_solve,
     },
-  };
+    { name: "custom_dev_budget_range", value: data.custom_dev_budget_range },
+    { name: "custom_dev_timeline", value: data.custom_dev_timeline },
+  ];
 }
 
 export async function POST(req: Request) {
   const parsed = await parseJson(req, contactSubmitSchema);
   if (!parsed.ok) return parsed.response;
 
-  const hutk = getHubspotUtk(req);
-  const payload = buildHubspotPayload(parsed.data, hutk);
+  const formId = process.env.HUBSPOT_CONTACT_FORM_GUID;
+  if (!formId) {
+    console.error("[contact-submit] HUBSPOT_CONTACT_FORM_GUID is not set");
+    return apiError(
+      500,
+      "config_missing",
+      "Our form is temporarily unavailable. Please email josh@dunamisstudios.net.",
+    );
+  }
 
-  let hubspotRes: Response;
-  try {
-    hubspotRes = await fetch(HUBSPOT_SUBMIT_URL, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-  } catch (err) {
-    console.error("[contact-submit] network error reaching HubSpot:", err);
+  const pageMeta =
+    (parsed.data.source && SOURCE_PAGE_META[parsed.data.source]) ??
+    DEFAULT_PAGE_META;
+  const hutk = getHubspotUtk(req);
+
+  const result = await submitToHubspotForm({
+    formId,
+    fields: buildFields(parsed.data),
+    context: {
+      ...(hutk ? { hutk } : {}),
+      pageUri: pageMeta.pageUri,
+      pageName: pageMeta.pageName,
+    },
+  });
+
+  if (result.ok) {
+    return NextResponse.json({ ok: true });
+  }
+
+  // status 0 means the call never reached HubSpot (network error,
+  // timeout, abort). Surface as 502 with a try-again hint. Status
+  // 4xx / 5xx from HubSpot passes through with HubSpot's own error
+  // message when one was extractable, matching the prior behavior of
+  // this route.
+  if (result.status === 0) {
     return apiError(
       502,
       "hubspot_unreachable",
@@ -100,25 +102,11 @@ export async function POST(req: Request) {
     );
   }
 
-  if (hubspotRes.ok) {
-    return NextResponse.json({ ok: true });
-  }
-
-  const rawBody = await hubspotRes.text();
-  console.error(
-    `[contact-submit] HubSpot returned ${hubspotRes.status} ${hubspotRes.statusText}:`,
-    rawBody,
+  const fallback =
+    "Submission failed. Please try again or email josh@dunamisstudios.net.";
+  return apiError(
+    result.status,
+    "hubspot_error",
+    result.error || fallback,
   );
-
-  let message = "Submission failed. Please try again or email josh@dunamisstudios.net.";
-  try {
-    const parsedBody = JSON.parse(rawBody) as { message?: string };
-    if (parsedBody && typeof parsedBody.message === "string" && parsedBody.message) {
-      message = parsedBody.message;
-    }
-  } catch {
-    // Body was not JSON; keep the generic message.
-  }
-
-  return apiError(hubspotRes.status, "hubspot_error", message);
 }
