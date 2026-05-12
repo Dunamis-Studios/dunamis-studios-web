@@ -3,14 +3,14 @@
 import * as React from "react";
 
 /**
- * When a help-article ArticleCta link lands on /help/contact-support
- * with a #support-form hash, Next.js's initial hash-resolve fires
- * before the SupportForm client component has hydrated, so the
- * browser scrolls to wherever the empty wrapper was at SSR time
- * rather than to the now-mounted form. This component runs one
- * scrollIntoView after mount when the URL matches the target hash,
- * which lines up the form with the viewport after hydration is
- * complete.
+ * When a link lands on /help/contact-support with a #support-form
+ * hash (footer nav, external link, marketing surface), Next.js's
+ * initial hash-resolve fires before the SupportForm client component
+ * has hydrated, so the browser scrolls to wherever the empty wrapper
+ * was at SSR time rather than to the now-mounted form. This
+ * component runs one scrollIntoView after mount when the URL matches
+ * the target hash, which lines up the form with the viewport after
+ * hydration is complete.
  *
  * Render this component inside the same DOM subtree as the anchor
  * target so it is guaranteed to mount after the target exists.

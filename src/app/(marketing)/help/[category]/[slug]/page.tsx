@@ -21,7 +21,6 @@ import { getCurrentSession } from "@/lib/session";
 import { getEntitlementsForAccount } from "@/lib/accounts";
 import type { Entitlement } from "@/lib/types";
 import { ArticleRating } from "../../_components/ArticleRating";
-import { ArticleCta } from "@/components/help/article-cta";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
@@ -300,10 +299,13 @@ export default async function ArticlePage({
             />
           )}
 
-          <ArticleCta />
-
           <div className="mt-10">
-            <ArticleRating slug={article.slug} category={article.category} />
+            <ArticleRating
+              slug={article.slug}
+              category={article.category}
+              articleTitle={article.frontmatter.title}
+              articleHref={article.href}
+            />
           </div>
 
           {related.length > 0 ? <RelatedArticles items={related} /> : null}

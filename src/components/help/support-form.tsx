@@ -223,8 +223,32 @@ function buildSubmitPayload(
   return { ...base, ...conditional } as SupportTicketInput;
 }
 
-export function SupportForm() {
-  const [state, setState] = React.useState<FormState>(INITIAL_STATE);
+export interface SupportFormProps {
+  /**
+   * Optional pre-fill applied when the form first mounts. Used by the
+   * article-thumbs-triggered embedded variant to seed Subject /
+   * Category / what_happened with article context. Every field stays
+   * fully editable; the user can blow the pre-fill away and write
+   * whatever they want before submitting.
+   */
+  initialValues?: Partial<FormState>;
+  /**
+   * Optional placeholder for the "What happened?" textarea. The
+   * embedded variant uses this to nudge the user toward describing
+   * what they were looking for ("I was reading the article on... and
+   * couldn't find..."). Falls back to no placeholder when omitted.
+   */
+  whatHappenedPlaceholder?: string;
+}
+
+export function SupportForm({
+  initialValues,
+  whatHappenedPlaceholder,
+}: SupportFormProps = {}) {
+  const [state, setState] = React.useState<FormState>(() => ({
+    ...INITIAL_STATE,
+    ...(initialValues ?? {}),
+  }));
   const [fieldErrors, setFieldErrors] = React.useState<FieldErrors>({});
   const [formError, setFormError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
@@ -474,6 +498,7 @@ export function SupportForm() {
           rows={5}
           value={state.what_happened}
           onChange={(e) => setField("what_happened", e.target.value)}
+          placeholder={whatHappenedPlaceholder}
           aria-invalid={fieldErrors.what_happened ? true : undefined}
           className={cn(
             FIELD_CHROME,
