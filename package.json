@@ -69,18 +69,18 @@
     "@fontsource-variable/fraunces": "^5.2.9",
     "@fontsource/fraunces": "^5.2.9",
     "@resvg/resvg-js": "^2.6.2",
-    "@tailwindcss/postcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.3.0",
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^22.10.5",
+    "@types/node": "^25.7.0",
     "@types/react": "^19.0.3",
     "@types/react-dom": "^19.0.2",
     "autoprefixer": "^10.4.20",
-    "dotenv": "^16.4.7",
-    "eslint": "^9.17.0",
+    "dotenv": "^17.4.2",
+    "eslint": "^10.3.0",
     "eslint-config-next": "16.2.6",
-    "postcss": "^8.5.1",
+    "postcss": "^8.5.14",
     "tailwindcss": "^4.0.0",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "typescript": "^6.0.3"
   }
 }
