@@ -15,23 +15,13 @@ import { CustomerActionsMenu } from "@/components/admin/customer-actions-menu";
 import { LicenseRowActions } from "@/components/admin/license-row-actions";
 import { ActivationRowActions } from "@/components/admin/activation-row-actions";
 import { LocalTime } from "@/components/admin/local-time";
+import { ActivityLogLoader } from "@/components/admin/activity-log-loader";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Customer · Admin · Dunamis Studios",
   robots: { index: false, follow: false },
-};
-
-const ACTION_LABELS: Record<string, string> = {
-  deactivate_device: "Deactivated device",
-  revoke_license: "Revoked license",
-  resend_license_email: "Resent license email",
-  update_account_profile: "Updated profile",
-  delete_account: "Deleted account",
-  trigger_data_export: "Triggered data export",
-  refresh_from_stripe: "Refreshed from Stripe",
-  set_refund_flag: "Set refund flag",
 };
 
 function formatRelative(iso: string): string {
@@ -137,6 +127,7 @@ export default async function CustomerDetailPage({
       <DataExportsSection />
       <VerificationKeysSection />
       <ActivityLogSection
+        accountId={detail.account.accountId}
         entries={detail.recentAuditLog}
         total={detail.totalAuditLogEntries}
       />
@@ -448,9 +439,11 @@ function VerificationKeysSection() {
 }
 
 function ActivityLogSection({
+  accountId,
   entries,
   total,
 }: {
+  accountId: string;
   entries: AdminActionLogEntry[];
   total: number;
 }) {
@@ -464,47 +457,12 @@ function ActivityLogSection({
       {entries.length === 0 ? (
         <EmptyState>No admin actions on this account yet.</EmptyState>
       ) : (
-        <ol className="divide-y divide-[var(--border)] rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)]">
-          {entries.map((entry, idx) => (
-            <li
-              key={`${entry.timestamp}-${idx}`}
-              className="flex items-start justify-between gap-3 px-4 py-3 text-sm"
-            >
-              <div className="min-w-0 flex-1">
-                <p className="text-[var(--fg)]">
-                  <span className="font-medium">
-                    {ACTION_LABELS[entry.action] ?? entry.action}
-                  </span>
-                  {entry.result === "failure" ? (
-                    <span className="ml-2 inline-flex items-center rounded-full bg-[var(--color-danger-bg,#fee2e2)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-danger-fg,#991b1b)] dark:bg-[#3a1010] dark:text-[#fca5a5]">
-                      failed
-                    </span>
-                  ) : null}
-                </p>
-                <p className="mt-0.5 text-xs text-[var(--fg-muted)]">
-                  <span className="font-medium">{entry.admin_email}</span>
-                  {entry.error_message ? (
-                    <span className="ml-2 italic">{entry.error_message}</span>
-                  ) : null}
-                </p>
-              </div>
-              <time
-                className="shrink-0 text-xs text-[var(--fg-subtle)]"
-                dateTime={entry.timestamp}
-                title={entry.timestamp}
-              >
-                {formatRelative(entry.timestamp)}
-              </time>
-            </li>
-          ))}
-        </ol>
+        <ActivityLogLoader
+          accountId={accountId}
+          initialEntries={entries}
+          initialTotal={total}
+        />
       )}
-      {total > entries.length ? (
-        <p className="mt-2 text-xs text-[var(--fg-subtle)]">
-          Pagination beyond the first 20 entries lands with the read-write
-          action slice.
-        </p>
-      ) : null}
     </section>
   );
 }
