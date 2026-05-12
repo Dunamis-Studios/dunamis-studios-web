@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { apiError, parseJson } from "@/lib/api";
-import { getCurrentSession } from "@/lib/session";
+import { getCurrentSessionAny } from "@/lib/session";
 import { stripe } from "@/lib/stripe";
 import { priceForLookupKey } from "@/lib/sync/stripe-helpers";
 import { SYNC_LOOKUP_KEYS } from "@/lib/sync/types";
@@ -38,7 +38,10 @@ const bodySchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const session = await getCurrentSession();
+  // Cookie OR `Authorization: Bearer <jwt>` ingress. Atelier desktop
+  // is signed in (Phase 2.1) and presents the JWT in the Bearer
+  // header; the existing site flow continues to use the cookie.
+  const session = await getCurrentSessionAny(request);
   if (!session) {
     return apiError(
       401,
@@ -71,6 +74,11 @@ export async function POST(request: Request) {
     cancel_url: cancelUrl,
     customer_email: session.account.email,
     customer_creation: isOneTime ? "if_required" : undefined,
+    // client_reference_id is the second-rail accountId binding. Even
+    // if metadata gets stripped along some edge of the webhook
+    // pipeline, the field on the Stripe Session itself carries the
+    // accountId for the Phase 2.1 account-bound link.
+    client_reference_id: session.account.accountId,
     allow_promotion_codes: true,
     automatic_tax: { enabled: false },
     metadata: {
