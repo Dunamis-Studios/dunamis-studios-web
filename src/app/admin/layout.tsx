@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentSession, getCurrentAdminSession } from "@/lib/session";
+import { AdminHeader } from "@/components/admin/admin-header";
 
 export const dynamic = "force-dynamic";
 
@@ -37,35 +37,10 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">
-      <header className="border-b border-[var(--border)] bg-[var(--bg-elevated)]">
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4">
-            <Link href="/admin/content" className="text-sm font-medium text-[var(--fg)]">
-              Admin
-            </Link>
-            <nav className="flex items-center gap-1">
-              <Link
-                href="/admin/content"
-                className="rounded-md px-3 py-1.5 text-sm text-[var(--fg-muted)] hover:text-[var(--fg)]"
-              >
-                Content
-              </Link>
-              <Link
-                href="/admin/licenses"
-                className="rounded-md px-3 py-1.5 text-sm text-[var(--fg-muted)] hover:text-[var(--fg)]"
-              >
-                Licenses
-              </Link>
-            </nav>
-          </div>
-          <Link
-            href="/"
-            className="text-sm text-[var(--fg-muted)] hover:text-[var(--fg)]"
-          >
-            Back to site
-          </Link>
-        </div>
-      </header>
+      <AdminHeader
+        adminFirstName={admin.account.firstName ?? null}
+        adminEmail={admin.account.email}
+      />
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {children}
       </main>

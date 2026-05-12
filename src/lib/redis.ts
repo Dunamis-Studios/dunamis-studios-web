@@ -251,4 +251,43 @@ export const KEY = {
    */
   atelierEulaAcceptancesByLicense: (lid: string) =>
     `dunamis:atelier-eula-acceptances-by-license:${lid}`,
+
+  // -----------------------------------------------------------------
+  // Admin action audit log (Admin Slice Part 6)
+  // -----------------------------------------------------------------
+
+  /**
+   * Per-account audit log. Redis LIST, newest first via LPUSH. Every
+   * read-write admin action against a customer writes one entry here,
+   * regardless of success or failure. Retention is indefinite: the
+   * audit trail must outlive the customer account, including the
+   * "delete account" action's own final entry.
+   *
+   * Entry shape (JSON-stringified before LPUSH):
+   *   {
+   *     timestamp: string (ISO-8601 UTC, ms precision),
+   *     admin_email: string,
+   *     action: AdminActionName,
+   *     parameters: Record<string, unknown>,
+   *     result: "success" | "failure",
+   *     error_message?: string,
+   *   }
+   *
+   * Resource IDs in `parameters` reference whatever Redis key naturally
+   * identifies the affected record (license -> lid, activation ->
+   * activation_id, etc.), not user-facing shorthands like a machine
+   * hash, so admin debugging traces back to the actual record.
+   */
+  adminActionLogByAccount: (accountId: string) =>
+    `dunamis:admin-action-log:${accountId}`,
+
+  /**
+   * Global cross-account stream of admin actions, used by the
+   * /admin dashboard's recent-activity feed. Redis STREAM capped to
+   * the last 10K entries via MAXLEN ~ on every XADD. Each stream
+   * entry's value is the per-account JSON entry plus an `account_id`
+   * field so a single XREVRANGE call populates the feed without
+   * per-entry lookups.
+   */
+  adminActionLogStream: "dunamis:admin-action-log:_all",
 } as const;
