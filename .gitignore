@@ -20,6 +20,20 @@ next-env.d.ts.backup
 .vercel
 .env*.local
 
+# CRON_SECRET sidecar read by scripts/smoke-cron-rerun.ts. Vercel's
+# Sensitive env vars come down empty from `vercel env pull`, so the
+# secret lives in a local-only sidecar file. Never commit.
+.env.local.cron
+
+# Unlighthouse audit output. Local tool run; outputs are large and
+# don't belong in the repo.
+.unlighthouse/
+
+# Build artifact: scripts/build-kb-index.ts writes this on prebuild
+# from content/kb/**/*.md, consumed at runtime by the help-page
+# SearchBox via fetch. Regenerated on every Vercel deploy.
+public/kb-index.json
+
 # Internal audit drafts kept alongside the docs they audit. The leading
 # underscore + date stamp is the convention; published docs never start
 # with "_".
