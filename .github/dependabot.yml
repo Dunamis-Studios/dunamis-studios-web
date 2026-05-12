@@ -9,6 +9,7 @@ version: 2
 updates:
   - package-ecosystem: npm
     directory: /
+    target-branch: "main"
     schedule:
       interval: weekly
       day: monday
@@ -16,7 +17,8 @@ updates:
       timezone: America/New_York
     open-pull-requests-limit: 5
     commit-message:
-      prefix: chore
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
       include: scope
     labels:
       - dependencies
@@ -45,6 +47,7 @@ updates:
 
   - package-ecosystem: github-actions
     directory: /
+    target-branch: "main"
     schedule:
       interval: monthly
       day: monday
@@ -52,7 +55,8 @@ updates:
       timezone: America/New_York
     open-pull-requests-limit: 3
     commit-message:
-      prefix: chore
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
       include: scope
     labels:
       - dependencies

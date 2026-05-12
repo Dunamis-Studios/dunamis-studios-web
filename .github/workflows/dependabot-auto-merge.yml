@@ -1,0 +1,44 @@
+# Dependabot auto-merge.
+#
+# Every Dependabot PR is enabled for auto-merge as soon as it opens. GitHub
+# then merges it on its own once all required status checks pass; if the
+# Vercel build fails, the PR stays open with the failure visible and the
+# previous Production deployment continues to serve. No human action
+# required for the happy path, no broken Production deploys for the
+# unhappy path.
+#
+# Required repo settings (one-time):
+# - Settings -> General -> Pull Requests -> Allow auto-merge: ON
+# - Settings -> Branches -> main protection -> Require status checks to
+#   pass before merging: ON, with the Vercel deployment check selected
+# - Branch protection "Require a pull request before merging" can stay
+#   off; the workflow opens its own PR via Dependabot and merges it
+#   without human review when CI is green
+#
+# See docs/internal/_github-settings-checklist.md for the full settings
+# audit list.
+
+name: Dependabot auto-merge
+
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Enable auto-merge
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
