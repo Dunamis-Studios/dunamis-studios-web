@@ -356,10 +356,11 @@ export function SupportForm({
           Thanks, we got it.
         </h2>
         <p className="mt-3 text-[var(--fg-muted)]">
-          A ticket has been opened for your request. We typically respond
-          within 1 business day. Watch for an email from{" "}
-          <span className="font-mono">support@dunamisstudios.net</span>; if
-          it does not arrive, check your spam folder.
+          A ticket has been opened for your request. We&apos;re a small
+          studio, so a real person reads every one and writes back
+          within 48 hours. Watch for an email from{" "}
+          <span className="font-mono">support@dunamisstudios.net</span>;
+          if it does not arrive, check your spam folder.
         </p>
       </div>
     );

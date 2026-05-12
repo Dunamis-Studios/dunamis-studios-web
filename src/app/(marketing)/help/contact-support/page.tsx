@@ -8,7 +8,7 @@ import { AnchorScrollOnMount } from "@/components/help/anchor-scroll-on-mount";
 export const metadata: Metadata = {
   title: "Contact Support · Dunamis Studios help center",
   description:
-    "Can't find what you need in our help articles? Send us a ticket and we'll get back to you within 1 business day.",
+    "Can't find what you need in our help articles? Send us a ticket. We're a small studio, so a real person reads every one and writes back within 48 hours.",
   alternates: { canonical: "/help/contact-support" },
 };
 
@@ -35,7 +35,7 @@ export default function ContactSupportPage() {
           />
           <PageHeader
             title="Contact Support"
-            description="Can't find what you need in our help articles? Send us a ticket and we'll get back to you within 1 business day."
+            description="Can't find what you need in our help articles? Send us a ticket. We're a small studio, so a real person reads every one and writes back within 48 hours."
           />
         </Container>
       </Section>

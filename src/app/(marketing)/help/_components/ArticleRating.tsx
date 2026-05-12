@@ -243,8 +243,9 @@ export function ArticleRating({
               Sorry this article didn&apos;t fully answer your question.
             </h3>
             <p className="mt-2 text-sm text-[var(--fg-muted)]">
-              Send us the details and a real person will follow up
-              within 1 business day.
+              Send us the details below. We&apos;re a small studio, so a
+              real person reads every ticket and writes back within 48
+              hours.
             </p>
             <div className="mt-6">
               <SupportForm
