@@ -55,6 +55,15 @@ export const KEY = {
   kbRating: (articleKey: string) => `dunamis:kb:rating:${articleKey}`,
   kbRated: (articleKey: string) => `dunamis:kb:rated:${articleKey}`,
   kbFeedback: (articleKey: string) => `dunamis:kb:feedback:${articleKey}`,
+  /**
+   * Per-IP-hash current vote direction on a help article. Hash key is
+   * `{ipHash}` and the value is "up" or "down" (HDEL on toggle-off).
+   * This is the source of truth for "what did this visitor vote", so
+   * the rating route can correctly adjust counters when a visitor
+   * changes their vote. The legacy `kbRated` SET ignored direction
+   * and so couldn't support up<>down toggling without double-counting.
+   */
+  kbVote: (articleKey: string) => `dunamis:kb:vote:${articleKey}`,
   // --- Guides & Articles ---
   guide: (slug: string) => `dunamis:guide:${slug}`,
   article: (slug: string) => `dunamis:article:${slug}`,

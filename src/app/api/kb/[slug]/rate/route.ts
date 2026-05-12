@@ -5,9 +5,8 @@ import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { getArticleBySlug } from "@/lib/kb";
 import {
   getRatingCounts,
-  hasAlreadyRated,
   hashIp,
-  recordRating,
+  setVote,
 } from "@/lib/kb-rating";
 import { getCurrentSession } from "@/lib/session";
 import type { Account } from "@/lib/types";
@@ -17,7 +16,10 @@ export const dynamic = "force-dynamic";
 const SLUG_RE = /^[a-z0-9-]+$/;
 
 const postBodySchema = z.object({
-  direction: z.enum(["up", "down"]),
+  // null = explicit clear. The client can also re-post the currently
+  // active direction to toggle off; setVote() reads the prior state
+  // and resolves both shapes to the same end state.
+  direction: z.union([z.enum(["up", "down"]), z.null()]),
   category: z.string().min(1).regex(SLUG_RE, {
     message: "category must be kebab-case",
   }),
@@ -42,25 +44,22 @@ function isAdminAccount(account: Account): boolean {
 /**
  * POST /api/kb/[slug]/rate
  *
- * Body: { direction: "up" | "down", category: string }
- * Response: { up: number, down: number, alreadyRated: boolean }
+ * Body: { direction: "up" | "down" | null, category: string }
+ * Response: { up, down, direction: "up" | "down" | null }
  *
- * Dedup is IP-hash based. A repeat vote from the same hashed IP is a
- * no-op — the response's counts reflect the stored state and
- * alreadyRated is true. The client treats either outcome the same
- * (show "thanks"); alreadyRated is a hint for future product decisions
- * (e.g., offer to change vote), not a hard error.
- *
- * The counts in the response are NOT surfaced to readers — the client
- * uses them only to populate the admin-bound widget if ever needed,
- * and the reader-facing badge is derived server-side via
- * getHelpfulBadge() in the article page.
+ * Bidirectional voting. The same visitor can switch from up to down or
+ * back, or toggle off entirely by posting the same direction they
+ * already had stored (or by explicitly posting null). The server reads
+ * the prior vote, adjusts the counters with one +1 / -1 / pair of
+ * those, and returns the new state. Counts in the response are not
+ * leaked to the reader UI; the reader-facing badge is derived server
+ * side via getHelpfulBadge() in the article page.
  *
  * Rate limit: 100 requests / 1h / IP. Large enough that a user who
- * reads a handful of articles and rates each one won't trip the limit
- * (especially behind NAT / corporate proxies that aggregate many real
- * users onto one IP), tight enough to keep a runaway bot from
- * pounding Redis.
+ * reads a handful of articles and toggles back and forth a few times
+ * stays under it, tight enough to keep a runaway bot from pounding
+ * Redis. NAT-aggregated IPs (corporate proxies, captive WiFi) share
+ * the limit which is the deliberate trade-off.
  */
 export async function POST(req: Request, { params }: RouteParams) {
   const { slug } = await params;
@@ -88,13 +87,11 @@ export async function POST(req: Request, { params }: RouteParams) {
   }
 
   const ipHash = hashIp(ip);
-  if (await hasAlreadyRated(category, slug, ipHash)) {
-    const counts = await getRatingCounts(category, slug);
-    return NextResponse.json({ ...counts, alreadyRated: true });
-  }
-
-  const counts = await recordRating(category, slug, direction, ipHash);
-  return NextResponse.json({ ...counts, alreadyRated: false });
+  const result = await setVote(category, slug, ipHash, direction);
+  return NextResponse.json({
+    ...result.counts,
+    direction: result.direction,
+  });
 }
 
 /**

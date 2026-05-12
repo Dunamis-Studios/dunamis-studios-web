@@ -13,12 +13,13 @@ export const metadata: Metadata = {
 };
 
 /**
- * Public-facing customer support entry point. Renders a static header
- * + the SupportForm client component, which owns the conditional
- * field logic and POSTs to /api/support-submit. The form section's
- * #support-form anchor is the link target for the per-article
- * ArticleCta so a click from any help article lands directly on the
- * form.
+ * Public-facing customer support entry point. Renders a static
+ * header plus the SupportForm client component, which owns the
+ * conditional field logic and POSTs to /api/support-submit. The
+ * form section's #support-form anchor is the link target for
+ * footer nav and external links into the support page; the
+ * article-thumbs-down flow embeds SupportForm inline on the
+ * article page itself, so it does not navigate here.
  */
 export default function ContactSupportPage() {
   return (
