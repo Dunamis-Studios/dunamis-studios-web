@@ -270,10 +270,10 @@ export const contactSubmitSchema = z.object({
     .min(1, "Required")
     .max(5000, "Too long"),
   custom_dev_budget_range: z.enum(BUDGET_OPTIONS, {
-    errorMap: () => ({ message: "Choose a budget range" }),
+    error: "Choose a budget range",
   }),
   custom_dev_timeline: z.enum(TIMELINE_OPTIONS, {
-    errorMap: () => ({ message: "Choose a timeline" }),
+    error: "Choose a timeline",
   }),
   source: z.enum(CONTACT_SOURCES).optional(),
 });
