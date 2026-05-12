@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentSession, getCurrentAdminSession } from "@/lib/session";
 import { AdminHeader } from "@/components/admin/admin-header";
+import { AdminTimezoneProvider } from "@/components/admin/admin-timezone-provider";
 
 export const dynamic = "force-dynamic";
 
@@ -36,14 +37,18 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg)]">
-      <AdminHeader
-        adminFirstName={admin.account.firstName ?? null}
-        adminEmail={admin.account.email}
-      />
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {children}
-      </main>
-    </div>
+    <AdminTimezoneProvider
+      preferredTimeZone={admin.account.timeZone ?? null}
+    >
+      <div className="min-h-screen bg-[var(--bg)]">
+        <AdminHeader
+          adminFirstName={admin.account.firstName ?? null}
+          adminEmail={admin.account.email}
+        />
+        <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          {children}
+        </main>
+      </div>
+    </AdminTimezoneProvider>
   );
 }
