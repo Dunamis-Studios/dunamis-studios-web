@@ -44,6 +44,15 @@ updates:
           - "@types/*"
       dev-tooling:
         dependency-type: development
+    ignore:
+      # eslint-config-next 16.x bundles eslint-plugin-import,
+      # eslint-plugin-jsx-a11y, and eslint-plugin-react sub-deps whose peer
+      # ranges still cap at eslint@^9. npm tolerates the conflict on install
+      # with warnings but the lint pipeline runs on the v9-pinned binary.
+      # Revisit when eslint-config-next's bundled plugins declare eslint@^10
+      # in their peerDependencies; remove this block + bump eslint then.
+      - dependency-name: "eslint"
+        versions: [">=10.0.0"]
 
   - package-ecosystem: github-actions
     directory: /
