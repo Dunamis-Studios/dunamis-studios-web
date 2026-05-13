@@ -50,9 +50,9 @@ export default function DoNotSellPage() {
             Should you wish to exercise any CCPA right against Dunamis Studios, email{" "}
             <a
               className="underline-offset-2 hover:underline"
-              href="mailto:dsr@dunamisstudios.com?subject=CCPA%20Rights%20Request"
+              href="mailto:dsr@dunamisstudios.net?subject=CCPA%20Rights%20Request"
             >
-              dsr@dunamisstudios.com
+              dsr@dunamisstudios.net
             </a>{" "}
             with your request. Include in the email:
           </p>

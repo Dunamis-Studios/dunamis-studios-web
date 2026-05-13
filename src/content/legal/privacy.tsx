@@ -215,7 +215,7 @@ export const privacyPolicy: LegalDocument = {
               commercial model and the operational availability of the licensing service. A
               Legitimate Interests Assessment is on file internally and is summarized in our
               public statements; data subjects may object via{" "}
-              <code className="font-mono text-sm">dsr@dunamisstudios.com</code>.
+              <code className="font-mono text-sm">dsr@dunamisstudios.net</code>.
             </li>
             <li>
               <strong>Account creation and management</strong>: Article 6(1)(b), contract
@@ -336,8 +336,8 @@ export const privacyPolicy: LegalDocument = {
             <li>
               <strong>Right to access</strong>: request a copy of the personal data we hold
               about you. Email{" "}
-              <a href="mailto:dsr@dunamisstudios.com" className="underline">
-                dsr@dunamisstudios.com
+              <a href="mailto:dsr@dunamisstudios.net" className="underline">
+                dsr@dunamisstudios.net
               </a>
               . 30-day response SLA.
             </li>
@@ -353,11 +353,11 @@ export const privacyPolicy: LegalDocument = {
             </li>
             <li>
               <strong>Right to rectification</strong>: correct inaccurate personal data. Email{" "}
-              <code className="font-mono text-sm">dsr@dunamisstudios.com</code>.
+              <code className="font-mono text-sm">dsr@dunamisstudios.net</code>.
             </li>
             <li>
               <strong>Right to erasure</strong>: request deletion of your personal data. Email{" "}
-              <code className="font-mono text-sm">dsr@dunamisstudios.com</code>. Some records
+              <code className="font-mono text-sm">dsr@dunamisstudios.net</code>. Some records
               (EULA acceptance, Stripe payment history) are retained under legal or contractual
               obligation and cannot be deleted on request; we will tell you which records are
               retained and why.
@@ -365,7 +365,7 @@ export const privacyPolicy: LegalDocument = {
             <li>
               <strong>Right to object to processing</strong>: object to processing based on
               legitimate interests (most notably the anti-abuse logging described above). Email{" "}
-              <code className="font-mono text-sm">dsr@dunamisstudios.com</code>.
+              <code className="font-mono text-sm">dsr@dunamisstudios.net</code>.
             </li>
             <li>
               <strong>Right to lodge a complaint</strong> with your local supervisory authority
@@ -410,8 +410,8 @@ export const privacyPolicy: LegalDocument = {
           </ul>
           <p className="mt-4">
             Exercise any of the above by emailing{" "}
-            <a href="mailto:dsr@dunamisstudios.com" className="underline">
-              dsr@dunamisstudios.com
+            <a href="mailto:dsr@dunamisstudios.net" className="underline">
+              dsr@dunamisstudios.net
             </a>
             . 45-day response under CCPA (we aim for 30).
           </p>
@@ -430,7 +430,7 @@ export const privacyPolicy: LegalDocument = {
             the European Economic Area, United Kingdom, or Switzerland, transfers to the United
             States are made under Standard Contractual Clauses (Module 2: Controller to
             Processor) executed with our processors. SCCs are available on request to{" "}
-            <code className="font-mono text-sm">privacy@dunamisstudios.com</code>.
+            <code className="font-mono text-sm">privacy@dunamisstudios.net</code>.
           </p>
           <p className="mt-3">
             We do not transfer personal data to jurisdictions that have not received a European
@@ -499,20 +499,20 @@ export const privacyPolicy: LegalDocument = {
           <ul className="list-disc space-y-2 pl-5">
             <li>
               <strong>General privacy inquiries</strong>:{" "}
-              <a href="mailto:privacy@dunamisstudios.com" className="underline">
-                privacy@dunamisstudios.com
+              <a href="mailto:privacy@dunamisstudios.net" className="underline">
+                privacy@dunamisstudios.net
               </a>
             </li>
             <li>
               <strong>Data subject requests</strong> (access, deletion, portability, objection):{" "}
-              <a href="mailto:dsr@dunamisstudios.com" className="underline">
-                dsr@dunamisstudios.com
+              <a href="mailto:dsr@dunamisstudios.net" className="underline">
+                dsr@dunamisstudios.net
               </a>
             </li>
             <li>
               <strong>Security incidents</strong>:{" "}
-              <a href="mailto:security@dunamisstudios.com" className="underline">
-                security@dunamisstudios.com
+              <a href="mailto:security@dunamisstudios.net" className="underline">
+                security@dunamisstudios.net
               </a>{" "}
               (see also{" "}
               <Link href="/security" className="underline">
