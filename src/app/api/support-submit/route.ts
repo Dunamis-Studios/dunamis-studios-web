@@ -13,6 +13,8 @@ import {
   type HubspotFormField,
 } from "@/lib/hubspot/submit-form";
 import { verifyKey } from "@/lib/verification-key/service";
+import { verifyTurnstileToken } from "@/lib/turnstile/verify";
+import { getClientIp } from "@/lib/get-client-ip";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -107,6 +109,22 @@ export async function POST(req: Request) {
 
   const parsed = await parseJson(req, supportTicketSchema);
   if (!parsed.ok) return parsed.response;
+
+  // Turnstile gate. Runs BEFORE the verification key check so a
+  // botted request never even pays for the HMAC verify. A failed
+  // Turnstile siteverify returns 400 with a generic message; the
+  // legitimate path silently consumes a token per submit.
+  const turnstile = await verifyTurnstileToken(
+    parsed.data.turnstileToken,
+    getClientIp(req),
+  );
+  if (!turnstile.valid) {
+    return apiError(
+      400,
+      "turnstile_failed",
+      "Bot protection check failed. Please refresh and try again.",
+    );
+  }
 
   // Verification key gate. The widget already enforced the
   // (key, email) pairing client-side; this is the load-bearing
