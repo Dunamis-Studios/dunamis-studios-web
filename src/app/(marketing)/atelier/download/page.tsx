@@ -297,10 +297,10 @@ export default async function AtelierDownloadPage() {
                       byte. If it doesn&apos;t, do not run the binary — re-
                       download from this page or open a support ticket at{" "}
                       <a
-                        href="mailto:legal@dunamisstudios.com"
+                        href="mailto:legal@dunamisstudios.net"
                         className="underline decoration-dotted underline-offset-2 hover:text-[var(--fg)]"
                       >
-                        legal@dunamisstudios.com
+                        legal@dunamisstudios.net
                       </a>
                       .
                     </p>
@@ -321,10 +321,10 @@ export default async function AtelierDownloadPage() {
                     </code>{" "}
                     and email the result to{" "}
                     <a
-                      href="mailto:legal@dunamisstudios.com"
+                      href="mailto:legal@dunamisstudios.net"
                       className="underline decoration-dotted underline-offset-2 hover:text-[var(--fg)]"
                     >
-                      legal@dunamisstudios.com
+                      legal@dunamisstudios.net
                     </a>{" "}
                     for cross-check.
                   </p>

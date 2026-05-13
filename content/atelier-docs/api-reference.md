@@ -12,7 +12,7 @@ This page is the customer-facing API reference. The authoritative version of eve
 
 The reference below is the curated, narrative version of the most common endpoints, organized by domain. For an endpoint not covered here, the in-app docs are the source of truth.
 
-> **Auto-generation status.** The end goal for this reference is automatic generation from the Rust handler signatures so it stays exactly in sync with the running API. That work is queued; for v1 the page is hand-curated against the live API surface. If you spot a discrepancy between this page and `/api/docs` in the running app, the in-app version is correct — please report the drift to legal@dunamisstudios.com.
+> **Auto-generation status.** The end goal for this reference is automatic generation from the Rust handler signatures so it stays exactly in sync with the running API. That work is queued; for v1 the page is hand-curated against the live API surface. If you spot a discrepancy between this page and `/api/docs` in the running app, the in-app version is correct — please report the drift to legal@dunamisstudios.net.
 
 ---
 
@@ -701,7 +701,7 @@ Common status codes:
 - **`401 Unauthorized`** — missing or wrong Bearer token.
 - **`404 Not Found`** — resource doesn't exist.
 - **`409 Conflict`** — write would violate a uniqueness constraint (e.g. creating a vendor with a name that already exists).
-- **`500 Internal Server Error`** — unexpected. Worth reporting to legal@dunamisstudios.com with the request that triggered it.
+- **`500 Internal Server Error`** — unexpected. Worth reporting to legal@dunamisstudios.net with the request that triggered it.
 
 There is no rate limit on the local API — you're calling your own machine. Be reasonable about pollers (5-minute intervals are plenty; 5-second intervals are wasteful).
 

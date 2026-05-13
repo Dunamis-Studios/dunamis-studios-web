@@ -104,7 +104,7 @@ Options:
 Examples:
   npm run revoke-license -- --lid abc-123 --reason "Leaked in support ticket"
   npm run revoke-license -- --lid abc-123 --mode grace_14d \\
-    --reason "Refund processed" --revoked-by josh@dunamisstudios.com
+    --reason "Refund processed" --revoked-by josh@dunamisstudios.net
 `);
 }
 

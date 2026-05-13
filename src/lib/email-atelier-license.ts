@@ -76,7 +76,7 @@ export async function sendAtelierLicenseEmail(
 
   const installUrl = "https://dunamisstudios.net/build-services/products/atelier/docs/install";
   const portalUrl = "https://dunamisstudios.net/account/atelier-licenses";
-  const supportEmail = "legal@dunamisstudios.com";
+  const supportEmail = "legal@dunamisstudios.net";
 
   const text = `${greeting}
 

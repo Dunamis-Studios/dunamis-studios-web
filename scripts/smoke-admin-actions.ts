@@ -41,7 +41,7 @@ function arg(flag: string): string | undefined {
   return process.argv[i + 1];
 }
 
-const ADMIN_EMAIL = "smoke@dunamisstudios.com";
+const ADMIN_EMAIL = "smoke@dunamisstudios.net";
 const BOGUS_LID = "smoke-bogus-lid-00000000-0000-0000-0000-000000000000";
 const BOGUS_ACTIVATION_ID =
   "smoke-bogus-activation-00000000-0000-0000-0000-000000000000";

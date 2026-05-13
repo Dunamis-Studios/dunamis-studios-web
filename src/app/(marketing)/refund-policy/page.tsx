@@ -68,8 +68,8 @@ export default function RefundPolicyPage() {
             <ol className="mt-3 list-decimal space-y-2 pl-5">
               <li>
                 Email{" "}
-                <a className="underline" href="mailto:support@dunamisstudios.com">
-                  support@dunamisstudios.com
+                <a className="underline" href="mailto:support@dunamisstudios.net">
+                  support@dunamisstudios.net
                 </a>{" "}
                 from the email address used to purchase.
               </li>
@@ -105,8 +105,8 @@ export default function RefundPolicyPage() {
               Studios), or alternative payment instruments. Where the original payment
               method is no longer valid (expired card, closed account), Customer should
               contact{" "}
-              <a className="underline" href="mailto:support@dunamisstudios.com">
-                support@dunamisstudios.com
+              <a className="underline" href="mailto:support@dunamisstudios.net">
+                support@dunamisstudios.net
               </a>{" "}
               to coordinate an alternative refund destination subject to verification.
             </p>
@@ -196,8 +196,8 @@ export default function RefundPolicyPage() {
             </h2>
             <p className="mt-3">
               Refund requests, chargeback discussions, and any related questions:{" "}
-              <a className="underline" href="mailto:support@dunamisstudios.com">
-                support@dunamisstudios.com
+              <a className="underline" href="mailto:support@dunamisstudios.net">
+                support@dunamisstudios.net
               </a>
               .
             </p>

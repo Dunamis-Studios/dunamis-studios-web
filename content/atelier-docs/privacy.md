@@ -69,7 +69,7 @@ When you accept the End User License Agreement on first launch, Atelier posts th
 
 The full record contains: the EULA version, your Dunamis account ID, your Atelier license ID, the timestamp of acceptance, the Atelier client version that posted it, the IP address and user-agent of the request, the device fingerprint of the activated machine, the SHA-256 of the rendered text, the substitution values used to render it, and the rendered text itself. A snapshot of your name, business name, and email at the moment of acceptance is included so a later account-email rotation doesn't rewrite the audit trail. No business data, no wedding data.
 
-Records are append-only — a re-acceptance after an EULA version bump adds a new row alongside the prior one. You can download the verbatim accepted document for any of your acceptances directly from your customer portal at [dunamisstudios.net/account/atelier-licenses](https://dunamisstudios.net/account/atelier-licenses), or email legal@dunamisstudios.com for a copy of every record bound to your account.
+Records are append-only — a re-acceptance after an EULA version bump adds a new row alongside the prior one. You can download the verbatim accepted document for any of your acceptances directly from your customer portal at [dunamisstudios.net/account/atelier-licenses](https://dunamisstudios.net/account/atelier-licenses), or email legal@dunamisstudios.net for a copy of every record bound to your account.
 
 ## Phone-friendly day-of view
 
@@ -137,7 +137,7 @@ This is the same commitment in [EULA §15.4](doc:eula). It is not abstract — t
 
 ## Marketing reference
 
-Per [EULA §17](doc:eula), we reserve the right to publicly reference your business name and industry as a Dunamis Studios customer for case study, portfolio, or social-proof purposes — for example, "Acme Weddings uses Atelier" on the product page. You can opt out by emailing legal@dunamisstudios.com at any time. We will not use your logo, photographs, your clients' names, or any client work product without separate written permission from you.
+Per [EULA §17](doc:eula), we reserve the right to publicly reference your business name and industry as a Dunamis Studios customer for case study, portfolio, or social-proof purposes — for example, "Acme Weddings uses Atelier" on the product page. You can opt out by emailing legal@dunamisstudios.net at any time. We will not use your logo, photographs, your clients' names, or any client work product without separate written permission from you.
 
 ## Cookies and trackers on this website
 
@@ -145,4 +145,4 @@ Separate from Atelier-the-software is dunamisstudios.net, this website. The webs
 
 ## Contacting us
 
-Questions about this privacy notice should be directed to **legal@dunamisstudios.com**. The same address handles licensing, support, and bug reports.
+Questions about this privacy notice should be directed to **legal@dunamisstudios.net**. The same address handles licensing, support, and bug reports.

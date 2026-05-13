@@ -11,12 +11,12 @@ updated: "2026-05-11"
 ## Refund windows
 
 - **14 days, no questions asked, on unactivated license keys.** If you purchased an Atelier license and have not yet activated it on any device, email us within 14 days of purchase and we refund in full. No reason required.
-- **30 days, for reproducible defects, on activated licenses.** If you have activated Atelier and encounter a reproducible defect, you must report the bug to support@dunamisstudios.com before requesting a refund. If we cannot resolve the defect within reasonable time, you can request a refund within 30 days of the original purchase.
+- **30 days, for reproducible defects, on activated licenses.** If you have activated Atelier and encounter a reproducible defect, you must report the bug to support@dunamisstudios.net before requesting a refund. If we cannot resolve the defect within reasonable time, you can request a refund within 30 days of the original purchase.
 - **After 30 days, refunds are at Dunamis Studios' discretion.** We do consider post-window refunds for material misunderstandings or duplicate purchases. Email us and we will respond honestly.
 
 ## How to request a refund
 
-1. Email `support@dunamisstudios.com` from the email address used to purchase.
+1. Email `support@dunamisstudios.net` from the email address used to purchase.
 2. Include your order number (from the purchase confirmation email Resend sends immediately after payment).
 3. For activated licenses: include a description of the defect and step-by-step instructions to reproduce it.
 4. For unactivated licenses: no description required.
@@ -48,4 +48,4 @@ If you initiate a chargeback through your bank or card issuer instead of contact
 
 ## Contact
 
-Refund requests, chargeback discussions, and any related questions: **support@dunamisstudios.com**.
+Refund requests, chargeback discussions, and any related questions: **support@dunamisstudios.net**.

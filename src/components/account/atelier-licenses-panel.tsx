@@ -217,7 +217,7 @@ function EulaAcceptanceRow({
       {error ? (
         <p className="mt-1 text-xs text-[var(--color-danger)]">
           Couldn&apos;t download — {error}. Try again or email
-          legal@dunamisstudios.com.
+          legal@dunamisstudios.net.
         </p>
       ) : null}
     </li>
@@ -250,10 +250,10 @@ function RevocationBanner({ license }: { license: PortalLicense }) {
           : " Atelier locks immediately on next activation or heartbeat."}{" "}
         If you believe this is in error, email{" "}
         <a
-          href="mailto:legal@dunamisstudios.com"
+          href="mailto:legal@dunamisstudios.net"
           className="underline underline-offset-2"
         >
-          legal@dunamisstudios.com
+          legal@dunamisstudios.net
         </a>
         .
       </div>
@@ -403,7 +403,7 @@ function SlotRow({ slot }: { slot: PortalSlot }) {
         {error ? (
           <p className="mt-1 text-xs text-[var(--color-danger)]">
             Couldn&apos;t complete — {error}. Try again or email
-            legal@dunamisstudios.com.
+            legal@dunamisstudios.net.
           </p>
         ) : null}
       </div>

@@ -72,8 +72,8 @@ export const termsAddendumAtelier: LegalDocument = {
             <strong>Device cap.</strong> The license permits activation on up to{" "}
             <strong>three (3) Customer-controlled devices</strong> simultaneously. Customer
             may deactivate a device through the Atelier account dashboard or by contacting{" "}
-            <a className="underline" href="mailto:support@dunamisstudios.com">
-              support@dunamisstudios.com
+            <a className="underline" href="mailto:support@dunamisstudios.net">
+              support@dunamisstudios.net
             </a>{" "}
             to free up an activation slot. Hardware replacement, device loss, or platform
             reinstall does not consume an additional license; Customer should deactivate
@@ -104,8 +104,8 @@ export const termsAddendumAtelier: LegalDocument = {
             <strong>30 days, for reproducible defects, on activated licenses.</strong> If
             Customer has activated Atelier and encounters a reproducible defect, Customer
             must report the defect to{" "}
-            <a className="underline" href="mailto:support@dunamisstudios.com">
-              support@dunamisstudios.com
+            <a className="underline" href="mailto:support@dunamisstudios.net">
+              support@dunamisstudios.net
             </a>{" "}
             before requesting a refund. If Dunamis Studios cannot resolve the defect within
             a reasonable time, Customer may request a refund within thirty (30) days of the
@@ -288,8 +288,8 @@ export const termsAddendumAtelier: LegalDocument = {
           <a className="underline" href="#a-offline-grace">§A7</a> applies. Persistent or
           extended outages that prevent Customer from activating new installations are
           handled by support; contact{" "}
-          <a className="underline" href="mailto:support@dunamisstudios.com">
-            support@dunamisstudios.com
+          <a className="underline" href="mailto:support@dunamisstudios.net">
+            support@dunamisstudios.net
           </a>
           .
         </p>

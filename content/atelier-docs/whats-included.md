@@ -35,7 +35,7 @@ Wedding data is never sent to Dunamis Studios in plaintext. The activation/heart
 ## What's not included, but available separately
 
 - **Major version upgrades.** When v2 ships (no committed date — we don't ship to deadlines), it's a separate paid purchase. Existing customers get loyalty pricing — currently 30% off — every major upgrade for life. See the [bug fix policy](doc:bug-fix-policy) for the major-version contract.
-- **Custom development.** If Atelier doesn't have a feature you need, we can scope a custom development engagement after you've used the app and know exactly what's missing. Pricing is per-customer, not a fixed tier — see [EULA §11](doc:eula) for the engagement framing. Contact us at [legal@dunamisstudios.com](mailto:legal@dunamisstudios.com) to start a conversation.
+- **Custom development.** If Atelier doesn't have a feature you need, we can scope a custom development engagement after you've used the app and know exactly what's missing. Pricing is per-customer, not a fixed tier — see [EULA §11](doc:eula) for the engagement framing. Contact us at [legal@dunamisstudios.net](mailto:legal@dunamisstudios.net) to start a conversation.
 - **Support agreements.** The default support is best-effort — no SLA, no guaranteed response time, but we do reply. Studios that need guaranteed response times can purchase a separate support agreement. Most studios don't need this.
 
 ## What's deliberately not coming

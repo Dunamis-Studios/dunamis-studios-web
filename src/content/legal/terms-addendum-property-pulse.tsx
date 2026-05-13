@@ -200,8 +200,8 @@ export const termsAddendumPropertyPulse: LegalDocument = {
           <p>
             Customer may request a full refund of the one-time Property Pulse license fee
             within <strong>seven (7) days</strong> of the original install date by contacting{" "}
-            <a href="mailto:support@dunamisstudios.com" className="underline">
-              support@dunamisstudios.com
+            <a href="mailto:support@dunamisstudios.net" className="underline">
+              support@dunamisstudios.net
             </a>
             . After the seven-day window, no refund is issued, except as required by law or as
             set forth in the Master Terms{" "}

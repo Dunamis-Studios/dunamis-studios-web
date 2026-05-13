@@ -11,7 +11,7 @@ import { buildAccountDataExport, dataExportFilename } from "@/lib/data-export";
  * Article 15 (right of access) and CCPA "right to know" request for
  * accounts that can sign in. Customers who cannot sign in (lost
  * credentials, deleted account in 30-day recovery window, etc.) email
- * dsr@dunamisstudios.com and we run the same builder server-side.
+ * dsr@dunamisstudios.net and we run the same builder server-side.
  */
 export async function GET() {
   const current = await getCurrentSession();

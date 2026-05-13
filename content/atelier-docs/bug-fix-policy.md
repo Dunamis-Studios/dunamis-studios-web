@@ -35,7 +35,7 @@ This model is the deal: you buy a major, you own it forever, you get free bug fi
 
 ## Reporting a bug
 
-The fastest path is email. Send to **legal@dunamisstudios.com** (the same address handles bug reports, support questions, and licensing issues — small studio, single inbox).
+The fastest path is email. Send to **legal@dunamisstudios.net** (the same address handles bug reports, support questions, and licensing issues — small studio, single inbox).
 
 What helps us fix it faster:
 
@@ -69,7 +69,7 @@ Examples:
 - **Feature request.** "Atelier should sync with Google Calendar." (We don't claim it does, and we haven't agreed to build it.)
 - **Feature request.** "I want a Mac build." (Out of scope for v1.)
 
-Feature requests aren't bugs and aren't covered by the bug-fix policy. They're either on the roadmap, off the roadmap, or candidates for [post-purchase custom development](doc:eula#11-support-and-custom-engagements). Reply or forward to legal@dunamisstudios.com and we'll let you know which bucket your request lands in.
+Feature requests aren't bugs and aren't covered by the bug-fix policy. They're either on the roadmap, off the roadmap, or candidates for [post-purchase custom development](doc:eula#11-support-and-custom-engagements). Reply or forward to legal@dunamisstudios.net and we'll let you know which bucket your request lands in.
 
 ## What this policy does not cover
 

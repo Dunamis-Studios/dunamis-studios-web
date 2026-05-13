@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Generate the Dunamis Studios security@ GPG keypair.
 #
-# Idempotent: if a key for security@dunamisstudios.com already exists in
+# Idempotent: if a key for security@dunamisstudios.net already exists in
 # the local gpg keyring, this script lists the existing key fingerprints
 # and exits without overwriting. Re-run to add additional keys (e.g., for
 # key rotation) is a deliberate gpg operation, not this script's job.
@@ -29,7 +29,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WELL_KNOWN_DIR="$REPO_ROOT/public/.well-known"
 PUBLIC_KEY_FILE="$WELL_KNOWN_DIR/security.txt.asc"
 KEY_NAME="Dunamis Studios Security"
-KEY_EMAIL="security@dunamisstudios.com"
+KEY_EMAIL="security@dunamisstudios.net"
 
 if ! command -v gpg >/dev/null 2>&1; then
   echo "error: gpg (GnuPG) not found in PATH. Install Gpg4win (Windows), brew install gnupg (macOS), or system package (Linux)." >&2
