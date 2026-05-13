@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 
 /**
  * Email-course signup form. First name, last name, and email all
@@ -58,6 +59,7 @@ export function CourseSignupForm({
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [turnstileToken, setTurnstileToken] = React.useState("");
   const [status, setStatus] = React.useState<Status>("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
@@ -74,6 +76,7 @@ export function CourseSignupForm({
         lastName,
         email,
         courseSlug,
+        turnstileToken,
       };
       if (hubspotutk) payload.hubspotutk = hubspotutk;
       const res = await fetch("/api/courses/signup", {
@@ -196,10 +199,17 @@ export function CourseSignupForm({
       </div>
 
       <div className="mt-5">
+        <TurnstileWidget
+          action="courses"
+          onSuccess={setTurnstileToken}
+        />
+      </div>
+
+      <div className="mt-5">
         <Button
           type="submit"
-          disabled={status === "submitting"}
-          aria-disabled={status === "submitting"}
+          disabled={status === "submitting" || !turnstileToken}
+          aria-disabled={status === "submitting" || !turnstileToken}
         >
           {status === "submitting" ? "Sending..." : "Send me Day 1"}
           {status === "submitting" ? null : (

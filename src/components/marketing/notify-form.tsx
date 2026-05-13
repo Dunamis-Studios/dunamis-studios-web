@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LeadNameFields, RequiredMark } from "@/components/marketing/lead-form-fields";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 import { cn } from "@/lib/utils";
 import type { ProductCatalogSlug } from "@/lib/types";
 
@@ -46,6 +47,7 @@ export function NotifyForm({
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [turnstileToken, setTurnstileToken] = React.useState("");
   const [status, setStatus] = React.useState<Status>("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
@@ -61,6 +63,7 @@ export function NotifyForm({
         lastName,
         email,
         product,
+        turnstileToken,
       };
       if (hubspotutk) payload.hubspotutk = hubspotutk;
       const res = await fetch("/api/notify", {
@@ -144,8 +147,8 @@ export function NotifyForm({
         <Button
           type="submit"
           size="lg"
-          disabled={status === "submitting"}
-          aria-disabled={status === "submitting"}
+          disabled={status === "submitting" || !turnstileToken}
+          aria-disabled={status === "submitting" || !turnstileToken}
         >
           {status === "submitting" ? "Sending..." : "Notify me"}
           {status === "submitting" ? null : (
@@ -153,6 +156,10 @@ export function NotifyForm({
           )}
         </Button>
       </div>
+      <TurnstileWidget
+        action="notify"
+        onSuccess={setTurnstileToken}
+      />
       {status === "error" && errorMessage ? (
         <p
           role="alert"

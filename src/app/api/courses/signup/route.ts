@@ -3,6 +3,8 @@ import { createHash } from "node:crypto";
 import { z } from "zod";
 import { redis, KEY } from "@/lib/redis";
 import { submitCourseSignup } from "@/lib/hubspot-courses-form";
+import { verifyTurnstileToken } from "@/lib/turnstile/verify";
+import { getClientIp } from "@/lib/get-client-ip";
 
 /**
  * POST /api/courses/signup
@@ -45,6 +47,7 @@ const BodySchema = z.object({
   email: z.string().email().max(254),
   courseSlug: z.string().min(1).max(80),
   hubspotutk: z.string().max(200).optional(),
+  turnstileToken: z.string().min(1, "Bot protection token required"),
 });
 
 interface CourseSignupRecord {
@@ -83,6 +86,17 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Please check your inputs and try again." },
+      { status: 400 },
+    );
+  }
+
+  const turnstile = await verifyTurnstileToken(
+    parsed.data.turnstileToken,
+    getClientIp(req),
+  );
+  if (!turnstile.valid) {
+    return NextResponse.json(
+      { error: "Bot protection check failed. Please refresh and try again." },
       { status: 400 },
     );
   }

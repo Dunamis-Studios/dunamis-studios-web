@@ -9,6 +9,7 @@ import {
   LeadNameFields,
   RequiredMark,
 } from "@/components/marketing/lead-form-fields";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 import { cn } from "@/lib/utils";
 
 /**
@@ -408,6 +409,7 @@ function EmailCapture({ inputs }: { inputs: Inputs }) {
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [turnstileToken, setTurnstileToken] = React.useState("");
   const [status, setStatus] = React.useState<EmailStatus>("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
@@ -425,6 +427,7 @@ function EmailCapture({ inputs }: { inputs: Inputs }) {
         email,
         inputs,
       };
+      payload.turnstileToken = turnstileToken;
       if (hubspotutk) payload.hubspotutk = hubspotutk;
       const res = await fetch("/api/tools/handoff-calculator-report", {
         method: "POST",
@@ -488,6 +491,10 @@ function EmailCapture({ inputs }: { inputs: Inputs }) {
           setLastName={setLastName}
           disabled={status === "submitting"}
         />
+        <TurnstileWidget
+          action="handoff-calculator"
+          onSuccess={setTurnstileToken}
+        />
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
           <div className="flex-1">
             <Label htmlFor="calc-email">
@@ -510,8 +517,8 @@ function EmailCapture({ inputs }: { inputs: Inputs }) {
           </div>
           <Button
             type="submit"
-            disabled={status === "submitting"}
-            aria-disabled={status === "submitting"}
+            disabled={status === "submitting" || !turnstileToken}
+            aria-disabled={status === "submitting" || !turnstileToken}
           >
             {status === "submitting" ? "Sending..." : "Email it"}
             {status === "submitting" ? null : (
