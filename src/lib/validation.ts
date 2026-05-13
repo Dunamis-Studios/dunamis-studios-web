@@ -276,6 +276,13 @@ export const contactSubmitSchema = z.object({
     error: "Choose a timeline",
   }),
   source: z.enum(CONTACT_SOURCES).optional(),
+  /**
+   * Cloudflare Turnstile token. Required on every public form
+   * submission. The /api/contact-submit route verifies against
+   * Cloudflare siteverify before forwarding to HubSpot; not included
+   * in the HubSpot payload (buildFields enumerates fields explicitly).
+   */
+  turnstileToken: z.string().min(1, "Bot protection token required"),
 });
 
 export type ContactSubmitInput = z.infer<typeof contactSubmitSchema>;
@@ -474,6 +481,17 @@ export const supportTicketSchema = z.object({
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
       "Verification key looks wrong. Generate a new one above.",
     ),
+  /**
+   * Cloudflare Turnstile token solved on the client. Required on
+   * every public form submission. The /api/support-submit route
+   * re-verifies the token against Cloudflare siteverify BEFORE any
+   * other validation or HubSpot forward; an invalid or missing
+   * token returns 400 and the helpdesk pipeline is never touched.
+   * Not forwarded into the HubSpot ticket payload (the route's
+   * buildFields helper enumerates the fields explicitly and omits
+   * this one).
+   */
+  turnstileToken: z.string().min(1, "Bot protection token required"),
   // Optional conditional fields. UI enforces required-when based on
   // category; the schema accepts any subset. Empty strings normalize
   // to undefined so they're absent from the HubSpot payload entirely

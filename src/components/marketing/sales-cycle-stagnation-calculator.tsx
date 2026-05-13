@@ -17,6 +17,7 @@ import {
   LeadNameFields,
   RequiredMark,
 } from "@/components/marketing/lead-form-fields";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 import { cn } from "@/lib/utils";
 import {
   computeSalesCycleStagnation,
@@ -702,6 +703,7 @@ function EmailCapture({ inputs }: { inputs: SalesCycleStagnationInputs }) {
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [turnstileToken, setTurnstileToken] = React.useState("");
   const [status, setStatus] = React.useState<EmailStatus>("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
@@ -719,6 +721,7 @@ function EmailCapture({ inputs }: { inputs: SalesCycleStagnationInputs }) {
         email,
         inputs,
       };
+      payload.turnstileToken = turnstileToken;
       if (hubspotutk) payload.hubspotutk = hubspotutk;
       const res = await fetch("/api/tools/sales-cycle-stagnation-report", {
         method: "POST",
@@ -782,6 +785,10 @@ function EmailCapture({ inputs }: { inputs: SalesCycleStagnationInputs }) {
           setLastName={setLastName}
           disabled={status === "submitting"}
         />
+        <TurnstileWidget
+          action="sales-cycle-stagnation"
+          onSuccess={setTurnstileToken}
+        />
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
           <div className="flex-1">
             <Label htmlFor="scsc-email">
@@ -804,8 +811,8 @@ function EmailCapture({ inputs }: { inputs: SalesCycleStagnationInputs }) {
           </div>
           <Button
             type="submit"
-            disabled={status === "submitting"}
-            aria-disabled={status === "submitting"}
+            disabled={status === "submitting" || !turnstileToken}
+            aria-disabled={status === "submitting" || !turnstileToken}
           >
             {status === "submitting" ? "Sending..." : "Email it"}
             {status === "submitting" ? null : (

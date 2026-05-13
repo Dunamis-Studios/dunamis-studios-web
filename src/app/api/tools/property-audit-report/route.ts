@@ -9,6 +9,8 @@ import {
 } from "@/lib/property-audit-scoring";
 import { sendPropertyAuditReportEmail } from "@/lib/email-property-audit-report";
 import { submitFreeToolLead } from "@/lib/hubspot-free-tools-form";
+import { verifyTurnstileToken } from "@/lib/turnstile/verify";
+import { getClientIp } from "@/lib/get-client-ip";
 
 /**
  * POST /api/tools/property-audit-report
@@ -53,6 +55,7 @@ const BodySchema = z.object({
   email: z.string().email().max(254),
   answers: AnswersSchema,
   hubspotutk: z.string().max(200).optional(),
+  turnstileToken: z.string().min(1, "Bot protection token required"),
 });
 
 interface ToolReportRecord {
@@ -92,6 +95,17 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Please check your answers and try again." },
+      { status: 400 },
+    );
+  }
+
+  const turnstile = await verifyTurnstileToken(
+    parsed.data.turnstileToken,
+    getClientIp(req),
+  );
+  if (!turnstile.valid) {
+    return NextResponse.json(
+      { error: "Bot protection check failed. Please refresh and try again." },
       { status: 400 },
     );
   }

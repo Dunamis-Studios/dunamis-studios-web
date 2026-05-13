@@ -26,6 +26,7 @@ import {
   VerificationKeyWidget,
   type VerificationKeyUser,
 } from "@/components/help/verification-key-widget";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 
 const VERIFICATION_KEY_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -149,6 +150,8 @@ interface FormState {
    * Not submitted to HubSpot; UI-only.
    */
   verifiedKeyEmail: string;
+  /** Cloudflare Turnstile token. Empty until the widget resolves. */
+  turnstileToken: string;
   order_email: string;
   license_key: string;
   order_or_transaction_id: string;
@@ -175,6 +178,7 @@ const INITIAL_STATE: FormState = {
   consent: false,
   identity_verification_reference: "",
   verifiedKeyEmail: "",
+  turnstileToken: "",
   order_email: "",
   license_key: "",
   order_or_transaction_id: "",
@@ -226,6 +230,7 @@ function buildSubmitPayload(
     what_happened: state.what_happened,
     consent: state.consent,
     identity_verification_reference: state.identity_verification_reference,
+    turnstileToken: state.turnstileToken,
   } as const;
   const config = CATEGORY_CONFIG[state.category];
   const visible: ConditionalFieldName[] = [
@@ -369,6 +374,11 @@ export function SupportForm({
     ) {
       errors.identity_verification_reference =
         "Your email no longer matches the verification key. Generate a new one above.";
+    }
+
+    if (!state.turnstileToken.trim()) {
+      errors.turnstileToken =
+        "Bot protection check is still loading. Wait a moment and try again.";
     }
 
     if (state.category !== "") {
@@ -990,6 +1000,28 @@ export function SupportForm({
       </div>
 
       <div>
+        <TurnstileWidget
+          action="support"
+          onSuccess={(token) => setField("turnstileToken", token)}
+          onError={() =>
+            setFieldErrors((prev) => ({
+              ...prev,
+              turnstileToken:
+                "Bot protection check failed. Please refresh and try again.",
+            }))
+          }
+          onExpire={() =>
+            setFieldErrors((prev) => ({
+              ...prev,
+              turnstileToken:
+                "Bot protection check expired. Please solve it again.",
+            }))
+          }
+        />
+        <FieldError>{fieldErrors.turnstileToken}</FieldError>
+      </div>
+
+      <div>
         <label className="flex items-start gap-3 text-sm text-[var(--fg)]">
           <input
             type="checkbox"
@@ -1025,7 +1057,12 @@ export function SupportForm({
       ) : null}
 
       <div className="flex justify-end pt-2">
-        <Button type="submit" size="lg" loading={submitting}>
+        <Button
+          type="submit"
+          size="lg"
+          loading={submitting}
+          disabled={submitting || !state.turnstileToken}
+        >
           Submit ticket
         </Button>
       </div>

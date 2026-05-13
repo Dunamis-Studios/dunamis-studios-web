@@ -17,6 +17,7 @@ import {
   LeadNameFields,
   RequiredMark,
 } from "@/components/marketing/lead-form-fields";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 import { cn } from "@/lib/utils";
 import {
   CATEGORY_LABELS,
@@ -897,6 +898,7 @@ function EmailCapture({
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [turnstileToken, setTurnstileToken] = React.useState("");
   const [status, setStatus] = React.useState<EmailStatus>("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
@@ -914,6 +916,7 @@ function EmailCapture({
         email,
         inputs,
       };
+      payload.turnstileToken = turnstileToken;
       if (hubspotutk) payload.hubspotutk = hubspotutk;
       const res = await fetch("/api/tools/tech-stack-cost-audit-report", {
         method: "POST",
@@ -978,6 +981,10 @@ function EmailCapture({
           setLastName={setLastName}
           disabled={status === "submitting" || disabled}
         />
+        <TurnstileWidget
+          action="tech-stack-cost-audit"
+          onSuccess={setTurnstileToken}
+        />
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
           <div className="flex-1">
             <Label htmlFor="tsa-email">
@@ -1000,8 +1007,8 @@ function EmailCapture({
           </div>
           <Button
             type="submit"
-            disabled={status === "submitting" || disabled}
-            aria-disabled={status === "submitting" || disabled}
+            disabled={status === "submitting" || disabled || !turnstileToken}
+            aria-disabled={status === "submitting" || disabled || !turnstileToken}
           >
             {status === "submitting" ? "Sending..." : "Email it"}
             {status === "submitting" ? null : (

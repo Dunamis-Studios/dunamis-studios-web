@@ -8,6 +8,8 @@ import {
   PRODUCT_META,
   type ProductCatalogSlug,
 } from "@/lib/types";
+import { verifyTurnstileToken } from "@/lib/turnstile/verify";
+import { getClientIp } from "@/lib/get-client-ip";
 
 /**
  * POST /api/notify
@@ -64,13 +66,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { firstName, lastName, email, product, hubspotutk } = (body ?? {}) as {
-    firstName?: unknown;
-    lastName?: unknown;
-    email?: unknown;
-    product?: unknown;
-    hubspotutk?: unknown;
-  };
+  const { firstName, lastName, email, product, hubspotutk, turnstileToken } =
+    (body ?? {}) as {
+      firstName?: unknown;
+      lastName?: unknown;
+      email?: unknown;
+      product?: unknown;
+      hubspotutk?: unknown;
+      turnstileToken?: unknown;
+    };
+
+  // Turnstile gate, before any other validation. Bots never see the
+  // payload-shape errors below; legitimate visitors with a solved
+  // token continue through the existing checks.
+  const tokenStr = typeof turnstileToken === "string" ? turnstileToken : "";
+  const turnstile = await verifyTurnstileToken(tokenStr, getClientIp(req));
+  if (!turnstile.valid) {
+    return NextResponse.json(
+      { error: "Bot protection check failed. Please refresh and try again." },
+      { status: 400 },
+    );
+  }
 
   const cleanFirstName =
     typeof firstName === "string" ? firstName.trim() : "";
