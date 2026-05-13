@@ -276,6 +276,13 @@ export const contactSubmitSchema = z.object({
     error: "Choose a timeline",
   }),
   source: z.enum(CONTACT_SOURCES).optional(),
+  /**
+   * Cloudflare Turnstile token. Required on every public form
+   * submission. The /api/contact-submit route verifies against
+   * Cloudflare siteverify before forwarding to HubSpot; not included
+   * in the HubSpot payload (buildFields enumerates fields explicitly).
+   */
+  turnstileToken: z.string().min(1, "Bot protection token required"),
 });
 
 export type ContactSubmitInput = z.infer<typeof contactSubmitSchema>;

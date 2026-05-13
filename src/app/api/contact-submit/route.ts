@@ -6,6 +6,8 @@ import {
   type ContactSubmitInput,
 } from "@/lib/validation";
 import { submitToHubspotForm } from "@/lib/hubspot/submit-form";
+import { verifyTurnstileToken } from "@/lib/turnstile/verify";
+import { getClientIp } from "@/lib/get-client-ip";
 
 const SITE_ORIGIN = "https://www.dunamisstudios.net";
 
@@ -59,6 +61,18 @@ function buildFields(data: ContactSubmitInput) {
 export async function POST(req: Request) {
   const parsed = await parseJson(req, contactSubmitSchema);
   if (!parsed.ok) return parsed.response;
+
+  const turnstile = await verifyTurnstileToken(
+    parsed.data.turnstileToken,
+    getClientIp(req),
+  );
+  if (!turnstile.valid) {
+    return apiError(
+      400,
+      "turnstile_failed",
+      "Bot protection check failed. Please refresh and try again.",
+    );
+  }
 
   const formId = process.env.HUBSPOT_CONTACT_FORM_GUID;
   if (!formId) {

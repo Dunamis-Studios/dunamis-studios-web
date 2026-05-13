@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label, FieldError, FieldHint } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 import {
   BUDGET_OPTIONS,
   TIMELINE_OPTIONS,
@@ -30,6 +31,7 @@ const INITIAL_VALUES: Omit<ContactSubmitInput, "source"> = {
   // until the user picks a real choice.
   custom_dev_budget_range: "" as ContactSubmitInput["custom_dev_budget_range"],
   custom_dev_timeline: "" as ContactSubmitInput["custom_dev_timeline"],
+  turnstileToken: "",
 };
 
 // Shared chrome for native <select> and <textarea> so they line up with the
@@ -317,6 +319,28 @@ export function CustomDevelopmentContactForm({
           <FieldError>{fieldErrors.custom_dev_timeline}</FieldError>
         </div>
 
+        <div>
+          <TurnstileWidget
+            action="contact"
+            onSuccess={(token) => setValue("turnstileToken", token)}
+            onError={() =>
+              setFieldErrors((prev) => ({
+                ...prev,
+                turnstileToken:
+                  "Bot protection check failed. Please refresh and try again.",
+              }))
+            }
+            onExpire={() =>
+              setFieldErrors((prev) => ({
+                ...prev,
+                turnstileToken:
+                  "Bot protection check expired. Please solve it again.",
+              }))
+            }
+          />
+          <FieldError>{fieldErrors.turnstileToken}</FieldError>
+        </div>
+
         {formError ? (
           <div
             role="alert"
@@ -327,7 +351,12 @@ export function CustomDevelopmentContactForm({
         ) : null}
 
         <div className="flex justify-end pt-2">
-          <Button type="submit" size="lg" loading={submitting}>
+          <Button
+            type="submit"
+            size="lg"
+            loading={submitting}
+            disabled={submitting || !values.turnstileToken}
+          >
             {submitLabel}
           </Button>
         </div>
