@@ -6,7 +6,7 @@ order: 2
 updated: "2026-05-09"
 ---
 
-If you're hitting something not covered here, email **legal@dunamisstudios.com** with what you were trying to do and what happened. We respond.
+If you're hitting something not covered here, email **legal@dunamisstudios.net** with what you were trying to do and what happened. We respond.
 
 ## Atelier won't start
 
@@ -70,11 +70,11 @@ sqlite3 atelier.sqlite ".recover" | sqlite3 atelier-recovered.sqlite
 This produces `atelier-recovered.sqlite` containing what SQLite was able to recover. Copy it back into the AppData directory as `atelier.sqlite` (after backing up the broken one) and re-launch Atelier.
 
 4. **Restore from backup.** If recovery doesn't produce a usable file, restore from your most recent backup (see [first-run § backing up](doc:first-run)). Atelier will pick up the restored database on next launch.
-5. **Email us.** If you don't have a backup and recovery didn't work, email legal@dunamisstudios.com with the backup of the broken database attached. We can sometimes extract more than the SQLite recovery tool, depending on the corruption pattern.
+5. **Email us.** If you don't have a backup and recovery didn't work, email legal@dunamisstudios.net with the backup of the broken database attached. We can sometimes extract more than the SQLite recovery tool, depending on the corruption pattern.
 
 ## I lost my license key
 
-Email **legal@dunamisstudios.com** from the same email address you used to purchase. We re-issue the original license key from our issuance database — the key is the same one you originally received, not a new one. There's no fee for re-issuance for the legitimate licensee.
+Email **legal@dunamisstudios.net** from the same email address you used to purchase. We re-issue the original license key from our issuance database — the key is the same one you originally received, not a new one. There's no fee for re-issuance for the legitimate licensee.
 
 If you can't email from the original purchase address (different job, lost access to the old account, etc.), include enough information to verify ownership: approximate purchase date, payment method, business name, or a partial copy of the original receipt. We'll re-issue once we can confirm.
 
@@ -115,7 +115,7 @@ To recover: connect to the internet (any network that can reach `dunamisstudios.
 If the lockdown persists after a successful internet connection, two likely causes:
 
 - **Antivirus or firewall blocking outbound HTTPS to dunamisstudios.net.** Check your firewall logs; whitelist the domain if needed.
-- **License has been revoked.** If the license is in revoked-immediate mode (rare, set by Dunamis Studios for explicit support reasons), reconnecting won't help — the lockdown screen will switch to a "License revoked" message instead. Email legal@dunamisstudios.com.
+- **License has been revoked.** If the license is in revoked-immediate mode (rare, set by Dunamis Studios for explicit support reasons), reconnecting won't help — the lockdown screen will switch to a "License revoked" message instead. Email legal@dunamisstudios.net.
 
 ## I lost a device and can't deactivate it remotely
 
@@ -124,7 +124,7 @@ A laptop got stolen. Or a hard drive died. Or you sold a machine without deactiv
 Two paths:
 
 1. **Customer portal remote deactivation.** Sign in at [dunamisstudios.net/account/atelier-licenses](https://dunamisstudios.net/account/atelier-licenses), find the missing device in the list, click **Deactivate**. The slot frees immediately. The next time the missing device tries to heartbeat (which it can't, because it's gone), it would lock — but that's already happened in your case, so this is purely housekeeping.
-2. **Email us.** If you don't have customer-portal access set up yet, email legal@dunamisstudios.com from the address tied to your license. We deactivate the slot manually, same effect.
+2. **Email us.** If you don't have customer-portal access set up yet, email legal@dunamisstudios.net from the address tied to your license. We deactivate the slot manually, same effect.
 
 Either path takes a few minutes. You don't need a police report, a serial number, or any other proof of loss — the license is yours, the slots are yours.
 
@@ -137,6 +137,6 @@ Activation can fail for a few specific reasons, and each one shows a structured 
 - **"License is for major version N; this build is major version M."** You bought a v1 license and you're running a v2 build (or vice versa). Install the matching major version, or email us to have us issue a license for the major you're running.
 - **"License is already activated on 3 devices."** See [I'm at the 3-device limit](doc:troubleshooting#im-at-the-3-device-limit-and-need-to-use-a-4th) above.
 - **"Could not reach activation server."** Atelier couldn't connect to `dunamisstudios.net`. Check your internet connection. If you're confident the connection is fine, antivirus or firewall software may be blocking the request — whitelist `dunamisstudios.net` and retry. As a fallback, Atelier grants a 7-day provisional grace period for first-launch internet failures, so you can keep working while you sort the network issue out.
-- **"License has been revoked."** The license has been marked revoked in our records — usually due to a refund or breach. Email legal@dunamisstudios.com.
+- **"License has been revoked."** The license has been marked revoked in our records — usually due to a refund or breach. Email legal@dunamisstudios.net.
 
 If none of the above describes what you're seeing, copy the exact error text and email it to us. We respond.

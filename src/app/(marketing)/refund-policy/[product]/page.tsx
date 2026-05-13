@@ -34,8 +34,8 @@ const BODIES: Record<string, AddendumBody> = {
               <strong>30 days, for reproducible defects, on activated licenses.</strong>{" "}
               If you have activated Atelier and encounter a reproducible defect, you must
               report the bug to{" "}
-              <a className="underline" href="mailto:support@dunamisstudios.com">
-                support@dunamisstudios.com
+              <a className="underline" href="mailto:support@dunamisstudios.net">
+                support@dunamisstudios.net
               </a>{" "}
               before requesting a refund. If we cannot resolve the defect within
               reasonable time, you can request a refund within 30 days of the original
@@ -183,8 +183,8 @@ const BODIES: Record<string, AddendumBody> = {
             Customer may request a full refund of the one-time Property Pulse license fee
             within <strong>seven (7) days</strong> of the original install date by
             contacting{" "}
-            <a className="underline" href="mailto:support@dunamisstudios.com">
-              support@dunamisstudios.com
+            <a className="underline" href="mailto:support@dunamisstudios.net">
+              support@dunamisstudios.net
             </a>
             . After the seven-day window, no refund is issued, except as required by law
             or as set forth in the master Terms of Sale §10 (limited service warranty

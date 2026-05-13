@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/security" },
 };
 
-const SECURITY_EMAIL = "security@dunamisstudios.com";
+const SECURITY_EMAIL = "security@dunamisstudios.net";
 
 // Read at build time so the markdown file is the source of truth for the
 // Acknowledgments section. New entries land in content/security-acknowledgments.md

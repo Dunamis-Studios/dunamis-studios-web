@@ -201,10 +201,10 @@ If any provision of this Agreement is held by a court of competent jurisdiction 
 
 Questions regarding this Agreement should be directed to:
 
-**legal@dunamisstudios.com**
+**legal@dunamisstudios.net**
 
 ## 24. Acceptance Acknowledgment
 
 By clicking "I Agree" during installation, by installing the Software, or by using the Software in any way, Licensee acknowledges that Licensee has read, understood, and agreed to be bound by this Agreement.
 
-Licensee's acceptance is recorded against Licensee's Dunamis Studios account at the moment of acceptance. The recorded data set comprises the EULA version, the Dunamis account identifier, the Atelier license identifier, the Atelier client version, the timestamp of acceptance, the IP address and user-agent of the client that posted the acceptance, the device fingerprint of the activated machine, the SHA-256 of the rendered document, the substitution values used to render it, and the verbatim rendered text of the document Licensee accepted. The rendered text is stored once at acceptance and is the authoritative legal artifact; it is never re-rendered. The record contains no business data, no wedding data, and no usage data. Licensee may download the verbatim accepted document at any time from the customer portal at dunamisstudios.net/account/atelier-licenses, or request a copy of every acceptance record bound to Licensee's account by contacting legal@dunamisstudios.com.
+Licensee's acceptance is recorded against Licensee's Dunamis Studios account at the moment of acceptance. The recorded data set comprises the EULA version, the Dunamis account identifier, the Atelier license identifier, the Atelier client version, the timestamp of acceptance, the IP address and user-agent of the client that posted the acceptance, the device fingerprint of the activated machine, the SHA-256 of the rendered document, the substitution values used to render it, and the verbatim rendered text of the document Licensee accepted. The rendered text is stored once at acceptance and is the authoritative legal artifact; it is never re-rendered. The record contains no business data, no wedding data, and no usage data. Licensee may download the verbatim accepted document at any time from the customer portal at dunamisstudios.net/account/atelier-licenses, or request a copy of every acceptance record bound to Licensee's account by contacting legal@dunamisstudios.net.

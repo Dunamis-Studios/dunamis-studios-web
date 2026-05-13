@@ -156,8 +156,8 @@ export const termsMaster: LegalDocument = {
             and account changes regardless of marketing preferences. Customer may opt out of
             marketing email at any time through the unsubscribe link in each marketing
             message or by emailing{" "}
-            <a className="underline" href="mailto:support@dunamisstudios.com">
-              support@dunamisstudios.com
+            <a className="underline" href="mailto:support@dunamisstudios.net">
+              support@dunamisstudios.net
             </a>
             .
           </p>
@@ -634,8 +634,8 @@ export const termsMaster: LegalDocument = {
           <p className="mt-3">
             Refunds are issued to the original payment method through Stripe. Customer
             agrees to contact Dunamis Studios at{" "}
-            <a className="underline" href="mailto:support@dunamisstudios.com">
-              support@dunamisstudios.com
+            <a className="underline" href="mailto:support@dunamisstudios.net">
+              support@dunamisstudios.net
             </a>{" "}
             before initiating a chargeback with its card issuer. See{" "}
             <Link href="/refund-policy#chargebacks" className="underline">
@@ -728,8 +728,8 @@ export const termsMaster: LegalDocument = {
             Florida Deceptive and Unfair Trade Practices Act (Fla. Stat. §501.201 et seq.)
             against Dunamis Studios, Customer will deliver written notice describing the
             alleged conduct and the relief sought to{" "}
-            <a className="underline" href="mailto:legal@dunamisstudios.com">
-              legal@dunamisstudios.com
+            <a className="underline" href="mailto:legal@dunamisstudios.net">
+              legal@dunamisstudios.net
             </a>{" "}
             and will allow Dunamis Studios thirty (30) days to respond and, where
             appropriate, cure or settle.
@@ -778,8 +778,8 @@ export const termsMaster: LegalDocument = {
           <p className="mt-3">
             <strong>Thirty-day opt-out.</strong> Customer may opt out of the arbitration
             provision and class-action waiver by sending written notice to{" "}
-            <a className="underline" href="mailto:legal@dunamisstudios.com">
-              legal@dunamisstudios.com
+            <a className="underline" href="mailto:legal@dunamisstudios.net">
+              legal@dunamisstudios.net
             </a>{" "}
             within thirty (30) days of first accepting this Agreement. The opt-out notice
             must include Customer&rsquo;s name, the email address on Customer&rsquo;s
@@ -897,8 +897,8 @@ export const termsMaster: LegalDocument = {
           </p>
           <p className="mt-3">
             <strong>Notices.</strong> Notices to Dunamis Studios must be sent to{" "}
-            <a className="underline" href="mailto:legal@dunamisstudios.com">
-              legal@dunamisstudios.com
+            <a className="underline" href="mailto:legal@dunamisstudios.net">
+              legal@dunamisstudios.net
             </a>
             . Notices to Customer will be sent to the email address on Customer&rsquo;s
             account and are effective when sent. Either party may change its notice address
@@ -919,12 +919,12 @@ export const termsMaster: LegalDocument = {
           </p>
           <p className="mt-3">
             <strong>Contact.</strong> For questions about this Agreement, email{" "}
-            <a className="underline" href="mailto:legal@dunamisstudios.com">
-              legal@dunamisstudios.com
+            <a className="underline" href="mailto:legal@dunamisstudios.net">
+              legal@dunamisstudios.net
             </a>
             . For product support, email{" "}
-            <a className="underline" href="mailto:support@dunamisstudios.com">
-              support@dunamisstudios.com
+            <a className="underline" href="mailto:support@dunamisstudios.net">
+              support@dunamisstudios.net
             </a>
             . For security issues, see{" "}
             <Link href="/security" className="underline">

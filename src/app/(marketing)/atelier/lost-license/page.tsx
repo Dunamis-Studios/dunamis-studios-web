@@ -48,10 +48,10 @@ export default function LostLicensePage() {
             Already tried this and didn&apos;t see the email? Check spam
             first, then reply or write to{" "}
             <a
-              href="mailto:legal@dunamisstudios.com"
+              href="mailto:legal@dunamisstudios.net"
               className="text-[var(--color-atelier-700)] hover:underline dark:text-[var(--color-atelier-300)]"
             >
-              legal@dunamisstudios.com
+              legal@dunamisstudios.net
             </a>
             . We&apos;ll re-issue from the original record.
           </p>

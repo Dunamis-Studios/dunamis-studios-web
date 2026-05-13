@@ -151,7 +151,7 @@ Examples:
 
   # Sign + persist + email the customer.
   npm run issue-license -- --email customer@example.com --send-email \\
-    --first-name Pat --issued-by josh@dunamisstudios.com
+    --first-name Pat --issued-by josh@dunamisstudios.net
 `);
 }
 
