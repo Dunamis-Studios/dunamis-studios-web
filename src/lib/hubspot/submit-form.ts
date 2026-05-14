@@ -190,16 +190,19 @@ export async function submitToHubspotForm(
   }
 
   const rawBody = await safeReadText(res);
-  console.error("[hubspot/submit-form] non-2xx response", {
-    formId: options.formId,
-    status: res.status,
-    body: rawBody.slice(0, 500),
-  });
 
+  // Parse JSON when possible so the log is pretty-printed; fall back
+  // to the raw string when the body is plain text. NEVER truncate:
+  // HubSpot's error responses enumerate every rejected field name +
+  // value, and a 500-char slice consistently cuts off after the
+  // first 1-2 fields, hiding the rest of the audit signal we need
+  // to fix property-name mismatches.
   let parsedBody: unknown = null;
   let userMessage: string | null = null;
+  let prettyBody: string;
   try {
     parsedBody = JSON.parse(rawBody);
+    prettyBody = JSON.stringify(parsedBody, null, 2);
     if (
       parsedBody &&
       typeof parsedBody === "object" &&
@@ -210,7 +213,14 @@ export async function submitToHubspotForm(
     }
   } catch {
     parsedBody = rawBody;
+    prettyBody = rawBody;
   }
+
+  console.error("[hubspot/submit-form] non-2xx response", {
+    formId: options.formId,
+    status: res.status,
+    body: prettyBody,
+  });
 
   return {
     ok: false,
