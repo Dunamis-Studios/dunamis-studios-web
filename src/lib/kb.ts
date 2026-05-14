@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
 import { z } from "zod";
+import { FEATURE_FLAGS } from "@/lib/feature-flags";
 
 /**
  * Knowledge-base article loader.
@@ -187,14 +188,26 @@ async function loadAll(): Promise<KbArticle[]> {
   return articles;
 }
 
+const HUBSPOT_KB_PRODUCTS: ReadonlySet<KbProduct> = new Set<KbProduct>([
+  "debrief",
+  "property-pulse",
+]);
+
 /**
  * Articles that should appear on the site. Drafts (frontmatter.draft = true)
- * are filtered out. Does NOT filter by access — that's a per-render
- * decision made after session lookup.
+ * are filtered out. Does NOT filter by access (that's a per-render decision
+ * made after session lookup).
+ *
+ * When FEATURE_FLAGS.hubspotSurfacesVisible is off, articles whose product
+ * is a HubSpot product (debrief, property-pulse) are also filtered out.
+ * This gates the index, category landing, sitemap, search, and direct-URL
+ * lookups in a single place. Articles with product=platform are unaffected.
  */
 export async function getPublishedArticles(): Promise<KbArticle[]> {
   const all = await getAllArticles();
-  return all.filter((a) => !a.frontmatter.draft);
+  const published = all.filter((a) => !a.frontmatter.draft);
+  if (FEATURE_FLAGS.hubspotSurfacesVisible) return published;
+  return published.filter((a) => !HUBSPOT_KB_PRODUCTS.has(a.frontmatter.product));
 }
 
 export async function getArticleBySlug(

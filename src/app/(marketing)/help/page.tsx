@@ -10,6 +10,7 @@ import {
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
+import { FEATURE_FLAGS } from "@/lib/feature-flags";
 import { siteFreshness } from "@/lib/schema-freshness";
 import {
   KB_PRODUCTS,
@@ -26,15 +27,21 @@ import { SearchBox } from "./_components/SearchBox";
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
+const HELP_DESCRIPTION = FEATURE_FLAGS.hubspotSurfacesVisible
+  ? "Docs, guides, and how-tos for Debrief, Property Pulse, and the Dunamis Studios platform."
+  : "Docs, guides, and how-tos for the Dunamis Studios platform.";
+
+const HELP_HERO_DESCRIPTION = FEATURE_FLAGS.hubspotSurfacesVisible
+  ? "Straight answers for Debrief, Property Pulse, and the platform underneath them. Written by the people who build the apps."
+  : "Straight answers for our software, written by the people who build it.";
+
 export const metadata: Metadata = {
   title: "Help center",
-  description:
-    "Docs, guides, and how-tos for Debrief, Property Pulse, and the Dunamis Studios platform.",
+  description: HELP_DESCRIPTION,
   alternates: { canonical: "/help" },
   openGraph: {
     title: "Help center · Dunamis Studios",
-    description:
-      "Docs, guides, and how-tos for Debrief, Property Pulse, and the Dunamis Studios platform.",
+    description: HELP_DESCRIPTION,
     url: "/help",
     type: "website",
     images: [
@@ -50,8 +57,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Help center · Dunamis Studios",
-    description:
-      "Docs, guides, and how-tos for Debrief, Property Pulse, and the Dunamis Studios platform.",
+    description: HELP_DESCRIPTION,
     images: [
       {
         url: "/twitter-image",
@@ -75,8 +81,7 @@ const websiteSchema = {
   ...siteFreshness(),
   name: "Dunamis Studios help center",
   url: `${SITE_URL}/help`,
-  description:
-    "Docs, guides, and how-tos for Debrief, Property Pulse, and the Dunamis Studios platform.",
+  description: HELP_DESCRIPTION,
   publisher: {
     "@type": "Organization",
     name: "Dunamis Studios",
@@ -95,10 +100,11 @@ const websiteSchema = {
   },
 };
 
-// Display order mirrors the marketing nav (Property Pulse, Debrief) and
-// closes with Platform — the Dunamis-Studios-as-a-whole bucket for
-// cross-app topics like billing, auth, and per-portal pricing.
-const PRODUCT_ORDER: KbProduct[] = ["property-pulse", "debrief", "platform"];
+// Display order mirrors the marketing nav. Platform always shows; HubSpot
+// products (Property Pulse, Debrief) only when their surfaces are visible.
+const PRODUCT_ORDER: KbProduct[] = FEATURE_FLAGS.hubspotSurfacesVisible
+  ? ["property-pulse", "debrief", "platform"]
+  : ["platform"];
 
 export default async function HelpIndexPage() {
   const [allArticles, recent, productGroups] = await Promise.all([
@@ -118,7 +124,7 @@ export default async function HelpIndexPage() {
           <PageHeader
             eyebrow="Help"
             title="Dunamis Studios help center"
-            description="Straight answers for Debrief, Property Pulse, and the platform underneath them. Written by the people who build the apps."
+            description={HELP_HERO_DESCRIPTION}
           />
           <div className="mt-8 max-w-2xl">
             <SearchBox />
