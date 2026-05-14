@@ -363,6 +363,23 @@ export function SupportForm({
   const [formError, setFormError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
+  const successRef = React.useRef<HTMLDivElement | null>(null);
+
+  /**
+   * When the form transitions to success the confirmation block lives
+   * where the form did. The form is often well below the fold (the
+   * verification widget alone pushes the submit button down), so without
+   * a scroll the user is left staring at unchanged form-area whitespace
+   * wondering whether anything happened. Smooth-scroll the success card
+   * into view as soon as it renders so the "Thanks, we got it." message
+   * is the first thing they see.
+   */
+  React.useEffect(() => {
+    if (!success) return;
+    const el = successRef.current;
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [success]);
 
   function setField<K extends keyof FormState>(name: K, value: FormState[K]) {
     setState((prev) => ({ ...prev, [name]: value }));
@@ -534,7 +551,7 @@ export function SupportForm({
 
   if (success) {
     return (
-      <div className="mx-auto max-w-xl text-center">
+      <div ref={successRef} className="mx-auto max-w-xl text-center">
         <h2 className="font-[var(--font-display)] text-2xl font-medium tracking-tight">
           Thanks, we got it.
         </h2>
