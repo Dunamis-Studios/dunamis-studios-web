@@ -30,6 +30,27 @@ export interface HubspotFormField {
    */
   name: string;
   value: string | string[];
+  /**
+   * HubSpot object type the property belongs to. Required on every
+   * field of a multi-object form (e.g. the support form, which
+   * creates one Ticket while upserting one Contact). When omitted,
+   * HubSpot v3 defaults the field to the Contact object, which is
+   * the right behavior for every contact-only form on the site
+   * (contact, notify, courses, the 9 tool report forms).
+   *
+   * Canonical IDs documented in the hubspot-gotchas skill:
+   *   "0-1" Contact
+   *   "0-2" Company
+   *   "0-3" Deal
+   *   "0-5" Ticket
+   *
+   * A multi-object form silently misroutes every field to the
+   * default Contact when this is omitted, which HubSpot then rejects
+   * with "Required field 'TICKET.subject' is missing" (etc.) for
+   * every ticket property the form expects. Always specify per
+   * field on any form that creates non-Contact records.
+   */
+  objectTypeId?: string;
 }
 
 export interface HubspotFormContext {
@@ -103,7 +124,11 @@ export async function submitToHubspotForm(
   const url = `${HUBSPOT_FORMS_BASE}/submissions/v3/integration/submit/${portalId}/${options.formId}`;
 
   const payload: Record<string, unknown> = {
-    fields: options.fields.map((f) => ({ name: f.name, value: f.value })),
+    fields: options.fields.map((f) => {
+      const entry: Record<string, unknown> = { name: f.name, value: f.value };
+      if (f.objectTypeId) entry.objectTypeId = f.objectTypeId;
+      return entry;
+    }),
   };
   if (options.context) {
     const ctx: Record<string, string> = {};
