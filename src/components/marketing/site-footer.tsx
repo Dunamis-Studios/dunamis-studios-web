@@ -1,10 +1,18 @@
 import Link from "next/link";
 import { LogoMark } from "@/components/brand/logo";
+import { FEATURE_FLAGS } from "@/lib/feature-flags";
 
 export function SiteFooter() {
+  const hubspotVisible = FEATURE_FLAGS.hubspotSurfacesVisible;
   return (
     <footer className="border-t border-[var(--border)] bg-[var(--bg-subtle)]">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-5 lg:px-8">
+      <div
+        className={
+          hubspotVisible
+            ? "mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-6 lg:px-8"
+            : "mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-5 lg:px-8"
+        }
+      >
         <div className="lg:col-span-1">
           <Link href="/" className="inline-flex items-center gap-2.5 text-[var(--fg)]">
             <LogoMark size={22} />
@@ -13,9 +21,9 @@ export function SiteFooter() {
             </span>
           </Link>
           <p className="mt-3 max-w-xs text-sm text-[var(--fg-muted)]">
-            A software studio with two service lines — Build Services and
-            HubSpot Custom Development — plus a small catalog of HubSpot
-            marketplace apps and prebuilt desktop software.
+            {hubspotVisible
+              ? "A software studio with two service lines, Build Services and HubSpot Custom Development, plus a small catalog of marketplace apps and prebuilt desktop software."
+              : "A software studio building custom applications and a small catalog of prebuilt desktop software."}
           </p>
         </div>
 
@@ -99,49 +107,67 @@ export function SiteFooter() {
           </ul>
         </div>
 
+        {hubspotVisible ? (
+          <div>
+            <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+              HubSpot Custom Development
+            </h3>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              <li>
+                <Link
+                  href="/custom-development"
+                  className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
+                >
+                  Overview
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/custom-development/products"
+                  className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
+                >
+                  Products
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/custom-development/pricing"
+                  className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
+                >
+                  Pricing
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/custom-development/articles"
+                  className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
+                >
+                  Articles
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/custom-development/guides"
+                  className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
+                >
+                  Guides
+                </Link>
+              </li>
+            </ul>
+          </div>
+        ) : null}
+
         <div>
           <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-            HubSpot Custom Development
+            Marketplace
           </h3>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li>
               <Link
-                href="/custom-development"
-                className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
+                href="/marketplace"
+                className="text-[var(--fg-muted)] hover:text-[var(--fg)]"
               >
                 Overview
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/custom-development/products"
-                className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
-              >
-                Products
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/custom-development/pricing"
-                className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
-              >
-                Pricing
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/custom-development/articles"
-                className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
-              >
-                Articles
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/custom-development/guides"
-                className="text-[var(--fg-muted)] hover:text-[var(--color-hubspot-600)] dark:hover:text-[var(--color-hubspot-400)]"
-              >
-                Guides
               </Link>
             </li>
           </ul>

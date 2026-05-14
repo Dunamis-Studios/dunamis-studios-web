@@ -7,9 +7,10 @@ import { usePathname } from "next/navigation";
 import { Logo } from "@/components/brand/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { FEATURE_FLAGS } from "@/lib/feature-flags";
 import { cn } from "@/lib/utils";
 
-type LaneKey = "build" | "hubspot";
+type LaneKey = "build" | "hubspot" | "marketplace";
 
 interface LaneNavLink {
   href: string;
@@ -24,11 +25,16 @@ interface GeneralNavLink {
 
 const LANE_LINKS: LaneNavLink[] = [
   { href: "/build-services", label: "Build Services", lane: "build" },
-  {
-    href: "/custom-development",
-    label: "HubSpot Custom Development",
-    lane: "hubspot",
-  },
+  ...(FEATURE_FLAGS.hubspotSurfacesVisible
+    ? [
+        {
+          href: "/custom-development",
+          label: "HubSpot Custom Development",
+          lane: "hubspot" as const,
+        },
+      ]
+    : []),
+  { href: "/marketplace", label: "Marketplace", lane: "marketplace" },
 ];
 
 const GENERAL_LINKS: GeneralNavLink[] = [
@@ -53,12 +59,16 @@ function detectLane(pathname: string | null): LaneKey | null {
   ) {
     return "hubspot";
   }
+  if (pathname === "/marketplace" || pathname.startsWith("/marketplace/")) {
+    return "marketplace";
+  }
   return null;
 }
 
 const LANE_DOT_CLASS: Record<LaneKey, string> = {
   build: "bg-[var(--color-build-500)]",
   hubspot: "bg-[var(--color-hubspot-500)]",
+  marketplace: "bg-[var(--color-hubspot-500)]",
 };
 
 const LANE_ACTIVE_CLASS: Record<LaneKey, string> = {
@@ -66,12 +76,16 @@ const LANE_ACTIVE_CLASS: Record<LaneKey, string> = {
     "bg-[color-mix(in_oklch,var(--color-build-500)_12%,transparent)] text-[var(--color-build-700)] dark:text-[var(--color-build-300)] font-medium",
   hubspot:
     "bg-[color-mix(in_oklch,var(--color-hubspot-500)_12%,transparent)] text-[var(--color-hubspot-700)] dark:text-[var(--color-hubspot-300)] font-medium",
+  marketplace:
+    "bg-[color-mix(in_oklch,var(--color-hubspot-500)_12%,transparent)] text-[var(--color-hubspot-700)] dark:text-[var(--color-hubspot-300)] font-medium",
 };
 
 const LANE_HOVER_CLASS: Record<LaneKey, string> = {
   build:
     "hover:text-[var(--color-build-700)] dark:hover:text-[var(--color-build-300)]",
   hubspot:
+    "hover:text-[var(--color-hubspot-700)] dark:hover:text-[var(--color-hubspot-300)]",
+  marketplace:
     "hover:text-[var(--color-hubspot-700)] dark:hover:text-[var(--color-hubspot-300)]",
 };
 

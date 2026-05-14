@@ -6,6 +6,7 @@ import {
 } from "@/lib/kb";
 import { listPosts } from "@/lib/content";
 import { loadAtelierDocs, ATELIER_DOCS_BASE_PATH } from "@/lib/atelier-docs";
+import { FEATURE_FLAGS } from "@/lib/feature-flags";
 
 /**
  * Last-modified timestamp bumped per deploy for static marketing
@@ -46,6 +47,138 @@ function parseUpdated(iso: string): Date {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = baseUrl();
+  const hubspotVisible = FEATURE_FLAGS.hubspotSurfacesVisible;
+
+  const hubspotStaticEntries: MetadataRoute.Sitemap = hubspotVisible
+    ? [
+        {
+          url: `${base}/custom-development/products`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "weekly",
+          priority: 0.9,
+        },
+        {
+          url: `${base}/custom-development/products/debrief`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "weekly",
+          priority: 0.9,
+        },
+        {
+          url: `${base}/custom-development/products/property-pulse`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "weekly",
+          priority: 0.9,
+        },
+        {
+          url: `${base}/custom-development/products/carbon-copy`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "weekly",
+          priority: 0.7,
+        },
+        {
+          url: `${base}/custom-development/products/traverse-and-update`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "weekly",
+          priority: 0.7,
+        },
+        {
+          url: `${base}/custom-development/products/association-visualizer`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.5,
+        },
+        {
+          url: `${base}/custom-development/products/debrief/roadmap`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.7,
+        },
+        {
+          url: `${base}/custom-development`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.7,
+        },
+        {
+          url: `${base}/custom-development/tools`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.7,
+        },
+        {
+          url: `${base}/custom-development/tools/handoff-time-calculator`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.7,
+        },
+        {
+          url: `${base}/custom-development/tools/property-audit-checklist`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.7,
+        },
+        {
+          url: `${base}/custom-development/tools/hubspot-bloat-score`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.7,
+        },
+        {
+          url: `${base}/custom-development/tools/lead-scoring-builder`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.7,
+        },
+        {
+          url: `${base}/custom-development/tools/sales-cycle-stagnation-calculator`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.7,
+        },
+        {
+          url: `${base}/custom-development/tools/tech-stack-cost-audit`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.7,
+        },
+        {
+          url: `${base}/custom-development/tools/workflow-audit-checklist`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.7,
+        },
+        {
+          url: `${base}/custom-development/tools/custom-object-decision-tree`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.7,
+        },
+        {
+          url: `${base}/custom-development/tools/hubspot-team-onboarding-checklist`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.7,
+        },
+        {
+          url: `${base}/custom-development/courses`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.8,
+        },
+        {
+          url: `${base}/custom-development/courses/hubspot-audit`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "monthly",
+          priority: 0.8,
+        },
+        {
+          url: `${base}/custom-development/pricing`,
+          lastModified: LAST_MODIFIED,
+          changeFrequency: "weekly",
+          priority: 0.8,
+        },
+      ]
+    : [];
 
   const staticEntries: MetadataRoute.Sitemap = [
     {
@@ -55,47 +188,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1.0,
     },
     {
-      url: `${base}/custom-development/products`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${base}/custom-development/products/debrief`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${base}/custom-development/products/property-pulse`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${base}/custom-development/products/carbon-copy`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/custom-development/products/traverse-and-update`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/custom-development/products/association-visualizer`,
+      url: `${base}/marketplace`,
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
-      priority: 0.5,
+      priority: 0.6,
     },
-    {
-      url: `${base}/custom-development/products/debrief/roadmap`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
+    ...hubspotStaticEntries,
     {
       url: `${base}/build-services`,
       lastModified: LAST_MODIFIED,
@@ -155,90 +253,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.5,
-    },
-    {
-      url: `${base}/custom-development`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/custom-development/tools`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/custom-development/tools/handoff-time-calculator`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/custom-development/tools/property-audit-checklist`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/custom-development/tools/hubspot-bloat-score`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/custom-development/tools/lead-scoring-builder`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/custom-development/tools/sales-cycle-stagnation-calculator`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/custom-development/tools/tech-stack-cost-audit`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/custom-development/tools/workflow-audit-checklist`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/custom-development/tools/custom-object-decision-tree`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/custom-development/tools/hubspot-team-onboarding-checklist`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/custom-development/courses`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${base}/custom-development/courses/hubspot-audit`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${base}/custom-development/pricing`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "weekly",
-      priority: 0.8,
     },
     {
       url: `${base}/about`,
@@ -311,46 +325,50 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  // Guides & Articles from Redis
-  const [publishedGuides, publishedArticles] = await Promise.all([
-    listPosts("guide", { includeDrafts: false }),
-    listPosts("article", { includeDrafts: false }),
-  ]);
-
-  const contentEntries: MetadataRoute.Sitemap = [
-    ...(publishedGuides.length > 0
-      ? [
-          {
-            url: `${base}/custom-development/guides`,
-            lastModified: new Date(publishedGuides[0].updatedAt),
-            changeFrequency: "weekly" as const,
-            priority: 0.7,
-          },
-        ]
-      : []),
-    ...publishedGuides.map((p) => ({
-      url: `${base}/custom-development/guides/${p.slug}`,
-      lastModified: new Date(p.updatedAt),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    })),
-    ...(publishedArticles.length > 0
-      ? [
-          {
-            url: `${base}/custom-development/articles`,
-            lastModified: new Date(publishedArticles[0].updatedAt),
-            changeFrequency: "weekly" as const,
-            priority: 0.7,
-          },
-        ]
-      : []),
-    ...publishedArticles.map((p) => ({
-      url: `${base}/custom-development/articles/${p.slug}`,
-      lastModified: new Date(p.updatedAt),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    })),
-  ];
+  // Guides & Articles from Redis. These live under /custom-development,
+  // so they're sitemap-only when the HubSpot lane is visible.
+  const contentEntries: MetadataRoute.Sitemap = hubspotVisible
+    ? await (async () => {
+        const [publishedGuides, publishedArticles] = await Promise.all([
+          listPosts("guide", { includeDrafts: false }),
+          listPosts("article", { includeDrafts: false }),
+        ]);
+        return [
+          ...(publishedGuides.length > 0
+            ? [
+                {
+                  url: `${base}/custom-development/guides`,
+                  lastModified: new Date(publishedGuides[0].updatedAt),
+                  changeFrequency: "weekly" as const,
+                  priority: 0.7,
+                },
+              ]
+            : []),
+          ...publishedGuides.map((p) => ({
+            url: `${base}/custom-development/guides/${p.slug}`,
+            lastModified: new Date(p.updatedAt),
+            changeFrequency: "monthly" as const,
+            priority: 0.6,
+          })),
+          ...(publishedArticles.length > 0
+            ? [
+                {
+                  url: `${base}/custom-development/articles`,
+                  lastModified: new Date(publishedArticles[0].updatedAt),
+                  changeFrequency: "weekly" as const,
+                  priority: 0.7,
+                },
+              ]
+            : []),
+          ...publishedArticles.map((p) => ({
+            url: `${base}/custom-development/articles/${p.slug}`,
+            lastModified: new Date(p.updatedAt),
+            changeFrequency: "monthly" as const,
+            priority: 0.6,
+          })),
+        ];
+      })()
+    : [];
 
   // Atelier docs — one entry per markdown file under
   // content/atelier-docs. lastModified comes from each doc's

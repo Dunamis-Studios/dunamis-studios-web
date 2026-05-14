@@ -10,15 +10,18 @@ import { CustomerLogoStrip } from "@/components/marketing/customer-logo-strip";
 import { MarketingFaq } from "@/components/marketing/marketing-faq";
 import { buildFaqPageSchema } from "@/components/marketing/article-extras";
 import { JsonLd } from "@/components/seo/json-ld";
+import { FEATURE_FLAGS } from "@/lib/feature-flags";
 import { siteFreshness } from "@/lib/schema-freshness";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
+const HUBSPOT_VISIBLE = FEATURE_FLAGS.hubspotSurfacesVisible;
+
 // Single source of truth for the homepage FAQ. Drives both the visible
 // accordion and the FAQPage JSON-LD so answer engines can cite Q/A
 // pairs verbatim. Same pattern as the product pages.
-const FAQ: { q: string; a: string }[] = [
+const FAQ_HUBSPOT: { q: string; a: string }[] = [
   {
     q: "What is Dunamis Studios?",
     a: "Dunamis Studios is a software studio with two service lines and a small catalog of products. Build Services is custom application development for agencies (white-label) and end businesses (direct), scoped through paid discovery and shipped on your infrastructure with full handover documentation. HubSpot Custom Development is our specialty practice for HubSpot UI extensions, integrations, and recovery work. Our products today are Property Pulse (a CRM card that surfaces full property change history on every HubSpot record) and Debrief (an AI-powered handoff brief and message generator). We also publish free HubSpot calculators and assessments at dunamisstudios.net/custom-development/tools.",
@@ -37,10 +40,28 @@ const FAQ: { q: string; a: string }[] = [
   },
 ];
 
+const FAQ_GENERAL: { q: string; a: string }[] = [
+  {
+    q: "What is Dunamis Studios?",
+    a: "Dunamis Studios is a software studio that builds custom applications for agencies and businesses, scoped through paid discovery and shipped on your infrastructure with full handover documentation. We also publish a small catalog of prebuilt desktop software, beginning with Atelier for professional wedding planners.",
+  },
+  {
+    q: "How does Build Services work?",
+    a: "Engagements begin with a fixed-price discovery phase that produces a written scope, architecture sketch, and fixed-price quote for the build phase. Build tiers are published; custom scopes outside the tiers get their own quote after discovery. You own the code at handover; the app runs on infrastructure you control.",
+  },
+  {
+    q: "Do you offer subscriptions?",
+    a: "No. Prebuilt apps in the catalog are one-time purchases. You own the code, run it yourself, and keep using it indefinitely. No license check-in, no recurring fees, no kill switch.",
+  },
+];
+
+const FAQ = HUBSPOT_VISIBLE ? FAQ_HUBSPOT : FAQ_GENERAL;
+
 const faqPageSchema = buildFaqPageSchema(FAQ, {
   name: "Dunamis Studios FAQ",
-  description:
-    "Frequently asked questions about Dunamis Studios, our HubSpot marketplace apps, and how account claims and entitlements work.",
+  description: HUBSPOT_VISIBLE
+    ? "Frequently asked questions about Dunamis Studios, our HubSpot marketplace apps, and how account claims and entitlements work."
+    : "Frequently asked questions about Dunamis Studios, our Build Services engagements, and our prebuilt apps.",
   url: `${SITE_URL}/`,
 });
 
@@ -59,8 +80,9 @@ const websiteSchema = {
   ...siteFreshness(),
   name: "Dunamis Studios",
   url: SITE_URL,
-  description:
-    "A software studio for custom application development with a HubSpot specialty. Home of Build Services, HubSpot Custom Development, Debrief, and Property Pulse.",
+  description: HUBSPOT_VISIBLE
+    ? "A software studio for custom application development with a HubSpot specialty. Home of Build Services, HubSpot Custom Development, Debrief, and Property Pulse."
+    : "A software studio for custom application development. Home of Build Services and a small catalog of prebuilt apps.",
   publisher: {
     "@type": "Organization",
     "@id": `${SITE_URL}/#organization`,
@@ -80,20 +102,25 @@ const websiteSchema = {
   },
 };
 
+const META_TITLE = HUBSPOT_VISIBLE
+  ? "Dunamis Studios: Custom software, with a HubSpot specialty"
+  : "Dunamis Studios: Custom software, built deliberately";
+
+const META_DESCRIPTION = HUBSPOT_VISIBLE
+  ? "A software studio that builds custom applications for agencies and businesses, with a HubSpot specialty practice and products for HubSpot CRM. Home of Debrief and Property Pulse."
+  : "A software studio that builds custom applications for agencies and businesses, plus a small catalog of prebuilt desktop apps.";
+
 export const metadata: Metadata = {
   // Use absolute title here, landing page shouldn't receive the
   // "%s · Dunamis Studios" template since it IS the studio.
   title: {
-    absolute:
-      "Dunamis Studios: Custom software, with a HubSpot specialty",
+    absolute: META_TITLE,
   },
-  description:
-    "A software studio that builds custom applications for agencies and businesses, with a HubSpot specialty practice and products for HubSpot CRM. Home of Debrief and Property Pulse.",
+  description: META_DESCRIPTION,
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Dunamis Studios: Custom software, with a HubSpot specialty",
-    description:
-      "A software studio that builds custom applications for agencies and businesses, with a HubSpot specialty practice and products for HubSpot CRM. Home of Debrief and Property Pulse.",
+    title: META_TITLE,
+    description: META_DESCRIPTION,
     url: "/",
     type: "website",
     // Page-level openGraph blocks replace (not merge) the layout's
@@ -105,7 +132,7 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Dunamis Studios: Custom software, with a HubSpot specialty",
+        alt: META_TITLE,
         type: "image/png",
       },
     ],
@@ -136,9 +163,9 @@ export default function LandingPage() {
               .
             </h1>
             <p className="mx-auto mt-7 max-w-xl text-lg leading-relaxed text-[var(--fg-muted)]">
-              Dunamis Studios builds custom applications for agencies and
-              businesses, runs a HubSpot specialty practice, and ships a small
-              catalog of products for HubSpot CRM.
+              {HUBSPOT_VISIBLE
+                ? "Dunamis Studios builds custom applications for agencies and businesses, runs a HubSpot specialty practice, and ships a small catalog of products for HubSpot CRM."
+                : "Dunamis Studios builds custom applications for agencies and businesses, plus a small catalog of prebuilt desktop software."}
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg">
@@ -148,7 +175,9 @@ export default function LandingPage() {
                 </Link>
               </Button>
               <Button asChild size="lg" variant="secondary">
-                <Link href="/custom-development/products">See products</Link>
+                <Link href={HUBSPOT_VISIBLE ? "/custom-development/products" : "/marketplace"}>
+                  {HUBSPOT_VISIBLE ? "See products" : "Visit marketplace"}
+                </Link>
               </Button>
             </div>
           </div>
@@ -164,17 +193,25 @@ export default function LandingPage() {
                 What we do
               </div>
               <h2 className="mt-2 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
-                Two service lines, one studio.
+                {HUBSPOT_VISIBLE
+                  ? "Two service lines, one studio."
+                  : "Custom applications, built to fixed scope."}
               </h2>
             </div>
             <p className="max-w-sm text-[var(--fg-muted)]">
-              Build Services for custom application development. HubSpot
-              Custom Development for HubSpot-specific work. Both shipped to
-              fixed scope.
+              {HUBSPOT_VISIBLE
+                ? "Build Services for custom application development. HubSpot Custom Development for HubSpot-specific work. Both shipped to fixed scope."
+                : "Custom application development for agencies and end businesses. Paid discovery, fixed-price tiers, full handover."}
             </p>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2">
+          <div
+            className={
+              HUBSPOT_VISIBLE
+                ? "grid gap-5 md:grid-cols-2"
+                : "grid gap-5"
+            }
+          >
             <ServiceTile
               accent="build"
               name="Build Services"
@@ -182,61 +219,65 @@ export default function LandingPage() {
               href="/build-services"
               description="White-label for agencies, direct for businesses. Paid discovery, fixed-price tiers, hosting on your infrastructure, full handover documentation, 30 days of post-launch bug-fix support."
             />
-            <ServiceTile
-              accent="hubspot"
-              name="HubSpot Custom Development"
-              tagline="Our HubSpot specialty practice"
-              href="/custom-development"
-              description="HubSpot UI extensions, marketplace apps, API integrations, data pipelines, AI workflows, and portal recovery. For teams beyond what an admin can configure."
-            />
+            {HUBSPOT_VISIBLE ? (
+              <ServiceTile
+                accent="hubspot"
+                name="HubSpot Custom Development"
+                tagline="Our HubSpot specialty practice"
+                href="/custom-development"
+                description="HubSpot UI extensions, marketplace apps, API integrations, data pipelines, AI workflows, and portal recovery. For teams beyond what an admin can configure."
+              />
+            ) : null}
           </div>
         </Container>
       </Section>
 
       {/* ---- PRODUCTS ---- */}
-      <Section className="relative border-t border-[var(--border)]">
-        <Container size="xl">
-          <div className="mb-12 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
-            <div>
-              <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-                HubSpot Products
+      {HUBSPOT_VISIBLE ? (
+        <Section className="relative border-t border-[var(--border)]">
+          <Container size="xl">
+            <div className="mb-12 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
+              <div>
+                <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+                  HubSpot Products
+                </div>
+                <h2 className="mt-2 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
+                  Apps for operators who live in HubSpot.
+                </h2>
               </div>
-              <h2 className="mt-2 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
-                Apps for operators who live in HubSpot.
-              </h2>
+              <p className="max-w-sm text-[var(--fg-muted)]">
+                Each app solves one specific HubSpot problem, end-to-end. No
+                toolbelts, no half-finished features.
+              </p>
             </div>
-            <p className="max-w-sm text-[var(--fg-muted)]">
-              Each app solves one specific HubSpot problem, end-to-end. No
-              toolbelts, no half-finished features.
-            </p>
-          </div>
 
-          <div className="grid gap-5 md:grid-cols-3">
-            <ProductTile
-              accent="pulse"
-              name="Property Pulse"
-              tagline="Real-time deal health for HubSpot CRM"
-              href="/custom-development/products/property-pulse"
-              description="Watches every deal property you care about and surfaces drift, staleness, and risk before it shows up on a forecast call."
-            />
-            <ProductTile
-              accent="brief"
-              name="Debrief"
-              tagline="Handoff intelligence for HubSpot CRM"
-              href="/custom-development/products/debrief"
-              description="When a record changes hands in HubSpot, Debrief gives the new owner a structured brief, and gives the old owner a message to send with it."
-            />
-            <ProductTile
-              accent="muted"
-              comingSoon
-              name="More, soon"
-              tagline="Quietly in the lab"
-              href="#"
-              description="We ship slowly and deliberately. New apps land when they're sharper than what already exists."
-            />
-          </div>
-        </Container>
-      </Section>
+            <div className="grid gap-5 md:grid-cols-3">
+              <ProductTile
+                accent="pulse"
+                name="Property Pulse"
+                tagline="Real-time deal health for HubSpot CRM"
+                href="/custom-development/products/property-pulse"
+                description="Watches every deal property you care about and surfaces drift, staleness, and risk before it shows up on a forecast call."
+              />
+              <ProductTile
+                accent="brief"
+                name="Debrief"
+                tagline="Handoff intelligence for HubSpot CRM"
+                href="/custom-development/products/debrief"
+                description="When a record changes hands in HubSpot, Debrief gives the new owner a structured brief, and gives the old owner a message to send with it."
+              />
+              <ProductTile
+                accent="muted"
+                comingSoon
+                name="More, soon"
+                tagline="Quietly in the lab"
+                href="#"
+                description="We ship slowly and deliberately. New apps land when they're sharper than what already exists."
+              />
+            </div>
+          </Container>
+        </Section>
+      ) : null}
 
       {/* ---- SOCIAL PROOF STRIP ---- */}
       <CustomerLogoStrip />
@@ -247,13 +288,25 @@ export default function LandingPage() {
           <div className="grid gap-10 lg:grid-cols-3">
             <Principle
               index="01"
-              title="Single pane of glass for HubSpot apps"
-              body="One Dunamis Studios account holds every HubSpot product entitlement across every portal you admin. Install once, manage forever."
+              title={
+                HUBSPOT_VISIBLE
+                  ? "Single pane of glass for HubSpot apps"
+                  : "Customer-owned software"
+              }
+              body={
+                HUBSPOT_VISIBLE
+                  ? "One Dunamis Studios account holds every HubSpot product entitlement across every portal you admin. Install once, manage forever."
+                  : "Build Services projects ship to your infrastructure with full handover. Prebuilt apps are one-time purchase, customer-hosted, owned forever."
+              }
             />
             <Principle
               index="02"
-              title="Built for admins"
-              body="No toy integrations. Proper error states, real audit trails, correct webhook semantics. The boring, important stuff."
+              title={HUBSPOT_VISIBLE ? "Built for admins" : "Built for operators"}
+              body={
+                HUBSPOT_VISIBLE
+                  ? "No toy integrations. Proper error states, real audit trails, correct webhook semantics. The boring, important stuff."
+                  : "No toy integrations. Proper error states, real audit trails, correct semantics. The boring, important stuff."
+              }
             />
             <Principle
               index="03"
@@ -280,11 +333,14 @@ export default function LandingPage() {
               }}
             />
             <h2 className="font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
-              One account. Every app. Every portal.
+              {HUBSPOT_VISIBLE
+                ? "One account. Every app. Every portal."
+                : "Built deliberately. Shipped to you."}
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-[var(--fg-muted)]">
-              Create your Dunamis Studios account today. Your entitlements
-              appear here automatically as you install apps from HubSpot.
+              {HUBSPOT_VISIBLE
+                ? "Create your Dunamis Studios account today. Your entitlements appear here automatically as you install apps from HubSpot."
+                : "Create your Dunamis Studios account to manage purchases and entitlements for every app you buy from us."}
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg">

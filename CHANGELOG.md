@@ -13,6 +13,28 @@ this file. Tagging is intentionally deferred to Josh.
 
 ## [Unreleased]
 
+## [0.31.0] - 2026-05-14
+
+### Added
+- `FEATURE_FLAGS.hubspotSurfacesVisible` feature flag at `src/lib/feature-flags.ts` controls every customer-facing HubSpot product surface from a single boolean.
+- `/marketplace` landing page scaffolded as a "Coming soon" placeholder, surfaced from site nav, footer, and sitemap.
+- Site nav and footer Marketplace surfaces (always visible regardless of the HubSpot flag).
+
+### Changed
+- Site nav: HubSpot Custom Development lane hidden behind the new flag; Marketplace lane always visible.
+- Site footer: HubSpot Custom Development column hidden behind the new flag; Marketplace column always visible; studio description rewritten to drop HubSpot-only phrasing when the flag is off.
+- Home page: HubSpot service tile, HubSpot Products section, HubSpot-flavored FAQ, principles, and final CTA copy all conditionally hidden or rewritten when the flag is off; metadata, OpenGraph, FAQPage / WebSite schemas updated to match.
+- About page: HubSpot Custom Development card, hero copy, "two service lines" heading, and metadata all conditionally hidden or rewritten when the flag is off.
+- Help center: HubSpot-tagged KB articles (`product: debrief`, `product: property-pulse`) filtered out at the loader level when the flag is off; help index hero/description and `PRODUCT_ORDER` rewritten to drop HubSpot mentions.
+- `llms.txt`: HubSpot Products, Articles, Guides, HubSpot Custom Development service line, and HubSpot pricing entry all conditionally suppressed when the flag is off; studio overview rewritten.
+- Sitemap: all `/custom-development/*` URLs (lane landing, products, tools, courses, articles, guides, pricing) gated behind the flag; Redis-backed guides/articles surface gated behind the flag.
+
+### Hidden
+- `/custom-development` lane and its entire subtree (5 product pages, 9 tool pages, courses landing + hubspot-audit, articles, guides, pricing, products index, debrief roadmap) return `notFound()` from the lane layout when the flag is off.
+
+### Notes
+- HubSpot CRM mirror used by support, contact, notify, courses, and tools forms is internal plumbing and stays fully functional regardless of the flag. Only customer-facing HubSpot product surfaces are hidden.
+
 ## [0.30.0] - 2026-05-14
 
 ### Added
