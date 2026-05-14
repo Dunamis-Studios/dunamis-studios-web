@@ -153,7 +153,7 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
     setAccountLookup({ kind: "loading" });
     try {
       const res = await fetch(
-        `/api/admin/lookup-account?email=${encodeURIComponent(trimmed)}`,
+        `/api/admin/customers/search?email=${encodeURIComponent(trimmed)}`,
       );
       const data = await res.json();
       if (!res.ok) {
@@ -163,15 +163,29 @@ export function LicensesAdminClient({ initialLicenses, adminEmail }: Props) {
         });
         return;
       }
-      if (!data.found) {
+      const first = Array.isArray(data?.results) ? data.results[0] : undefined;
+      if (!first) {
         setAccountLookup({ kind: "missing" });
         return;
       }
-      setAccountLookup({ kind: "found", account: data.account });
+      // customers/search returns firstName / lastName as string|null; the
+      // local ResolvedAccount shape uses required strings. Coalesce here
+      // rather than widening the local type since the issuance form
+      // always wants a renderable value.
+      setAccountLookup({
+        kind: "found",
+        account: {
+          accountId: first.accountId,
+          email: first.email,
+          firstName: first.firstName ?? "",
+          lastName: first.lastName ?? "",
+          companyName: first.companyName ?? null,
+        },
+      });
       // Snap the email field to the canonical account email so issuance
-      // and the account record agree byte-for-byte (the lookup
-      // lowercases and trims; reflect that back into the input).
-      setIssueEmail(data.account.email);
+      // and the account record agree byte-for-byte (search lowercases
+      // and trims; reflect that back into the input).
+      setIssueEmail(first.email);
     } catch (err) {
       setAccountLookup({
         kind: "error",
