@@ -426,6 +426,77 @@ export const SUPPORT_PUBLIC_DISCLOSURE_STATUSES = [
 
 export type SupportCategory = (typeof SUPPORT_CATEGORIES)[number];
 
+/**
+ * Per-category visibility map for the support form's conditional
+ * fields. Single source of truth for THREE consumers:
+ *
+ *   1. The React form's CATEGORY_CONFIG (which fields render for
+ *      the chosen Category).
+ *   2. The Zod schema's superRefine below (which fields fail
+ *      validation when missing for the chosen Category).
+ *   3. The /api/support-submit route handler (which conditional
+ *      fields are eligible to forward into the HubSpot payload).
+ *
+ * `required` = visible AND must be non-empty. `optional` = visible
+ * but accept-anything. Every other conditional field is NOT visible
+ * for that category and must NOT reach HubSpot regardless of what
+ * the client posted (defense-in-depth against a direct-curl POST
+ * that supplies fields outside the category's visible set).
+ *
+ * HubSpot's v3 Forms Submission API enforces property-level Required
+ * at the form definition level and does NOT honor our conditional
+ * logic, so every Required toggle on a conditional property must be
+ * disabled in the HubSpot form editor; required-when-shown lives
+ * entirely in this app. See hubspot-gotchas skill for the property-
+ * type + dropdown internal-name caveats that surround this.
+ */
+export const SUPPORT_CONDITIONAL_FIELDS_BY_CATEGORY: Record<
+  SupportCategory,
+  { required: readonly string[]; optional: readonly string[] }
+> = {
+  "Refund Request": {
+    required: ["order_email", "refund_reason"],
+    optional: ["license_key", "order_or_transaction_id"],
+  },
+  "Bug Report": {
+    required: ["atelier_version", "operating_system"],
+    optional: [
+      "license_key",
+      "os_version_or_build",
+      "steps_to_reproduce",
+      "issue_first_occurred",
+    ],
+  },
+  "Atelier Won't Start or Won't Open": {
+    required: ["atelier_version", "operating_system"],
+    optional: ["license_key", "os_version_or_build", "issue_first_occurred"],
+  },
+  "Corrupted Data or Lost Data": {
+    required: ["atelier_version", "operating_system"],
+    optional: ["license_key", "os_version_or_build", "issue_first_occurred"],
+  },
+  "License or Device Transfer": {
+    required: ["order_email", "license_or_device_transfer_action"],
+    optional: ["license_key", "order_or_transaction_id"],
+  },
+  "Privacy or Data Request": {
+    required: ["order_email", "data_request_type"],
+    optional: [],
+  },
+  "Security Vulnerability Report": {
+    required: [
+      "affected_component",
+      "suggested_severity",
+      "public_disclosure_status",
+    ],
+    optional: ["steps_to_reproduce"],
+  },
+  "General Question": {
+    required: [],
+    optional: [],
+  },
+} as const;
+
 export const supportTicketSchema = z.object({
   firstname: z
     .string()
@@ -555,6 +626,26 @@ export const supportTicketSchema = z.object({
   public_disclosure_status: z
     .enum(SUPPORT_PUBLIC_DISCLOSURE_STATUSES)
     .optional(),
+}).superRefine((data, ctx) => {
+  // Server-side enforcement of the 15 required-when-shown rules.
+  // The React form blocks submit when these are missing for the
+  // chosen Category; this is the load-bearing server-side re-check
+  // that catches a direct-curl POST or a client that bypassed the
+  // form's validateAll. Each missing required-for-this-category
+  // field surfaces as its own ZodIssue so the React form can light
+  // up the right error under the right field.
+  const required =
+    SUPPORT_CONDITIONAL_FIELDS_BY_CATEGORY[data.category].required;
+  for (const field of required) {
+    const value = (data as Record<string, unknown>)[field];
+    if (value === undefined || value === null || value === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: [field],
+        message: "Required for this category",
+      });
+    }
+  }
 });
 
 export type SupportTicketInput = z.infer<typeof supportTicketSchema>;

@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import {
   SUPPORT_AFFECTED_COMPONENTS,
   SUPPORT_CATEGORIES,
+  SUPPORT_CONDITIONAL_FIELDS_BY_CATEGORY,
   SUPPORT_CONSENT_TEXT,
   SUPPORT_DATA_REQUEST_TYPES,
   SUPPORT_LICENSE_OR_DEVICE_TRANSFER_ACTIONS,
@@ -81,57 +82,27 @@ interface CategoryConfig {
   optionalFields: readonly ConditionalFieldName[];
 }
 
-const CATEGORY_CONFIG: Record<SupportCategory, CategoryConfig> = {
-  "Refund Request": {
-    requiredFields: ["order_email", "refund_reason"],
-    optionalFields: ["license_key", "order_or_transaction_id"],
-  },
-  "Bug Report": {
-    requiredFields: ["atelier_version", "operating_system"],
-    optionalFields: [
-      "license_key",
-      "os_version_or_build",
-      "steps_to_reproduce",
-      "issue_first_occurred",
-    ],
-  },
-  "Atelier Won't Start or Won't Open": {
-    requiredFields: ["atelier_version", "operating_system"],
-    optionalFields: [
-      "license_key",
-      "os_version_or_build",
-      "issue_first_occurred",
-    ],
-  },
-  "Corrupted Data or Lost Data": {
-    requiredFields: ["atelier_version", "operating_system"],
-    optionalFields: [
-      "license_key",
-      "os_version_or_build",
-      "issue_first_occurred",
-    ],
-  },
-  "License or Device Transfer": {
-    requiredFields: ["order_email", "license_or_device_transfer_action"],
-    optionalFields: ["license_key", "order_or_transaction_id"],
-  },
-  "Privacy or Data Request": {
-    requiredFields: ["order_email", "data_request_type"],
-    optionalFields: [],
-  },
-  "Security Vulnerability Report": {
-    requiredFields: [
-      "affected_component",
-      "suggested_severity",
-      "public_disclosure_status",
-    ],
-    optionalFields: ["steps_to_reproduce"],
-  },
-  "General Question": {
-    requiredFields: [],
-    optionalFields: [],
-  },
-};
+/**
+ * The required + optional sets per Category come from a single source
+ * of truth in src/lib/validation.ts (SUPPORT_CONDITIONAL_FIELDS_BY_CATEGORY).
+ * The schema's superRefine enforces required-when-shown server-side
+ * against the same constant, so the form's UI rules and the route's
+ * validation rules cannot drift. The cast widens the schema's
+ * readonly string[] to the form's ConditionalFieldName tuple; both
+ * lists are kept in lockstep manually because the schema does not
+ * know about the form's narrower field-name union.
+ */
+const CATEGORY_CONFIG: Record<SupportCategory, CategoryConfig> = Object.fromEntries(
+  (Object.entries(SUPPORT_CONDITIONAL_FIELDS_BY_CATEGORY) as Array<
+    [SupportCategory, { required: readonly string[]; optional: readonly string[] }]
+  >).map(([category, sets]) => [
+    category,
+    {
+      requiredFields: sets.required as readonly ConditionalFieldName[],
+      optionalFields: sets.optional as readonly ConditionalFieldName[],
+    },
+  ]),
+) as Record<SupportCategory, CategoryConfig>;
 
 interface FormState {
   firstname: string;

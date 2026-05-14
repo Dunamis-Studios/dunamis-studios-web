@@ -5,6 +5,7 @@ import { rateLimit } from "@/lib/ratelimit";
 import { truncatedClientIp } from "@/lib/truncate-ip";
 import {
   supportTicketSchema,
+  SUPPORT_CONDITIONAL_FIELDS_BY_CATEGORY,
   SUPPORT_CONSENT_TEXT,
   type SupportTicketInput,
 } from "@/lib/validation";
@@ -34,11 +35,25 @@ export const dynamic = "force-dynamic";
  * fallback for those is the explicit email address surfaced in the
  * 502 error message.
  *
- * Conditional required-when validation lives in the React form's UI
- * (the categories that need refund_reason, etc.). The schema accepts
- * any subset of optional fields so a misclick cannot trip a 500;
- * the route forwards whatever the form sent to HubSpot and trusts
- * the UI's required-when enforcement.
+ * Conditional required-when validation lives in three coordinated
+ * layers, all backed by the same SUPPORT_CONDITIONAL_FIELDS_BY_CATEGORY
+ * map in src/lib/validation.ts:
+ *
+ *   1. React form: blocks submit when a required-for-Category field
+ *      is empty, hides fields that don't apply to the Category.
+ *   2. Zod schema (.superRefine): server-side re-check that surfaces
+ *      one ZodIssue per missing required-for-Category field. A
+ *      direct-curl POST that bypasses the UI fails at parseJson.
+ *   3. buildFields below: filters conditional fields to the visible
+ *      set for the Category before forwarding, so an out-of-category
+ *      value supplied by a tampering client never reaches the
+ *      HubSpot ticket.
+ *
+ * HubSpot itself enforces property-level Required at the form
+ * definition level (it does not honor our conditional logic), so
+ * every Required toggle on a conditional property must be disabled
+ * in the HubSpot form editor for the validation here to be the
+ * load-bearing layer.
  */
 
 const SITE_ORIGIN = "https://www.dunamisstudios.net";
@@ -120,11 +135,21 @@ function buildFields(data: SupportTicketInput): HubspotFormField[] {
       value: data.public_disclosure_status,
     },
   ];
+
+  // Only forward conditional fields that are actually visible for the
+  // chosen Category. The React form's buildSubmitPayload already
+  // filters this way client-side; this is the server-side defense-in-
+  // depth that catches a direct-curl POST supplying out-of-category
+  // values (e.g. atelier_version on a Refund Request). Empty values
+  // are still dropped, so HubSpot only sees the populated set the
+  // form would have surfaced for that Category.
+  const visibleSet = new Set<string>([
+    ...SUPPORT_CONDITIONAL_FIELDS_BY_CATEGORY[data.category].required,
+    ...SUPPORT_CONDITIONAL_FIELDS_BY_CATEGORY[data.category].optional,
+  ]);
   for (const f of conditional) {
+    if (!visibleSet.has(f.name)) continue;
     if (f.value !== undefined && f.value !== "") {
-      // Every conditional support-form field is a ticket property
-      // (Category drives which subset is required; none of them are
-      // contact properties).
       fields.push({ objectTypeId: HS_TICKET, name: f.name, value: f.value });
     }
   }
