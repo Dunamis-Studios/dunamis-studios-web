@@ -33,6 +33,109 @@ const VERIFICATION_KEY_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 /**
+ * Human-readable labels for every field that can land in fieldErrors.
+ * Drives the inline error summary above the submit button so the
+ * user sees "Email" rather than "email" in the list of things to
+ * fix. Keys are FormState field names (string-typed for ergonomic
+ * lookup against arbitrary fieldErrors keys).
+ */
+const FIELD_LABELS: Record<string, string> = {
+  firstname: "First Name",
+  lastname: "Last Name",
+  email: "Email",
+  subject: "Subject",
+  category: "Category",
+  what_happened: "What happened?",
+  consent: "Consent",
+  identity_verification_reference: "Verification Key",
+  turnstileToken: "Security check",
+  order_email: "Order Email",
+  license_key: "License Key",
+  order_or_transaction_id: "Order or Transaction ID",
+  refund_reason: "Refund Reason",
+  atelier_version: "Atelier Version",
+  operating_system: "Operating System",
+  os_version_or_build: "OS Version or Build",
+  steps_to_reproduce: "Steps to Reproduce",
+  issue_first_occurred: "Issue First Occurred",
+  license_or_device_transfer_action: "License or Device Transfer Action",
+  data_request_type: "Data Request Type",
+  affected_component: "Affected Component",
+  suggested_severity: "Suggested Severity",
+  public_disclosure_status: "Public Disclosure Status",
+};
+
+/**
+ * Maps each FormState field name to the DOM id of the element a
+ * user should land on when the error-summary jump-link or the
+ * auto-scroll fires. Most fields use the canonical "sf-<slug>"
+ * input id; consent and turnstile point at a wrapping div that
+ * was given an id so the smooth-scroll lands on the right region
+ * even though those inputs are not direct text inputs.
+ */
+const FIELD_DOM_ID: Record<string, string> = {
+  firstname: "sf-firstname",
+  lastname: "sf-lastname",
+  email: "sf-email",
+  subject: "sf-subject",
+  category: "sf-category",
+  what_happened: "sf-what-happened",
+  consent: "sf-consent",
+  identity_verification_reference: "sf-verification-key",
+  turnstileToken: "sf-turnstile",
+  order_email: "sf-order-email",
+  license_key: "sf-license-key",
+  order_or_transaction_id: "sf-order-id",
+  refund_reason: "sf-refund-reason",
+  atelier_version: "sf-atelier-version",
+  operating_system: "sf-operating-system",
+  os_version_or_build: "sf-os-version",
+  steps_to_reproduce: "sf-steps",
+  issue_first_occurred: "sf-issue-date",
+  license_or_device_transfer_action: "sf-transfer-action",
+  data_request_type: "sf-data-request",
+  affected_component: "sf-affected-component",
+  suggested_severity: "sf-severity",
+  public_disclosure_status: "sf-disclosure",
+};
+
+/**
+ * Scroll the field's input region into view and, when the target is
+ * a focusable native input, give it focus so screen readers + keyboard
+ * users land on the right element. `preventScroll: true` on focus
+ * stops the focus from racing the smooth-scroll. Non-input regions
+ * (consent label wrapper, turnstile widget wrapper) still scroll but
+ * do not steal focus.
+ */
+function scrollAndFocusField(fieldName: string) {
+  if (typeof document === "undefined") return;
+  const id = FIELD_DOM_ID[fieldName];
+  if (!id) return;
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
+  if (
+    el instanceof HTMLInputElement ||
+    el instanceof HTMLSelectElement ||
+    el instanceof HTMLTextAreaElement
+  ) {
+    window.setTimeout(() => el.focus({ preventScroll: true }), 80);
+  }
+}
+
+/**
+ * Pick the first errored field in FormState declaration order so the
+ * jump lands on the topmost problem on the page, regardless of which
+ * order validateAll added the keys. Returns undefined when no errors.
+ */
+function firstErrorFieldInOrder(errors: FieldErrors): string | undefined {
+  for (const field of Object.keys(FIELD_LABELS) as Array<keyof FieldErrors>) {
+    if (errors[field]) return field as string;
+  }
+  return undefined;
+}
+
+/**
  * Customer support ticket form. POSTs to /api/support-submit which
  * forwards to a HubSpot form wired into the Help Desk pipeline. The
  * React state machine owns:
@@ -372,12 +475,16 @@ export function SupportForm({
     const local = validateAll();
     if (!local.ok) {
       setFieldErrors(local.errors);
+      const first = firstErrorFieldInOrder(local.errors);
+      if (first) scrollAndFocusField(first);
       return;
     }
 
     const payload = buildSubmitPayload(state);
     if ("_missingCategory" in payload) {
-      setFieldErrors({ category: "Choose a category" });
+      const next: FieldErrors = { category: "Choose a category" };
+      setFieldErrors(next);
+      scrollAndFocusField("category");
       return;
     }
 
@@ -389,6 +496,8 @@ export function SupportForm({
         if (key && !next[key]) next[key] = issue.message;
       }
       setFieldErrors(next);
+      const first = firstErrorFieldInOrder(next);
+      if (first) scrollAndFocusField(first);
       return;
     }
 
@@ -970,7 +1079,7 @@ export function SupportForm({
         </FieldError>
       </div>
 
-      <div>
+      <div id="sf-turnstile">
         <TurnstileWidget
           action="support"
           onSuccess={(token) => setField("turnstileToken", token)}
@@ -995,6 +1104,7 @@ export function SupportForm({
       <div>
         <label className="flex items-start gap-3 text-sm text-[var(--fg)]">
           <input
+            id="sf-consent"
             type="checkbox"
             name="consent"
             checked={state.consent}
