@@ -1137,6 +1137,8 @@ export function SupportForm({
         </div>
       ) : null}
 
+      <ErrorSummary fieldErrors={fieldErrors} />
+
       <div className="flex justify-end pt-2">
         <Button
           type="submit"
@@ -1156,6 +1158,50 @@ function Required() {
     <span aria-hidden className="ml-0.5 text-[var(--color-danger)]">
       *
     </span>
+  );
+}
+
+/**
+ * Inline error summary rendered directly above the submit button when
+ * any field is invalid. Each row is a button that scrolls + focuses the
+ * offending field, so the user can jump to the first thing to fix
+ * without scrolling the page themselves. The panel disappears as soon
+ * as fieldErrors is empty, which `setField` handles per-field by
+ * deleting the entry the user just edited.
+ */
+function ErrorSummary({ fieldErrors }: { fieldErrors: FieldErrors }) {
+  const entries = (Object.keys(FIELD_LABELS) as Array<keyof FieldErrors>)
+    .filter((field) => Boolean(fieldErrors[field]))
+    .map((field) => ({
+      field: field as string,
+      label: FIELD_LABELS[field as string] ?? (field as string),
+      message: fieldErrors[field] as string,
+    }));
+  if (entries.length === 0) return null;
+  return (
+    <div
+      role="alert"
+      aria-live="polite"
+      className="rounded-md border border-[var(--color-danger)]/40 bg-[color-mix(in_oklch,var(--color-danger)_10%,transparent)] px-4 py-3 text-sm text-[var(--fg)]"
+    >
+      <p className="font-medium text-[var(--color-danger)]">
+        Please fix the following before submitting:
+      </p>
+      <ul className="mt-2 list-disc space-y-1 pl-5">
+        {entries.map((entry) => (
+          <li key={entry.field}>
+            <button
+              type="button"
+              onClick={() => scrollAndFocusField(entry.field)}
+              className="text-left text-[var(--accent)] underline-offset-2 hover:underline focus:outline-none focus-visible:underline"
+            >
+              {entry.label}
+            </button>
+            <span className="text-[var(--fg-muted)]">: {entry.message}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
