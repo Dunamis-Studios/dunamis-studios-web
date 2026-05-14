@@ -55,19 +55,37 @@ function getHubspotUtk(req: Request): string | undefined {
   }
 }
 
+/**
+ * HubSpot object type IDs. Canonical values documented in the
+ * hubspot-gotchas skill; "0-1" is Contact, "0-5" is Ticket. The
+ * support form is a multi-object form (one Ticket per submission,
+ * one Contact upserted alongside), so every field must carry its
+ * owning object's id or HubSpot defaults the property to Contact
+ * and the ticket pipeline rejects with "Required field
+ * 'TICKET.<name>' is missing" for every property that should have
+ * landed on the ticket.
+ */
+const HS_CONTACT = "0-1";
+const HS_TICKET = "0-5";
+
 function buildFields(data: SupportTicketInput): HubspotFormField[] {
   // Order matches the HubSpot form's field order so a future audit of
   // raw submission payloads reads naturally. Optional fields appear
   // only when the form sent a value; HubSpot rejects unknown empty
   // values cleanly but adding them adds nothing.
   const fields: HubspotFormField[] = [
-    { name: "firstname", value: data.firstname },
-    { name: "lastname", value: data.lastname },
-    { name: "email", value: data.email },
-    { name: "subject", value: data.subject },
-    { name: "category", value: data.category },
-    { name: "what_happened", value: data.what_happened },
+    { objectTypeId: HS_CONTACT, name: "firstname", value: data.firstname },
+    { objectTypeId: HS_CONTACT, name: "lastname", value: data.lastname },
+    { objectTypeId: HS_CONTACT, name: "email", value: data.email },
+    { objectTypeId: HS_TICKET, name: "subject", value: data.subject },
+    { objectTypeId: HS_TICKET, name: "category", value: data.category },
     {
+      objectTypeId: HS_TICKET,
+      name: "what_happened",
+      value: data.what_happened,
+    },
+    {
+      objectTypeId: HS_TICKET,
       name: "identity_verification_reference",
       value: data.identity_verification_reference,
     },
@@ -97,7 +115,10 @@ function buildFields(data: SupportTicketInput): HubspotFormField[] {
   ];
   for (const f of conditional) {
     if (f.value !== undefined && f.value !== "") {
-      fields.push({ name: f.name, value: f.value });
+      // Every conditional support-form field is a ticket property
+      // (Category drives which subset is required; none of them are
+      // contact properties).
+      fields.push({ objectTypeId: HS_TICKET, name: f.name, value: f.value });
     }
   }
   return fields;
