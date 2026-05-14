@@ -168,6 +168,16 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
+              <a
+                href="https://stats.uptimerobot.com/U8YGfq1sq5"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--fg-muted)] hover:text-[var(--fg)]"
+              >
+                Status
+              </a>
+            </li>
+            <li>
               <Link href="/terms" className="text-[var(--fg-muted)] hover:text-[var(--fg)]">
                 Terms
               </Link>

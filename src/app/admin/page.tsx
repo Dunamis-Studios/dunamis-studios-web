@@ -7,6 +7,7 @@ import {
   KeyRound,
   ScrollText,
   Settings as SettingsIcon,
+  ThumbsUp,
 } from "lucide-react";
 
 import { getCurrentAdminSession } from "@/lib/session";
@@ -125,6 +126,12 @@ export default async function AdminDashboardPage() {
             icon={<KeyRound className="h-5 w-5" />}
             title="Licenses"
             description="Global Atelier license issuance"
+          />
+          <NavCard
+            href="/admin/kb-feedback"
+            icon={<ThumbsUp className="h-5 w-5" />}
+            title="KB feedback"
+            description="Per-article thumbs aggregation, highest down-rate first"
           />
           <NavCard
             icon={<Ticket className="h-5 w-5" />}

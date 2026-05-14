@@ -15,17 +15,18 @@ export const dynamic = "force-dynamic";
 /**
  * GET /api/admin/customers/search?email={addr}
  *
- * As-you-type search endpoint for the admin customers page. Returns
- * a `results` array shape (zero or one entries today; the array is
- * forward-compatible with future fuzzy/prefix search). Rate-limited
+ * As-you-type search endpoint for the admin customers page AND the
+ * one-shot account lookup for the license issuance UI. Returns a
+ * `results` array shape (zero or one entries today; the array is
+ * forward-compatible with future fuzzy / prefix search). Rate-limited
  * at 30/min keyed on the admin's email (not IP) so multiple admins
  * behind a shared NAT don't collide.
  *
- * This endpoint is intentionally NOT consolidated with the older
- * `/api/admin/lookup-account` route yet: the issuance UI in
- * /admin/licenses still consumes that route's `{ found, account }`
- * shape. Consolidation lands as a separate slice; see the
- * day-of-launch backlog "Admin section follow-ups" entry.
+ * This endpoint absorbed the former `/api/admin/lookup-account` route
+ * during the day-of-launch backlog cleanup. The issuance UI in
+ * /admin/licenses now consumes the array shape directly and coalesces
+ * its nullable name fields when adapting the entry into its local
+ * ResolvedAccount shape.
  *
  * Auth: gated by ADMIN_EMAILS via requireAdmin(). Returns 503 in
  * dev when the allowlist is unconfigured (matches sibling admin

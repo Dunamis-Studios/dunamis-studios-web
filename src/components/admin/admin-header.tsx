@@ -48,6 +48,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/admin/content", label: "Content", match: "prefix" },
   { href: "/admin/customers", label: "Customers", match: "prefix" },
   { href: "/admin/licenses", label: "Licenses", match: "prefix" },
+  { href: "/admin/kb-feedback", label: "KB feedback", match: "prefix" },
 ];
 
 function isActive(item: NavItem, pathname: string | null): boolean {
