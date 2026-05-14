@@ -78,7 +78,14 @@ function buildFields(data: SupportTicketInput): HubspotFormField[] {
     { objectTypeId: HS_CONTACT, name: "lastname", value: data.lastname },
     { objectTypeId: HS_CONTACT, name: "email", value: data.email },
     { objectTypeId: HS_TICKET, name: "subject", value: data.subject },
-    { objectTypeId: HS_TICKET, name: "category", value: data.category },
+    {
+      objectTypeId: HS_TICKET,
+      // Ticket internal property name is `hs_ticket_category`, not
+      // `category`. Verified via HubSpot get_properties MCP and the
+      // hubspot-gotchas skill. Enum values stay verbatim from the form.
+      name: "hs_ticket_category",
+      value: data.category,
+    },
     {
       objectTypeId: HS_TICKET,
       name: "what_happened",
