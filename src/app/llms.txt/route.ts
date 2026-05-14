@@ -5,9 +5,12 @@ import {
   getCategoriesForProduct,
   type KbCategory,
 } from "@/lib/kb";
+import { FEATURE_FLAGS } from "@/lib/feature-flags";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://www.dunamisstudios.net";
+
+const HUBSPOT_VISIBLE = FEATURE_FLAGS.hubspotSurfacesVisible;
 
 /**
  * llms.txt is the AI-crawler equivalent of robots.txt + sitemap. It
@@ -42,8 +45,12 @@ function categoryLine(c: KbCategory): string {
 
 export async function GET(): Promise<Response> {
   const [articles, guides, categoriesByProduct] = await Promise.all([
-    listPosts("article", { includeDrafts: false }),
-    listPosts("guide", { includeDrafts: false }),
+    HUBSPOT_VISIBLE
+      ? listPosts("article", { includeDrafts: false })
+      : Promise.resolve([] as Awaited<ReturnType<typeof listPosts>>),
+    HUBSPOT_VISIBLE
+      ? listPosts("guide", { includeDrafts: false })
+      : Promise.resolve([] as Awaited<ReturnType<typeof listPosts>>),
     Promise.all(
       KB_PRODUCTS.map(async (p) => [p, await getCategoriesForProduct(p)] as const),
     ),
@@ -54,21 +61,25 @@ export async function GET(): Promise<Response> {
   lines.push("# Dunamis Studios");
   lines.push("");
   lines.push(
-    "> A software studio. We take on custom application development engagements directly and on a white-label basis (Build Services), with a HubSpot specialty practice (HubSpot Custom Development) and a small catalog of HubSpot marketplace apps. Two service lines, plus products.",
+    HUBSPOT_VISIBLE
+      ? "> A software studio. We take on custom application development engagements directly and on a white-label basis (Build Services), with a HubSpot specialty practice (HubSpot Custom Development) and a small catalog of HubSpot marketplace apps. Two service lines, plus products."
+      : "> A software studio. We take on custom application development engagements directly and on a white-label basis (Build Services), plus a small catalog of prebuilt desktop software.",
   );
   lines.push("");
 
-  lines.push("## Products");
-  lines.push("");
-  lines.push(
-    `- [Property Pulse](${SITE_URL}/custom-development/products/property-pulse): A HubSpot marketplace app that surfaces property change history directly on every CRM record. Admins choose which properties to track per object type, and users see the full change log, prior values, current values, and source in a single CRM card with inline editing and filtering.`,
-  );
-  lines.push(
-    `- [Debrief](${SITE_URL}/custom-development/products/debrief): A HubSpot marketplace app that generates structured handoff briefs and conversational handoff messages on demand, when a HubSpot user starts a handoff from the Debrief CRM card on a record. Reads the record's history, properties, and engagement to produce a brief for the new owner and a personalized message they can send to the contact.`,
-  );
-  lines.push("");
+  if (HUBSPOT_VISIBLE) {
+    lines.push("## Products");
+    lines.push("");
+    lines.push(
+      `- [Property Pulse](${SITE_URL}/custom-development/products/property-pulse): A HubSpot marketplace app that surfaces property change history directly on every CRM record. Admins choose which properties to track per object type, and users see the full change log, prior values, current values, and source in a single CRM card with inline editing and filtering.`,
+    );
+    lines.push(
+      `- [Debrief](${SITE_URL}/custom-development/products/debrief): A HubSpot marketplace app that generates structured handoff briefs and conversational handoff messages on demand, when a HubSpot user starts a handoff from the Debrief CRM card on a record. Reads the record's history, properties, and engagement to produce a brief for the new owner and a personalized message they can send to the contact.`,
+    );
+    lines.push("");
+  }
 
-  if (articles.length > 0) {
+  if (HUBSPOT_VISIBLE && articles.length > 0) {
     lines.push("## Articles");
     lines.push("");
     for (const a of articles) {
@@ -82,7 +93,7 @@ export async function GET(): Promise<Response> {
     lines.push("");
   }
 
-  if (guides.length > 0) {
+  if (HUBSPOT_VISIBLE && guides.length > 0) {
     lines.push("## Guides");
     lines.push("");
     for (const g of guides) {
@@ -113,15 +124,19 @@ export async function GET(): Promise<Response> {
   lines.push(
     `- [Build Services](${SITE_URL}/build-services): Custom application development for agencies (white-label) and end businesses (direct). Paid discovery, fixed-price tiers, hosting on the client's infrastructure, full handover documentation, and 30 days of post-launch bug-fix support.`,
   );
-  lines.push(
-    `- [HubSpot Custom Development](${SITE_URL}/custom-development): Specialty practice for HubSpot UI extensions, marketplace apps, API integrations, data pipelines, AI workflows, and portal recovery.`,
-  );
+  if (HUBSPOT_VISIBLE) {
+    lines.push(
+      `- [HubSpot Custom Development](${SITE_URL}/custom-development): Specialty practice for HubSpot UI extensions, marketplace apps, API integrations, data pipelines, AI workflows, and portal recovery.`,
+    );
+  }
   lines.push("");
 
   lines.push("## About");
   lines.push("");
   lines.push(
-    `- [About Dunamis Studios](${SITE_URL}/about): Studio overview, two service lines, and the engagement model.`,
+    HUBSPOT_VISIBLE
+      ? `- [About Dunamis Studios](${SITE_URL}/about): Studio overview, two service lines, and the engagement model.`
+      : `- [About Dunamis Studios](${SITE_URL}/about): Studio overview and the engagement model.`,
   );
   lines.push(
     `- [Contact](${SITE_URL}/contact): Get in touch with the studio.`,
@@ -129,9 +144,11 @@ export async function GET(): Promise<Response> {
   lines.push(
     `- [Build Services pricing](${SITE_URL}/build-services/pricing): Fixed-price tiers for custom application development.`,
   );
-  lines.push(
-    `- [HubSpot Custom Development pricing](${SITE_URL}/custom-development/pricing): Pricing for Property Pulse, Debrief, and other products.`,
-  );
+  if (HUBSPOT_VISIBLE) {
+    lines.push(
+      `- [HubSpot Custom Development pricing](${SITE_URL}/custom-development/pricing): Pricing for Property Pulse, Debrief, and other products.`,
+    );
+  }
   lines.push("");
 
   lines.push("## Optional");
