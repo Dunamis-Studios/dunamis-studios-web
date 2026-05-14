@@ -6,18 +6,28 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HeroGradient } from "@/components/marketing/hero-gradient";
 import { JsonLd } from "@/components/seo/json-ld";
+import { FEATURE_FLAGS } from "@/lib/feature-flags";
 import { siteFreshness } from "@/lib/schema-freshness";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
+
+const HUBSPOT_VISIBLE = FEATURE_FLAGS.hubspotSurfacesVisible;
+
+const ABOUT_DESCRIPTION = HUBSPOT_VISIBLE
+  ? "Dunamis Studios builds custom software and HubSpot extensions. Two practices, one engagement model: paid discovery, fixed quote, hosting on your infrastructure, full handover documentation."
+  : "Dunamis Studios builds custom software. Paid discovery, fixed quote, hosting on your infrastructure, full handover documentation.";
+
+const ABOUT_META_DESCRIPTION = HUBSPOT_VISIBLE
+  ? "Dunamis Studios builds custom software and HubSpot extensions. Two practices: Build Services for custom apps, HubSpot Custom Development for HubSpot-specific work."
+  : "Dunamis Studios builds custom software. Paid discovery, fixed quote, your infrastructure, full handover.";
 
 const webPageSchema = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
   ...siteFreshness(),
   name: "About Dunamis Studios",
-  description:
-    "Dunamis Studios builds custom software and HubSpot extensions. Two practices, one engagement model: paid discovery, fixed quote, hosting on your infrastructure, full handover documentation.",
+  description: ABOUT_DESCRIPTION,
   url: `${SITE_URL}/about`,
   isPartOf: {
     "@type": "WebSite",
@@ -31,21 +41,18 @@ const webPageSchema = {
 
 export const metadata: Metadata = {
   title: "About",
-  description:
-    "Dunamis Studios builds custom software and HubSpot extensions. Two practices — Build Services for custom apps, HubSpot Custom Development for HubSpot-specific work — one engagement model.",
+  description: ABOUT_META_DESCRIPTION,
   alternates: { canonical: "/about" },
   openGraph: {
     title: "About · Dunamis Studios",
-    description:
-      "Dunamis Studios builds custom software and HubSpot extensions. Two practices — Build Services for custom apps, HubSpot Custom Development for HubSpot-specific work — one engagement model.",
+    description: ABOUT_META_DESCRIPTION,
     url: "/about",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "About · Dunamis Studios",
-    description:
-      "Dunamis Studios builds custom software and HubSpot extensions. Two practices — Build Services for custom apps, HubSpot Custom Development for HubSpot-specific work — one engagement model.",
+    description: ABOUT_META_DESCRIPTION,
   },
 };
 
@@ -60,13 +67,14 @@ export default function AboutPage() {
           <div className="mx-auto max-w-3xl text-center stagger">
             <Badge className="mx-auto">About</Badge>
             <h1 className="mt-6 font-[var(--font-display)] text-4xl font-medium tracking-[-0.03em] leading-[1.05] text-[var(--fg)] sm:text-5xl lg:text-6xl">
-              Two practices, one engagement model.
+              {HUBSPOT_VISIBLE
+                ? "Two practices, one engagement model."
+                : "Custom software, one engagement model."}
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-[var(--fg-muted)]">
-              Dunamis Studios is a small, independent shop. We build custom
-              software and HubSpot extensions. We start with paid discovery,
-              ship to a fixed quote, deploy on your infrastructure, and hand
-              over with full documentation.
+              {HUBSPOT_VISIBLE
+                ? "Dunamis Studios is a small, independent shop. We build custom software and HubSpot extensions. We start with paid discovery, ship to a fixed quote, deploy on your infrastructure, and hand over with full documentation."
+                : "Dunamis Studios is a small, independent shop. We build custom software. We start with paid discovery, ship to a fixed quote, deploy on your infrastructure, and hand over with full documentation."}
             </p>
           </div>
         </Container>
@@ -78,19 +86,26 @@ export default function AboutPage() {
             What we do
           </div>
           <h2 className="mt-3 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
-            Two service lines
+            {HUBSPOT_VISIBLE ? "Two service lines" : "Custom application development"}
           </h2>
-          <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          <div
+            className={
+              HUBSPOT_VISIBLE
+                ? "mt-10 grid gap-6 lg:grid-cols-2"
+                : "mt-10 grid gap-6"
+            }
+          >
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-7">
               <Badge variant="build">Build Services</Badge>
               <h3 className="mt-4 font-[var(--font-display)] text-xl font-medium tracking-tight">
-                Custom software outside HubSpot
+                {HUBSPOT_VISIBLE
+                  ? "Custom software outside HubSpot"
+                  : "Custom software"}
               </h3>
               <p className="mt-3 text-[var(--fg-muted)] leading-relaxed">
-                Internal tools, customer portals, dashboards, integrations
-                between non-HubSpot systems, full custom applications. Direct
-                engagements for businesses, white-label engagements for
-                agencies.
+                {HUBSPOT_VISIBLE
+                  ? "Internal tools, customer portals, dashboards, integrations between non-HubSpot systems, full custom applications. Direct engagements for businesses, white-label engagements for agencies."
+                  : "Internal tools, customer portals, dashboards, integrations, full custom applications. Direct engagements for businesses, white-label engagements for agencies."}
               </p>
               <Link
                 href="/build-services"
@@ -100,25 +115,27 @@ export default function AboutPage() {
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-7">
-              <Badge variant="hubspot">HubSpot Custom Development</Badge>
-              <h3 className="mt-4 font-[var(--font-display)] text-xl font-medium tracking-tight">
-                HubSpot-specific work
-              </h3>
-              <p className="mt-3 text-[var(--fg-muted)] leading-relaxed">
-                UI extensions, marketplace apps, HubSpot API integrations,
-                custom workflow actions. We&apos;ve shipped multiple HubSpot
-                marketplace listings and run our own portfolio of HubSpot
-                products alongside client work.
-              </p>
-              <Link
-                href="/custom-development"
-                className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-hubspot-700)] hover:text-[var(--color-hubspot-800)] dark:text-[var(--color-hubspot-400)] dark:hover:text-[var(--color-hubspot-300)]"
-              >
-                HubSpot Custom Development
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
+            {HUBSPOT_VISIBLE ? (
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-7">
+                <Badge variant="hubspot">HubSpot Custom Development</Badge>
+                <h3 className="mt-4 font-[var(--font-display)] text-xl font-medium tracking-tight">
+                  HubSpot-specific work
+                </h3>
+                <p className="mt-3 text-[var(--fg-muted)] leading-relaxed">
+                  UI extensions, marketplace apps, HubSpot API integrations,
+                  custom workflow actions. We&apos;ve shipped multiple HubSpot
+                  marketplace listings and run our own portfolio of HubSpot
+                  products alongside client work.
+                </p>
+                <Link
+                  href="/custom-development"
+                  className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-hubspot-700)] hover:text-[var(--color-hubspot-800)] dark:text-[var(--color-hubspot-400)] dark:hover:text-[var(--color-hubspot-300)]"
+                >
+                  HubSpot Custom Development
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            ) : null}
           </div>
         </Container>
       </Section>
@@ -129,7 +146,7 @@ export default function AboutPage() {
             How we work
           </div>
           <h2 className="mt-3 font-[var(--font-display)] text-3xl font-medium tracking-tight sm:text-4xl">
-            One engagement model
+            {HUBSPOT_VISIBLE ? "One engagement model" : "Our engagement model"}
           </h2>
           <div className="mt-8 space-y-5 text-[var(--fg-muted)] leading-relaxed">
             <p>
