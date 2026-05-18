@@ -1,3 +1,10 @@
+/**
+ * HubSpot Custom Development articles index at
+ * /custom-development/articles. Lists every published article from
+ * src/lib/content.ts (Redis-backed listPosts). Mirrors the guides
+ * index in shape; the two are separate content types so editorial
+ * cadence and content shape can diverge.
+ */
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";

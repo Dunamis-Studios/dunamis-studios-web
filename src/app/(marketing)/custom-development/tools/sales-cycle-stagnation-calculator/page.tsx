@@ -1,3 +1,9 @@
+/**
+ * Sales Cycle Stagnation Calculator tool page at
+ * /custom-development/tools/sales-cycle-stagnation-calculator.
+ * Mounts the calculator client and the FAQ. Logic lives in
+ * src/lib/sales-cycle-stagnation-logic.ts.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";

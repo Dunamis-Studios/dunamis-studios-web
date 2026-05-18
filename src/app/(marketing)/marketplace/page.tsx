@@ -1,3 +1,15 @@
+/**
+ * Marketplace catalog index at /marketplace. Renders the
+ * MarketplaceGrid with the full MARKETPLACE_PRODUCTS list and the
+ * auto-derived platform / category filter dropdowns. Emits
+ * ItemList JSON-LD over the products so search engines can index
+ * the catalog.
+ *
+ * Atelier is the lone shipping product at launch; future prebuilt
+ * apps are added by extending MARKETPLACE_PRODUCTS in
+ * src/lib/marketplace.ts. The grid and detail page auto-pick them
+ * up.
+ */
 import type { Metadata } from "next";
 import { Container, Section } from "@/components/ui/primitives";
 import { HeroGradient } from "@/components/marketing/hero-gradient";

@@ -1,3 +1,13 @@
+/**
+ * Marketing homepage at "/". Server-rendered, statically buildable. The
+ * page composes the studio-level hero, the customer logo strip, two
+ * lane-bubble CTAs (Build Services + HubSpot Custom Development),
+ * product tiles, and a FAQ accordion plus FAQPage JSON-LD.
+ *
+ * The HubSpot lane bubble + the HubSpot-specific FAQ items both gate
+ * on FEATURE_FLAGS.hubspotSurfacesVisible so the whole HubSpot service
+ * line can be hidden without editing this file.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";

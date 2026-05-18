@@ -1,3 +1,10 @@
+/**
+ * Help center root at /help. Lists every public category in
+ * src/lib/kb.ts (Platform, Debrief, Property Pulse, About, Billing,
+ * etc.) with a featured-articles preview and a top-level search
+ * link. The whole help center is a static-rendered surface backed
+ * by markdown content under content/kb/.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";

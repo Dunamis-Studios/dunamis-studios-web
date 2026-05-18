@@ -1,3 +1,10 @@
+/**
+ * Debrief roadmap page at
+ * /custom-development/products/debrief/roadmap. Renders the
+ * milestone list (Now / Next / Later sections) from the canonical
+ * data in content/roadmap/debrief.ts. Public-facing transparency
+ * surface; updates as work ships.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Check, Clock, Compass, Sparkles } from "lucide-react";

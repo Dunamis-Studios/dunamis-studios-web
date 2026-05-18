@@ -1,3 +1,10 @@
+/**
+ * Help center category page at /help/[category]. Dynamic route with
+ * generateStaticParams over KB_CATEGORIES (from src/lib/kb.ts).
+ * Lists every article in the category newest-first, with a reading-
+ * time badge and an optional "members only" lock icon for
+ * account-gated articles.
+ */
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";

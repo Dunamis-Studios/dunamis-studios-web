@@ -1,3 +1,10 @@
+/**
+ * Lead Scoring Builder tool page at
+ * /custom-development/tools/lead-scoring-builder. Mounts the
+ * LeadScoringBuilder client which outputs a starter HubSpot
+ * lead-scoring model the visitor can paste into Marketing >
+ * Lead Scoring. Logic lives in src/lib/lead-scoring-logic.ts.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";

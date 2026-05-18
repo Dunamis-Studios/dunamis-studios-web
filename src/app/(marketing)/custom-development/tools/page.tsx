@@ -1,3 +1,12 @@
+/**
+ * HubSpot Free Tools index at /custom-development/tools. Lists the
+ * nine free calculator and audit tools the studio publishes as
+ * lead-capture surfaces (HubSpot Bloat Score, Property Audit,
+ * Workflow Audit, Lead Scoring Builder, Custom Object Decision
+ * Tree, Sales Cycle Stagnation Calculator, Team Onboarding
+ * Checklist, Tech Stack Cost Audit, Handoff Time Calculator).
+ * Each tool lives at /custom-development/tools/[slug].
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import {

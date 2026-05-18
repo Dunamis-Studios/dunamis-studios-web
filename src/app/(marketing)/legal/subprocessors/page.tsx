@@ -1,3 +1,12 @@
+/**
+ * Sub-processors disclosure at /legal/subprocessors. Lists every
+ * third-party vendor that processes Customer Personal Data under
+ * the DPA, with purpose, processing location, and the EU-US data
+ * transfer mechanism applied (DPF, SCC, or both). Updated on each
+ * vendor add or drop; the LAST_UPDATED constant below carries the
+ * version date the DPA's sub-processor change-notice clause
+ * references.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";

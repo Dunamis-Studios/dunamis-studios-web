@@ -1,3 +1,10 @@
+/**
+ * Workflow Audit Checklist tool page at
+ * /custom-development/tools/workflow-audit-checklist. Mounts the
+ * WorkflowAuditChecklist client + cap-utilization warning +
+ * CourseCtaCard + FAQ. Scoring lives in
+ * src/lib/workflow-audit-scoring.ts.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";

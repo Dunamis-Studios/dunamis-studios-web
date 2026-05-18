@@ -1,3 +1,15 @@
+/**
+ * Atelier docs index at /build-services/products/atelier/docs.
+ * Server-rendered table of contents grouped by category. Sources
+ * the nav structure from getAtelierDocsNavigation in
+ * src/lib/atelier-docs.ts; adding a new doc file under
+ * content/atelier-docs/ auto-extends the index after the next
+ * build.
+ *
+ * Emits TechArticle + BreadcrumbList JSON-LD over the docs root.
+ * The breadcrumb trail (Home > Marketplace > Atelier > Docs)
+ * reflects the canonical Atelier home at /marketplace/atelier.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";

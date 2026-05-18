@@ -1,3 +1,10 @@
+/**
+ * Article detail page at /custom-development/articles/[slug].
+ * Same shape as the guide detail page plus the listicle blocks
+ * (comparison table, related products card strip) for listicle-
+ * grade articles. Builds Article + FAQPage JSON-LD per page; the
+ * canonical source of truth lives in src/lib/content.ts.
+ */
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";

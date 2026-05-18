@@ -1,3 +1,11 @@
+/**
+ * Help center article detail page at /help/[category]/[slug].
+ * Dynamic route with generateStaticParams over every published
+ * article. Gated articles (access:"members") redirect unauth
+ * visitors to /login with a returnTo back-pointer. Renders the
+ * markdown body via renderKbMarkdown plus the ArticleRating widget
+ * at the bottom.
+ */
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";

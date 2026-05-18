@@ -1,3 +1,10 @@
+/**
+ * Master Terms of Sale at /terms. Renders termsMaster (the umbrella
+ * agreement governing every product) and links to each product
+ * addendum at /terms/[product]. The addendums supplement the master
+ * with product-specific terms (Debrief subscription cycle, PP
+ * one-time license, Atelier perpetual license).
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";

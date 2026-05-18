@@ -1,3 +1,14 @@
+/**
+ * Build Services lane landing at /build-services. Positions the
+ * service line (white-label custom software for agencies + direct
+ * for businesses), describes the engagement model, lists past work,
+ * and mounts a CustomDevelopmentContactForm with source="build-
+ * services" so HubSpot routes the lead to the Build Services
+ * pipeline.
+ *
+ * Lane wrapper (.lane-build) is applied by the parent layout, so
+ * accent tokens here resolve to the build teal.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Mail, Minus } from "lucide-react";

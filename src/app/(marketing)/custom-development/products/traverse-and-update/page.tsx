@@ -1,3 +1,9 @@
+/**
+ * Traverse and Update product page at
+ * /custom-development/products/traverse-and-update. Coming-soon
+ * shell because TnU is built but not yet on the HubSpot
+ * marketplace. Pulls metadata from PRODUCT_META.traverse-and-update.
+ */
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/primitives";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";

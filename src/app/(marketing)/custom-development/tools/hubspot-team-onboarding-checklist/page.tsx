@@ -1,3 +1,10 @@
+/**
+ * HubSpot Team Onboarding Checklist tool page at
+ * /custom-development/tools/hubspot-team-onboarding-checklist.
+ * Mounts the TeamOnboardingChecklist client (role-aware scoring
+ * across eight onboarding phases). Logic lives in
+ * src/lib/team-onboarding-checklist-logic.ts.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";

@@ -1,3 +1,9 @@
+/**
+ * Build Services articles placeholder at /build-services/articles.
+ * Same shape as the other lane placeholders. When articles ship
+ * under this lane, replace with a listing page sourced from
+ * listPosts("article", lane="build-services") or equivalent.
+ */
 import type { Metadata } from "next";
 import { LanePlaceholder } from "@/components/marketing/lane-placeholder";
 

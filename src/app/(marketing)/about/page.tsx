@@ -1,3 +1,10 @@
+/**
+ * About page at /about. Studio-level positioning: who Dunamis Studios
+ * is, what we ship (Build Services, HubSpot Custom Development,
+ * marketplace), and what we stand for. Emits Organization JSON-LD so
+ * search and answer engines have a clean entity definition. HubSpot
+ * lane copy is gated behind FEATURE_FLAGS.hubspotSurfacesVisible.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Mail } from "lucide-react";

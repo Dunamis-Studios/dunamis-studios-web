@@ -1,3 +1,11 @@
+/**
+ * Atelier download page at /atelier/download. Direct download link
+ * to the latest Windows installer plus SHA-256 verification
+ * instructions for customers who want belt-and-suspenders integrity
+ * on the unsigned binary (Atelier ships without an EV code-signing
+ * cert in v1; the SmartScreen prompt is documented in the install
+ * docs).
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Download, Shield, ArrowRight } from "lucide-react";

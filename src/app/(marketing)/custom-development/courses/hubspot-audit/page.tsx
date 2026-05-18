@@ -1,3 +1,11 @@
+/**
+ * HubSpot Audit email course landing at
+ * /custom-development/courses/hubspot-audit. Renders the course
+ * outline (per-day topics, what the participant gets, who it's
+ * for) plus the CourseSignupForm. The form posts to
+ * /api/courses/signup with course slug "hubspot-audit"; HubSpot's
+ * attached workflow then drips the actual emails.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import {

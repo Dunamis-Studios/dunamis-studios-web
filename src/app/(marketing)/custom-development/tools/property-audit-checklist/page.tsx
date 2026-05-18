@@ -1,3 +1,9 @@
+/**
+ * Property Audit Checklist tool page at
+ * /custom-development/tools/property-audit-checklist. Mounts the
+ * PropertyAuditChecklist client + methodology + CourseCtaCard +
+ * FAQ. Scoring lives in src/lib/property-audit-scoring.ts.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";

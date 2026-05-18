@@ -1,3 +1,15 @@
+/**
+ * Support ticket page at /help/contact-support. Server component
+ * that resolves the current session, checks
+ * hasActiveProduct(account, email) for the Mode A verification-key
+ * fast path, and renders the SupportForm with the resolved user
+ * context. AnchorScrollOnMount aligns the form with the viewport
+ * after hydration so a deep link to #support-form lands cleanly.
+ *
+ * Form submission posts to /api/support-submit which validates,
+ * re-verifies Turnstile + verification key, then forwards into the
+ * HubSpot helpdesk pipeline.
+ */
 import type { Metadata } from "next";
 
 import { Container, Section, PageHeader } from "@/components/ui/primitives";

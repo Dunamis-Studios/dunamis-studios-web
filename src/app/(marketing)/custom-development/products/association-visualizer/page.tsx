@@ -1,3 +1,9 @@
+/**
+ * Association Visualizer product page at
+ * /custom-development/products/association-visualizer. Currently an
+ * internal tool we're exploring as a public product. Coming-soon
+ * shell + PRODUCT_META.association-visualizer.
+ */
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/primitives";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";

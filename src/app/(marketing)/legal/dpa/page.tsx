@@ -1,3 +1,11 @@
+/**
+ * Data Processing Addendum at /legal/dpa. The customer-facing version
+ * of the DPA the customer accepts at signup (or at claim-link time for
+ * a HubSpot product install). Incorporates the EU SCCs, UK IDTA, and
+ * Swiss Addendum by reference. Version stamped against
+ * LEGAL_METADATA.dpa so the canonical text and the consent record
+ * agree.
+ */
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
