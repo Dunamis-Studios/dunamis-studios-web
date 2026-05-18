@@ -1,3 +1,18 @@
+/**
+ * Token machinery for the Dunamis Sync API: long-lived (24h) Bearer
+ * access tokens, short-lived (5 min) QR-scan handshake tokens, and
+ * one-time exchange codes (10 min) used by the post-checkout deep-
+ * link flow.
+ *
+ * Distinct from the customer-portal session JWTs in src/lib/tokens.ts.
+ * Sync tokens carry their own issuer ("dunamis-sync") and audience
+ * ("dunamis-sync-client") so a customer-portal JWT can never satisfy
+ * a Sync API call, even though both signing layers share JWT_SECRET.
+ *
+ * Related: src/lib/sync/redis-keys.ts (TTL'd Redis entries for the
+ * QR / exchange-code state), src/lib/sync/types.ts (SyncTokenClaims
+ * shape that drives the JWT payload).
+ */
 import { SignJWT, jwtVerify } from "jose";
 import { randomBytes } from "node:crypto";
 

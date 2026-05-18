@@ -1,3 +1,13 @@
+/**
+ * Sync-specific Stripe Price helpers. Resolves the Sync lookup_keys
+ * (trial_month, monthly, annual) to concrete Stripe Price objects
+ * and classifies an incoming Checkout Session or Subscription back
+ * to its lookup_key for the webhook router.
+ *
+ * Mirrors the Atelier helpers in src/lib/atelier-pricing.ts so the
+ * shape stays familiar across product lines. Per-invocation cache;
+ * Stripe-side price edits propagate after the next cold start.
+ */
 import type Stripe from "stripe";
 
 import { stripe } from "../stripe";
