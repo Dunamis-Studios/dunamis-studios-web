@@ -38,24 +38,18 @@ const breadcrumbSchema = {
     {
       "@type": "ListItem",
       position: 2,
-      name: "Build Services",
-      item: `${SITE_URL}/build-services`,
+      name: "Marketplace",
+      item: `${SITE_URL}/marketplace`,
     },
     {
       "@type": "ListItem",
       position: 3,
-      name: "Products",
-      item: `${SITE_URL}/build-services/products`,
+      name: "Atelier",
+      item: `${SITE_URL}/marketplace/atelier`,
     },
     {
       "@type": "ListItem",
       position: 4,
-      name: "Atelier",
-      item: `${SITE_URL}/build-services/products/atelier`,
-    },
-    {
-      "@type": "ListItem",
-      position: 5,
       name: "Documentation",
       item: `${SITE_URL}${PAGE_PATH}`,
     },
@@ -85,12 +79,8 @@ export default async function AtelierDocsIndexPage() {
       <Breadcrumbs
         items={[
           { label: "Home", href: "/" },
-          { label: "Build Services", href: "/build-services" },
-          { label: "Products", href: "/build-services/products" },
-          {
-            label: "Atelier",
-            href: "/build-services/products/atelier",
-          },
+          { label: "Marketplace", href: "/marketplace" },
+          { label: "Atelier", href: "/marketplace/atelier" },
           { label: "Documentation" },
         ]}
       />

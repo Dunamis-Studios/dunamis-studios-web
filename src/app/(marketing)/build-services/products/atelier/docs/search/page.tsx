@@ -20,12 +20,8 @@ export default function AtelierDocsSearchPage() {
       <Breadcrumbs
         items={[
           { label: "Home", href: "/" },
-          { label: "Build Services", href: "/build-services" },
-          { label: "Products", href: "/build-services/products" },
-          {
-            label: "Atelier",
-            href: "/build-services/products/atelier",
-          },
+          { label: "Marketplace", href: "/marketplace" },
+          { label: "Atelier", href: "/marketplace/atelier" },
           {
             label: "Docs",
             href: "/build-services/products/atelier/docs",

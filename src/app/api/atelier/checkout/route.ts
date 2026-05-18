@@ -60,7 +60,7 @@ export async function POST(request: Request) {
     parsed.data.success_url ??
     `${appUrl}/build-services/products/atelier/post-checkout?session_id={CHECKOUT_SESSION_ID}`;
   const cancelUrl =
-    parsed.data.cancel_url ?? `${appUrl}/build-services/products/atelier`;
+    parsed.data.cancel_url ?? `${appUrl}/marketplace/atelier`;
 
   const stripeClient = stripe();
   const checkoutSession = await stripeClient.checkout.sessions.create({

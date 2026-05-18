@@ -13,6 +13,21 @@ this file. Tagging is intentionally deferred to Josh.
 
 ## [Unreleased]
 
+## [0.32.3] - 2026-05-14
+
+### Removed
+- Deleted `src/app/(marketing)/build-services/products/atelier/page.tsx`. The legacy Atelier marketing page is gone; `/build-services/products/atelier` now returns 404. Atelier is canonical at `/marketplace/atelier`.
+- Removed the sitemap entry for `/build-services/products/atelier`.
+
+### Changed
+- Footer Software Projects column "Atelier" link repointed from `/build-services/products/atelier` to `/marketplace/atelier`.
+- Stripe Atelier checkout cancel_url default in `src/app/api/atelier/checkout/route.ts` repointed from `/build-services/products/atelier` to `/marketplace/atelier`.
+- Atelier docs subtree breadcrumbs (visible `Breadcrumbs` plus JSON-LD `BreadcrumbList`) updated across `/docs`, `/docs/[slug]`, and `/docs/search`. The trail collapses from `Home > Build Services > Products > Atelier > Documentation` to `Home > Marketplace > Atelier > Documentation`. Also fixes the broken "Products" crumb introduced in 0.32.2 when the catalog page was deleted.
+
+### Notes
+- The only working Atelier purchase path was the Stripe-integrated `#buy-atelier` form on the now-deleted page. Atelier sales effectively pause until checkout wiring lands on the `/marketplace/atelier` shell (whose Buy button is still intentionally dead). The `/api/atelier/checkout` endpoint and `AtelierPurchaseGate` / `AtelierCheckoutButton` components remain on disk, orphaned and ready to be reused when checkout is wired up.
+- The docs subtree itself (`/build-services/products/atelier/docs/*`) and the `/post-checkout` route are alive. URLs still contain `/build-services/products/atelier/...`, which is an incoherence that can be cleaned up in a future slice by moving the docs to `/marketplace/atelier/docs` (with redirects and email-template URL updates).
+
 ## [0.32.2] - 2026-05-14
 
 ### Removed
