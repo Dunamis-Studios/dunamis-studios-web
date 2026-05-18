@@ -13,6 +13,17 @@ this file. Tagging is intentionally deferred to Josh.
 
 ## [Unreleased]
 
+## [0.31.1] - 2026-05-14
+
+### Added
+- `--color-marketplace-*` palette ramp (green, hue 150) and `.lane-marketplace` class in `src/app/globals.css`, matching the build / hubspot ramp shape so the lane sits visually alongside them.
+
+### Changed
+- `FEATURE_FLAGS.hubspotSurfacesVisible` flipped to `true`. Every customer-facing HubSpot surface (the `/custom-development` lane, the 5-product catalog, HubSpot KB articles, HubSpot mentions in home + About copy, HubSpot sitemap entries, llms.txt entries) is visible again.
+- Site nav: lane order is now Build Services, Marketplace, HubSpot Custom Development. Marketplace stays always-visible; HubSpot stays flag-gated but renders after Marketplace.
+- Site footer: column order swapped so Marketplace renders before HubSpot Custom Development.
+- Marketplace nav dot, active fill, and footer hover repointed from the borrowed `--color-hubspot-*` tokens onto the new `--color-marketplace-*` palette. HubSpot keeps its orange (`--color-hubspot-*`).
+
 ## [0.31.0] - 2026-05-14
 
 ### Added
