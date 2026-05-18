@@ -1,3 +1,33 @@
+/**
+ * Stripe webhook router and per-event handlers for every Dunamis
+ * product line. Entered from /api/stripe/webhook, which verifies the
+ * signature and calls handleStripeEvent below. Every handler is
+ * idempotent (dunamis:stripe-event:* cache) and writes through
+ * withEntitlementLock to serialize against concurrent deliveries on
+ * the same entitlement.
+ *
+ * Routing fans out by event.type:
+ *   - Sync events branch off first via tryHandleSyncEvent (see
+ *     src/lib/sync/stripe-webhook-handlers.ts). Sync owns its own
+ *     state machine and must not pass through the Debrief / PP path.
+ *   - Subscription events drive Debrief entitlement state (tier,
+ *     credits, status, renewal date).
+ *   - checkout.session.completed routes by metadata.product:
+ *     "atelier" mints + emails a perpetual license; "property-pulse"
+ *     stamps the one-time PP license.
+ *   - charge.refunded reverses PP entitlement state and fires the
+ *     license_refunded HubSpot event.
+ *
+ * HubSpot event fan-out happens AFTER the entitlement lock releases
+ * so a slow HubSpot API call can't hold the Redis mutex. Tier values
+ * are captured inside the lock and passed to the fire-* helpers
+ * outside it to prevent a concurrent tier change skewing the stamped
+ * value.
+ *
+ * Related: src/lib/atelier-license-signing.ts (Ed25519 license mint),
+ * src/lib/hubspot/* (event builders), src/lib/pricing.ts (tier
+ * resolution), src/lib/entitlement-lock.ts (mutex).
+ */
 import type Stripe from "stripe";
 import { redis, KEY } from "./redis";
 import {

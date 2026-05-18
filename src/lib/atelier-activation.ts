@@ -1,3 +1,17 @@
+/**
+ * Activation slot record + helpers for Atelier license enforcement.
+ *
+ * Each activated device is a separate Redis record; the license keeps
+ * a SET of activation_ids in dunamis:atelier-activations-by-license:
+ * so slot accounting is one SMEMBERS plus N GETs. The 2-of-3 hardware
+ * matching rule (see matchesMachine) tolerates one component swap
+ * without consuming a new slot.
+ *
+ * Related: src/lib/atelier-license-signing.ts (license records),
+ * /api/atelier/activate (slot acquisition), /api/atelier/heartbeat
+ * (last_heartbeat_at refresh), /admin/licenses (per-license slot
+ * management UI).
+ */
 import { randomUUID } from "node:crypto";
 
 import { redis, KEY } from "./redis";

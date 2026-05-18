@@ -1,11 +1,25 @@
+/**
+ * Singleton Stripe SDK client for the site, plus helpers that resolve
+ * stripeMode + publishableKey from env.
+ *
+ * Pinned API version: an upgrade must be a deliberate code change so
+ * webhook payload shapes and SDK return types don't silently drift on
+ * a Stripe-side migration. Server-only: never import into a client
+ * component, the secret key must not ship in the browser bundle.
+ *
+ * Callers: every server-side Stripe interaction in this codebase
+ * (route handlers under /api/**, the webhook router in
+ * src/lib/stripe-webhook.ts, the Atelier checkout creator, the Sync
+ * checkout / billing portal endpoints).
+ */
 import Stripe from "stripe";
 
 /**
  * Singleton Stripe client for the Dunamis Studios site. Pinned API
- * version: any upgrade must be deliberate so webhook payload shapes and
- * SDK return types don't silently drift.
+ * version: an upgrade must be deliberate so webhook payload shapes
+ * and SDK return types don't silently drift.
  *
- * Server-only. Never import into client components — the secret key
+ * Server-only. Never import into client components, the secret key
  * must never ship in the browser bundle.
  */
 

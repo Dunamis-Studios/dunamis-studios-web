@@ -1,3 +1,23 @@
+/**
+ * Markdown to HTML renderer for the Atelier docs subtree. Sister
+ * pipeline to src/lib/kb-render.ts; the two intentionally stay
+ * separate so the help center pipeline and the Atelier docs pipeline
+ * can evolve independent of each other.
+ *
+ * Adds two Atelier-specific rehype passes on top of the standard
+ * remark → rehype chain:
+ *   1. rehypeDocLinks rewrites `[label](doc:slug)` author shorthand
+ *      to absolute /build-services/products/atelier/docs/{slug}
+ *      paths so doc renames don't require a global find-replace.
+ *   2. rehypeTaskListLabels patches GFM checkbox accessibility (same
+ *      helper as kb-render.ts, duplicated here on purpose to keep
+ *      this module self-contained).
+ *
+ * The output HTML is injected into the docs page via a raw-HTML
+ * sink; allowDangerousHtml:false on remark-rehype strips raw script
+ * tags before they reach the HAST tree, so the chain produces safe
+ * markup end-to-end.
+ */
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
