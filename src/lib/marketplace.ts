@@ -1,8 +1,23 @@
-// Marketplace product data layer. Self-contained and decoupled from
-// src/lib/types.ts (which scopes the HubSpot product catalog and the
-// entitlement domain). New products added here flow into the
-// marketplace grid and the dynamic detail route automatically.
+/**
+ * Marketplace product data layer for the /marketplace surface.
+ *
+ * Self-contained and deliberately decoupled from src/lib/types.ts
+ * (which scopes the HubSpot product catalog and the entitlement
+ * domain). New products added to MARKETPLACE_PRODUCTS flow into the
+ * grid page (src/app/(marketing)/marketplace/page.tsx), the dynamic
+ * detail route (.../marketplace/[slug]/page.tsx), and the auto-derived
+ * platform / category filters with no further wiring.
+ *
+ * The marketplace is for prebuilt apps the studio ships as standalone
+ * products (Atelier today, more later). It is NOT the HubSpot product
+ * catalog; nothing here touches PRODUCT_META or entitlement records.
+ */
 
+/**
+ * Shape of a single product entry rendered by the marketplace grid
+ * and detail page. heroLede + sections drive the detail page body;
+ * cardDescription + price + platform + category drive the grid card.
+ */
 export interface MarketplaceProduct {
   slug: string;
   name: string;
@@ -82,21 +97,38 @@ export const MARKETPLACE_PRODUCTS: MarketplaceProduct[] = [
   },
 ];
 
-// Helper functions for the grid filter UI. Both derive distinct values
-// from MARKETPLACE_PRODUCTS so adding a new product auto-extends the
-// filter dropdowns without code changes.
+/**
+ * Distinct platform values present in the catalog. Used by the grid
+ * filter UI to populate the platform dropdown. Adding a new product
+ * with a new platform auto-extends the dropdown with no code change.
+ *
+ * @returns Sorted array of unique platform labels.
+ */
 export function getMarketplacePlatforms(): MarketplaceProduct["platform"][] {
   const set = new Set<MarketplaceProduct["platform"]>();
   for (const p of MARKETPLACE_PRODUCTS) set.add(p.platform);
   return Array.from(set).sort();
 }
 
+/**
+ * Distinct category values present in the catalog. Same auto-extend
+ * behavior as getMarketplacePlatforms.
+ *
+ * @returns Sorted array of unique category labels.
+ */
 export function getMarketplaceCategories(): string[] {
   const set = new Set<string>();
   for (const p of MARKETPLACE_PRODUCTS) set.add(p.category);
   return Array.from(set).sort();
 }
 
+/**
+ * Lookup a product by its URL slug. Returns undefined when the slug
+ * is unrecognized so the dynamic detail route can call notFound().
+ *
+ * @param slug - URL slug (e.g., "atelier").
+ * @returns Matching MarketplaceProduct or undefined.
+ */
 export function getMarketplaceProductBySlug(
   slug: string,
 ): MarketplaceProduct | undefined {

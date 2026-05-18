@@ -1,10 +1,20 @@
-import type { EntitlementTier } from "./types";
-
 /**
- * Single source of truth for Debrief pricing on the website.
- * Price IDs are pulled from env vars that mirror the canonical list
- * in the debrief repo's docs/stripe-integration-test.md.
+ * Single source of truth for Debrief, Property Pulse, and credit-pack
+ * pricing on the website. Defines tier specs (label, monthly dollars,
+ * credit allotments, first-month bonus, feature bullet list), the
+ * one-time credit pack catalog, Property Pulse's flat license price,
+ * and the credit-cost table the pricing page renders.
+ *
+ * Stripe Price IDs are pulled from env vars by name; the env var
+ * names mirror the canonical list in the Debrief repo's
+ * docs/stripe-integration-test.md so a rename here is a coordinated
+ * rename across both repos plus a Vercel env var update on each
+ * project. Update neighboring files when a tier label or feature
+ * bullet changes: src/app/(marketing)/custom-development/pricing/
+ * page.tsx, the subscribe modal, and the entitlement detail card all
+ * render this data verbatim.
  */
+import type { EntitlementTier } from "./types";
 
 // ---------------------------------------------------------------------------
 // Subscription tiers
@@ -78,7 +88,16 @@ export const DEBRIEF_TIER_ORDER: EntitlementTier[] = [
   "enterprise",
 ];
 
-/** Stripe recurring-price ID for a Debrief tier (monthly cadence only). */
+/**
+ * Resolve the Stripe recurring-price ID for a Debrief tier on monthly
+ * cadence. Throws when the corresponding env var is missing so the
+ * subscribe flow can fail loudly rather than silently picking the
+ * wrong tier. Used by /api/subscribe and the subscribe modal.
+ *
+ * @param tier - "starter" | "pro" | "enterprise".
+ * @returns Stripe Price object id.
+ * @throws When STRIPE_PRICE_DEBRIEF_{TIER}_MONTHLY is not set.
+ */
 export function getPriceId(tier: EntitlementTier): string {
   const envKey = `STRIPE_PRICE_DEBRIEF_${tier.toUpperCase()}_MONTHLY`;
   const id = process.env[envKey];
@@ -88,6 +107,17 @@ export function getPriceId(tier: EntitlementTier): string {
   return id;
 }
 
+/**
+ * Reverse lookup from a Stripe Price ID to its Debrief tier. Returns
+ * null when the price doesn't match any configured tier (canceled
+ * subscriptions reference deleted prices, legacy purchases reference
+ * prices that have since been migrated, etc.) so webhook handlers
+ * can fall through gracefully. Skips tiers whose env vars are
+ * unconfigured so a partial test deploy doesn't throw on the lookup.
+ *
+ * @param priceId - Stripe Price ID to match against configured tiers.
+ * @returns Matching tier, or null when no tier matches.
+ */
 export function getTierByPriceId(
   priceId: string,
 ): EntitlementTier | null {
@@ -101,6 +131,13 @@ export function getTierByPriceId(
   return null;
 }
 
+/**
+ * Monthly credit allotment for a Debrief tier. Used by the webhook
+ * handler when refilling the monthly bucket at period rollover.
+ *
+ * @param tier - "starter" | "pro" | "enterprise".
+ * @returns Credits granted at each period rollover for the tier.
+ */
 export function getTierAllotment(tier: EntitlementTier): number {
   return DEBRIEF_TIERS[tier].monthlyAllotment;
 }
@@ -115,6 +152,14 @@ export function getTierFeatures(tier: EntitlementTier): string[] {
   return DEBRIEF_TIERS[tier].features;
 }
 
+/**
+ * First-month bonus credit grant for a Debrief tier. Used by the
+ * customer.subscription.created webhook to seed the addon bucket on
+ * a fresh subscription.
+ *
+ * @param tier - "starter" | "pro" | "enterprise".
+ * @returns Bonus credits to deposit into the addon bucket once.
+ */
 export function getFirstMonthBonus(tier: EntitlementTier): number {
   return DEBRIEF_TIERS[tier].firstMonthBonus;
 }
@@ -182,13 +227,30 @@ export const CREDIT_PACKS: CreditPack[] = [
   },
 ];
 
+/**
+ * Resolve a CreditPack record by its short name. Throws on an
+ * unknown name so the buy-credits flow surfaces a clean error
+ * instead of a downstream NaN price.
+ *
+ * @param name - "small" | "medium" | "large" | "bulk".
+ * @returns The CreditPack record from CREDIT_PACKS.
+ * @throws When the name doesn't match a configured pack.
+ */
 export function getCreditPack(name: CreditPackName): CreditPack {
   const pack = CREDIT_PACKS.find((p) => p.name === name);
   if (!pack) throw new Error(`Unknown credit pack: ${name}`);
   return pack;
 }
 
-/** Stripe Price ID for a credit pack (one-time). */
+/**
+ * Resolve the Stripe Price ID for a one-time credit pack purchase.
+ * Throws when the env var is unset so the buy-credits API fails
+ * loudly rather than charging the customer for the wrong SKU.
+ *
+ * @param name - Credit pack short name.
+ * @returns Stripe Price object id.
+ * @throws When the configured env var is missing.
+ */
 export function getCreditPackPriceId(name: CreditPackName): string {
   const pack = getCreditPack(name);
   const id = process.env[pack.priceIdEnvKey];
@@ -205,7 +267,14 @@ export function getCreditPackPriceId(name: CreditPackName): string {
 export const PROPERTY_PULSE_LICENSE_CENTS = 4900;
 export const PROPERTY_PULSE_LICENSE_DOLLARS = 49;
 
-/** Stripe Price ID for the Property Pulse one-time license ($49 per portal). */
+/**
+ * Resolve the Stripe Price ID for the Property Pulse one-time
+ * license ($49 per portal). Throws when the env var is unset so the
+ * PP checkout flow fails loudly instead of charging the wrong SKU.
+ *
+ * @returns Stripe Price object id for the PP one-time license.
+ * @throws When STRIPE_PRICE_PROPERTY_PULSE_LICENSE is not set.
+ */
 export function getPropertyPulseLicensePriceId(): string {
   const id = process.env.STRIPE_PRICE_PROPERTY_PULSE_LICENSE;
   if (!id) {

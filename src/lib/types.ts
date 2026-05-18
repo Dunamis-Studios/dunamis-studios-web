@@ -1,3 +1,23 @@
+/**
+ * Domain type catalog for the Dunamis Studios HubSpot product line:
+ * Accounts, Sessions, Entitlements, Credits, and the public product
+ * catalog used by marketing surfaces.
+ *
+ * Two distinct slug unions exist here on purpose:
+ *   - Product: the billable / entitled subset ("debrief" |
+ *     "property-pulse"). Pricing, claim, account dashboard, and
+ *     Stripe codepaths all type against this narrow union so an
+ *     unshipped product slug can never reach a Stripe call.
+ *   - ProductCatalogSlug: the broader marketing surface (adds
+ *     "carbon-copy", "traverse-and-update",
+ *     "association-visualizer"). PRODUCT_META + the
+ *     /custom-development/products index render against this union.
+ *
+ * Add a new product entry to PRODUCT_META and, if it ships billing,
+ * widen Product as well. The marketplace catalog at
+ * src/lib/marketplace.ts is a SEPARATE surface for prebuilt apps
+ * (Atelier etc.) and shares nothing with the HubSpot catalog here.
+ */
 export type Product = "debrief" | "property-pulse";
 
 export type EntitlementStatus =
@@ -175,6 +195,16 @@ export interface Entitlement {
   purchasedAt?: string;
 }
 
+/**
+ * Total credits available across both buckets on a Debrief
+ * entitlement. Null-safe so a never-activated entitlement (credits
+ * still null) collapses to 0 rather than throwing. The Debrief app
+ * enforces the spend order (monthly first, then addon); this helper
+ * is for display contexts only.
+ *
+ * @param c - Credit buckets or null for an unactivated entitlement.
+ * @returns Sum of monthly + addon, or 0 when the buckets are null.
+ */
 export function sumCredits(c: CreditBuckets | null): number {
   if (!c) return 0;
   return (c.monthly ?? 0) + (c.addon ?? 0);
@@ -287,6 +317,16 @@ export const PRODUCT_META: Record<ProductCatalogSlug, ProductMeta> = {
   },
 };
 
+/**
+ * Strip secret + private fields off an Account before returning it
+ * to the client. The remote API never exposes passwordHash, the
+ * consent stamp metadata, or session lifetime preferences; this
+ * projection is the canonical filter so a server route can't
+ * accidentally leak those fields by returning the raw Account.
+ *
+ * @param a - The full server-side Account record.
+ * @returns A PublicAccount safe to serialize over the wire.
+ */
 export function toPublicAccount(a: Account): PublicAccount {
   return {
     accountId: a.accountId,

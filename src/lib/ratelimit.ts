@@ -1,3 +1,23 @@
+/**
+ * Sliding-window rate limiters for every public endpoint exposed by the
+ * site, backed by Upstash's Ratelimit primitive and the shared Redis
+ * client. The factory caches limiter instances per bucket so hot routes
+ * don't pay the constructor cost on every request.
+ *
+ * Two top-level entry points:
+ *   - rateLimit(request, name): buckets by the request's truncated IP.
+ *     Default for any unauthenticated public route.
+ *   - rateLimitBy(bucketKey, name): buckets by a caller-supplied key
+ *     (admin email, account id, raw email). Used when the meaningful
+ *     per-actor dimension is something other than IP.
+ *
+ * Disabled when NODE_ENV === "test" or RATE_LIMIT_DISABLED=1 so smoke
+ * scripts and integration tests don't trip the limits. See the SPECS
+ * map below for the per-bucket configuration with rationale.
+ *
+ * Related: src/lib/rate-limit.ts (legacy fixed-window helper kept
+ * around for the few routes that haven't migrated yet).
+ */
 import { Ratelimit } from "@upstash/ratelimit";
 import { NextResponse } from "next/server";
 import { redis } from "./redis";

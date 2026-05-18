@@ -1,3 +1,19 @@
+/**
+ * Zod schemas for every public form and route boundary in the site.
+ *
+ * Centralizing schemas here keeps the validation contract uniform: every
+ * /api route uses parseJson(req, schema) from src/lib/api.ts and gets
+ * the same per-field error map, NFC normalization, length caps, and
+ * domain-specific reject rules (reserved portal ids, IANA-only time
+ * zones, Vercel-Blob-only logo URLs, etc.). The React forms run the
+ * same schemas client-side to surface errors before the network trip.
+ *
+ * Adding a new form: define its schema here next to the existing
+ * ones, export the input type via z.infer, and have the API route call
+ * parseJson with the schema. Do not bypass parseJson; the error
+ * envelope shape and the per-field error map are the contract the
+ * client relies on.
+ */
 import { z } from "zod";
 import { isValidIanaTimeZone } from "./timezones";
 
