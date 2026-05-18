@@ -107,6 +107,22 @@ export function SiteFooter() {
           </ul>
         </div>
 
+        <div>
+          <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+            Marketplace
+          </h3>
+          <ul className="mt-4 space-y-2.5 text-sm">
+            <li>
+              <Link
+                href="/marketplace"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-marketplace-600)] dark:hover:text-[var(--color-marketplace-400)]"
+              >
+                Overview
+              </Link>
+            </li>
+          </ul>
+        </div>
+
         {hubspotVisible ? (
           <div>
             <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
@@ -156,22 +172,6 @@ export function SiteFooter() {
             </ul>
           </div>
         ) : null}
-
-        <div>
-          <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-            Marketplace
-          </h3>
-          <ul className="mt-4 space-y-2.5 text-sm">
-            <li>
-              <Link
-                href="/marketplace"
-                className="text-[var(--fg-muted)] hover:text-[var(--fg)]"
-              >
-                Overview
-              </Link>
-            </li>
-          </ul>
-        </div>
 
         <div>
           <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
