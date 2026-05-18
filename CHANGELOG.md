@@ -13,6 +13,14 @@ this file. Tagging is intentionally deferred to Josh.
 
 ## [Unreleased]
 
+## [0.31.2] - 2026-05-14
+
+### Changed
+- Marketplace lane bubble (nav dot, active fill, hover) and footer overview hover repointed from a dedicated green palette onto the studio's brand amber (`--color-brand-*`). Marketplace is studio-scoped rather than service-line-scoped, so it shares the studio palette instead of getting its own wayfinding hue.
+
+### Removed
+- `--color-marketplace-{300..700}` ramp and `.lane-marketplace` light / dark class from `src/app/globals.css` (introduced one patch ago, unused after the brand-amber repoint).
+
 ## [0.31.1] - 2026-05-14
 
 ### Added

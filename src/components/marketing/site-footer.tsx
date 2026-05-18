@@ -115,7 +115,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="/marketplace"
-                className="text-[var(--fg-muted)] hover:text-[var(--color-marketplace-600)] dark:hover:text-[var(--color-marketplace-400)]"
+                className="text-[var(--fg-muted)] hover:text-[var(--color-brand-600)] dark:hover:text-[var(--color-brand-400)]"
               >
                 Overview
               </Link>
