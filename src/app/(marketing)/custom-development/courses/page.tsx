@@ -1,3 +1,10 @@
+/**
+ * HubSpot Custom Development courses index at
+ * /custom-development/courses. Lists the email-course offerings
+ * the studio publishes as lead-capture surfaces. First course is
+ * "hubspot-audit" at /custom-development/courses/hubspot-audit;
+ * future courses extend the listing on this page.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, GraduationCap } from "lucide-react";

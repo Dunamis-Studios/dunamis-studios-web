@@ -1,3 +1,10 @@
+/**
+ * Build Services guides placeholder at /build-services/guides.
+ * Long-form content area; no guides shipped here yet. Uses the
+ * shared LanePlaceholder shell. When guides ship under this lane,
+ * replace with a listing page sourced from listPosts("guide",
+ * lane="build-services") or equivalent.
+ */
 import type { Metadata } from "next";
 import { LanePlaceholder } from "@/components/marketing/lane-placeholder";
 

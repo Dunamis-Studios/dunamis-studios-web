@@ -1,3 +1,14 @@
+/**
+ * HubSpot Custom Development lane landing at /custom-development.
+ * Positions the specialty practice (HubSpot platform engineering:
+ * marketplace apps, custom UI extensions, workflow actions), lists
+ * shipped products, and mounts the contact form with
+ * source="hubspot-custom-development" so HubSpot routes the lead
+ * into the right pipeline.
+ *
+ * Lane wrapper (.lane-hubspot) comes from the parent layout, which
+ * also enforces the hubspotSurfacesVisible feature flag.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import {

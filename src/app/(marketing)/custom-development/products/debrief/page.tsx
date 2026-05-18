@@ -1,3 +1,10 @@
+/**
+ * Debrief product page at /custom-development/products/debrief.
+ * Coming-soon status: ProductPageShell with accent="brief" plus an
+ * inline NotifyForm so visitors can leave their email for the
+ * launch announcement. Three-tier subscription pricing lives at
+ * /custom-development/pricing.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";

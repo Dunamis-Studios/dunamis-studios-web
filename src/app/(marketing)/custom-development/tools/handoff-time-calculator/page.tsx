@@ -1,3 +1,10 @@
+/**
+ * Handoff Time Calculator tool page at
+ * /custom-development/tools/handoff-time-calculator. Adjacent to
+ * Debrief's positioning: estimates dollar value of internal
+ * handoffs (deal-to-CS, marketing-to-sales, etc.) and surfaces the
+ * Debrief CTA in the results state.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";

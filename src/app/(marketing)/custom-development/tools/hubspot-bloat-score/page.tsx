@@ -1,3 +1,12 @@
+/**
+ * HubSpot Bloat Score tool page at
+ * /custom-development/tools/hubspot-bloat-score. Mounts the
+ * BloatScoreChecklist client component plus the surrounding
+ * methodology / disclaimer / FAQ copy. JSON-LD emits the FAQPage
+ * over the FAQ. Scoring logic lives in
+ * src/lib/bloat-score-scoring.ts so the live preview and the
+ * report-email path resolve to the same numbers.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";

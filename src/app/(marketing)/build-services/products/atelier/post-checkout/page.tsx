@@ -1,3 +1,15 @@
+/**
+ * Atelier post-checkout return page at
+ * /build-services/products/atelier/post-checkout. Stripe redirects
+ * here after a successful Atelier purchase with the session_id
+ * query param. The PostCheckoutLauncher client component reads the
+ * id and fires the atelier:// deep link so the desktop app pops to
+ * the foreground and re-fetches entitlements; the page itself
+ * stays as the manual-fallback surface for users whose browser
+ * doesn't auto-launch the protocol.
+ *
+ * robots:noindex because this is a per-purchase transient URL.
+ */
 import type { Metadata } from "next";
 
 import { PostCheckoutLauncher } from "./post-checkout-launcher";

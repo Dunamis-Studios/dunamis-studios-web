@@ -1,3 +1,10 @@
+/**
+ * Tech Stack Cost Audit tool page at
+ * /custom-development/tools/tech-stack-cost-audit. Mounts the
+ * TechStackCostAudit client where the visitor adds tool rows and
+ * receives a license-waste / overlap / consolidation report.
+ * Logic lives in src/lib/tech-stack-cost-audit-logic.ts.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";

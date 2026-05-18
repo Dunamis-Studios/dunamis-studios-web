@@ -1,3 +1,15 @@
+/**
+ * HubSpot Custom Development products index at
+ * /custom-development/products. Lists every entry in PRODUCT_META
+ * (Property Pulse, Debrief, Carbon Copy, Traverse and Update,
+ * Association Visualizer) with stage badge, tagline, and a link
+ * into each product's marketing page.
+ *
+ * Single source of truth: src/lib/types.ts. Adding a new HubSpot
+ * product to PRODUCT_META auto-extends this index, plus the related-
+ * products picker in the article editor, plus the homepage tile
+ * grid.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";

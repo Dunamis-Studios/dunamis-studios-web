@@ -1,3 +1,14 @@
+/**
+ * Atelier docs detail page at
+ * /build-services/products/atelier/docs/[slug]. Dynamic route with
+ * generateStaticParams over every doc file loaded from
+ * content/atelier-docs/. Unknown slugs hit notFound().
+ *
+ * Renders the markdown body through renderAtelierDocMarkdown (which
+ * includes the [label](doc:slug) cross-doc link resolver) and emits
+ * TechArticle + BreadcrumbList JSON-LD per page so each doc has its
+ * own discrete search entry.
+ */
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";

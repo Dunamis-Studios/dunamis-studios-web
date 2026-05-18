@@ -1,3 +1,11 @@
+/**
+ * Atelier docs search at
+ * /build-services/products/atelier/docs/search. Mounts the
+ * client-side fuzzy search component (Fuse.js over the
+ * /atelier-docs-index.json index file built at next build time).
+ * Metadata is robots:noindex because search-result URLs are
+ * dynamic and the canonical entry points are the docs themselves.
+ */
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { AtelierDocsSearch } from "@/components/marketing/atelier-docs-search";

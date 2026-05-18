@@ -1,3 +1,9 @@
+/**
+ * Build Services courses placeholder at /build-services/courses.
+ * No courses shipped under this lane yet; same LanePlaceholder
+ * pattern as the tools / guides / articles placeholders. Replace
+ * with a course index once content lands.
+ */
 import type { Metadata } from "next";
 import { LanePlaceholder } from "@/components/marketing/lane-placeholder";
 

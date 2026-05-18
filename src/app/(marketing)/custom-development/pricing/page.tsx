@@ -1,3 +1,11 @@
+/**
+ * HubSpot Custom Development pricing page at
+ * /custom-development/pricing. Renders the per-product pricing
+ * tables for Debrief (three tiers + credit packs) and Property
+ * Pulse (flat $49 one-time per portal). Pricing data is sourced
+ * from src/lib/pricing.ts so the visible numbers and the Stripe
+ * SKU resolution stay in lockstep.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Check, ArrowRight } from "lucide-react";

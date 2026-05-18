@@ -1,3 +1,10 @@
+/**
+ * HubSpot Custom Development guides index at
+ * /custom-development/guides. Lists every published guide from
+ * src/lib/content.ts (Redis-backed listPosts). Render order is
+ * newest-first via the sorted-set index. Each card links into the
+ * detail page at /custom-development/guides/[slug].
+ */
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";

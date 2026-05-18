@@ -1,3 +1,10 @@
+/**
+ * Build Services pricing page at /build-services/pricing. Lays out
+ * the engagement model (fixed-bid for scoped work, hourly for
+ * open-ended exploratory), the typical price-band ranges, and the
+ * Common Questions FAQ. No checkout flow; every "Get started" CTA
+ * drops the visitor into the contact form on the lane landing.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Check, Mail } from "lucide-react";

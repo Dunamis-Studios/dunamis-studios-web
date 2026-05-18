@@ -1,3 +1,10 @@
+/**
+ * Custom Object Decision Tree tool page at
+ * /custom-development/tools/custom-object-decision-tree. Mounts the
+ * CustomObjectDecisionTree client (branching questionnaire to
+ * decide custom object vs custom property vs HubDB vs custom event).
+ * Logic lives in src/lib/custom-object-decision-tree-logic.ts.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";

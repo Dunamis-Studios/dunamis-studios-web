@@ -1,3 +1,9 @@
+/**
+ * Carbon Copy product page at
+ * /custom-development/products/carbon-copy. Renders the coming-soon
+ * shell because Carbon Copy is built but not yet on the HubSpot
+ * marketplace. Pulls metadata from PRODUCT_META.carbon-copy.
+ */
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/primitives";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";

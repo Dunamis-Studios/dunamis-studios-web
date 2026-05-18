@@ -1,3 +1,10 @@
+/**
+ * Property Pulse product page at
+ * /custom-development/products/property-pulse. Hero, problem,
+ * screenshots, features, comparison, pricing, FAQ rendered via
+ * ProductPageShell with accent="pulse". Live in HubSpot marketplace
+ * with capped installs at $49 one-time per portal.
+ */
 import type { Metadata } from "next";
 import { ProductPageShell } from "@/components/marketing/product-page-shell";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";

@@ -1,3 +1,10 @@
+/**
+ * Build Services tools placeholder at /build-services/tools.
+ * Currently no tools shipped under this lane; the route renders the
+ * shared LanePlaceholder shell so the nav link resolves and the
+ * surface stays SEO-indexable. Replace with a tools index when the
+ * first Build Services calculator ships.
+ */
 import type { Metadata } from "next";
 import { LanePlaceholder } from "@/components/marketing/lane-placeholder";
 

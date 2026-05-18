@@ -1,3 +1,10 @@
+/**
+ * Guide detail page at /custom-development/guides/[slug]. Dynamic
+ * route over Redis-stored guides (src/lib/content.ts). Renders the
+ * Post.contentHtml (HTML pre-rendered by the Tiptap editor on
+ * save), the optional FAQ accordion, related products, and an
+ * Article JSON-LD entry per guide.
+ */
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
