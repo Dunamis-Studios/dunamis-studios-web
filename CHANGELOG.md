@@ -13,6 +13,14 @@ this file. Tagging is intentionally deferred to Josh.
 
 ## [Unreleased]
 
+## [0.32.1] - 2026-05-14
+
+### Changed
+- Build Services lane subnav: removed the "Products" item that pointed at `/build-services/products`. The Marketplace is now the studio-level home for prebuilt apps, and the Build Services lane is scoped to the service line itself.
+- Site footer Build Services column: replaced the "Products" link (which pointed at `/build-services/products`) with a "Marketplace" link pointing at `/marketplace`. Hover styling stays in Build Services purple for column visual consistency.
+- HubSpot Custom Development lane subnav unchanged. Its "Products" item still points at `/custom-development/products` (the curated HubSpot product catalog, a separate surface from Marketplace).
+- Footer Software Projects column "All prebuilt apps" link is intentionally untouched in this slice. Repointing it to `/marketplace`, plus redirect handling for the orphaned `/build-services/products` route and sitemap cleanup, are deferred to a follow-up.
+
 ## [0.32.0] - 2026-05-14
 
 ### Added

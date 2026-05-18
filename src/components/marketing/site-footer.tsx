@@ -50,10 +50,10 @@ export function SiteFooter() {
             </li>
             <li>
               <Link
-                href="/build-services/products"
+                href="/marketplace"
                 className="text-[var(--fg-muted)] hover:text-[var(--color-build-600)] dark:hover:text-[var(--color-build-400)]"
               >
-                Products
+                Marketplace
               </Link>
             </li>
             <li>
