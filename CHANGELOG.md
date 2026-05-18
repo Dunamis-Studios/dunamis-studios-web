@@ -13,6 +13,20 @@ this file. Tagging is intentionally deferred to Josh.
 
 ## [Unreleased]
 
+## [0.32.0] - 2026-05-14
+
+### Added
+- Marketplace section foundation at `/marketplace` and `/marketplace/[slug]` (dynamic route), backed by a fresh self-contained data layer at `src/lib/marketplace.ts`. Decoupled from `src/lib/types.ts` and from `PRODUCT_META`; new marketplace products plug into the grid and detail route without touching the HubSpot product catalog.
+- `MarketplaceProduct` interface plus an Atelier seed entry covering pricing, license terms, platform, category, card description, hero lede, long-form sections (workspace, CRM pipeline, day-of mode, ownership model, other tools), download bundle, system requirements, Sync add-on disclosure, and a docs link.
+- `/marketplace` page: hero plus a client-component search and filter grid (`MarketplaceGrid`) with a free-text search across name/tagline/cardDescription and platform plus category filters auto-derived from `MARKETPLACE_PRODUCTS`. `MarketplaceCard` renders each grid entry; styling neutral so the grid scales as more products land.
+- `/marketplace/[slug]` page: `generateStaticParams` plus `generateMetadata` from the data layer, `notFound()` on unknown slug, `SoftwareApplication` and `BreadcrumbList` JSON-LD, and `MarketplaceProductShell` (fresh shell, no reuse of `ProductPageShell`). Shell sections in order: hero with non-functional Buy button, long-form sections list, optional Sync add-on block, "In the box" bundle, "What it runs on" requirements, docs link, final CTA.
+- Shell wrapped in `.lane-atelier` so accent tokens (`--accent`, `--ring`, `--lane-glow`) resolve to the atelier palette for buttons, focus rings, and the hero glow.
+
+### Notes
+- Buy button is fully styled but intentionally non-functional. No onClick, no href, no checkout. Stripe wiring lands in a follow-up slice; a code comment in `MarketplaceProductShell` flags the deferral.
+- Existing `/build-services/products/atelier` Atelier marketing page is untouched. Canonical URL handling between the two surfaces is deliberately deferred until the live render is reviewed.
+- `PRODUCT_META`, `src/lib/types.ts`, and every existing HubSpot product page are untouched.
+
 ## [0.31.2] - 2026-05-14
 
 ### Changed
