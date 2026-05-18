@@ -65,13 +65,23 @@
   --color-build-600: oklch(55% 0.18 300);
   --color-build-700: oklch(45% 0.15 300);
 
-  /* Atelier — oxblood anchor (#5C2326), hue 18. Warm red-brown ramp;
+  /* Atelier - oxblood anchor (#5C2326), hue 18. Warm red-brown ramp;
      -700 keeps white text at AA Normal contrast (~5.5:1). */
   --color-atelier-300: oklch(85% 0.05 18);
   --color-atelier-400: oklch(70% 0.10 18);
   --color-atelier-500: oklch(55% 0.13 18);
   --color-atelier-600: oklch(42% 0.13 18);
   --color-atelier-700: oklch(32% 0.10 18);
+
+  /* Marketplace wayfinding: green, hue 150. Matches the hubspot and
+     build ramp shape (same lightness + chroma curve, different hue)
+     so the lane sits visually alongside them in the top nav without
+     looking out of place. */
+  --color-marketplace-300: oklch(85% 0.10 150);
+  --color-marketplace-400: oklch(78% 0.14 150);
+  --color-marketplace-500: oklch(68% 0.18 150);
+  --color-marketplace-600: oklch(58% 0.17 150);
+  --color-marketplace-700: oklch(48% 0.14 150);
 
   /* Semantic */
   --color-success: oklch(65% 0.17 150);
@@ -158,6 +168,13 @@
   --lane-glow: var(--color-atelier-500);
 }
 
+.lane-marketplace {
+  --ring: var(--color-marketplace-500);
+  --accent: var(--color-marketplace-700);
+  --accent-fg: #ffffff;
+  --lane-glow: var(--color-marketplace-500);
+}
+
 .dark .lane-build {
   --ring: var(--color-build-400);
   --accent: var(--color-build-400);
@@ -177,6 +194,13 @@
   --accent: var(--color-atelier-400);
   --accent-fg: var(--color-ink-1000);
   --lane-glow: var(--color-atelier-500);
+}
+
+.dark .lane-marketplace {
+  --ring: var(--color-marketplace-400);
+  --accent: var(--color-marketplace-400);
+  --accent-fg: var(--color-ink-1000);
+  --lane-glow: var(--color-marketplace-500);
 }
 
 .dark {

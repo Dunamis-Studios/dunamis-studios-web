@@ -25,6 +25,7 @@ interface GeneralNavLink {
 
 const LANE_LINKS: LaneNavLink[] = [
   { href: "/build-services", label: "Build Services", lane: "build" },
+  { href: "/marketplace", label: "Marketplace", lane: "marketplace" },
   ...(FEATURE_FLAGS.hubspotSurfacesVisible
     ? [
         {
@@ -34,7 +35,6 @@ const LANE_LINKS: LaneNavLink[] = [
         },
       ]
     : []),
-  { href: "/marketplace", label: "Marketplace", lane: "marketplace" },
 ];
 
 const GENERAL_LINKS: GeneralNavLink[] = [
@@ -68,7 +68,7 @@ function detectLane(pathname: string | null): LaneKey | null {
 const LANE_DOT_CLASS: Record<LaneKey, string> = {
   build: "bg-[var(--color-build-500)]",
   hubspot: "bg-[var(--color-hubspot-500)]",
-  marketplace: "bg-[var(--color-hubspot-500)]",
+  marketplace: "bg-[var(--color-marketplace-500)]",
 };
 
 const LANE_ACTIVE_CLASS: Record<LaneKey, string> = {
@@ -77,7 +77,7 @@ const LANE_ACTIVE_CLASS: Record<LaneKey, string> = {
   hubspot:
     "bg-[color-mix(in_oklch,var(--color-hubspot-500)_12%,transparent)] text-[var(--color-hubspot-700)] dark:text-[var(--color-hubspot-300)] font-medium",
   marketplace:
-    "bg-[color-mix(in_oklch,var(--color-hubspot-500)_12%,transparent)] text-[var(--color-hubspot-700)] dark:text-[var(--color-hubspot-300)] font-medium",
+    "bg-[color-mix(in_oklch,var(--color-marketplace-500)_12%,transparent)] text-[var(--color-marketplace-700)] dark:text-[var(--color-marketplace-300)] font-medium",
 };
 
 const LANE_HOVER_CLASS: Record<LaneKey, string> = {
@@ -86,7 +86,7 @@ const LANE_HOVER_CLASS: Record<LaneKey, string> = {
   hubspot:
     "hover:text-[var(--color-hubspot-700)] dark:hover:text-[var(--color-hubspot-300)]",
   marketplace:
-    "hover:text-[var(--color-hubspot-700)] dark:hover:text-[var(--color-hubspot-300)]",
+    "hover:text-[var(--color-marketplace-700)] dark:hover:text-[var(--color-marketplace-300)]",
 };
 
 type AuthState =

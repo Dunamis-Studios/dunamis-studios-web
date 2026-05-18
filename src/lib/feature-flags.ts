@@ -8,5 +8,5 @@
 // contact, notify, courses, and tools forms is internal plumbing and
 // stays functional regardless of this flag.
 export const FEATURE_FLAGS = {
-  hubspotSurfacesVisible: false,
+  hubspotSurfacesVisible: true,
 } as const;
