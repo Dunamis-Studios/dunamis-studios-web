@@ -1,3 +1,15 @@
+/**
+ * Editorial SEO checks run from the admin /admin/content editor.
+ *
+ * Each runCheck-style function inspects a post draft (title, slug,
+ * description, contentHtml, coverImageUrl, targetKeyword) and emits
+ * a pass / warn / fail / skip verdict with a one-line message. The
+ * admin UI surfaces every result as a colored row above the publish
+ * button so an editor sees the SEO posture before shipping.
+ *
+ * Pure logic, no I/O. The same module backs a future Zod schema for
+ * the publish-time enforcement gate.
+ */
 export type CheckStatus = "pass" | "warn" | "fail" | "skip";
 
 export interface CheckResult {

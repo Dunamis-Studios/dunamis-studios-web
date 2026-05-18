@@ -1,3 +1,13 @@
+/**
+ * JSON-LD builders for blog-style content (articles and guides). The
+ * article and guide page templates call buildArticleJsonLd to mint
+ * the schema.org Article block that gets emitted alongside the
+ * markup.
+ *
+ * Word-counting and reading-time helpers live here so the two
+ * numbers (wordCount on the Article schema, the visible reading-time
+ * pill above the article body) stay aligned across both surfaces.
+ */
 import type { Post, ContentType } from "./content";
 
 const BASE_URL = process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
