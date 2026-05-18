@@ -1,3 +1,22 @@
+/**
+ * Service-layer for every admin read-write action. Each exported
+ * function is one action the admin UI can invoke: deactivate a
+ * device, revoke a license, resend a license email, update an
+ * account profile, soft-delete an account, trigger a data export,
+ * refund a Stripe charge, etc.
+ *
+ * Each service is dispatched from /api/admin/* routes via
+ * runAdminAction (src/lib/admin/action-runner.ts), which wraps the
+ * auth gate, rate limit, audit log entry, and error envelope. The
+ * services themselves stay narrow: input validation lives in the
+ * route, persistence lives in the underlying store helper (accounts,
+ * atelier-license-signing, atelier-activation, etc.), and the
+ * service composes them into one logical action.
+ *
+ * Throw AdminActionError when an action should surface a structured
+ * error to the admin UI; throw any other Error to land in the
+ * unexpected-error branch with the message logged to audit.
+ */
 import {
   getAccountById,
   saveAccount,
