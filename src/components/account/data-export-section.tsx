@@ -1,3 +1,15 @@
+/**
+ * Customer-self-serve data export on /account. One-click button
+ * that calls /api/account/data-export which returns the JSON
+ * AccountDataExport shape built in src/lib/data-export.ts. The
+ * download streams as a JSON file in the browser.
+ *
+ * Disclosure copy on the section makes clear the export covers
+ * everything Dunamis stores about this account; HubSpot CRM data
+ * inside the customer's own portals is not mirrored to Dunamis and
+ * therefore not included. Customers needing a CRM export request
+ * it from HubSpot directly.
+ */
 "use client";
 
 import * as React from "react";

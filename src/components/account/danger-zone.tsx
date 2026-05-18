@@ -1,3 +1,12 @@
+/**
+ * Account-delete surface. Renders the destructive SectionCard with a
+ * confirm-by-typing dialog (the customer types DELETE to confirm
+ * before the request fires). Soft-deletes the account via
+ * /api/account/delete which stamps deletedAt + frees the email
+ * index for the 30-day recovery window. Active subscriptions must
+ * be canceled first; the route refuses delete with a structured 400
+ * if any entitlement is still active.
+ */
 "use client";
 
 import * as React from "react";

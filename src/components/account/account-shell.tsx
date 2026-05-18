@@ -1,3 +1,12 @@
+/**
+ * Top-level shell for every /account/* page. Renders the account
+ * sidebar (logo + nav links + theme toggle) on desktop, collapses
+ * to a top drawer on mobile, and provides the account avatar menu
+ * with log-out / settings shortcuts.
+ *
+ * One AccountShell is mounted by the (account) layout; individual
+ * page components render inside its main content slot.
+ */
 "use client";
 
 import Link from "next/link";

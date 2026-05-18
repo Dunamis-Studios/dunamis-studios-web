@@ -1,3 +1,14 @@
+/**
+ * Per-license interactive panel on
+ * /account/atelier-licenses/[lid]. Renders the active / inactive
+ * device list with inline deactivate, rename, and download-receipt
+ * actions. Each row action posts to a /api/atelier/* endpoint and
+ * triggers a router.refresh() to re-fetch the server-rendered list
+ * after a state change.
+ *
+ * Distinct from atelier-licenses-section.tsx, which is the read-only
+ * dashboard summary panel under /account.
+ */
 "use client";
 
 import * as React from "react";

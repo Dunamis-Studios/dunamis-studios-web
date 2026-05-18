@@ -1,3 +1,11 @@
+/**
+ * Inline button + SubscribeModal opener for Debrief tier upgrades.
+ * Rendered on the entitlement detail page and in the entitlement
+ * table row when the customer is below their target tier. Thin
+ * wrapper: owns the modal-open state and forwards the entitlement +
+ * email through to SubscribeModal which does the actual subscribe
+ * flow.
+ */
 "use client";
 
 import * as React from "react";

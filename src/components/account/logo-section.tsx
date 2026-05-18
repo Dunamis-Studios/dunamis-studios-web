@@ -1,3 +1,14 @@
+/**
+ * Logo upload section on /account. Drop-zone + file picker that
+ * POSTs to /api/account/logo, which stores the image in Vercel Blob
+ * and stamps the resulting public URL on the account record. The
+ * uploaded logo is consumed by Atelier's setup screen (and any
+ * future product that asks "who owns this license") so the customer
+ * sets it once and every product picks it up.
+ *
+ * Replacing the logo deletes the prior blob on the server to avoid
+ * orphans; the DELETE button clears the URL entirely.
+ */
 "use client";
 
 import * as React from "react";

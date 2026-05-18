@@ -1,3 +1,10 @@
+/**
+ * Email-verification banner rendered at the top of /account when
+ * account.emailVerified is false. Includes a "Resend verification
+ * email" button that posts to /api/auth/resend-verification and
+ * locks itself after a successful send so the visitor can't spam
+ * the route by repeated clicks.
+ */
 "use client";
 
 import { MailCheck } from "lucide-react";

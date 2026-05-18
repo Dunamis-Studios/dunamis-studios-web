@@ -1,3 +1,10 @@
+/**
+ * Inline button + BuyCreditsModal opener for one-off Debrief credit
+ * pack purchases. Rendered on the entitlement detail page next to
+ * the credit balance card. Thin wrapper: owns the modal-open state
+ * and forwards the entitlement + email through to BuyCreditsModal
+ * which handles the Stripe Elements flow.
+ */
 "use client";
 
 import * as React from "react";
