@@ -1,3 +1,12 @@
+/**
+ * Route entry for /signup. The page itself is a thin server-rendered
+ * shell that exports metadata (noindex, since this is a transactional
+ * surface) and wraps SignupCard in a Suspense boundary so its
+ * useSearchParams() call does not force the whole route to dynamic.
+ *
+ * All real signup logic (form state, POST to /api/auth/signup, claim
+ * token handling) lives in signup-card.tsx as a client island.
+ */
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { SignupCard } from "./signup-card";

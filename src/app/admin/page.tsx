@@ -1,3 +1,15 @@
+/**
+ * /admin: dashboard landing page. Reads aggregate stats (account
+ * count, active Atelier license count, last-24h activations, etc.)
+ * and the most recent 20 audit-log entries, then renders three
+ * stacked sections: stat tiles, navigation cards to each admin
+ * sub-tool, and a chronological activity feed.
+ *
+ * Stat sources live in @/lib/admin/dashboard-stats; audit entries
+ * come from @/lib/admin/audit-log. NavCard items that point at
+ * not-yet-built tools render as `disabled` so the surface area is
+ * visible even before each tool ships.
+ */
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {

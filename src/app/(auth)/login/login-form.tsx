@@ -1,3 +1,14 @@
+/**
+ * Sign-in form client island. POSTs credentials to /api/auth/login,
+ * surfaces server-side field and form errors, and on success pushes
+ * to a sanitized `?redirect=` target (or /account). Also runs a
+ * whoami probe on mount to bounce already-signed-in visitors off
+ * the form without rendering it.
+ *
+ * The same-origin redirect sanitizer is intentionally duplicated
+ * here rather than imported so this surface has no server-only
+ * imports and stays statically renderable.
+ */
 "use client";
 
 import * as React from "react";

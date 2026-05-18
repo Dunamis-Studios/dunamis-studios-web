@@ -1,3 +1,12 @@
+/**
+ * Route entry for /login. Server-renders the AuthCard chrome and
+ * footer link to /signup, then defers all interactive behavior to
+ * LoginForm behind a Suspense boundary. Marked noindex because this
+ * is a transactional surface; SEO is owned by the marketing root.
+ *
+ * See login-form.tsx for the POST /api/auth/login flow and the
+ * `?redirect=` handoff used by the install-claim deeplinks.
+ */
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";

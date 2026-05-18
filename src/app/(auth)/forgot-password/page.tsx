@@ -1,3 +1,12 @@
+/**
+ * Route entry for /forgot-password. Renders the AuthCard chrome and
+ * a link back to /login, then mounts ForgotForm for the email input.
+ * Marked noindex + nofollow because the surface only exists to start
+ * a transactional reset email flow.
+ *
+ * The page is fully static; whether an email matches an account is
+ * never disclosed in the UI, so there is no per-request branching.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AuthCard } from "@/components/auth/auth-card";

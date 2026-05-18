@@ -1,3 +1,12 @@
+/**
+ * Email-verification client island. Runs a three-state machine
+ * (loading, success, error) around a single POST to
+ * /api/auth/verify-email with the token captured from the route
+ * params. Success path delays 1.2s before routing to /account so
+ * the user reads the "verified" confirmation; error path renders
+ * the server-supplied message plus a fallback link back to the
+ * dashboard.
+ */
 "use client";
 
 import * as React from "react";

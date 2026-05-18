@@ -13,6 +13,17 @@ this file. Tagging is intentionally deferred to Josh.
 
 ## [Unreleased]
 
+## [0.32.8] - 2026-05-18
+
+### Documentation
+- Pseudo-code-style comment pass across the private route groups under `src/app/` (PR 1.5 of the codebase-wide comment lift). File-level TSDoc headers added to every page and form under `src/app/(auth)/` (layout, signup, login, forgot-password, reset-password/[token], verify-email/[token] plus their form client components), `src/app/account/` (layout, dashboard, settings, atelier-licenses, [product]/[portalId] detail page, [product]/[portalId]/claim handoff page), and `src/app/admin/` (layout, dashboard, customers index, customers/[account_id] detail page, licenses, kb-feedback, content index, articles/guides new + edit + preview routes). Files that already carried thorough function-level commentary (claim/page.tsx, licenses/page.tsx, kb-feedback/page.tsx, atelier-licenses/page.tsx, signup-card.tsx) had a short top-of-file pointer added without rewriting the existing prose.
+- No behavioral changes. Comment-only diff verified by typecheck (`tsc --noEmit`) and production build (`npm run build`).
+
+## [0.32.7] - 2026-05-18
+
+### Documentation
+- (Pending PR 1.4 merge.)
+
 ## [0.32.6] - 2026-05-18
 
 ### Documentation

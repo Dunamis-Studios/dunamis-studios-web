@@ -1,3 +1,10 @@
+/**
+ * /admin/content/guides/[slug]/edit: edit a specific guide by slug.
+ * Mirror of the articles edit route; the only difference is the
+ * "guide" discriminator passed to PostEditor and getPost. notFound()
+ * when the slug doesn't resolve so admins see the 404 page rather
+ * than a blank editor with no document loaded.
+ */
 import { notFound } from "next/navigation";
 import { getPost } from "@/lib/content";
 import { PostEditor } from "@/components/admin/post-editor";

@@ -1,3 +1,11 @@
+/**
+ * /admin/content/articles/[slug]/edit: edit a specific article by
+ * slug. Loads the persisted post (including draft state), shapes it
+ * into the PostEditor's `initial` prop, and renders the same editor
+ * component used by the create route. notFound() when the slug
+ * doesn't resolve so admins get the 404 page rather than an empty
+ * editor.
+ */
 import { notFound } from "next/navigation";
 import { getPost } from "@/lib/content";
 import { PostEditor } from "@/components/admin/post-editor";

@@ -1,3 +1,21 @@
+/**
+ * /account/[product]/[portalId]: per-entitlement detail page for a
+ * HubSpot product install. Validates the URL params, confirms the
+ * signed-in account owns the entitlement (404 otherwise), and
+ * composes five sections: current plan / license, credits balance,
+ * upcoming charge preview, billing history, and the cancel block.
+ *
+ * Most sections branch on `entitlement.product` because Debrief
+ * (recurring subscription with tiers and credits) and Property
+ * Pulse (one-time $49 per portal license) have fundamentally
+ * different commerce shapes. The Stripe interactions here are
+ * read-only previews; the actual mutations live in the *Button
+ * client components and POST to /api/stripe/*.
+ *
+ * The `?purchase=success|cancelled` querystring is set by Stripe
+ * Checkout's return_url so the page can show a one-shot banner
+ * before the entitlement webhook flips licenseStatus to Paid.
+ */
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Check, ChevronDown, Receipt } from "lucide-react";

@@ -1,3 +1,10 @@
+/**
+ * Reset-password client island. POSTs the new password plus the token
+ * captured from the URL to /api/auth/reset-password. On success it
+ * pushes a toast and routes to /account; on failure it surfaces the
+ * server-supplied field errors or a generic "invalid or expired"
+ * message. The token itself stays opaque to the client.
+ */
 "use client";
 
 import * as React from "react";

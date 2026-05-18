@@ -1,3 +1,14 @@
+/**
+ * /admin/licenses: global Atelier license issuance and management
+ * surface. Server-side loads every Atelier license, sorts by issued
+ * timestamp descending, and renders the LicensesAdminClient form +
+ * table. Issuance signs against ATELIER_LICENSE_SIGNING_PRIVATE_KEY
+ * server-side. Per-license actions (revoke, resend email) live in
+ * the client component but POST to /api/admin/* endpoints.
+ *
+ * See LicensesAdminPage docstring for the small-list rationale and
+ * the future shift to paged loading when the catalog outgrows it.
+ */
 import { redirect } from "next/navigation";
 import { getCurrentAdminSession } from "@/lib/session";
 import { listLicensesByProduct } from "@/lib/atelier-license-signing";

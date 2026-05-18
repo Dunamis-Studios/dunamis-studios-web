@@ -1,3 +1,11 @@
+/**
+ * Client wrapper around SignupForm that consumes the install-handoff
+ * query string (`claim`, `state`, `email`) and swaps in claim-aware
+ * copy and a "Sign in to finish linking" footer redirect. Also bounces
+ * an already-authenticated visitor to /account on hydration.
+ *
+ * See signup-form.tsx for the actual form fields and POST logic.
+ */
 "use client";
 
 import * as React from "react";
