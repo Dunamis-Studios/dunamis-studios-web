@@ -1,3 +1,24 @@
+/**
+ * Server-side session layer for the customer account portal and the
+ * Atelier desktop bearer-token client.
+ *
+ * Two ingress shapes share the same JWT + secret:
+ *   - The browser presents the JWT via the HttpOnly `__Host-session`
+ *     cookie (production) or `dunamis_session` (development).
+ *   - The Atelier desktop client and any future native client present
+ *     the same JWT in an `Authorization: Bearer <jwt>` header.
+ *
+ * Either ingress walks the same flow: verify JWT signature + issuer +
+ * audience + expiry, look up the canonical session record at
+ * `dunamis:session:{sid}`, refresh its TTL clamped to the wall-clock
+ * remaining until expiresAt, return `{ account, session }`. Any failure
+ * returns null so route handlers can map to their own 401.
+ *
+ * The admin gate at the bottom is an env-var ACL (ADMIN_EMAILS), not a
+ * role field on Account. requireAdmin() throws a Response, which only
+ * works inside Server Components / layouts that auto-catch; route
+ * handlers must call getCurrentAdminSession() and return their own 403.
+ */
 import { cookies } from "next/headers";
 import { redis, KEY } from "./redis";
 import type { Account, Session } from "./types";

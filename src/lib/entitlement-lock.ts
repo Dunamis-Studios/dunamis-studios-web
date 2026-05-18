@@ -1,3 +1,16 @@
+/**
+ * Per-entitlement Redis lock used by the Stripe webhook handler to
+ * serialize writes against the same entitlement record. Upstash Redis
+ * REST has no BLPOP / BRPOP, so the implementation polls SETNX with a
+ * short retry budget. Stripe normally delivers events sequentially per
+ * object, so contention here is rare; the lock exists as a belt-and-
+ * suspenders guard for the cases where Stripe retries an event that
+ * overlaps a freshly-fired one (or for any future code path that
+ * touches an entitlement outside the webhook).
+ *
+ * Related: src/lib/stripe-webhook.ts (sole caller),
+ * src/lib/redis.ts (KEY.entitlementLock).
+ */
 import { redis, KEY } from "./redis";
 
 const LOCK_TTL_SEC = 10;

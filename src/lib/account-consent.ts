@@ -1,3 +1,23 @@
+/**
+ * Versioned consent helpers shared across every acceptance surface:
+ * signup (ToS + Privacy unconditionally; DPA + Service Addendum on
+ * implicit-claim signup) and both claim-link paths (re-stamping DPA
+ * and the relevant Service Addendum when the stamped version doesn't
+ * match the current LEGAL_METADATA version).
+ *
+ * Two distinct shapes are exposed:
+ *   - needsConsent / computePendingConsentStamps: drive the
+ *     server-side stamping flow and the UI's "you need to accept X"
+ *     disclosure copy.
+ *   - accountConsentArgs: maps an Account record to the primitive arg
+ *     shape buildAccountContactPatch expects, with intentional
+ *     ToS + Privacy fallbacks for legacy accounts that pre-date the
+ *     explicit consent fields.
+ *
+ * Bumping a document version in LEGAL_METADATA is sufficient to mark
+ * every existing account as needing re-stamp; the next acceptance
+ * surface they visit will collect a fresh acceptance.
+ */
 import { LEGAL_METADATA } from "@/content/legal/metadata";
 import type { Account, Product } from "./types";
 

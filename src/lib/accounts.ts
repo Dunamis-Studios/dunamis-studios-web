@@ -1,3 +1,19 @@
+/**
+ * Persistence layer for Account and Entitlement records, plus the
+ * stripe-customer-to-account reverse index used by webhook handlers.
+ *
+ * Every read here is shape-migrating: legacy Entitlement records that
+ * still carry `credits: number` get upgraded to the bucketed shape on
+ * the fly, missing `subscriptionHistory` arrays get seeded from the
+ * current stripeSubscriptionId, and Account records that still carry
+ * the dead top-level stripeCustomerId field get stripped. Migrations
+ * persist the upgraded shape back so subsequent reads are cache hits.
+ *
+ * Related: src/lib/types.ts (record shapes), src/lib/redis.ts (KEY
+ * factory), src/lib/session.ts (calls getAccountById on every request),
+ * src/lib/stripe-webhook.ts (resolves customer to account via the
+ * reverse index here).
+ */
 import { redis, KEY } from "./redis";
 import type {
   Account,
@@ -93,6 +109,15 @@ function isBuckets(v: unknown): v is CreditBuckets {
   );
 }
 
+/**
+ * Read an Account by id. Returns null when the record is missing or
+ * has been soft-deleted (deletedAt set, used for the 30-day recovery
+ * window). Runs the legacy field stripper on the fly and persists
+ * the cleaned shape back to Redis on the first read.
+ *
+ * @param accountId - Account UUID.
+ * @returns Live Account or null when missing / soft-deleted.
+ */
 export async function getAccountById(
   accountId: string,
 ): Promise<Account | null> {
@@ -128,6 +153,13 @@ async function migrateAccountInPlace(
   return migrated;
 }
 
+/**
+ * Resolve an Account's id from its email via the email-to-account
+ * reverse index. Returns null for unknown emails.
+ *
+ * @param email - Customer email (case-insensitive lookup).
+ * @returns Account UUID or null when no account with that email.
+ */
 export async function getAccountIdByEmail(
   email: string,
 ): Promise<string | null> {
@@ -135,6 +167,13 @@ export async function getAccountIdByEmail(
   return id ?? null;
 }
 
+/**
+ * Convenience wrapper that pulls an Account directly by email.
+ * Returns null for unknown emails or soft-deleted accounts.
+ *
+ * @param email - Customer email (case-insensitive lookup).
+ * @returns Account or null.
+ */
 export async function getAccountByEmail(
   email: string,
 ): Promise<Account | null> {
@@ -143,12 +182,29 @@ export async function getAccountByEmail(
   return getAccountById(id);
 }
 
+/**
+ * Persist an Account record and refresh its email-index entry. Used by
+ * signup, profile edits, password changes, and email verification
+ * stamping. Email rotation requires the deleted-old-email step in
+ * rotateAccountEmail below; saveAccount alone leaves the prior email
+ * pointing at this account.
+ *
+ * @param account - Full Account record. Slug is account.accountId.
+ */
 export async function saveAccount(account: Account): Promise<void> {
   const r = redis();
   await r.set(KEY.account(account.accountId), account);
   await r.set(KEY.emailIndex(account.email), account.accountId);
 }
 
+/**
+ * Persist an Account and atomically remove the old email's reverse
+ * index entry. Called by /api/account PATCH when the email field
+ * changes. Same-email-but-different-case is treated as no rotation.
+ *
+ * @param account - The Account with its NEW email value already set.
+ * @param oldEmail - The email the Account had before this update.
+ */
 export async function rotateAccountEmail(
   account: Account,
   oldEmail: string,
@@ -160,6 +216,14 @@ export async function rotateAccountEmail(
   await saveAccount(account);
 }
 
+/**
+ * Soft-delete an Account. Stamps deletedAt + updatedAt and removes the
+ * email reverse-index entry, freeing the address for re-registration
+ * during the 30-day recovery window. The underlying Account record
+ * stays in Redis so support can restore it on request.
+ *
+ * @param accountId - Account UUID to soft-delete.
+ */
 export async function softDeleteAccount(accountId: string): Promise<void> {
   const r = redis();
   const acc = await r.get<Account>(KEY.account(accountId));
@@ -171,6 +235,16 @@ export async function softDeleteAccount(accountId: string): Promise<void> {
   // Per spec: 30-day recovery window — records remain but email index is freed.
 }
 
+/**
+ * Read every Entitlement bound to an Account. Walks the
+ * accountEntitlements SET, hydrates each compound `{product}::{portalId}`
+ * into the underlying entitlement record, runs the shape migrator on
+ * the fly, and persists upgraded shapes back. Filters out stale set
+ * members whose backing record no longer points at this account.
+ *
+ * @param accountId - Account UUID.
+ * @returns Entitlements sorted by createdAt ascending.
+ */
 export async function getEntitlementsForAccount(
   accountId: string,
 ): Promise<Entitlement[]> {

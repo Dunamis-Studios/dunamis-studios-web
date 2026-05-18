@@ -1,3 +1,17 @@
+/**
+ * Cloudflare Turnstile siteverify helper. Used by every public form
+ * route (/api/contact-submit, /api/support-submit, /api/atelier/buy,
+ * the verification-key issuance endpoints) to re-verify the
+ * client-solved challenge BEFORE forwarding anything to HubSpot or the
+ * helpdesk pipeline.
+ *
+ * The helper is intentionally tolerant on the failure path: an empty
+ * token short-circuits without a network call; siteverify timeouts and
+ * non-2xx responses collapse to a synthetic "internal-error" code so
+ * callers can decide whether to 400 (bad token) or 502 (siteverify
+ * down). Server-only because TURNSTILE_SECRET_KEY must never reach the
+ * client bundle.
+ */
 import "server-only";
 
 const SITEVERIFY_URL =
