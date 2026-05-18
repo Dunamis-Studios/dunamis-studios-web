@@ -1,3 +1,19 @@
+/**
+ * HubSpot contact-property deriver. Turns a tracking event (type +
+ * payload) into the patch + counter increments that should land on
+ * the contact alongside the custom event itself.
+ *
+ * This is the single source of truth for "when event X fires, what
+ * properties does the contact get?" Splitting derive vs send keeps
+ * the trackEvents pipeline straightforward: derive every event's
+ * patch + increments first, merge across the batch, do ONE upsert,
+ * then send the events in parallel, then apply increments serially.
+ *
+ * Related: src/lib/hubspot/events.ts (event payload shapes +
+ * dropdown unions), src/lib/hubspot/client.ts (the underlying
+ * fetch+retry helpers), CLAUDE.md HubSpot section (dropdown internal
+ * value casing rules that constrain what this deriver may emit).
+ */
 import "server-only";
 
 import type {
