@@ -1,3 +1,11 @@
+/**
+ * Property Audit Checklist free tool. Lives at
+ * /custom-development/tools/property-audit-checklist. Ten-question
+ * scoring of property hygiene (fill rate, duplicates, creation
+ * cadence, etc.) that buckets the portal into Clean / Drift / Bloat
+ * / Crisis with a prioritized punch list. Scoring lives in
+ * src/lib/property-audit-scoring.ts.
+ */
 "use client";
 
 import * as React from "react";

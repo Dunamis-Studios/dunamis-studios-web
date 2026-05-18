@@ -1,3 +1,13 @@
+/**
+ * Shared layout shell for an unshipped product page (Carbon Copy,
+ * Traverse and Update, Association Visualizer at time of writing).
+ * Three narrative sections (problem, what we're building, where we
+ * are) plus a NotifyForm-fed email capture at the bottom.
+ *
+ * Distinct from product-page-shell.tsx (the shipped-product shell)
+ * because the "coming soon" surface intentionally avoids feature lists
+ * and pricing chrome that would imply a buyable product.
+ */
 import { Container, Section } from "@/components/ui/primitives";
 import { ProductStageBadge } from "@/components/marketing/product-stage-badge";
 import { NotifyForm } from "@/components/marketing/notify-form";

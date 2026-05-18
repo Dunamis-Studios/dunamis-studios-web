@@ -13,6 +13,12 @@ this file. Tagging is intentionally deferred to Josh.
 
 ## [Unreleased]
 
+## [0.32.5] - 2026-05-18
+
+### Documentation
+- Pseudo-code-style comment pass across `src/components/ui/` and `src/components/marketing/` (PR 1.2 of the codebase-wide comment lift). File-level TSDoc headers added to every UI primitive (button, card, input, label, dialog, dropdown, toast, table, badge, avatar, skeleton, empty-state, breadcrumbs, tooltip, primitives) and to the marketing chrome (site-nav, site-footer, hero-gradient, product-tile, product-stage-badge, product-page-shell, product-page-coming-soon-shell, lane-placeholder, lane-subnav). Headers also added to the lead-capture and free-tool components (atelier-buy-form, custom-development-contact-form, bloat-score, custom-object-decision-tree, handoff-time, lead-scoring, property-audit, sales-cycle-stagnation, team-onboarding, tech-stack-cost-audit, workflow-audit). Files that already carried thorough header commentary (lane-subnav originally, marketing-faq, article-extras, product-screenshots-grid, customer-logo-strip, atelier-checkout-button, atelier-purchase-gate, atelier-docs-nav, atelier-docs-search, course-cta-card, course-signup-form, lead-form-fields, lost-license-form, notify-form) were left unchanged or had headers extended only where missing.
+- No behavioral changes. Comment-only diff verified by typecheck (`tsc --noEmit`) and production build (`npm run build`).
+
 ## [0.32.4] - 2026-05-18
 
 ### Documentation

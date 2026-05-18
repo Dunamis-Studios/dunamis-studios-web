@@ -1,3 +1,12 @@
+/**
+ * Dropdown menu primitive set. Thin styling wrapper around Radix UI's
+ * DropdownMenu with the site's theme tokens applied: bordered
+ * elevated background, fade-up animation, padded items with hover
+ * state and check-marked option support.
+ *
+ * Re-exports Dropdown / DropdownTrigger unchanged. DropdownContent
+ * portals out and clamps to the trigger with a 6px side offset.
+ */
 "use client";
 
 import * as React from "react";

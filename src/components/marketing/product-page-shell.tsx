@@ -1,3 +1,17 @@
+/**
+ * Shared layout shell for a "shipped or near-shipped" product
+ * marketing page (Property Pulse, Debrief, and Atelier's old
+ * standalone page). One component, three accent colors. The shell
+ * owns the hero, problem block, screenshot grid, feature list,
+ * comparison strip, pricing tier card, FAQ, and CTA so each product
+ * page is just a thin call site that supplies the copy + screenshot
+ * URLs.
+ *
+ * Atelier's marketing now lives at /marketplace/atelier with the
+ * MarketplaceProductShell instead; this shell is still in use by
+ * the HubSpot product pages and may be reused for future Software
+ * Projects launches.
+ */
 import Link from "next/link";
 import { ArrowRight, ArrowUp, ArrowDown } from "lucide-react";
 import { Container, Section } from "@/components/ui/primitives";

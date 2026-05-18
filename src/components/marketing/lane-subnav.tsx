@@ -1,3 +1,17 @@
+/**
+ * Sticky per-lane sub-navigation rendered directly below SiteNav by
+ * each lane's layout. Two sets of items, keyed by LaneKey ("build" |
+ * "hubspot"), defined in the ITEMS map below. Adding a new area to a
+ * lane is a one-line addition there.
+ *
+ * The marketplace lane has no subnav (only one surface so far). The
+ * Atelier lane is also subnav-less by design because the product page
+ * stands alone; the Atelier docs subtree carries its own internal
+ * navigation in atelier-docs-nav.tsx.
+ *
+ * See site-nav.tsx for the top-level lane bubbles that this
+ * subnav lives directly beneath.
+ */
 "use client";
 
 import Link from "next/link";

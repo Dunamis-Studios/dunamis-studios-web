@@ -1,3 +1,13 @@
+/**
+ * HubSpot Bloat Score free-tool calculator. Lives at
+ * /custom-development/tools/hubspot-bloat-score. Visitor inputs
+ * property counts, active workflow / list counts, contact volume,
+ * tier, and portal age; the client component renders a live preview
+ * via src/lib/bloat-score-scoring.ts. On submit, the lead capture
+ * fields POST to /api/tools/hubspot-bloat-score which persists the
+ * row in Redis, mirrors into the HubSpot Free Tools lead form, and
+ * emails the report.
+ */
 "use client";
 
 import * as React from "react";

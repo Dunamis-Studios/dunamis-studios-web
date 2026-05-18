@@ -1,3 +1,14 @@
+/**
+ * Decorative hero backdrop. Renders a soft radial glow over a subtle
+ * grid pattern that fades out toward the bottom. The glow color
+ * comes from --lane-glow, which each lane wrapper (.lane-build,
+ * .lane-hubspot, .lane-marketplace, .lane-atelier) overrides, so
+ * the same component naturally paints the right tone on every page.
+ *
+ * Aria-hidden + pointer-events-none + absolute positioning behind
+ * the content (-z-10) so the layer is purely visual; nothing
+ * focusable lives here.
+ */
 export function HeroGradient() {
   return (
     <div

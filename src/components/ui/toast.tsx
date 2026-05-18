@@ -1,3 +1,13 @@
+/**
+ * Toast notification primitive set, layered on Radix UI's Toast.
+ * Exposes a ToastProvider context with a `push` helper so any client
+ * component can fire a notification via the useToast hook.
+ *
+ * Three kinds: success (green check), error (red alert), info (blue
+ * info). The provider auto-mounts the viewport at the bottom-right;
+ * each push appends a transient entry that animates in, sits for
+ * a few seconds, and animates out.
+ */
 "use client";
 
 import * as React from "react";

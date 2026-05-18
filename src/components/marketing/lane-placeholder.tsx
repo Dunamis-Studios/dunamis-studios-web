@@ -1,3 +1,14 @@
+/**
+ * Placeholder surface for a lane subsection that has no shipped
+ * content yet (e.g., the Free Tools area before the first tool
+ * shipped, the Courses area before the first course shipped).
+ * Renders a "this lives here, here is what we are building, drop
+ * your email" page so the URL is reachable from nav links and
+ * the site map stays consistent.
+ *
+ * Distinct from product-page-coming-soon-shell which is product-
+ * scoped; LanePlaceholder is area-scoped (one step coarser).
+ */
 import Link from "next/link";
 import { ArrowRight, Mail } from "lucide-react";
 import { Container, Section } from "@/components/ui/primitives";

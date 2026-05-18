@@ -1,3 +1,23 @@
+/**
+ * Top-level site navigation bar. Shipped on every public page via the
+ * marketing layout. Two link groups:
+ *
+ *   - LANE_LINKS: Build Services, Marketplace, HubSpot Custom
+ *     Development. Each link carries a lane key so the bubble paints
+ *     the matching wayfinding color when the user is inside that
+ *     lane (build = teal, marketplace = brand amber, hubspot =
+ *     orange).
+ *   - GENERAL_LINKS: studio-level pages (About, Pricing, Help) that
+ *     don't belong to one service line.
+ *
+ * HubSpot lane visibility flips with FEATURE_FLAGS.hubspotSurfacesVisible
+ * so the whole HubSpot product line can be toggled off site-wide from
+ * a single boolean.
+ *
+ * Mobile: a hamburger flips a full-height panel. The pathname listener
+ * collapses the panel on route change so navigation feels instant
+ * rather than the user having to dismiss the menu manually.
+ */
 "use client";
 
 import Link from "next/link";

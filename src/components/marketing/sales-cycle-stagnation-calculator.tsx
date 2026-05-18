@@ -1,3 +1,12 @@
+/**
+ * Sales Cycle Stagnation Calculator free tool. Lives at
+ * /custom-development/tools/sales-cycle-stagnation-calculator.
+ * Quantifies the dollar value of stalled pipeline by combining deal
+ * economics (avg size, win rate, cycle length) with per-stage
+ * stagnation counts. Compares the visitor's numbers against
+ * deal-size-bracket benchmarks pulled from external research. Pure
+ * computation lives in src/lib/sales-cycle-stagnation-logic.ts.
+ */
 "use client";
 
 import * as React from "react";

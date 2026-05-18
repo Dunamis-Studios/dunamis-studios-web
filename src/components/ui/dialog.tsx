@@ -1,3 +1,14 @@
+/**
+ * Modal Dialog primitive set. Thin styling wrapper around Radix UI's
+ * Dialog with the site's theme tokens applied: bordered background,
+ * centered with fade-up animation, and a built-in close button in the
+ * top-right.
+ *
+ * Re-exports Dialog / DialogTrigger / DialogClose from Radix
+ * unchanged. DialogContent provides the portal, overlay, and close
+ * affordance in one piece; callers only need to compose Header /
+ * Title / Description / Footer inside.
+ */
 "use client";
 
 import * as React from "react";

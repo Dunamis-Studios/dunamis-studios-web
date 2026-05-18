@@ -1,3 +1,15 @@
+/**
+ * Site-wide footer. Six columns when HubSpot surfaces are visible
+ * (logo + tagline, Build Services, Software Projects / marketplace,
+ * Marketplace, HubSpot Custom Development, Company) and five columns
+ * when the HubSpot lane is hidden. Each lane uses its hover color so
+ * the footer reads as a wayfinding index rather than a flat list.
+ *
+ * Updates to nav structure: cross-reference the SiteNav LANE_LINKS in
+ * site-nav.tsx so the two surfaces stay in lockstep on link adds /
+ * removes. The footer also carries the legal column (Terms, Privacy,
+ * Do Not Sell, Security) which the nav does not surface.
+ */
 import Link from "next/link";
 import { LogoMark } from "@/components/brand/logo";
 import { FEATURE_FLAGS } from "@/lib/feature-flags";

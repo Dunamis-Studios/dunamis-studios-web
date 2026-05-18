@@ -1,3 +1,13 @@
+/**
+ * Custom Object Decision Tree free tool. Lives at
+ * /custom-development/tools/custom-object-decision-tree. Branching
+ * questionnaire that asks up to seven questions and terminates at
+ * one of five recommendations (custom object, custom property,
+ * repurposed standard object, HubDB, or custom event). Traversal
+ * logic lives in src/lib/custom-object-decision-tree-logic.ts so
+ * the same eval runs client-side for live preview and server-side
+ * on submit for the report-mailing path.
+ */
 "use client";
 
 import * as React from "react";

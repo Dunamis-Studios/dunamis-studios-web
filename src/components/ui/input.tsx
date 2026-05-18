@@ -1,3 +1,12 @@
+/**
+ * Standard text input. Pairs with Label / FieldError / FieldHint from
+ * ./label.tsx for the full labeled-field stack. The optional `error`
+ * prop is a convenience: passing a non-empty string flips
+ * aria-invalid to true, which the styling block below picks up to
+ * paint the danger border + ring. Callers render the actual error
+ * text via FieldError so the message is bound to the field via
+ * role="alert".
+ */
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
