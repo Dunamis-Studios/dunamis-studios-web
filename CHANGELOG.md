@@ -13,6 +13,13 @@ this file. Tagging is intentionally deferred to Josh.
 
 ## [Unreleased]
 
+## [0.32.7] - 2026-05-18
+
+### Documentation
+- Pseudo-code-style comment pass across `src/app/(marketing)/` (PR 1.4 of the codebase-wide comment lift). File-level TSDoc headers added to every route file under the marketing route group: the homepage and root layout, the legal / policy pages (about, contact, security, privacy, privacy/do-not-sell, terms, terms/[product], refund-policy, refund-policy/[product], legal/dpa, legal/subprocessors), the standalone Atelier surfaces (download, lost-license, marketplace, marketplace/[slug]), the build-services lane (page, pricing, tools / courses / guides / articles placeholders, atelier docs subtree pages, post-checkout), the custom-development lane (page, pricing, products index + per-product pages, the 9 free-tool pages, courses + hubspot-audit, guides + [slug], articles + [slug]), and the help center subtree (help index, search, category, article detail, contact-support).
+- Files that already had thorough commentary (the (marketing) layout, build-services / custom-development / atelier docs layouts, SearchBox, ArticleRating, post-checkout-launcher) were left unchanged.
+- No behavioral changes. Comment-only diff verified by typecheck (`tsc --noEmit`) and production build (`npm run build`).
+
 ## [0.32.6] - 2026-05-18
 
 ### Documentation
