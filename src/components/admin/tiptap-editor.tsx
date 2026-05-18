@@ -1,3 +1,14 @@
+/**
+ * Tiptap-backed rich text editor used inside the /admin/content
+ * post editor. StarterKit + Link + Image extensions; emits HTML on
+ * each change so the parent PostEditor can persist the body as
+ * `contentHtml` on the Post record (Redis-backed via
+ * src/lib/content.ts).
+ *
+ * Image uploads go through /api/admin/upload-image which streams to
+ * Vercel Blob and returns the public URL the editor inserts as
+ * an Image node.
+ */
 "use client";
 
 import { useEditor, EditorContent } from "@tiptap/react";

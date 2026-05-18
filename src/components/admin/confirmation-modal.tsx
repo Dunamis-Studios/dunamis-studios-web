@@ -1,3 +1,11 @@
+/**
+ * Reusable confirmation dialog used by every destructive admin
+ * action (deactivate device, revoke license, refund charge, etc.).
+ * Forces the admin to either type a confirm phrase or pick from a
+ * structured options list (e.g., revocation mode + reason) before
+ * the action fires, so a stray click can't trigger a destructive
+ * call.
+ */
 "use client";
 
 import * as React from "react";

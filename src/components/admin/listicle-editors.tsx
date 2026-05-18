@@ -1,3 +1,18 @@
+/**
+ * Optional structured-content editors composed inside PostEditor:
+ *
+ *   - ListicleFaqEditor: adds Q&A pairs that render as FAQ
+ *     accordions below the article body AND emit FAQPage JSON-LD.
+ *   - ListicleComparisonEditor: builds the N-column comparison
+ *     table used in listicle-style articles.
+ *   - ListicleRelatedProductsEditor: picker over PRODUCT_CATALOG_SLUGS
+ *     for the related-products card strip.
+ *
+ * All three slot into the Post record's optional fields (see
+ * src/lib/content.ts: PostFaqItem, PostComparisonTable,
+ * relatedProducts) so existing articles without any of these load
+ * unchanged.
+ */
 "use client";
 
 import * as React from "react";

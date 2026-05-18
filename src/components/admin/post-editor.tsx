@@ -1,3 +1,14 @@
+/**
+ * Top-level editor for guides and articles under /admin/content.
+ * Composes the Tiptap rich-text body, the SEOSidebar checks panel,
+ * the optional listicle editors (FAQ block, comparison table,
+ * related products), and the publish / draft / delete controls.
+ *
+ * Posts to /api/admin/content/{type}/{slug} on save. Slug
+ * uniqueness is enforced server-side via generateUniqueSlug; the
+ * editor surfaces the resolved slug back into the URL after a
+ * successful first save.
+ */
 "use client";
 
 import * as React from "react";

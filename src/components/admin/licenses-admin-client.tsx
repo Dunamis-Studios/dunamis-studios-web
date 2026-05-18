@@ -1,3 +1,14 @@
+/**
+ * Top-level client for /admin/licenses. Renders the issued-license
+ * inventory table with inline filters (product, status, owner email)
+ * and exposes the per-row actions: copy license string, resend
+ * license email, revoke (immediate or 14-day grace), view EULA
+ * acceptance history.
+ *
+ * Each action posts to a /api/admin/licenses/* endpoint; the
+ * response triggers router.refresh() so the server-rendered table
+ * picks up the new state without a manual reload.
+ */
 "use client";
 
 import * as React from "react";

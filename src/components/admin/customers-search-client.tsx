@@ -1,3 +1,14 @@
+/**
+ * Debounced customer-search box on /admin/customers. Each keystroke
+ * (past a small debounce window) calls /api/admin/customers/search
+ * which scans Redis for matching account emails / ids / company
+ * names and returns hydrated rows. Results render as a clickable
+ * list under the input that deep-links to each customer's detail
+ * page.
+ *
+ * Empty input renders the parent page's "recent customers" list as
+ * a fallback so admins always have an entry point.
+ */
 "use client";
 
 import * as React from "react";

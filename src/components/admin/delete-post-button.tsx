@@ -1,3 +1,9 @@
+/**
+ * Delete a guide or article from the /admin/content editor. Wraps a
+ * window.confirm prompt and posts to /api/admin/content/{type}/{slug}
+ * with method DELETE. On success, routes back to the type's index
+ * page so the deleted post can't be re-edited from a stale URL.
+ */
 "use client";
 
 import { useRouter } from "next/navigation";

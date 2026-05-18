@@ -1,3 +1,14 @@
+/**
+ * Top-of-page actions dropdown on /admin/customers/[accountId].
+ * Bundles every admin action that targets a single customer:
+ * edit profile, trigger data export, resend verification email,
+ * soft-delete account, restore from soft-delete, etc.
+ *
+ * Each action posts to a /api/admin/customers/[accountId]/* route
+ * via the shared runAdminAction wrapper in src/lib/admin/action-
+ * runner.ts. Audit log entries are written automatically on both
+ * success and failure paths.
+ */
 "use client";
 
 import * as React from "react";
