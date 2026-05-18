@@ -23,7 +23,6 @@ interface SubnavItem {
 
 const ITEMS: Record<LaneKey, SubnavItem[]> = {
   build: [
-    { href: "/build-services/products", label: "Products" },
     { href: "/build-services/tools", label: "Free Tools" },
     { href: "/build-services/courses", label: "Courses" },
     { href: "/build-services/guides", label: "Guides" },
