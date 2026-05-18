@@ -1,3 +1,17 @@
+/**
+ * Help-center support ticket form on /help/contact-support. Category
+ * picker at the top swaps in different conditional field sets based
+ * on SUPPORT_CONDITIONAL_FIELDS_BY_CATEGORY (from
+ * src/lib/validation.ts), so a Bug Report draws fields the Refund
+ * Request flow doesn't, and vice versa.
+ *
+ * Three required gates before submit: the consent checkbox, the
+ * verification key widget (which derives a key from the typed email
+ * and the current 30-minute window), and the Cloudflare Turnstile
+ * challenge. The route at /api/support-submit re-validates all
+ * three plus the full supportTicketSchema before forwarding into the
+ * HubSpot helpdesk pipeline.
+ */
 "use client";
 
 import * as React from "react";

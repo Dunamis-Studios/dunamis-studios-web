@@ -1,3 +1,10 @@
+/**
+ * Marketplace grid card. Renders one MarketplaceProduct entry as a
+ * tile with name, tagline, platform / category badges, price, and a
+ * deep link into /marketplace/[slug]. Used by MarketplaceGrid; the
+ * card stays neutral (no lane color) so the grid reads as a unified
+ * catalog rather than a per-product splash page.
+ */
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

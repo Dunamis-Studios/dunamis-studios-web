@@ -1,3 +1,14 @@
+/**
+ * Marketplace catalog grid with inline text search and platform /
+ * category filters. Filter values are auto-derived from the products
+ * data via getMarketplacePlatforms / getMarketplaceCategories so
+ * adding a new product auto-extends the filter dropdowns with no
+ * code change.
+ *
+ * Client component because filters and search are responsive on
+ * every keystroke; the underlying products list is server-rendered
+ * by /marketplace/page.tsx and passed in as a prop.
+ */
 "use client";
 
 import * as React from "react";
