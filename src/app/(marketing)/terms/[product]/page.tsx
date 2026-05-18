@@ -1,3 +1,10 @@
+/**
+ * Per-product Terms of Sale addendum at /terms/[product]. Dynamic
+ * route with generateStaticParams over TERMS_ADDENDUMS so every
+ * product slug is statically built; unknown slugs hit notFound().
+ * Each addendum supplements the master terms with product-specific
+ * provisions (license type, payment cadence, refund window, etc.).
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";

@@ -1,3 +1,12 @@
+/**
+ * Lost-license self-service surface at /atelier/lost-license. Mounts
+ * the LostLicenseForm which POSTs to /api/atelier/lost-license. The
+ * route looks up every active license for the entered email and
+ * re-sends a license-recovery email; the response is the same
+ * "if this email has a license, we'll send it" envelope regardless
+ * of whether anything was found, so an attacker can't enumerate
+ * customer emails.
+ */
 import type { Metadata } from "next";
 import { Container, Section } from "@/components/ui/primitives";
 import { LostLicenseForm } from "@/components/marketing/lost-license-form";

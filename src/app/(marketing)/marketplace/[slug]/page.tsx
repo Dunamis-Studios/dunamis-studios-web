@@ -1,3 +1,13 @@
+/**
+ * Marketplace product detail page at /marketplace/[slug]. Dynamic
+ * route with generateStaticParams over MARKETPLACE_PRODUCTS so each
+ * shipped product is statically built. Unknown slugs fall through
+ * to notFound(). Emits SoftwareApplication + BreadcrumbList JSON-LD
+ * over the product entry.
+ *
+ * Canonical surface for Atelier at /marketplace/atelier; the legacy
+ * /build-services/products/atelier page was deleted in v0.32.3.
+ */
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/primitives";

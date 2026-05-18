@@ -1,3 +1,10 @@
+/**
+ * California / CPRA "Do Not Sell or Share My Personal Information"
+ * disclosure at /privacy/do-not-sell. Dunamis Studios does not engage
+ * in selling or cross-context behavioral advertising, but the page
+ * exists to make that fact explicit and honor CPRA right-of-knowledge
+ * requirements regardless of statutory threshold applicability.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";

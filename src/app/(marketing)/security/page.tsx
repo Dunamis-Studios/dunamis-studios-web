@@ -1,3 +1,12 @@
+/**
+ * Security disclosure page at /security. Reads the canonical PGP
+ * public key from disk and renders it inline alongside the
+ * vulnerability-disclosure policy: 90-day responsible disclosure,
+ * safe harbor for good-faith research, encrypted contact channel.
+ *
+ * Server component, statically buildable because the PGP key file
+ * is checked into the repo (content/security/pgp-public-key.asc).
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import fs from "node:fs/promises";

@@ -1,3 +1,10 @@
+/**
+ * Privacy Policy at /privacy. Renders the long-form privacy policy
+ * from content/legal/privacy.ts (single source of truth). The doc
+ * covers the website, the account system, and the Debrief +
+ * Property Pulse HubSpot apps; product-specific addendums live at
+ * /terms/[product] and /refund-policy/[product].
+ */
 import type { Metadata } from "next";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
 import { privacyPolicy } from "@/content/legal/privacy";

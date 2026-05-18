@@ -1,3 +1,11 @@
+/**
+ * Per-product refund policy at /refund-policy/[product]. Dynamic
+ * route with generateStaticParams over REFUND_ADDENDUMS so every
+ * product slug is statically built; unknown slugs hit notFound().
+ * Each addendum carries the product-specific window (14 days
+ * pre-activation for Atelier, 30 days money-back for Debrief, etc.)
+ * and the exception list.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";

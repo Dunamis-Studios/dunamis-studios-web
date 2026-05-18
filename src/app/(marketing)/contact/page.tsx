@@ -1,3 +1,10 @@
+/**
+ * Contact page at /contact. Studio-level inquiry surface that funnels
+ * any kind of conversation (Build Services scoping, HubSpot Custom
+ * Development, general questions). Mounts the
+ * CustomDevelopmentContactForm with source="general" so HubSpot can
+ * segment these leads from lane-specific submissions.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container, Section } from "@/components/ui/primitives";

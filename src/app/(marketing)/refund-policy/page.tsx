@@ -1,3 +1,10 @@
+/**
+ * Master refund policy at /refund-policy. Lists the studio-wide
+ * refund framework and links to each product's specific refund
+ * window at /refund-policy/[product]. Like the master terms page,
+ * product-specific windows and conditions live in the addendums
+ * (REFUND_ADDENDUMS in content/legal/addendums.ts).
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
