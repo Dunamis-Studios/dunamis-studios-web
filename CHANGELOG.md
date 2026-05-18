@@ -13,6 +13,18 @@ this file. Tagging is intentionally deferred to Josh.
 
 ## [Unreleased]
 
+## [0.32.2] - 2026-05-14
+
+### Removed
+- Deleted `src/app/(marketing)/build-services/products/page.tsx`. The Build Services products catalog page is gone; `/build-services/products` now returns 404. The Marketplace at `/marketplace` is the canonical product catalog.
+
+### Changed
+- Footer Software Projects column "All prebuilt apps" link repointed from `/build-services/products` to `/marketplace` so the link does not 404 after the catalog page deletion.
+- Sitemap entry for `/build-services/products` removed. The deeper `/build-services/products/atelier` entry stays for now (that page is unchanged).
+
+### Notes
+- The `/build-services/products/atelier/` subtree (Atelier product detail page plus its docs and post-checkout child routes) is still alive. Atelier now appears at two URLs: `/marketplace/atelier` (canonical going forward) and `/build-services/products/atelier` (legacy). Consolidating the two is a follow-up.
+
 ## [0.32.1] - 2026-05-14
 
 ### Changed
