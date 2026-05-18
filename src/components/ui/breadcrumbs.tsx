@@ -1,3 +1,13 @@
+/**
+ * Breadcrumb trail. Renders an aria-labelled nav with a chevron
+ * separator between crumbs. Items with an href become Next.js Links;
+ * the final item is rendered as a plain span with aria-current="page"
+ * so screen readers announce it as the current location.
+ *
+ * Used on every nested route (product pages, atelier docs, marketplace
+ * detail, account portal subpages) so navigation context is always
+ * one tab-stop away from the page heading.
+ */
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";

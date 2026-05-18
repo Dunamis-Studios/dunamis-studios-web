@@ -1,3 +1,14 @@
+/**
+ * Inline pill-shaped Badge component. Ten variants cover the standard
+ * semantic states (neutral, success, warning, danger, info) plus the
+ * brand / product-line accent colors (brand, pulse, brief, hubspot,
+ * build, atelier) so a product page header can tag itself with the
+ * matching color without writing one-off classes.
+ *
+ * The StatusBadge sibling maps entitlement and license status strings
+ * to the right variant + an animated pulse dot so dashboards render
+ * "active" / "past_due" / "revoked" consistently.
+ */
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";

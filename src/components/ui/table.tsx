@@ -1,3 +1,13 @@
+/**
+ * Table primitive set: Table / THead / TBody / Tr / Th / Td. Wraps a
+ * native <table> in a horizontally-scrollable rounded container so
+ * wide tables stay tidy on narrow viewports.
+ *
+ * Used by the admin dashboard (customer search, license listings,
+ * entitlement details) and the customer portal (active devices,
+ * billing history, license inventory). No sorting / pagination / row
+ * selection here; consumers compose those at the page level.
+ */
 import * as React from "react";
 import { cn } from "@/lib/utils";
 

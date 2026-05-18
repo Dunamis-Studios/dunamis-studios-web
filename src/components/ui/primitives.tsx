@@ -1,3 +1,13 @@
+/**
+ * Layout primitives shared across every page surface: Container,
+ * Section, Stack, Grid, PageHeader. Centralized so the page-level
+ * sizing decisions (max-w, gap, padding) stay consistent across the
+ * marketing site, admin, and account portal.
+ *
+ * Container.size="prose" is the article / guide reading column. The
+ * other sizes step through the standard sm / md / lg / xl
+ * progression used elsewhere on the site.
+ */
 import * as React from "react";
 import { cn } from "@/lib/utils";
 

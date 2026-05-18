@@ -1,3 +1,14 @@
+/**
+ * Card primitive set: Card / CardHeader / CardTitle / CardDescription /
+ * CardContent / CardFooter. Compose into the standard rounded container
+ * used everywhere on the marketing site, admin tables, and account
+ * portal: bordered, slightly elevated background, with a 6-pad column
+ * inside.
+ *
+ * The pieces are forwardRef-wrapped so callers can attach refs for
+ * scroll-into-view, focus management, or measurement without
+ * unwrapping the component.
+ */
 import * as React from "react";
 import { cn } from "@/lib/utils";
 

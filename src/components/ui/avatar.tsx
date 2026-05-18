@@ -1,3 +1,13 @@
+/**
+ * Avatar primitive set: Avatar (the rounded container), AvatarImage
+ * (the actual image), AvatarFallback (initials or icon when the image
+ * fails or is absent). Wraps Radix UI's Avatar so the image-failure
+ * fallback is handled automatically.
+ *
+ * Used by the account dashboard, admin customer rows, and the site
+ * navigation's account menu. Pair AvatarFallback with the initials()
+ * helper from @/lib/utils for the two-character glyph.
+ */
 "use client";
 
 import * as React from "react";

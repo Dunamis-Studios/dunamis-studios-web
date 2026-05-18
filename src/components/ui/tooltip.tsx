@@ -1,3 +1,12 @@
+/**
+ * Tooltip primitive set, layered on Radix UI's Tooltip. Includes a
+ * HintTooltip convenience wrapper that provides its own Provider so
+ * one-off hint icons (the "i" next to a field label, for example)
+ * don't need a tree-level Provider in scope.
+ *
+ * 200ms delay before show. Portals out of the layout so the tooltip
+ * floats above nearby z-index stacks.
+ */
 "use client";
 
 import * as React from "react";

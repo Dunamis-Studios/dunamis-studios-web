@@ -1,3 +1,20 @@
+/**
+ * Canonical Button primitive. Six variants (primary, secondary, ghost,
+ * outline, danger, link) plus four sizes (sm, md, lg, icon). Powered by
+ * class-variance-authority so the variant + size + className trio
+ * collapses to a single deduped Tailwind string at render time.
+ *
+ * `asChild` swaps the underlying element via Radix Slot (used to make
+ * Next.js Link render with button styling). When `asChild` is true,
+ * the loading spinner is skipped because Slot requires exactly one
+ * child and Link has no disabled semantics; callers wire `loading` to
+ * their own copy.
+ *
+ * This is the single source of truth for button styling across the
+ * site. Anything that looks like a button MUST go through this
+ * component so theme tokens (--accent, --border, --ring) stay
+ * consistent across the four visual modes.
+ */
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";

@@ -1,3 +1,14 @@
+/**
+ * Empty-state placeholder. Used wherever a list / table / dashboard
+ * tile is genuinely empty (no licenses yet, no sessions yet, no
+ * tickets matching the current filter). The dashed border + muted
+ * background reads as "nothing here yet" rather than "loading", which
+ * the Skeleton primitive owns instead.
+ *
+ * The optional `action` slot is for the canonical next-step CTA
+ * ("Buy your first license", "Invite a teammate", etc.) so the empty
+ * state stays useful instead of just informative.
+ */
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
