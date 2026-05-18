@@ -1,70 +1,123 @@
 import type { Metadata } from "next";
 import { Container, Section } from "@/components/ui/primitives";
-import { Badge } from "@/components/ui/badge";
 import { HeroGradient } from "@/components/marketing/hero-gradient";
 import { JsonLd } from "@/components/seo/json-ld";
 import { siteFreshness } from "@/lib/schema-freshness";
+import { MarketplaceGrid } from "@/components/marketplace/marketplace-grid";
+import {
+  MARKETPLACE_PRODUCTS,
+  getMarketplacePlatforms,
+  getMarketplaceCategories,
+} from "@/lib/marketplace";
 
 const SITE_URL =
   process.env.APP_URL?.replace(/\/+$/, "") ?? "https://dunamisstudios.net";
 
-const webPageSchema = {
+const collectionSchema = {
   "@context": "https://schema.org",
-  "@type": "WebPage",
+  "@type": "CollectionPage",
   ...siteFreshness(),
-  name: "Marketplace",
+  name: "Marketplace by Dunamis Studios",
   description:
-    "Dunamis Studios apps and tools. The full marketplace is coming soon.",
+    "Prebuilt apps and tools from Dunamis Studios. One-time purchase, customer owned, customer hosted.",
   url: `${SITE_URL}/marketplace`,
-  isPartOf: {
-    "@type": "WebSite",
-    "@id": `${SITE_URL}/#website`,
-  },
   publisher: {
     "@type": "Organization",
+    name: "Dunamis Studios",
     "@id": `${SITE_URL}/#organization`,
+  },
+  mainEntity: {
+    "@type": "ItemList",
+    itemListOrder: "https://schema.org/ItemListOrderAscending",
+    numberOfItems: MARKETPLACE_PRODUCTS.length,
+    itemListElement: MARKETPLACE_PRODUCTS.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "SoftwareApplication",
+        name: p.name,
+        applicationCategory: p.category,
+        operatingSystem: p.platform,
+        url: `${SITE_URL}/marketplace/${p.slug}`,
+        description: p.cardDescription,
+        offers: {
+          "@type": "Offer",
+          price: String(p.price),
+          priceCurrency: "USD",
+          availability: "https://schema.org/InStock",
+        },
+        publisher: {
+          "@type": "Organization",
+          name: "Dunamis Studios",
+          "@id": `${SITE_URL}/#organization`,
+        },
+      },
+    })),
   },
 };
 
 export const metadata: Metadata = {
   title: "Marketplace",
   description:
-    "Dunamis Studios apps and tools. The full marketplace is coming soon.",
+    "Prebuilt apps and tools from Dunamis Studios. One-time purchase, customer owned, customer hosted.",
   alternates: { canonical: "/marketplace" },
   openGraph: {
     title: "Marketplace · Dunamis Studios",
     description:
-      "Dunamis Studios apps and tools. The full marketplace is coming soon.",
+      "Prebuilt apps and tools from Dunamis Studios. One-time purchase, customer owned, customer hosted.",
     url: "/marketplace",
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Marketplace by Dunamis Studios",
+        type: "image/png",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Marketplace · Dunamis Studios",
     description:
-      "Dunamis Studios apps and tools. The full marketplace is coming soon.",
+      "Prebuilt apps and tools from Dunamis Studios. One-time purchase, customer owned, customer hosted.",
   },
 };
 
 export default function MarketplacePage() {
+  const platforms = getMarketplacePlatforms();
+  const categories = getMarketplaceCategories();
+
   return (
     <>
-      <JsonLd id="jsonld-marketplace-webpage" schema={webPageSchema} />
+      <JsonLd id="jsonld-marketplace-collection" schema={collectionSchema} />
       <div className="relative overflow-hidden">
         <HeroGradient />
-        <Container size="xl" className="py-24 sm:py-32 lg:py-40">
-          <div className="mx-auto max-w-3xl text-center stagger">
-            <Badge className="mx-auto">Coming soon</Badge>
-            <h1 className="mt-6 font-[var(--font-display)] text-5xl font-medium tracking-[-0.03em] leading-[1.02] text-[var(--fg)] sm:text-6xl lg:text-7xl">
+        <Container size="xl" className="py-20 sm:py-24 lg:py-28">
+          <div className="max-w-3xl">
+            <div className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
               Marketplace
+            </div>
+            <h1 className="mt-3 font-[var(--font-display)] text-4xl font-medium tracking-[-0.02em] leading-[1.05] text-[var(--fg)] sm:text-5xl lg:text-6xl">
+              Prebuilt apps and tools from Dunamis Studios.
             </h1>
-            <p className="mx-auto mt-7 max-w-xl text-lg leading-relaxed text-[var(--fg-muted)]">
-              Dunamis Studios apps and tools. Coming soon.
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-[var(--fg-muted)]">
+              One-time purchase. Customer owned, customer hosted. No subscriptions, no telemetry, no kill switch.
             </p>
           </div>
         </Container>
       </div>
-      <Section />
+
+      <Section className="border-t border-[var(--border)] py-12 sm:py-16">
+        <Container size="xl">
+          <MarketplaceGrid
+            products={MARKETPLACE_PRODUCTS}
+            platforms={platforms}
+            categories={categories}
+          />
+        </Container>
+      </Section>
     </>
   );
 }
