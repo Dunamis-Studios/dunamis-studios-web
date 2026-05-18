@@ -1,7 +1,18 @@
+/**
+ * HMAC-signed handoff token verifier for the HubSpot-install →
+ * Dunamis-signup flow. Wire format and shape are byte-for-byte
+ * compatible with the Debrief server's server/lib/claim-state.js;
+ * drift on either side breaks every in-flight install.
+ *
+ * Related: src/lib/redis.ts (KEY namespaces), the Debrief repo's
+ * matching helper, and the shared CLAIM_STATE_SECRET env var that
+ * must be identical on all three projects (Debrief, Property Pulse,
+ * dunamisstudios-site).
+ */
 import crypto from "crypto";
 
 /**
- * claim-state.ts — verify the HMAC-signed state token Debrief passes
+ * claim-state.ts: verify the HMAC-signed state token Debrief passes
  * to this site on the HubSpot-install → Dunamis-signup handoff.
  *
  * WIRE FORMAT

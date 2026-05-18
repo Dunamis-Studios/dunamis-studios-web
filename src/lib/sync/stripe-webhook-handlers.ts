@@ -1,3 +1,21 @@
+/**
+ * Stripe webhook router for Dunamis Sync. Lives in a separate file
+ * from src/lib/stripe-webhook.ts because Sync has its own state
+ * machine (customer record, trial expiry, encryption-key issuance,
+ * tombstones, grace cleanup) and must not fall through to the
+ * Debrief / Property Pulse handlers.
+ *
+ * Entry point: tryHandleSyncEvent is called first by the parent
+ * router. It returns true when the event was a Sync event (handled
+ * or intentionally skipped), false to indicate the parent should
+ * continue with non-Sync routing. Discrimination is by
+ * metadata.product === "dunamis-sync" set on every Sync-side
+ * checkout session and subscription.
+ *
+ * Related: src/lib/sync/types.ts (SyncCustomerState shape),
+ * src/lib/sync/auth.ts (exchange code issuance on first checkout),
+ * src/lib/sync/email.ts (trial-expiry + grace-cleanup notices).
+ */
 import type Stripe from "stripe";
 
 import {

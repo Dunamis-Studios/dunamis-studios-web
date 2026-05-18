@@ -13,6 +13,12 @@ this file. Tagging is intentionally deferred to Josh.
 
 ## [Unreleased]
 
+## [0.32.4] - 2026-05-18
+
+### Documentation
+- Pseudo-code-style comment pass across `src/lib/` (PR 1.1 of the codebase-wide comment lift). File-level TSDoc headers added to every module that lacked one; function-level docstrings added on exported helpers in `src/lib/utils.ts`, `password.ts`, `tokens.ts`, `api.ts`, `content.ts`, `accounts.ts`, `pricing.ts`, `types.ts`. Inline `// Step N:` narration added inside non-trivial function bodies in the core utilities. Files that already carried thorough header + function commentary (validation, rate-limit, ratelimit, redis, get-client-ip, truncate-ip, schema-freshness, kb, kb-rating, kb-feedback, the *-scoring / *-logic free-tool modules, every `email-*-report` template, the Atelier and HubSpot subdirs, the admin services, the verification-key service) were left unchanged per the "skip files already well-commented" rule.
+- No behavioral changes. Comment-only diff verified by typecheck (`tsc --noEmit`) and production build (`npm run build`).
+
 ## [0.32.3] - 2026-05-14
 
 ### Removed

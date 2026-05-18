@@ -1,3 +1,17 @@
+/**
+ * Server-only orchestrator that fires the HubSpot events accompanying
+ * every successful claim-link operation. Three entry points funnel
+ * through here so a single contact patch + event batch lands per
+ * claim, regardless of which surface initiated it: the signup-time
+ * implicit-claim, the non-UI /api/entitlements/claim POST, and the
+ * UI-driven Server Action at /account/[product]/[portalId]/claim.
+ *
+ * The "merged patch on first event" pattern below is load-bearing:
+ * trackEvents merges every event's additionalContactPatch into one
+ * upsert, so placing the full account + install patch on the first
+ * event guarantees account-level fields land regardless of which
+ * subset of dpa / addendum / app_installed actually fires.
+ */
 import "server-only";
 
 import { LEGAL_METADATA } from "@/content/legal/metadata";

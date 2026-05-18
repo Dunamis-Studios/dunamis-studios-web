@@ -1,3 +1,20 @@
+/**
+ * Low-level HubSpot API client. Owns the access-token resolution,
+ * authenticated fetch helper with exponential backoff + jitter on
+ * retryable 429 / 5xx responses, and the upsertContactByEmail +
+ * sendCustomEvent primitives every higher-level helper composes
+ * against.
+ *
+ * Server-only. The HUBSPOT_ACCESS_TOKEN must never reach the client
+ * bundle; this module imports "server-only" up front so a stray
+ * import from a client component fails the build loudly.
+ *
+ * Callers: src/lib/hubspot/index.ts (trackEvents pipeline),
+ * src/lib/hubspot/contact-properties.ts (deriver + increments),
+ * src/lib/hubspot/tickets.ts (Search API for verification-key
+ * ticket lookups), and every wire-up site (signup, claim-link,
+ * stripe-webhook).
+ */
 import "server-only";
 
 const HUBSPOT_API_BASE = "https://api.hubapi.com";

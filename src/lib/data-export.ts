@@ -1,3 +1,19 @@
+/**
+ * Account data export builder. Backs the customer-portal "Download
+ * everything you have on me" button and the admin-side equivalent
+ * action. Aggregates every Dunamis-side record keyed to one account:
+ * the Account itself, every active session, every entitlement (HubSpot
+ * products), every Atelier license + activation + EULA acceptance.
+ *
+ * HubSpot CRM data inside the customer's own portals is NOT mirrored
+ * into Dunamis storage, so it does not appear in this export. The
+ * /account/data-export page surfaces that explicitly so the customer
+ * understands what they're getting; admins relay the same disclaimer
+ * when a customer asks "is this everything?"
+ *
+ * Output is a stable v1 JSON shape; the format_version field on the
+ * envelope lets callers branch as the schema evolves.
+ */
 import { getAccountById, getEntitlementsForAccount } from "./accounts";
 import { listSessionsForAccount } from "./session";
 import {

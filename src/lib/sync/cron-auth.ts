@@ -1,3 +1,15 @@
+/**
+ * Vercel cron Bearer-token verifier. Every cron endpoint under
+ * /api/cron/sync/* calls authorizeCron at the top of the handler;
+ * a request missing or mismatching the CRON_SECRET token returns
+ * 401 / 403 before any cron work runs.
+ *
+ * Why: Vercel cron requests are routed to the same public URL as
+ * regular traffic. Without this gate, anyone who knew the cron path
+ * could trigger destructive cleanup (tombstone sweep, trial expiry,
+ * grace-period collapse). The CRON_SECRET env var is the trust
+ * boundary.
+ */
 import { NextResponse } from "next/server";
 
 import { apiError } from "../api";

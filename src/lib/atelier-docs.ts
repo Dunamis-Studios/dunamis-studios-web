@@ -1,3 +1,18 @@
+/**
+ * Atelier docs loader. Reads markdown from content/atelier-docs/
+ * with gray-matter frontmatter parsing, validates with Zod, and
+ * exposes a process-lifetime cache + sidebar navigation builder.
+ *
+ * Sister module to src/lib/kb.ts: the help center and the Atelier
+ * docs deliberately stay separate file systems and pipelines. The KB
+ * is shared infrastructure across products; Atelier docs are
+ * product-specific reference material that ships with the Atelier
+ * product surface. Frontmatter shape mirrors kb.ts so an editor who
+ * knows one knows the other.
+ *
+ * Related: src/lib/atelier-docs-render.ts (HTML rendering pipeline),
+ * scripts/build-atelier-docs-index.ts (browser-side search index).
+ */
 import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";

@@ -1,3 +1,19 @@
+/**
+ * Atelier Stripe pricing helpers. References Stripe Prices by
+ * `lookup_key` rather than hardcoded price IDs so the catalog can be
+ * edited in the Stripe dashboard without a code change.
+ *
+ * Used by /api/atelier/checkout (mints the Checkout Session against
+ * the canonical perpetual price) and by the webhook handler in
+ * src/lib/stripe-webhook.ts (classifyAtelierPrice on the first line
+ * item of checkout.session.completed). Atelier ships a single SKU at
+ * launch; the constant + per-key cache is forward-compatible for a
+ * future second tier or upgrade SKU.
+ *
+ * Per-invocation cache: Vercel lambdas reuse the cache within a single
+ * cold-start. Across invocations the cache resets, so a Stripe-side
+ * price edit propagates without a deploy.
+ */
 import type Stripe from "stripe";
 
 import { stripe } from "./stripe";

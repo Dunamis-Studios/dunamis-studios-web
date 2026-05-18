@@ -1,3 +1,20 @@
+/**
+ * CRUD helpers for the Sync customer-state record. Each customer's
+ * row tracks subscription status, trial expiry, encryption-key
+ * material, device pairs, and the per-product device-id mappings.
+ *
+ * The store keys off the Stripe customer id (cus_*) so the join key
+ * lives in Stripe, not in a duplicated identity table here. The
+ * accountToCustomer reverse index lets session-cookie routes (the
+ * /account/sync portal page, data export, account delete) resolve
+ * their caller's customer row without scanning.
+ *
+ * Related: src/lib/sync/redis-keys.ts (key factory),
+ * src/lib/sync/types.ts (record shape), src/lib/sync/auth.ts
+ * (Bearer-token issuance against the same customer id),
+ * src/lib/sync/stripe-webhook-handlers.ts (the writer that
+ * maintains the customer row from Stripe events).
+ */
 import { redis } from "../redis";
 import { SYNC_KEY } from "./redis-keys";
 import type { SyncCustomerState, SyncStatus } from "./types";

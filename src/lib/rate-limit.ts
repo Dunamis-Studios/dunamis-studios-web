@@ -1,3 +1,20 @@
+/**
+ * Legacy fixed-window rate-limit helper plus a permissive client-IP
+ * extractor for routes that haven't migrated to the Upstash
+ * sliding-window limiter in src/lib/ratelimit.ts.
+ *
+ * The fixed-window implementation here uses Redis INCR + EXPIRE: simple,
+ * cheap, and good enough for low-cardinality routes. The
+ * sliding-window limiter (./ratelimit.ts) is preferred for new public
+ * endpoints because its accounting is smoother across bucket
+ * boundaries. Keep this file thin: extend ratelimit.ts when adding a
+ * new limiter rather than adding more buckets here.
+ *
+ * The clientIp() helper here intentionally trusts x-real-ip first
+ * (Vercel-set, not client-controllable) and then takes the LAST entry
+ * of x-forwarded-for to defeat the well-known XFF spoof. See the
+ * function-level docstring for the full rationale.
+ */
 import { redis, KEY } from "./redis";
 
 interface RateLimitResult {

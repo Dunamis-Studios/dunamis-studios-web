@@ -1,3 +1,20 @@
+/**
+ * Server-side persistence for "customer accepted Atelier EULA version
+ * X at moment T" events. Append-only: a re-acceptance creates a new
+ * record alongside the prior one rather than mutating it, so the
+ * audit trail tells the full consent story.
+ *
+ * The Atelier desktop's local SQLite mirror is a UX cache only. The
+ * record persisted here, including the verbatim rendered EULA text
+ * stored once at acceptance time, is what we would cite in any future
+ * enforcement or dispute. The rendered_eula_text is immutable once
+ * written; recordEulaAcceptance preserves the original bytes on
+ * retry even when the caller passes a fresh render.
+ *
+ * Related: src/lib/eula-renderer.ts (canonical template loader,
+ * version source of truth), src/lib/atelier-content.ts (the public
+ * EULA copy this template generates).
+ */
 import { redis, KEY } from "./redis";
 import { loadAtelierEulaTemplate } from "./eula-renderer";
 

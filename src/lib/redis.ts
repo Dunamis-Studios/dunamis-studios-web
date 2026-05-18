@@ -1,3 +1,22 @@
+/**
+ * Shared Upstash Redis client and the canonical KEY factory for every
+ * Redis namespace the site reads or writes.
+ *
+ * Every key consumed by this codebase MUST flow through the KEY factory
+ * here. That keeps the wire-level namespace single-sourced, makes
+ * cross-app coupling explicit (Property Pulse and Debrief share this
+ * instance under the `dunamis:*` prefix), and gives a grep target for
+ * any future schema rename.
+ *
+ * The instance is lazy: redis() is a no-op until the first call, then
+ * caches. Throws explicitly when the env vars are missing so a misconfig
+ * fails at the first Redis access rather than silently returning null.
+ *
+ * Cross-app cohabitation rules: the dunamis:entitlement:* namespace is
+ * shared with the Property Pulse and Debrief server repos and is the
+ * canonical entitlement record. Renaming any of those keys requires a
+ * coordinated PR across all three repos plus a data migration.
+ */
 import { Redis } from "@upstash/redis";
 
 /**

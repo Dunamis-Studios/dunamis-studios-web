@@ -1,3 +1,15 @@
+/**
+ * HubSpot ticket-search helpers used by the admin Verification Keys
+ * panel at /admin/customers/[account_id]. Resolves a Dunamis account
+ * email to its tickets and pulls the identity_verification_reference
+ * the customer submitted on the support form, so a support agent can
+ * see at a glance which key the customer typed and whether it
+ * matches a current-window key.
+ *
+ * Cached 5 minutes in Redis under dunamis:admin-verification-key-tickets:
+ * The Refresh button on the admin page DELs the cache to force a
+ * fresh fetch from HubSpot's Search API.
+ */
 import "server-only";
 
 import { hubspotFetch, HubSpotApiError } from "./client";

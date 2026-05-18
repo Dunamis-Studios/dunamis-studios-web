@@ -1,3 +1,18 @@
+/**
+ * Markdown to HTML pipeline for the help-center (kb) article body.
+ * Standard remark → rehype chain plus a small accessibility patch
+ * for GFM task lists.
+ *
+ * Sister to src/lib/atelier-docs-render.ts, which has the same
+ * shape plus an Atelier-specific doc:slug rewriter. The two
+ * pipelines intentionally stay separate so help-center conventions
+ * (no doc:slug shorthand, no Atelier-only headers) and Atelier docs
+ * conventions can evolve without coupling.
+ *
+ * Plugin chain: remark-parse → remark-gfm → remark-rehype with
+ * allowDangerousHtml:false → rehype-slug → rehype-autolink-headings
+ * → rehype-highlight → rehypeTaskListLabels → rehype-stringify.
+ */
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";

@@ -1,9 +1,24 @@
+/**
+ * Persistence layer for long-form marketing content (guides + articles).
+ *
+ * Posts live in Redis as JSON blobs keyed by slug, with a parallel
+ * sorted-set index per content type ordered by publishedAt (or
+ * createdAt for drafts). The admin /admin/content surfaces, the public
+ * /build-services/articles and /build-services/guides pages, and the
+ * KB cross-link helpers all funnel through the small CRUD surface
+ * exported here.
+ *
+ * Related: src/lib/redis-keys.ts (KEY.guide / KEY.article namespacing),
+ * src/lib/types.ts (PRODUCT_META + ProductCatalogSlug for related
+ * products), src/components/admin/post-editor.tsx (admin UI).
+ */
 import { redis, KEY } from "./redis";
 import {
   PRODUCT_CATALOG_SLUGS,
   type ProductCatalogSlug,
 } from "./types";
 
+/** Discriminator for the two long-form content types stored here. */
 export type ContentType = "guide" | "article";
 
 /**
@@ -67,14 +82,25 @@ export interface Post {
   relatedProducts?: ProductCatalogSlug[];
 }
 
+/** Single-key resolver. Picks the right KEY.* helper for the type. */
 function keyFor(type: ContentType, slug: string): string {
   return type === "guide" ? KEY.guide(slug) : KEY.article(slug);
 }
 
+/** Sorted-set index key resolver. One index per content type. */
 function indexKey(type: ContentType): string {
   return type === "guide" ? KEY.guidesIndex : KEY.articlesIndex;
 }
 
+/**
+ * Read a single post from Redis. Returns null when the slug isn't
+ * registered (admin deletes, never-published drafts viewed from a
+ * stale URL, etc.) so callers can fall through to notFound().
+ *
+ * @param type - "guide" or "article" content type.
+ * @param slug - URL-safe identifier (kebab-case).
+ * @returns The full Post record or null if missing.
+ */
 export async function getPost(
   type: ContentType,
   slug: string,
@@ -83,6 +109,15 @@ export async function getPost(
   return r.get<Post>(keyFor(type, slug));
 }
 
+/**
+ * Upsert a post and refresh its index entry. The index score is the
+ * publishedAt timestamp when set, otherwise createdAt; that lets the
+ * default listPosts() ordering surface published-newest-first while
+ * still tracking drafts for the admin includeDrafts flag.
+ *
+ * @param type - "guide" or "article" content type.
+ * @param post - Full Post record. Slug is the index member.
+ */
 export async function savePost(type: ContentType, post: Post): Promise<void> {
   const r = redis();
   await r.set(keyFor(type, post.slug), post);
@@ -90,6 +125,16 @@ export async function savePost(type: ContentType, post: Post): Promise<void> {
   await r.zadd(indexKey(type), { score, member: post.slug });
 }
 
+/**
+ * Remove a post and its index entry in lockstep. Both deletes are
+ * issued; a partial failure leaves a stale index pointing at a
+ * missing key, which listPosts handles by skipping. No transaction
+ * wrapper because admin-side editorial deletes are infrequent and a
+ * stale index entry self-heals on the next listPosts call.
+ *
+ * @param type - "guide" or "article" content type.
+ * @param slug - The slug of the post to delete.
+ */
 export async function deletePost(
   type: ContentType,
   slug: string,
@@ -99,17 +144,32 @@ export async function deletePost(
   await r.zrem(indexKey(type), slug);
 }
 
+/**
+ * List every post of the given type, ordered newest first by index
+ * score. Skips drafts unless includeDrafts is set (admin views).
+ * Self-heals stale index entries: a slug in the index without a
+ * matching key value (deleted out of band, half-completed delete) is
+ * skipped rather than throwing.
+ *
+ * @param type - "guide" or "article" content type.
+ * @param opts.includeDrafts - When true, drafts are included in the
+ *                              result. Admin surfaces only.
+ * @returns Array of Post records sorted by score descending.
+ */
 export async function listPosts(
   type: ContentType,
   opts: { includeDrafts: boolean } = { includeDrafts: false },
 ): Promise<Post[]> {
   const r = redis();
-  // Get all slugs from the sorted set, newest first
+  // Step 1: pull every slug from the index in newest-first order.
   const slugs = await r.zrange<string[]>(indexKey(type), 0, -1, { rev: true });
   if (!slugs || slugs.length === 0) return [];
 
+  // Step 2: hydrate each slug into its Post record. Sequential rather
+  // than parallel because admin lists are small enough that the
+  // sequential cost is negligible and the resulting code stays simple.
   const posts: Post[] = [];
-  for (const slug of slugs) {
+  for (const slug of slugs) { // claude-code:allow-await-in-loop
     const post = await r.get<Post>(keyFor(type, slug));
     if (!post) continue;
     if (!opts.includeDrafts && post.status !== "published") continue;
@@ -193,6 +253,18 @@ export function normalizeRelatedProducts(
   return cleaned.length > 0 ? cleaned : undefined;
 }
 
+/**
+ * Generate a slug that doesn't collide with an existing post.
+ *
+ * Returns the base slug unchanged when the namespace is clear,
+ * otherwise appends -2, -3, -4 etc. until an unused candidate is
+ * found. Called by the admin create flow so a second "How to X"
+ * article auto-becomes "how-to-x-2" instead of overwriting the first.
+ *
+ * @param type - "guide" or "article" content type.
+ * @param baseSlug - The slugified title the editor first proposed.
+ * @returns A unique slug (possibly the input unchanged).
+ */
 export async function generateUniqueSlug(
   type: ContentType,
   baseSlug: string,
@@ -200,7 +272,9 @@ export async function generateUniqueSlug(
   const r = redis();
   let candidate = baseSlug;
   let suffix = 2;
-  while (true) {
+  // Sequential probing: each iteration depends on the prior candidate
+  // being unavailable, so Promise.all parallelization does not apply.
+  while (true) { // claude-code:allow-await-in-loop
     const existing = await r.exists(keyFor(type, candidate));
     if (!existing) return candidate;
     candidate = `${baseSlug}-${suffix}`;

@@ -1,3 +1,22 @@
+/**
+ * Ed25519 license issuance + persistence for Atelier.
+ *
+ * The wire format and signing math are pinned to match the
+ * generate-license.py reference implementation in the Atelier repo
+ * AND the Rust verifier in src-tauri/.../verify.rs. Drift on any of
+ * the three sides breaks every customer install on the next launch,
+ * so changes here must land in all three repos as one coordinated
+ * deploy.
+ *
+ * Hot path: the Stripe webhook handler calls signAndPersistLicense
+ * on a paid Atelier checkout. The signed payload is the byte stream
+ * the customer receives; the persistence layer mints the three Redis
+ * indexes (by lid, by email-hash, by account-id) so admin tooling
+ * and the customer portal can resolve the license either direction.
+ *
+ * Related: src/lib/atelier-activation.ts (slot accounting),
+ * src/lib/email-atelier-license.ts (delivery email).
+ */
 import { createPrivateKey, randomUUID, sign } from "node:crypto";
 
 import { redis, KEY } from "./redis";
