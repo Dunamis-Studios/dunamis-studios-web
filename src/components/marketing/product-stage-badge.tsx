@@ -1,3 +1,10 @@
+/**
+ * Inline ProductStage indicator. Maps the four catalog stages (beta,
+ * coming-soon, building, exploring) to label + badge variant so the
+ * marketplace cards and product page headers all read the same.
+ * Single source of truth so adding a new stage means updating both
+ * maps here and ProductStage in src/lib/types.ts.
+ */
 import { Badge } from "@/components/ui/badge";
 import type { ProductStage } from "@/lib/types";
 

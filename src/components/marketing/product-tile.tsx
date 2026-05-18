@@ -1,3 +1,11 @@
+/**
+ * Compact product tile used on the marketing homepage and other
+ * "browse our things" surfaces. Three accent options (pulse, brief,
+ * muted) drive a soft gradient at the top of the tile so the visual
+ * grid still distinguishes products even without their full color
+ * branding. The comingSoon flag dims interactivity but keeps the
+ * tile rendered so the lineup looks intentionally populated.
+ */
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
