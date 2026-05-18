@@ -1,3 +1,15 @@
+/**
+ * Shared chrome for the auth route group (signup, login, forgot/reset
+ * password, verify-email). Replaces the marketing nav with a stripped
+ * shell: brand logo plus theme toggle on top, centered form card in
+ * the middle, terms/privacy links pinned to the bottom.
+ *
+ * The radial brand-color gradient at the top is decorative only and
+ * sits behind the content via aria-hidden + pointer-events-none so it
+ * never blocks form interactions or shows up in the accessibility tree.
+ * Pages inside this group render only the card body; the page chrome
+ * lives entirely here so every auth surface stays visually identical.
+ */
 import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
 import { ThemeToggle } from "@/components/theme-toggle";

@@ -1,3 +1,15 @@
+/**
+ * /admin/content: content management dashboard for marketing
+ * long-form (guides) and blog-style posts (articles). Loads both
+ * lists in parallel including drafts (the admin needs to see what's
+ * in flight) and renders them in two stacked tables with edit,
+ * preview, and delete actions per row, plus a "New <kind>" CTA
+ * pointing at the create routes.
+ *
+ * Note: this is distinct from the help-center KB articles under
+ * content/kb/, which are file-system markdown sources not editable
+ * here. KB content updates happen via PR + the kb-index prebuild.
+ */
 import Link from "next/link";
 import { listPosts } from "@/lib/content";
 import type { Post } from "@/lib/content";

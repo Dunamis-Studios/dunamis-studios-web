@@ -1,3 +1,14 @@
+/**
+ * Auth gate plus chrome for every /account/* route. Resolves the
+ * session cookie, redirects to /login when it is missing (or when
+ * Redis is unreachable, since that breaks our ability to confirm
+ * the session), and otherwise renders the AccountShell sidebar +
+ * unverified-email banner around the child route.
+ *
+ * Force-dynamic is required: this layout reads cookies on every
+ * request, which Next.js would otherwise treat as a build-time
+ * error under static prerendering.
+ */
 import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/lib/session";
 import { AccountShell } from "@/components/account/account-shell";

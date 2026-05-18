@@ -1,3 +1,12 @@
+/**
+ * Forgot-password client island. POSTs the entered email to
+ * /api/auth/forgot-password and swaps the form for a generic success
+ * message whether the address resolves to an account or not. The
+ * intentional ambiguity in the success copy ("if an account exists")
+ * is the user-visible half of the no-account-enumeration contract;
+ * the server endpoint upholds the other half by responding 200 in
+ * both cases.
+ */
 "use client";
 
 import * as React from "react";

@@ -1,3 +1,15 @@
+/**
+ * /account/settings: composite settings page assembled from per-area
+ * client components (profile, brand logo upload, password change,
+ * active sessions list, data export, danger zone). The server-side
+ * job here is narrow: resolve the session, look up the active
+ * sessions list once for the SessionsSection, and pass each
+ * subsection its slice of the account record.
+ *
+ * The danger zone owns account-deletion flow; data export owns the
+ * GDPR-style data download. Both live in components/account/* so
+ * the page itself stays readable.
+ */
 import type { Metadata } from "next";
 import {
   DEFAULT_SESSION_LIFETIME_DAYS,

@@ -1,3 +1,15 @@
+/**
+ * /account dashboard root. Pulls two independent indexes (HubSpot
+ * entitlements keyed by account id, Atelier perpetual licenses keyed
+ * by account id with an email-index fallback for pre-migration rows)
+ * and renders them as two separate sections. An empty state surfaces
+ * only when the customer owns neither, and points them at both
+ * marketplace listings as plausible first purchases.
+ *
+ * The layout above this route has already enforced auth; the null
+ * return after getCurrentSession() is purely a TypeScript narrowing
+ * for the non-null `s` used below.
+ */
 import type { Metadata } from "next";
 import { Inbox } from "lucide-react";
 import { getCurrentSession } from "@/lib/session";

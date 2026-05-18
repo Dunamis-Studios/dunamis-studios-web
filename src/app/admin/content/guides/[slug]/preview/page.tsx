@@ -1,3 +1,10 @@
+/**
+ * /admin/content/guides/[slug]/preview: faithful preview of what the
+ * public guide route will render once published. Slimmer than the
+ * article preview because guides do not currently support the FAQ /
+ * comparison table / related products sections, just title plus
+ * cover image plus body HTML.
+ */
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Container, Section } from "@/components/ui/primitives";

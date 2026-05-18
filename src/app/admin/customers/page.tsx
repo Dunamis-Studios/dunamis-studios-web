@@ -1,3 +1,10 @@
+/**
+ * /admin/customers: customer search and "recent customers" landing
+ * page. Server-side fetches the 10 most recent customer accounts so
+ * the surface isn't blank on first load, then defers all interactive
+ * search behavior to CustomersSearchClient. Selecting a result
+ * routes to /admin/customers/[account_id] for the per-account view.
+ */
 import { redirect } from "next/navigation";
 
 import { getCurrentAdminSession } from "@/lib/session";

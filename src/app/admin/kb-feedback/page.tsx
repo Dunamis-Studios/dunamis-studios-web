@@ -1,3 +1,15 @@
+/**
+ * /admin/kb-feedback: thumbs aggregation across every published help-
+ * center article. Pulls counts directly from the Redis HSETs the
+ * public rating route writes to, derives a per-article down-rate,
+ * sorts highest-down-rate first, and surfaces summary tiles plus a
+ * full table. Articles with zero votes are still listed so the table
+ * reflects the entire content surface, not just rated entries.
+ *
+ * Only surface that exposes raw vote counts; the public-facing
+ * "Most found this helpful" badge derives a boolean via
+ * src/lib/kb-rating.ts and never leaks the numbers to the HTML.
+ */
 import Link from "next/link";
 import { redirect } from "next/navigation";
 

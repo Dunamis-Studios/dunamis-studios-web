@@ -1,3 +1,20 @@
+/**
+ * /admin/customers/[account_id]: one-page deep-dive for a single
+ * customer account. Aggregates seven sections side-by-side:
+ *   - header with name / company / created / last-login plus the
+ *     CustomerActionsMenu (profile edit, password reset email, etc.)
+ *   - Licenses: every Atelier license including refunded / revoked
+ *   - Activations: device slots per license with deactivate action
+ *   - EULA acceptances: signed audit trail of every accepted EULA
+ *   - Data exports: placeholder until export logging lands
+ *   - Verification keys: HubSpot ticket cross-check, isolated in a
+ *     try/catch so a HubSpot outage degrades that section only
+ *   - Activity log: admin actions taken against this account with
+ *     pagination via ActivityLogLoader
+ *
+ * loadCustomerDetail bundles the Redis reads into a single shape;
+ * the page itself stays presentational.
+ */
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 

@@ -1,3 +1,15 @@
+/**
+ * Signup form client island. POSTs to /api/auth/signup with the form
+ * fields plus, if present, the install-handoff claim and signed state
+ * token forwarded from a HubSpot app. Handles three branches: plain
+ * signup, claim succeeded (route to product-specific redirect), and
+ * claim failed but account created (route to /account with toast).
+ *
+ * The product addendum link is selected from the claim prefix
+ * (property-pulse vs debrief) so the legal copy matches what the
+ * user is actually installing. Claim parsing itself happens in the
+ * parent signup-card.tsx, this form only forwards the strings.
+ */
 "use client";
 
 import * as React from "react";

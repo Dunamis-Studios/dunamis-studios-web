@@ -1,3 +1,11 @@
+/**
+ * Route entry for /reset-password/[token]. The token is the opaque
+ * id from the reset email; it stays in the URL path and is forwarded
+ * to ResetForm where the actual POST happens. The page itself does
+ * no token validation since giving the client distinct "invalid" /
+ * "expired" / "consumed" states up front would leak whether a token
+ * exists at all. Marked noindex + nofollow.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AuthCard } from "@/components/auth/auth-card";

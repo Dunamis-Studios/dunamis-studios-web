@@ -1,3 +1,14 @@
+/**
+ * /admin/content/articles/[slug]/preview: faithful preview of what
+ * the public /custom-development/articles/[slug] route will render
+ * once the article is published. Loads the persisted post (draft or
+ * published) and applies the same section ordering and FAQPage
+ * JSON-LD payload as the public route so editors can confirm the
+ * final shape before flipping status to published.
+ *
+ * Cover image, FAQ, comparison table, and related-products sections
+ * all render conditionally, matching the public renderer.
+ */
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Container, Section } from "@/components/ui/primitives";

@@ -1,3 +1,16 @@
+/**
+ * Authenticated confirmation surface for the HubSpot-install →
+ * Dunamis-account claim handoff. Re-verifies the signed state token,
+ * portal id, entitlement existence, owner, and installer-email
+ * matchup on both the initial render and inside the server action
+ * that finalizes the link. On success, links the entitlement, stamps
+ * any newly-required DPA / Service Addendum consent versions, and
+ * fires the HubSpot terms_accepted + app_installed events before
+ * redirecting to the per-portal detail page.
+ *
+ * See ClaimPage docstring below for query param contract and the
+ * handleLink server action for the full link-attempt state machine.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";

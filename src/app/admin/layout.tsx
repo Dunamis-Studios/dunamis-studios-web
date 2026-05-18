@@ -1,3 +1,14 @@
+/**
+ * Two-gate auth wrapper for every /admin/* route. First requires a
+ * valid session (redirect to /login on miss or on Redis outage),
+ * then requires that session's account to also satisfy the admin
+ * check (Forbidden render on miss). Wraps approved routes in the
+ * admin chrome plus a timezone provider so timestamps across the
+ * admin tools render in the admin's saved preference.
+ *
+ * Force-dynamic for the same reason as the /account layout: this
+ * reads cookies on every request and cannot be prerendered.
+ */
 import { redirect } from "next/navigation";
 import { getCurrentSession, getCurrentAdminSession } from "@/lib/session";
 import { AdminHeader } from "@/components/admin/admin-header";

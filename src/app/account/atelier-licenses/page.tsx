@@ -1,3 +1,16 @@
+/**
+ * /account/atelier-licenses: per-customer view of every Atelier
+ * license they own and the activation slots each license has
+ * consumed. Server-side projects the raw license records plus their
+ * activations and EULA-acceptance audit trail into PortalLicense
+ * shapes, then hands them to AtelierLicensesPanel for interactive
+ * deactivate / rename actions.
+ *
+ * Listed under "atelier-licenses" rather than mixed into the main
+ * dashboard so customers with multiple licenses get a dedicated
+ * surface; the dashboard preview links here for "manage all".
+ * Mirrors the in-app Settings -> License screen inside Atelier.
+ */
 import type { Metadata } from "next";
 import { KeyRound } from "lucide-react";
 import { getCurrentSession } from "@/lib/session";
