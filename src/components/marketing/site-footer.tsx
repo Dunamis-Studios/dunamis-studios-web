@@ -82,7 +82,7 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-2.5 text-sm">
             <li>
               <Link
-                href="/build-services/products/atelier"
+                href="/marketplace/atelier"
                 className="text-[var(--fg-muted)] hover:text-[var(--color-atelier-600)] dark:hover:text-[var(--color-atelier-400)]"
               >
                 Atelier
