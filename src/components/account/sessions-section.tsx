@@ -1,3 +1,11 @@
+/**
+ * Sessions section on /account. Lists the customer's active sessions
+ * (one row per device with user-agent fingerprint, IP, and created
+ * time), with a "Sign out everywhere else" button that destroys
+ * every session except the current one. Also exposes the
+ * session-lifetime preference (1 / 3 / 7 days) which takes effect on
+ * the next sign-in rather than the current session.
+ */
 "use client";
 
 import * as React from "react";

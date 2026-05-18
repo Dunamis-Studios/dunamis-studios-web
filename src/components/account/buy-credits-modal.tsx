@@ -1,3 +1,15 @@
+/**
+ * Debrief credit-pack purchase modal. Four packs (Small / Medium /
+ * Large / Bulk) defined in src/lib/pricing.ts; the customer picks
+ * one and pays via Stripe Elements. Distinct from subscribe-modal,
+ * this one creates a PaymentIntent (one-time) rather than a
+ * SubscriptionIntent.
+ *
+ * Same poll-on-success pattern: the webhook stamps credits into
+ * the addon bucket on the entitlement; the modal polls
+ * /api/entitlement until the bucket reflects the purchase, then
+ * closes.
+ */
 "use client";
 
 import * as React from "react";

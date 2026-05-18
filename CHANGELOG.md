@@ -13,6 +13,13 @@ this file. Tagging is intentionally deferred to Josh.
 
 ## [Unreleased]
 
+## [0.32.6] - 2026-05-18
+
+### Documentation
+- Pseudo-code-style comment pass across the remaining `src/components/` subtrees (PR 1.3 of the codebase-wide comment lift). File-level TSDoc headers added to every `src/components/account/` component (account-shell, section-card, profile/password/sessions/logo/data-export sections, verify-banner, danger-zone, entitlements-table, atelier-licenses-panel, subscribe-modal, buy-credits-modal, cancel-subscription-block, upgrade-button, buy-credits-button) and `src/components/admin/` component (post-editor, tiptap-editor, seo-sidebar, listicle-editors, delete-post-button, admin-header, customers-search-client, licenses-admin-client, license-row-actions, customer-actions-menu, confirmation-modal) that lacked one. Smaller subdirs auth/, marketplace/, help/, plus the root theme-provider, theme-toggle, and support-form also got headers.
+- Files that already had thorough commentary (json-ld, brand/logo, anchor-scroll-on-mount, verification-key-widget, turnstile-widget, hubspot-loader, manage-billing-button, buy-property-pulse-button, atelier-licenses-section, activation-row-actions, copyable-id, local-time, activity-log-loader, admin-timezone-provider, account-id-copy-button, refresh-verification-keys-button) were left unchanged.
+- No behavioral changes. Comment-only diff verified by typecheck (`tsc --noEmit`) and production build (`npm run build`).
+
 ## [0.32.5] - 2026-05-18
 
 ### Documentation

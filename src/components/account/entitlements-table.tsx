@@ -1,3 +1,14 @@
+/**
+ * HubSpot entitlements table rendered at the top of /account. Lists
+ * every (product, portalId) pair the customer holds, with status
+ * badge, tier, and a link into the entitlement detail page.
+ * Includes a search input that filters by portal id / domain
+ * inline so a customer with many portals can jump to the one they
+ * care about.
+ *
+ * Distinct from atelier-licenses-panel.tsx which renders the
+ * Atelier perpetual licenses (no portal, no tier).
+ */
 "use client";
 
 import Link from "next/link";

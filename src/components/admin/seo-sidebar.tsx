@@ -1,3 +1,10 @@
+/**
+ * SEO checks side panel inside the post editor. Runs the full battery
+ * of editorial checks from src/lib/seo-checks.ts against the live
+ * draft and renders one colored row per check (pass / warn / fail /
+ * skip) plus the rolled-up score and reading-time estimate. Updates
+ * inline as the editor types, no save round-trip.
+ */
 "use client";
 
 import * as React from "react";

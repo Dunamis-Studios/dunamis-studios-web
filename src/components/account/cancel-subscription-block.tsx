@@ -1,3 +1,11 @@
+/**
+ * Cancel-at-period-end block on the Debrief entitlement detail page.
+ * Renders a confirmation dialog (the customer must type CANCEL to
+ * confirm) and then posts to /api/cancel-subscription, which sets
+ * cancel_at_period_end on the Stripe subscription. Entitlement
+ * state changes after the next billing cycle ends; until then
+ * the customer keeps full access.
+ */
 "use client";
 
 import * as React from "react";

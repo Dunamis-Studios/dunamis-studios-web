@@ -1,3 +1,11 @@
+/**
+ * Standard card wrapper for /account/* section blocks (Profile,
+ * Password, Sessions, Logo, etc.). Title + optional description
+ * appear as the card header; children render in the body. The
+ * `danger` flag swaps to the destructive accent border so the
+ * Delete Account block reads as visually distinct from routine
+ * settings.
+ */
 import * as React from "react";
 import { cn } from "@/lib/utils";
 

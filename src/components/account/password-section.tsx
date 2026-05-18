@@ -1,3 +1,11 @@
+/**
+ * Password-change section on the /account page. Three-field
+ * surface (current password + new password + confirm), validated
+ * against changePasswordSchema (src/lib/validation.ts) before
+ * posting to /api/auth/change-password. The route enforces the
+ * same constraints server-side and destroys all other sessions on
+ * success so a stolen credential can't survive a rotation.
+ */
 "use client";
 
 import * as React from "react";

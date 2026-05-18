@@ -1,3 +1,12 @@
+/**
+ * Light / dark theme provider. Reads the visitor's preference from
+ * localStorage on mount, falls back to system preference via
+ * prefers-color-scheme, and sets the `data-theme` attribute on
+ * <html> so the CSS variable cascade picks up the right palette.
+ *
+ * Public API: ThemeProvider (mount once in the root layout) and
+ * useTheme (read current theme + toggle from any client component).
+ */
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";

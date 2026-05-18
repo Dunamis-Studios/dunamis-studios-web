@@ -1,3 +1,20 @@
+/**
+ * Detail-page shell for one marketplace product. Renders the hero
+ * (eyebrow, name, tagline, price card with intentionally non-functional
+ * Buy button), the prose sections from product.sections, the download
+ * bundle list, the system requirements list, the optional sync addon
+ * block, and a docs link footer.
+ *
+ * The Buy button is fully styled but has no onClick / href / form
+ * action by design; Stripe wiring is deferred until the customer
+ * portal account gate ships. Atelier currently sells via the
+ * separate atelier-checkout-button on the /marketplace/atelier
+ * surface mounted in this shell.
+ *
+ * Wrapped in `.lane-atelier` so var(--accent) resolves to the
+ * Atelier oxblood. When future marketplace products ship with their
+ * own lane wrapping, swap the wrapper or parameterize it.
+ */
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Container, Section } from "@/components/ui/primitives";

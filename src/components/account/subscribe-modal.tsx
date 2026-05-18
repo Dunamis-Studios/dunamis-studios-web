@@ -1,3 +1,15 @@
+/**
+ * Debrief subscribe modal. Three-tier picker (Starter / Pro /
+ * Enterprise) on top of Stripe Elements payment collection. Opens
+ * from UpgradeButton or from a "Pick a plan" CTA on the entitlement
+ * detail page.
+ *
+ * Flow: tier select, POST /api/subscribe to create a Stripe
+ * SubscriptionIntent, Stripe Elements collects card info, confirm
+ * payment, webhook stamps the entitlement, modal polls
+ * /api/entitlement for the active status flip then closes. See
+ * src/lib/poll.ts for the polling helper.
+ */
 "use client";
 
 import * as React from "react";

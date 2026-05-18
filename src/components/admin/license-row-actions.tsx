@@ -1,3 +1,17 @@
+/**
+ * Per-row action menu on the /admin/licenses table. Three actions
+ * funnel through the dropdown:
+ *
+ *   - Resend license email (re-mints the email body and dispatches
+ *     via sendAtelierLicenseEmail).
+ *   - Revoke (opens a ConfirmationModal that requires mode +
+ *     reason and posts to /api/admin/licenses/[lid]/revoke).
+ *   - View receipt (deep-links into Stripe customer portal for the
+ *     bound payment intent).
+ *
+ * Each action calls router.refresh() on success so the admin sees
+ * status changes without reloading.
+ */
 "use client";
 
 import * as React from "react";

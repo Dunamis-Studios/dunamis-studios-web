@@ -1,3 +1,10 @@
+/**
+ * Bordered card layout used by every /signup, /login,
+ * /forgot-password, /reset-password page. Renders the title +
+ * optional description in the header, the form in the body, and a
+ * small footer slot for the "Already have an account?" cross-link.
+ * Pure layout shell, no auth logic.
+ */
 import * as React from "react";
 
 interface AuthCardProps {

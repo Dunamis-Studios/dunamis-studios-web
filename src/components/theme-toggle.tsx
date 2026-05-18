@@ -1,3 +1,10 @@
+/**
+ * Light / dark toggle button. Reads the current theme from
+ * ThemeProvider's context and flips between values on click.
+ * Rendered in the site nav (mobile + desktop), the account shell,
+ * and the admin header so the toggle is always one click away
+ * regardless of where the visitor is.
+ */
 "use client";
 
 import { Moon, Sun } from "lucide-react";

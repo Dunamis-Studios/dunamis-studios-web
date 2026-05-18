@@ -1,3 +1,13 @@
+/**
+ * Profile editing section on the /account page. Renders the first /
+ * last name, email, company name, and time zone fields, with inline
+ * Zod validation against profileUpdateSchema (src/lib/validation.ts)
+ * before posting to /api/account.
+ *
+ * Email rotation is handled by the same endpoint; the EmailVerified
+ * badge auto-clears when the email field is dirty so the user knows
+ * a new verification email will be sent on save.
+ */
 "use client";
 
 import * as React from "react";

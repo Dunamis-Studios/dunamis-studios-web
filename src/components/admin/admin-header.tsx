@@ -1,3 +1,11 @@
+/**
+ * Top-of-page header for every /admin/* route. Logo on the left,
+ * top-level admin nav (Customers, Licenses, Content, etc.) in the
+ * center, theme toggle and admin avatar menu on the right.
+ *
+ * Pathname-based active-state highlights the section the admin is
+ * currently in so wayfinding inside the admin shell stays obvious.
+ */
 "use client";
 
 import * as React from "react";
