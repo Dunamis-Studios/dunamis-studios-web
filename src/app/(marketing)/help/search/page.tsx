@@ -1,3 +1,14 @@
+/**
+ * Help center search at /help/search. Mounts the SearchBox client
+ * which runs fuzzy search against /kb-index.json (built at
+ * `prebuild` by scripts/build-kb-index.ts). Pre-populates the input
+ * from the `q` query param so a deep link from the homepage search
+ * preserves the term.
+ *
+ * Metadata is robots:noindex because search-result URLs are
+ * dynamic and the canonical entry points are the underlying
+ * articles.
+ */
 import type { Metadata } from "next";
 import { Container, Section, PageHeader } from "@/components/ui/primitives";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
