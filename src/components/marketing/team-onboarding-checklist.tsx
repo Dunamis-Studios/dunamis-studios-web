@@ -1,3 +1,13 @@
+/**
+ * HubSpot Team Onboarding Checklist free tool. Lives at
+ * /custom-development/tools/hubspot-team-onboarding-checklist.
+ * Role-aware scoring (admin / marketer / sales / cs / ops) across
+ * eight phases (access, concepts, role-specific, tools, process,
+ * integrations, reporting, adoption) that buckets a new team
+ * member's readiness into Ready / Mostly Ready / Gaps / Critical
+ * Gaps. Phase logic lives in
+ * src/lib/team-onboarding-checklist-logic.ts.
+ */
 "use client";
 
 import * as React from "react";

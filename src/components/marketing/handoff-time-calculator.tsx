@@ -1,3 +1,14 @@
+/**
+ * Handoff Time Calculator free tool. Lives at
+ * /custom-development/tools/handoff-time-calculator. Estimates the
+ * dollar value of time spent on internal handoffs (deal -> CS,
+ * marketing -> sales, etc.) based on team size, average handoff
+ * count per week, and average minutes per handoff. Used as a Debrief
+ * adjacent lead-capture surface. Same shape as the other free tools:
+ * live preview client-side, POST to /api/tools/handoff-time on
+ * submit, lead persisted to Redis + mirrored to HubSpot + email
+ * report.
+ */
 "use client";
 
 import * as React from "react";

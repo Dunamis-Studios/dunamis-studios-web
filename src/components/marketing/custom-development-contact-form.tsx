@@ -1,3 +1,19 @@
+/**
+ * Custom Development / Build Services inquiry form. Posts to
+ * /api/contact-submit, which validates against contactSubmitSchema
+ * (src/lib/validation.ts) and forwards verbatim to HubSpot form
+ * cfda52bd-4573-4e7e-9057-68d2aea2a10a in portal 20867488. Field
+ * names mirror the HubSpot property internal names so the route
+ * needs no translation layer.
+ *
+ * Two pickers (budget range, timeline) and a free-text "what are
+ * you trying to solve" field. The `source` prop is forwarded to
+ * HubSpot to segment leads by lane (custom-development vs
+ * build-services vs general) for RevOps reporting.
+ *
+ * Cloudflare Turnstile is required and gates the submit button until
+ * the challenge solves.
+ */
 "use client";
 
 import * as React from "react";

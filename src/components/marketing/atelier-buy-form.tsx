@@ -1,3 +1,15 @@
+/**
+ * Atelier launch-notification interest form. Atelier is in active
+ * development; this form is NOT a checkout. It collects first name,
+ * last name, email, optional business name, optional notes and POSTs
+ * to /api/atelier-buy-request which persists a Redis row and fires
+ * two transactional emails (admin notification + visitor
+ * confirmation).
+ *
+ * Distinct from atelier-checkout-button.tsx, which initiates the
+ * actual Stripe checkout for a signed-in customer. That button is
+ * gated by atelier-purchase-gate.tsx; this form has no gate.
+ */
 "use client";
 
 import * as React from "react";

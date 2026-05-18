@@ -1,3 +1,15 @@
+/**
+ * Tech Stack Cost Audit free tool. Lives at
+ * /custom-development/tools/tech-stack-cost-audit. Visitor adds
+ * tool rows (name, category, seats, monthly cost, utilization);
+ * the calculator surfaces total SaaS spend, license-waste estimate,
+ * category overlap, and consolidation opportunities. Benchmarks +
+ * categorization logic live in src/lib/tech-stack-cost-audit-logic.ts.
+ *
+ * Has an inline tool row editor with Add / Trash controls. The
+ * other free tools mostly use static fields, this one shapes its
+ * own data set.
+ */
 "use client";
 
 import * as React from "react";

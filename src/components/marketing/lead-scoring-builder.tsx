@@ -1,3 +1,15 @@
+/**
+ * Lead Scoring Builder free tool. Lives at
+ * /custom-development/tools/lead-scoring-builder. Visitor picks
+ * target buyer role, company size, sales cycle length, and a set
+ * of high-intent actions plus disqualifiers; the tool outputs a
+ * starter HubSpot lead-scoring model the visitor can paste straight
+ * into Marketing > Lead Scoring. Recommendation logic lives in
+ * src/lib/lead-scoring-logic.ts.
+ *
+ * Result block includes a Copy button for each rule so the visitor
+ * can move the model into HubSpot one rule at a time.
+ */
 "use client";
 
 import * as React from "react";

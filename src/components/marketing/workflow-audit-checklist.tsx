@@ -1,3 +1,13 @@
+/**
+ * Workflow Audit Checklist free tool. Lives at
+ * /custom-development/tools/workflow-audit-checklist. Eight-question
+ * scoring across ownership / conflict signals / audit cadence /
+ * incidents that buckets a portal's workflow posture. Inputs include
+ * total active workflows and HubSpot tier so the tool can compare
+ * against the per-tier published cap and flag approaching /
+ * critical utilization. Scoring lives in
+ * src/lib/workflow-audit-scoring.ts.
+ */
 "use client";
 
 import * as React from "react";
