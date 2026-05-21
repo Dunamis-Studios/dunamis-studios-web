@@ -1,3 +1,10 @@
+/**
+ * Bust the 5-minute Redis cache backing the Verification Keys
+ * section on the customer detail page. The client clicks Refresh,
+ * this endpoint deletes the cache, and the next server-render of
+ * the page repulls tickets from HubSpot Search. Read-only against
+ * HubSpot, so intentionally outside runAdminAction.
+ */
 import { NextResponse } from "next/server";
 
 import { apiError } from "@/lib/api";

@@ -1,3 +1,14 @@
+/**
+ * PATCH /api/account/profile: edit the signed-in customer's profile
+ * (name, email, company, time zone, logo URL). Email changes go
+ * through rotateAccountEmail to swap the email-to-id index in the
+ * same write, then flip emailVerified back to false and dispatch a
+ * fresh verification email.
+ *
+ * Optional fields use `undefined === leave alone` and `null === clear`
+ * semantics so partial updates from the settings form and the
+ * Atelier setup screen never clobber values the form didn't show.
+ */
 import { NextResponse } from "next/server";
 import { redis, KEY } from "@/lib/redis";
 import { profileUpdateSchema } from "@/lib/validation";

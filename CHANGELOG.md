@@ -13,6 +13,12 @@ this file. Tagging is intentionally deferred to Josh.
 
 ## [Unreleased]
 
+## [0.32.9] - 2026-05-21
+
+### Documentation
+- Pseudo-code-style comment pass across every API route handler under `src/app/api/` (PR 1.6 of the codebase-wide comment lift). 90+ route files modified across `auth/`, `account/`, `entitlements/`, `stripe/`, `kb/`, `og/`, `admin/`, `admin/customers/[account_id]/*`, `atelier/`, `sync/`, `sync/auth/`, `cron/`, `support/verification-key/`, `tools/`, and the misc lead-capture endpoints (atelier-buy-request, contact-submit, courses/signup, notify, support-submit). Headers describe the endpoint URL, auth model, side effects, and key contract decisions (anti-enumeration, idempotency, dual-auth modes, hash pinning, etc.). Files that already carried thorough function-level commentary received a short top-of-file pointer.
+- No behavioral changes. Comment-only diff verified by typecheck (`tsc --noEmit`) and production build (`npm run build`).
+
 ## [0.32.8] - 2026-05-18
 
 ### Documentation

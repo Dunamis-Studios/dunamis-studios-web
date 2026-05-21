@@ -1,3 +1,15 @@
+/**
+ * POST /api/auth/reset-password: consume a reset token, rotate the
+ * account password hash, invalidate every existing session for that
+ * account, then mint a fresh session for the caller. Token records
+ * carry an explicit expiresAt plus a 1-hour Redis TTL, both
+ * checked. Token is single-use; deleted on success and on the
+ * expired-but-present path.
+ *
+ * Wiping all sessions is intentional: if the password reset was
+ * triggered because credentials leaked, any attacker session is
+ * blown away along with the legitimate user's other devices.
+ */
 import { NextResponse } from "next/server";
 import { redis, KEY } from "@/lib/redis";
 import { resetPasswordSchema } from "@/lib/validation";

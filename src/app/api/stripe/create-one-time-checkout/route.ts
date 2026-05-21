@@ -1,3 +1,12 @@
+/**
+ * POST /api/stripe/create-one-time-checkout: Property Pulse license
+ * checkout. PP is flat $49 per portal with no recurring billing, so
+ * the flow uses Stripe-hosted Checkout (not the SetupIntent dance
+ * Debrief uses) and listens for checkout.session.completed on the
+ * webhook to flip the entitlement to Paid.
+ *
+ * See bodySchema docstring for the install-then-pay ownership guard.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiError, parseJson } from "@/lib/api";

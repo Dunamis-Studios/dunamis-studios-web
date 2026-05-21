@@ -1,3 +1,16 @@
+/**
+ * POST /api/stripe/webhook: Stripe webhook receiver. Verifies the
+ * signature against STRIPE_WEBHOOK_SECRET using the raw body, then
+ * hands the event to the shared handleStripeEvent dispatcher in
+ * @/lib/stripe-webhook (which owns the per-event-type fanout into
+ * entitlement and credit ledger mutations).
+ *
+ * Errors are returned generically: a failed signature check is a
+ * plain 400 because Stripe's own error strings can reveal which
+ * check failed and give a scanner probe feedback. A handler throw
+ * is a 500 so Stripe retries (200/2xx tells Stripe the event was
+ * consumed and stops retries).
+ */
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe";

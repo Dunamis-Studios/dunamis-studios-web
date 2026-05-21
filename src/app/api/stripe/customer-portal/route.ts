@@ -1,3 +1,11 @@
+/**
+ * POST /api/stripe/customer-portal: mint a single-use Stripe Billing
+ * Portal link for the entitlement's Customer and return the URL.
+ * Used by the "Manage billing" CTA on the Debrief detail page; the
+ * portal lets customers update payment method, view invoices, and
+ * download PDFs without the studio building those screens ourselves.
+ * Return URL routes the customer back to the same detail page.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiError, parseJson } from "@/lib/api";

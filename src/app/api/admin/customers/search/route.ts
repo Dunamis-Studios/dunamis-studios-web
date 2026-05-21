@@ -1,3 +1,10 @@
+/**
+ * As-you-type customer search for the admin tools. Rate-limited
+ * per admin email (not IP) so admins on the same NAT don't share a
+ * bucket. Currently exact-email match; the `results` array shape is
+ * forward-compatible with fuzzy/prefix expansion later. Also
+ * services the one-shot account lookup the license issuance UI uses.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

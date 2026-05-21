@@ -1,3 +1,9 @@
+/**
+ * Lead-capture endpoint for the Tech Stack Cost Audit free tool.
+ * Standard tool-report shape: server recomputes the audit, persists
+ * canonical to Redis, mirrors to HubSpot Forms, sends the Resend
+ * email. Persistence is the only hard-fail leg.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { z } from "zod";

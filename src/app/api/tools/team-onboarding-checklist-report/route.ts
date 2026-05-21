@@ -1,3 +1,8 @@
+/**
+ * Lead-capture endpoint for the Team Onboarding Checklist free
+ * tool. Standard tool-report shape: canonical Redis write,
+ * HubSpot Forms mirror, Resend email.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { z } from "zod";

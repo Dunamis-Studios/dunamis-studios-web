@@ -1,3 +1,13 @@
+/**
+ * Free a single activation slot on an Atelier license. Accepts two
+ * body shapes for two auth modes: the Atelier desktop client authn
+ * by sending the verbatim license_string, the customer portal authn
+ * by session cookie + license-email match. See POST docstring for
+ * the per-source reason tagging used by the activation audit trail.
+ *
+ * Admin-driven deactivation lives in the admin/customers tree under
+ * activations/[activation_id]/deactivate and is not routed here.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

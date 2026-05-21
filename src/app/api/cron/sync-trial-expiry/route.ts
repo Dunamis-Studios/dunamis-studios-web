@@ -1,3 +1,10 @@
+/**
+ * Daily cron: scan Sync customers in trial_active, fire T-3
+ * reminder emails, fire T-0 transition emails, and flip the status
+ * to cancelled_in_grace at T-0. Vercel scheduler hits this once a
+ * day with the CRON_SECRET bearer. See helper docstrings for the
+ * email-idempotency guards.
+ */
 import { NextResponse } from "next/server";
 
 import {

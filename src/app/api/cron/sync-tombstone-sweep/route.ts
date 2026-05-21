@@ -1,3 +1,10 @@
+/**
+ * Defensive cron: re-asserts the 90-day TTL on every Sync tombstone
+ * row in case a writer ever forgot to set `ex`. In a healthy system
+ * this cron does zero work; its value is catching the regression
+ * before tombstones accrete into permanent index bloat. See helper
+ * docstring for the TTL invariant.
+ */
 import { NextResponse } from "next/server";
 
 import { redis } from "@/lib/redis";

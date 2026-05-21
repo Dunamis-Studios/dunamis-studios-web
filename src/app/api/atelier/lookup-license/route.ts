@@ -1,3 +1,11 @@
+/**
+ * Public self-service "I lost my license" lookup endpoint. The hard
+ * design constraint is anti-enumeration: every response shape is
+ * identical, every code path returns 200, infrastructure failures
+ * are swallowed into the success body, and a honeypot field catches
+ * obvious bots. See POST docstring for the full enumeration-defense
+ * contract.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

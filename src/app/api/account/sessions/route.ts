@@ -1,3 +1,16 @@
+/**
+ * /api/account/sessions: list and bulk-revoke active sessions for
+ * the signed-in account.
+ *
+ * GET returns every session record tagged with a `current: true`
+ * flag on the one driving the request, so the settings UI can
+ * label and protect that row.
+ *
+ * DELETE is the "sign out everywhere else" action: revokes every
+ * session for the account except the current one, leaving the
+ * caller signed in. Per-session revoke (kicking a specific other
+ * device) lives in the [sessionId] sibling route.
+ */
 import { NextResponse } from "next/server";
 import { apiError } from "@/lib/api";
 import {

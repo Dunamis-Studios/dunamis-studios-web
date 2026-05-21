@@ -1,3 +1,12 @@
+/**
+ * POST /api/admin/customers/[account_id]/delete: admin-initiated
+ * account deletion. Soft-delete via service_admin_delete_account
+ * with the 30-day recovery window; the reason field is required
+ * and lands in the audit log alongside the email and deletedAt
+ * stamp. Related records (licenses, sessions, entitlements) are
+ * preserved during the recovery window and reaped later by the
+ * hard-delete sweep.
+ */
 import { z } from "zod";
 
 import { runAdminAction, AdminActionError } from "@/lib/admin/action-runner";

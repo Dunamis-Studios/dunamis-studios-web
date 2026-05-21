@@ -1,3 +1,18 @@
+/**
+ * POST /api/auth/verify-email: consume a verification token, flip
+ * emailVerified on the matching account, and delete the token.
+ *
+ * Three "invalid or expired" rejection paths intentionally share
+ * the same generic copy so the response can't be used to distinguish
+ * "no such token" from "token was for a different email address now."
+ * The stale-email path (record.email differs from account.email)
+ * covers the edge case where a user changed their email between
+ * signup and clicking the verification link.
+ *
+ * Idempotent on the verified=true side: re-clicking the link after
+ * verification deletes the token and returns 200 without rewriting
+ * the account.
+ */
 import { NextResponse } from "next/server";
 import { redis, KEY } from "@/lib/redis";
 import { verifyEmailSchema } from "@/lib/validation";

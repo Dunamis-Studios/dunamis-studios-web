@@ -1,3 +1,10 @@
+/**
+ * List every EULA acceptance record for a single Atelier license,
+ * newest-first. Slim license projection ships alongside the
+ * acceptances so the EULA history modal in /admin/licenses can
+ * render the license context (email, status, issued_at) without a
+ * separate fetch.
+ */
 import { NextResponse } from "next/server";
 
 import {

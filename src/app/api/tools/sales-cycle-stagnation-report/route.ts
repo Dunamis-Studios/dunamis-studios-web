@@ -1,3 +1,8 @@
+/**
+ * Lead-capture endpoint for the Sales Cycle Stagnation Analyzer
+ * free tool. Standard three-effect shape: canonical Redis write
+ * (hard fail), HubSpot Forms mirror, Resend email.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { z } from "zod";

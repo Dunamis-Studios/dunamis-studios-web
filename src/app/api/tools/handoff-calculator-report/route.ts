@@ -1,3 +1,9 @@
+/**
+ * Lead-capture endpoint for the Handoff Time Calculator free tool.
+ * Same three-effect shape as the other tool report routes: Redis
+ * canonical write (hard fail), HubSpot Forms mirror, Resend email
+ * (both best-effort).
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { z } from "zod";

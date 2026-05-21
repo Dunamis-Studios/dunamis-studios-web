@@ -1,3 +1,10 @@
+/**
+ * Outbox-flush batch upload for the Sync blob store. Trades one
+ * round-trip for many small blobs by encoding each ciphertext as
+ * base64 inside a JSON envelope (mobile browsers ship inconsistent
+ * multipart streaming support). Per-item failure isolation lets a
+ * partial flush still drain the queue.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

@@ -1,3 +1,11 @@
+/**
+ * Mark an Atelier license as refunded or revoked. The signed
+ * license string itself stays cryptographically valid (offline
+ * verification still passes), but the next activate/heartbeat
+ * online check branches on the recorded status to lock the
+ * client. See POST docstring for the per-status lock policy
+ * (immediate vs 14-day grace).
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

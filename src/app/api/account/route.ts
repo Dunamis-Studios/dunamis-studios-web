@@ -1,3 +1,15 @@
+/**
+ * DELETE /api/account: customer-initiated account deletion (the
+ * Danger Zone button on /account/settings). Soft-deletes the account
+ * with a 30-day recovery window (purge happens out-of-band via a
+ * scheduled job), destroys every session, and clears the cookie so
+ * the same browser cannot continue using a now-orphaned session.
+ *
+ * The 30-day window is a deliberate UX choice: customers who hit
+ * Delete by mistake can email support to reverse it. The grace
+ * period also lets us untangle linked HubSpot installs cleanly via
+ * the customer-facing app surfaces rather than racing a hard delete.
+ */
 import { NextResponse } from "next/server";
 import { apiError } from "@/lib/api";
 import {

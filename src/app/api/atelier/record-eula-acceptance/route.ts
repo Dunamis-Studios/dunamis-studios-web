@@ -1,3 +1,12 @@
+/**
+ * Persist the customer's acceptance of the personalized Atelier
+ * EULA. Re-renders the EULA server-side from the same inputs the
+ * preview used, recomputes the sha256, verifies the client's
+ * claimed hash matches, then writes the audit record. The
+ * recomputation step is the trust boundary that prevents a tampered
+ * desktop from "accepting" doctored text. See POST docstring for
+ * the determinism contract shared with /api/atelier/preview-eula.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createHash } from "node:crypto";

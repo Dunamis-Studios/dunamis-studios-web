@@ -1,3 +1,9 @@
+/**
+ * Admin-driven deactivation of a single Atelier activation slot.
+ * URL is keyed by activation_id (the canonical Redis key) rather
+ * than machine hash so admins can copy ids directly from the
+ * Activations table in the customer detail page.
+ */
 import { runAdminAction } from "@/lib/admin/action-runner";
 import { service_admin_deactivate_device } from "@/lib/admin/services";
 

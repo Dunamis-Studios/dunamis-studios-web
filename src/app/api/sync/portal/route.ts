@@ -1,3 +1,10 @@
+/**
+ * Mint a Stripe Billing Portal session for the caller's Sync
+ * subscription. Used by the dunamisstudios.net account UI and the
+ * Manage Subscription link inside Atelier. Intentionally cookie-
+ * only auth: managing the subscription is a deliberate web action,
+ * not something a Bearer-token-only PWA flow should drive.
+ */
 import { NextResponse } from "next/server";
 
 import { apiError } from "@/lib/api";

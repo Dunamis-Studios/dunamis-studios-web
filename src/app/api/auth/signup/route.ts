@@ -1,3 +1,18 @@
+/**
+ * POST /api/auth/signup: create a Dunamis account from the signup
+ * form, mint a session, send verification + welcome emails, and
+ * (optionally) attempt to link a HubSpot install-handoff claim in
+ * the same call. A claim failure does NOT roll back account
+ * creation; the response carries a `claim` sub-result so the form
+ * can route to the entitlement page on success or surface the link
+ * error as a non-fatal toast otherwise.
+ *
+ * Stamps ToS + Privacy acceptance from LEGAL_METADATA at the
+ * current versions, batches the HubSpot account_created plus two
+ * terms_accepted events through trackEvents so the contact upsert
+ * is coordinated, and (in the claim-linked path) stamps DPA +
+ * Service Addendum consent post-link via computePendingConsentStamps.
+ */
 import { NextResponse } from "next/server";
 import { redis, KEY } from "@/lib/redis";
 import { signupSchema, parseClaimToken } from "@/lib/validation";

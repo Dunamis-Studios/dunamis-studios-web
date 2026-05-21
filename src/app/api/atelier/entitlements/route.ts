@@ -1,3 +1,12 @@
+/**
+ * Desktop-facing entitlements index. Differs from
+ * /api/atelier/my-licenses in two ways: it accepts cookie OR Bearer
+ * JWT auth (so the Atelier desktop can call it on launch), and it
+ * INCLUDES key_string in the response so a freshly-signed-in
+ * install can persist the license without an additional paste step.
+ * See the GET docstring for the trust-boundary reasoning behind
+ * exposing key_string here while the portal endpoint suppresses it.
+ */
 import { NextResponse } from "next/server";
 
 import { getCurrentSessionAny } from "@/lib/session";

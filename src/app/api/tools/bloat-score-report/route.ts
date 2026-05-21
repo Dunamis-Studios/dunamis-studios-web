@@ -1,3 +1,11 @@
+/**
+ * Lead-capture endpoint for the HubSpot Bloat Score free tool. The
+ * server re-runs the scoring lib (same module the in-page preview
+ * uses) so the persisted record and the email are canonical
+ * regardless of client tampering. Three side effects: Redis write
+ * (source of truth, hard-fails the request), HubSpot Forms mirror,
+ * and Resend transactional email (both best-effort).
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { z } from "zod";

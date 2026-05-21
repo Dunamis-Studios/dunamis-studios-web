@@ -1,3 +1,12 @@
+/**
+ * POST /api/support-submit: support ticket intake. Validates a
+ * category + verification key combo, optionally verifies the key
+ * against the time-windowed derivation in the verification-key
+ * service, dispatches the ticket to the HubSpot ticketing form
+ * with the per-category conditional fields, and emits the
+ * confirmation copy. Turnstile-gated, rate-limited, and the IP is
+ * truncated before logging per the privacy contract.
+ */
 import { NextResponse } from "next/server";
 
 import { apiError, parseJson } from "@/lib/api";

@@ -1,3 +1,12 @@
+/**
+ * POST /api/kb/[slug]/feedback: append free-text feedback to a KB
+ * article. Gated on having already rated the same article (per
+ * IP hash) so the spam surface is limited to people who actually
+ * read the page enough to thumbs-up or -down it. Truncated to a
+ * 100-entry rolling LIST per article; only the first 8 chars of the
+ * IP hash are persisted so the admin view has weak correlation
+ * without re-identification.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiError, parseJson } from "@/lib/api";

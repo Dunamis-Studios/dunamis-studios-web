@@ -1,3 +1,9 @@
+/**
+ * POST /api/courses/signup: email-course signup capture. Persists
+ * the canonical record to Redis and mirrors to the HubSpot Email
+ * Courses form. The drip schedule itself runs in HubSpot via the
+ * workflow attached to the form, so this route never calls Resend.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { z } from "zod";

@@ -1,3 +1,11 @@
+/**
+ * Tiny session + active-product probe for the support
+ * verification-key widget. Lets the widget choose Mode A vs Mode B
+ * at hydration time without forcing the host page (specifically
+ * statically-prerendered KB articles) to become dynamic. The
+ * standalone /help/contact-support page already resolves the user
+ * prop server-side and does not call this.
+ */
 import { NextResponse } from "next/server";
 
 import { getCurrentSession } from "@/lib/session";

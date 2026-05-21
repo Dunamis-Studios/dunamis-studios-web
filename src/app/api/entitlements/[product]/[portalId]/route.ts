@@ -1,3 +1,12 @@
+/**
+ * GET /api/entitlements/[product]/[portalId]: fetch a single
+ * entitlement record by product + portal id. Returns 404 (not 403)
+ * when the entitlement is owned by another account, so the response
+ * cannot be used to enumerate which portals exist or whose they are.
+ * Same 404 fires on a missing record. The /account dashboard reads
+ * this when refreshing a single portal's status after a Stripe
+ * mutation lands.
+ */
 import { NextResponse } from "next/server";
 import { apiError } from "@/lib/api";
 import { getCurrentSession } from "@/lib/session";

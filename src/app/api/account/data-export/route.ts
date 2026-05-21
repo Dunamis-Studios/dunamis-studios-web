@@ -1,3 +1,9 @@
+/**
+ * Self-serve GDPR Article 15 / CCPA right-to-know data export for
+ * the signed-in account. Builds the export server-side from the
+ * shared data-export library and streams it as a JSON download.
+ * See GET docstring for the lost-credentials fallback path.
+ */
 import { NextResponse } from "next/server";
 import { apiError } from "@/lib/api";
 import { getCurrentSession } from "@/lib/session";

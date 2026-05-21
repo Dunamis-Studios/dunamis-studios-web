@@ -1,3 +1,10 @@
+/**
+ * Hard-delete every Sync record for the caller's customer (blobs,
+ * manifests, customer record, all index entries). Triggered when a
+ * customer deletes their Dunamis account; the soft-delete grace
+ * window does not apply to Sync data since the ciphertext is opaque
+ * to us and the encryption keys live only on the customer's devices.
+ */
 import { NextResponse } from "next/server";
 
 import { apiError } from "@/lib/api";

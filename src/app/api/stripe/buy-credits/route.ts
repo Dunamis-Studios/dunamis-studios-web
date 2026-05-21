@@ -1,3 +1,15 @@
+/**
+ * POST /api/stripe/buy-credits: mint a PaymentIntent for an add-on
+ * credit pack (small, medium, large, or bulk). Frontend Stripe
+ * Elements confirms against the returned clientSecret. The webhook
+ * picks up payment_intent.succeeded and writes the new credit
+ * balance to the entitlement.
+ *
+ * The previousPaymentIntentId cleanup exists because the Buy credits
+ * modal re-creates the PI on every pack selection change, leaving
+ * orphaned incomplete intents that Stripe otherwise lingers on for
+ * 23 hours before auto-expiring.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiError, parseJson } from "@/lib/api";

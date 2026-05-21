@@ -1,3 +1,11 @@
+/**
+ * POST /api/stripe/create-setup-intent: step 1 of the SetupIntent-
+ * first Debrief subscribe flow. Mints an off-session SetupIntent
+ * against the entitlement's Stripe Customer (creating that Customer
+ * if it does not exist yet) and returns the clientSecret for the
+ * frontend Stripe Elements card form to confirm against. The actual
+ * subscription is created later in create-subscription.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiError, parseJson } from "@/lib/api";

@@ -1,3 +1,15 @@
+/**
+ * POST/DELETE /api/account/logo: customer brand-logo upload and
+ * removal. Multipart upload to Vercel Blob under a stable per-account
+ * path so re-uploads overwrite in place when the file extension
+ * matches; extension changes trigger a delete of the orphaned prior
+ * blob after the new one is committed.
+ *
+ * The 2 MB cap and the JPEG/PNG/SVG/WebP allowlist also gate the
+ * Atelier desktop logo upload, which posts here directly. GIF is
+ * intentionally excluded since animated logos in product chrome are
+ * a footgun.
+ */
 import { NextResponse } from "next/server";
 import { put as vercelBlobPut, del as vercelBlobDel } from "@vercel/blob";
 

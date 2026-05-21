@@ -1,3 +1,11 @@
+/**
+ * Notify-on-launch interest capture for the Atelier marketing
+ * page's #buy-atelier form. Atelier is in active development; this
+ * endpoint does NOT take payment, issue licenses, or ship installers
+ * yet. Submissions land in a launch-notification list and trigger a
+ * single email when the installer ships. Route name retained from
+ * the original shape since renaming would break the form post URL.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { redis, KEY } from "@/lib/redis";

@@ -1,3 +1,9 @@
+/**
+ * Lead-capture endpoint for the Lead Scoring Model Builder free
+ * tool. Re-runs the model build server-side, persists canonical
+ * results to Redis, mirrors to HubSpot Forms, dispatches the
+ * Resend email. Persistence is the only hard-failure path.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { z } from "zod";

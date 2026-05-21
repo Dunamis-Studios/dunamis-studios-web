@@ -1,3 +1,11 @@
+/**
+ * Revoke an Atelier license with an admin-supplied reason and an
+ * optional revocation mode (immediate hard-lock vs grace_14d soft
+ * warning). Distinct from refund: revoke is policy enforcement. The
+ * activate/heartbeat endpoints branch on the mode to decide how
+ * aggressively to lock the client. Reason lands on the license
+ * record and the audit-log entry.
+ */
 import { z } from "zod";
 
 import { runAdminAction, AdminActionError } from "@/lib/admin/action-runner";

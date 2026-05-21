@@ -1,3 +1,11 @@
+/**
+ * PATCH /api/admin/customers/[account_id]/profile: admin-driven
+ * profile edit for a customer account. Runs through the shared
+ * admin action runner so authentication, audit logging, and
+ * before/after change tracking come for free. Email rotations use
+ * rotateAccountEmail under the hood so the email-to-id index stays
+ * consistent on rename.
+ */
 import { z } from "zod";
 
 import { runAdminAction, AdminActionError } from "@/lib/admin/action-runner";

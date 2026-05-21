@@ -1,3 +1,14 @@
+/**
+ * POST /api/stripe/cancel-subscription: schedule cancel-at-period-end
+ * on the Debrief subscription tied to a portal. Customer keeps access
+ * through the current billing period; the webhook flips the
+ * entitlement to canceled when Stripe emits the final
+ * customer.subscription.deleted event. Mirror surface for reversing
+ * the cancel is /api/stripe/reactivate-subscription.
+ *
+ * Refuses on a 404 when the entitlement is owned by another account
+ * so the response cannot be used to probe other customers' portals.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiError, parseJson } from "@/lib/api";

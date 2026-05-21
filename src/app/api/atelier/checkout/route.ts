@@ -1,3 +1,10 @@
+/**
+ * Stripe Checkout session creator for the perpetual Atelier license
+ * ($149, one-time). Single-SKU mirror of /api/sync/checkout. Auth
+ * via cookie OR Bearer JWT so the Atelier desktop can call it post-
+ * sign-in. See POST docstring for the full deep-link
+ * post-purchase choreography.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

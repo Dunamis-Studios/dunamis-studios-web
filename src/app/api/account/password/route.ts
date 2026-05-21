@@ -1,3 +1,15 @@
+/**
+ * PATCH /api/account/password: signed-in password change. Requires
+ * the current password (no token; this is the in-app change path,
+ * not reset). On success, kills every other session for the account
+ * and mints a fresh session for the caller so the active browser
+ * does not log itself out.
+ *
+ * Wiping sibling sessions matches the reset-password contract:
+ * password rotations always end the cohort of devices that knew the
+ * prior credential. Reset is for "I lost it," this is for "I want a
+ * new one."
+ */
 import { NextResponse } from "next/server";
 import { changePasswordSchema } from "@/lib/validation";
 import { apiError, parseJson } from "@/lib/api";

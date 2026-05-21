@@ -1,3 +1,11 @@
+/**
+ * POST /api/notify: "notify me on launch" signup for unshipped
+ * Dunamis products. Persists the canonical record to Redis,
+ * mirrors to the HubSpot notify form, and sends a single
+ * confirmation email. The product slug must be one of the
+ * PRODUCT_CATALOG_SLUGS; the matching PRODUCT_META supplies the
+ * display name used in the confirmation.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { redis, KEY } from "@/lib/redis";
