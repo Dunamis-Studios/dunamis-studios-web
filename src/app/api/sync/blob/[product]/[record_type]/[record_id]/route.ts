@@ -1,3 +1,10 @@
+/**
+ * Single-blob CRUD endpoints for the Sync blob store. Auth is
+ * Bearer-only; the server only handles ciphertext and never sees
+ * plaintext or decrypts metadata. GET fetches, PUT uploads, DELETE
+ * writes the tombstone. The path parts (product, record_type,
+ * record_id) form the storage key via buildBlobKey.
+ */
 import { NextResponse } from "next/server";
 
 import { apiError } from "@/lib/api";

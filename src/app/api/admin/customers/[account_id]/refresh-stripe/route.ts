@@ -1,3 +1,11 @@
+/**
+ * POST /api/admin/customers/[account_id]/refresh-stripe: read-only
+ * Stripe drift report. For every entitlement on the account, pulls
+ * the live Customer, active subscriptions, and recent PaymentIntents
+ * and diffs them against the local entitlement record. No writes
+ * happen here; auto-reconciliation is intentionally deferred until
+ * the drift surface is well understood.
+ */
 import { runAdminAction } from "@/lib/admin/action-runner";
 import { service_admin_refresh_from_stripe } from "@/lib/admin/services";
 

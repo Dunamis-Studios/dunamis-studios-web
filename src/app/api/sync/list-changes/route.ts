@@ -1,3 +1,9 @@
+/**
+ * Cursor-paginated delta read for Sync clients. Returns blob and
+ * tombstone metadata for everything modified since the supplied
+ * timestamp, capped by limit. Drives the catch-up scan a client
+ * runs after coming online or pairing a new device.
+ */
 import { NextResponse } from "next/server";
 
 import { apiError } from "@/lib/api";

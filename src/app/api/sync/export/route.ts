@@ -1,3 +1,9 @@
+/**
+ * Streams every Sync blob and manifest belonging to the caller's
+ * customer as one downloadable archive. Used by the customer-facing
+ * "Export my Sync data" surface. Auth accepts cookie or Bearer so
+ * either the web account UI or the desktop/PWA can drive the export.
+ */
 import { NextResponse } from "next/server";
 
 import { apiError } from "@/lib/api";

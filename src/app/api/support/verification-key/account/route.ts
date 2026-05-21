@@ -1,3 +1,10 @@
+/**
+ * Auth-only verification-key issuer for the support form (Mode A).
+ * Requires a signed-in customer with at least one active product
+ * (any active Atelier license or HubSpot entitlement). Derives a
+ * time-windowed key the support pipeline can re-verify later to
+ * confirm the requesting account.
+ */
 import { NextResponse } from "next/server";
 
 import { apiError } from "@/lib/api";

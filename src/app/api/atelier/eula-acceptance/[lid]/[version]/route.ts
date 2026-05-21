@@ -1,3 +1,11 @@
+/**
+ * Customer-facing read of a single accepted-EULA artifact. Drives
+ * the "Download my accepted EULA" button on /account/atelier-licenses.
+ * Ownership check uses account_id match with an email-fallback for
+ * unbacked migration-window records (account_id:null but email
+ * matches). See the listLicensesForAccountWithFallback helper for the
+ * matching fallback semantics on the index paths.
+ */
 import { NextResponse } from "next/server";
 
 import { getCurrentSession } from "@/lib/session";

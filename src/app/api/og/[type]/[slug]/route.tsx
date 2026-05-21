@@ -1,3 +1,14 @@
+/**
+ * GET /api/og/[type]/[slug]: dynamic OpenGraph image generator for
+ * guide and article posts. Returns a 1200x630 PNG generated via
+ * next/og's ImageResponse with the post title, type label, and a
+ * dark radial-gradient background that matches the marketing
+ * aesthetic.
+ *
+ * Forced dynamic so a republish picks up new title copy without a
+ * cache flush. Cache-control still applies at the CDN since the
+ * URL is keyed by type + slug.
+ */
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import { getPost } from "@/lib/content";

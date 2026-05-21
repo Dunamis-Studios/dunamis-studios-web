@@ -1,3 +1,9 @@
+/**
+ * Sign + persist an Atelier license without sending email. Sibling
+ * surface to /api/admin/issue-license; the difference is purely
+ * whether the recipient gets the auto-delivery email. Used when an
+ * admin wants the license string for an out-of-band channel.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

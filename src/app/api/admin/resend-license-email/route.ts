@@ -1,3 +1,9 @@
+/**
+ * Re-send the original Atelier license email for an existing
+ * license id. Does not re-sign; the cryptographic signature stays
+ * the original one, so the recipient sees the same key they
+ * already received. Used by the lost-key support flow.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

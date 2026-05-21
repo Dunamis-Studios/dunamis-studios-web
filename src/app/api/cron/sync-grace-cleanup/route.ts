@@ -1,3 +1,9 @@
+/**
+ * Daily cron: scan Sync customers in cancelled_in_grace, hard-
+ * delete every blob and manifest once their grace window expires,
+ * email a final "Sync data deleted" notice, and flip the customer
+ * record to expired. CRON_SECRET bearer auth via authorizeCron.
+ */
 import { NextResponse } from "next/server";
 
 import { redis } from "@/lib/redis";

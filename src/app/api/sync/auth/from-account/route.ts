@@ -1,3 +1,11 @@
+/**
+ * Account-bound Sync access token issuance. The Atelier desktop is
+ * already signed in to the Dunamis account and presents its account
+ * JWT to receive a Sync token bound to whichever sync-customer
+ * record is linked to that account. Replaces the post-checkout
+ * exchange-code dance for accounts; the exchange/QR endpoint
+ * remains for PWA pairing and legacy callers.
+ */
 import { NextResponse } from "next/server";
 
 import { apiError } from "@/lib/api";

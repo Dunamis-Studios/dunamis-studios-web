@@ -1,3 +1,9 @@
+/**
+ * POST /api/contact-submit: marketing-page contact form receiver.
+ * Dispatches to HubSpot Forms with page-context metadata derived
+ * from the `source` discriminator (custom-development vs build-
+ * services vs homepage). Turnstile-gated to keep the inbox quiet.
+ */
 import { NextResponse } from "next/server";
 import { apiError, parseJson } from "@/lib/api";
 import {

@@ -1,3 +1,11 @@
+/**
+ * DELETE /api/account/sessions/[sessionId]: revoke a specific
+ * session by id. Refuses to act on a session that does not belong
+ * to the caller (404, so the response cannot be used to probe other
+ * accounts' session ids). If the caller revokes its own session,
+ * the cookie is cleared in the same call so the browser does not
+ * keep a token for a session that no longer exists.
+ */
 import { NextResponse } from "next/server";
 import { apiError } from "@/lib/api";
 import { redis, KEY } from "@/lib/redis";

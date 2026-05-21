@@ -1,3 +1,10 @@
+/**
+ * Email-keyed verification-key issuer for the support form (Mode B).
+ * Mails the derived key to the address the support submitter typed
+ * so the support form can paste it back without requiring sign-in.
+ * Always 200 to preserve enumeration resistance; see hashing /
+ * windowing in the service helpers.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

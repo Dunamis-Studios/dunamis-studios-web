@@ -1,3 +1,11 @@
+/**
+ * POST /api/stripe/change-plan: tier change (upgrade or downgrade)
+ * for a Debrief subscription. Swaps the subscription item to the
+ * new tier's price, with proration handled by Stripe per its
+ * default schedule. The webhook listener picks up the resulting
+ * customer.subscription.updated event and rewrites the entitlement
+ * tier + monthly allotment in Redis.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiError, parseJson } from "@/lib/api";

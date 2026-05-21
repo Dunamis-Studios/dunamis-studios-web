@@ -1,3 +1,10 @@
+/**
+ * Atelier license activation endpoint. Binds a license to a device,
+ * with the 2-of-3 hardware-component match rule refreshing the slot
+ * on hardware swaps (motherboard, CPU, etc.) instead of consuming a
+ * new slot. See POST docstring for the response-shape contract and
+ * the rationale for the server-side license string equality check.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

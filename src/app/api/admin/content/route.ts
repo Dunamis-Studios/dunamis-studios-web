@@ -1,3 +1,13 @@
+/**
+ * Admin content authoring endpoints. POST creates or updates a
+ * guide/article post (auto-slug if not supplied, dedupe via
+ * generateUniqueSlug, FAQ/comparison/related-products normalized);
+ * DELETE removes a post. Both gated by requireAdmin so the surface
+ * is unavailable to anyone without the admin role.
+ *
+ * The companion images/ subdirectory route handles cover image
+ * uploads to Vercel Blob.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/session";
 import {

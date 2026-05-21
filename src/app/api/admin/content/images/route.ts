@@ -1,3 +1,14 @@
+/**
+ * POST /api/admin/content/images: image upload endpoint for the
+ * post editor. Uploads to Vercel Blob under the private "content/"
+ * prefix, then writes a Redis metadata record keyed by a fresh
+ * UUID so the editor can reference the image by id and the admin
+ * tools can list uploaded images later.
+ *
+ * Filenames carry a Date.now() prefix so re-uploads can't collide,
+ * which avoids needing allowOverwrite (and the destructive overwrite
+ * semantics it would otherwise allow on shared filenames).
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 import { requireAdmin } from "@/lib/session";

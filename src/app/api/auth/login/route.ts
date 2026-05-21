@@ -1,3 +1,16 @@
+/**
+ * POST /api/auth/login: verify credentials, mint a session, set the
+ * HttpOnly cookie, and (for header-gated native clients) return the
+ * JWT in the body so a desktop shell can drive its own session.
+ *
+ * Hardened against email-existence enumeration by burning a real
+ * bcrypt cost on the "no such account" path. Also rate-limits at
+ * 10 attempts per 15 minutes per IP. See DUMMY_BCRYPT_HASH below.
+ *
+ * The X-Atelier-Client opt-in lets the Atelier desktop app receive
+ * the JWT explicitly (it cannot read the HttpOnly cookie); browser
+ * callers continue to see the existing `{ ok: true }` shape.
+ */
 import { NextResponse } from "next/server";
 import { loginSchema } from "@/lib/validation";
 import { apiError, parseJson } from "@/lib/api";

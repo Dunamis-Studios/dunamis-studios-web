@@ -1,3 +1,10 @@
+/**
+ * Daily check-in from the Atelier desktop client. Refreshes the
+ * activation's last-seen timestamp and surfaces revocation /
+ * deactivation state so the client can decide whether to keep
+ * running, show a soft warning, or lock. See POST docstring for the
+ * three-job breakdown and the per-status client behavior.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

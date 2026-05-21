@@ -1,3 +1,10 @@
+/**
+ * Stripe Checkout session creator for the three Sync SKUs. Auth via
+ * cookie or Bearer JWT. The customer is expected to have signed in
+ * to dunamisstudios.net before clicking Subscribe inside Atelier;
+ * Atelier opens the URL in the default browser and the post-
+ * checkout deep link returns the customer to the desktop.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

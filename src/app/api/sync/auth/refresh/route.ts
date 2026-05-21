@@ -1,3 +1,10 @@
+/**
+ * Trade a still-valid 24h Sync access token for a fresh 24h token.
+ * Fully expired subscriptions (status=expired, blobs deleted) cannot
+ * refresh; the customer must re-subscribe and re-pair. Cancelled-in-
+ * grace can still refresh because read paths render the warning UI
+ * themselves.
+ */
 import { NextResponse } from "next/server";
 
 import { apiError } from "@/lib/api";

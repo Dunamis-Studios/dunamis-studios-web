@@ -1,3 +1,9 @@
+/**
+ * One-click Atelier license issuance for admins: sign, persist to
+ * Redis, and email the recipient in a single request. See POST
+ * docstring for the failure-isolation contract between the signing,
+ * persistence, and email-send phases.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

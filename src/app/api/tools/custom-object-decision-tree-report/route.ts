@@ -1,3 +1,11 @@
+/**
+ * Lead-capture endpoint for the Custom Object Decision Tree free
+ * tool. Mirrors the bloat-score-report shape: server re-evaluates
+ * the tree from the same logic module the page uses, persists the
+ * canonical record to Redis, mirrors to HubSpot Forms, and sends
+ * the Resend report email. Persistence failure is fatal; the other
+ * two side effects are best-effort.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { z } from "zod";

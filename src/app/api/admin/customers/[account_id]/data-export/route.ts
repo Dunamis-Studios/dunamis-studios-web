@@ -1,3 +1,10 @@
+/**
+ * Admin-driven data export for a customer account. Builds the same
+ * export the self-serve /api/account/data-export endpoint returns
+ * and ships it inline so the admin can download it directly. The
+ * customer is not notified; the audit log records the action with
+ * the filename and timestamp.
+ */
 import { runAdminAction } from "@/lib/admin/action-runner";
 import { service_admin_trigger_data_export } from "@/lib/admin/services";
 

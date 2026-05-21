@@ -1,3 +1,11 @@
+/**
+ * Render the personalized Atelier EULA for the in-app acceptance
+ * screen. Returns the rendered text plus its sha256 so the desktop
+ * can show, hash-pin, and later submit the acceptance. The matching
+ * record-eula-acceptance route re-derives the same render from the
+ * same inputs and verifies the hash; see POST docstring for the
+ * determinism contract that lets the preview and accept calls agree.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createHash } from "node:crypto";

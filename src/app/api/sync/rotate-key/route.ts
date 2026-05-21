@@ -1,3 +1,11 @@
+/**
+ * Bump the customer's Sync key generation. Subsequent uploads
+ * encrypted with the old generation are rejected as
+ * stale_key_generation; the client is responsible for re-encrypting
+ * and re-uploading every record plus the manifest before closing
+ * the rotation modal. The server only enforces the generation
+ * check.
+ */
 import { NextResponse } from "next/server";
 
 import { apiError } from "@/lib/api";

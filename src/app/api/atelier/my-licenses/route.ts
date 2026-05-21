@@ -1,3 +1,10 @@
+/**
+ * Customer portal index for Atelier licenses. Returns every license
+ * tied to the signed-in account's email plus per-license slot
+ * projections, newest-first. The license_string itself is
+ * deliberately excluded so the portal cannot become a leak surface;
+ * the lookup endpoint mails the string to the verified inbox.
+ */
 import { NextResponse } from "next/server";
 
 import { getCurrentSession } from "@/lib/session";

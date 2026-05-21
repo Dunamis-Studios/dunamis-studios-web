@@ -1,3 +1,11 @@
+/**
+ * POST /api/stripe/reactivate-subscription: reverse a scheduled
+ * cancel by flipping cancel_at_period_end back to false. Only valid
+ * while the subscription is still in its grace period (i.e., the
+ * webhook has not yet processed customer.subscription.deleted).
+ * After the period actually ends, the customer must subscribe
+ * again rather than reactivate.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiError, parseJson } from "@/lib/api";

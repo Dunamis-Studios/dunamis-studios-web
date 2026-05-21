@@ -1,3 +1,11 @@
+/**
+ * Cursor-paginated read of the per-account audit log LIST. The
+ * customer detail page initial-loads server-side; the Load More
+ * button advances `start` by `count` and uses hasMore to hide
+ * itself. Intentionally outside runAdminAction so reading the log
+ * does not itself emit a log entry; admin-email rate limiting is
+ * the only abuse guard.
+ */
 import { NextResponse } from "next/server";
 
 import {

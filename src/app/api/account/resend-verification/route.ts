@@ -1,3 +1,11 @@
+/**
+ * POST /api/account/resend-verification: mint a fresh 24h verification
+ * token for the signed-in account and dispatch the email. Rate-limited
+ * at 5 per 15 minutes per account (not per IP) so a user sharing an
+ * office IP can't be locked out by someone else's spam. Returns
+ * `{ ok: true, alreadyVerified: true }` when the email is already
+ * verified so the UI can render the matching confirmation.
+ */
 import { NextResponse } from "next/server";
 import { apiError } from "@/lib/api";
 import { redis, KEY } from "@/lib/redis";

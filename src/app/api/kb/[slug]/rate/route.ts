@@ -1,3 +1,12 @@
+/**
+ * KB article voting endpoint: POST records / toggles / clears a
+ * per-IP vote on a single help-center article. GET is the admin-only
+ * raw-counts probe. Raw counts never reach the reader UI; the public
+ * "Helpful" badge is derived server-side via getHelpfulBadge().
+ *
+ * See each handler's docstring for the rate-limit, idempotency, and
+ * role-gating contracts.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiError, parseJson } from "@/lib/api";

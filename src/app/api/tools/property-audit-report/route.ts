@@ -1,3 +1,9 @@
+/**
+ * Lead-capture endpoint for the Property Audit free tool. Standard
+ * tool-report shape: server re-scores from the same lib the live
+ * preview uses, persists canonical to Redis, mirrors to HubSpot
+ * Forms, sends the Resend report email.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { z } from "zod";

@@ -1,3 +1,10 @@
+/**
+ * Trade a one-time exchange code (post-Stripe-checkout deep link)
+ * or a 5-minute QR pairing token (PWA scan) for a 24-hour Bearer
+ * access token. Single-use on both paths. The body is
+ * discriminated by which field is present; see POST docstring for
+ * the validation contract.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

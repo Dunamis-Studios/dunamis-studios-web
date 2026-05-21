@@ -1,3 +1,10 @@
+/**
+ * Resend the post-purchase Atelier license email scoped to a
+ * customer account. Mirrors the global /api/admin/resend-license-
+ * email but pulls auth + audit context from the account-scoped
+ * admin action runner. Tags the email with isResend:true so the
+ * template renders the appropriate copy.
+ */
 import { runAdminAction } from "@/lib/admin/action-runner";
 import { service_admin_resend_license_email } from "@/lib/admin/services";
 

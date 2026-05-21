@@ -1,3 +1,10 @@
+/**
+ * Read the caller's Sync customer-state record. Dual-auth: Bearer
+ * access token (Atelier desktop, PWA) OR session cookie (web). A
+ * synthetic "none" record stands in for customers who have never
+ * activated Sync so the UI can branch on sync_status uniformly
+ * without special-casing the absent-record path.
+ */
 import { NextResponse } from "next/server";
 
 import { apiError } from "@/lib/api";

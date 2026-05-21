@@ -1,3 +1,14 @@
+/**
+ * HubSpot install -> Dunamis-account handoff endpoint. GET dispatches
+ * the browser to signup, the claim confirmation page, or the linked
+ * dashboard depending on session + entitlement state. POST executes
+ * the link from the claim confirmation page.
+ *
+ * See the GET docstring below for the full routing table and the
+ * reason this lives at /api rather than as a page route under
+ * /account/* (the account layout redirects unauth visitors to
+ * /login, which would break the install-handoff fork to /signup).
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiError, parseJson } from "@/lib/api";

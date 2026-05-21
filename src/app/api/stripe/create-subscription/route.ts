@@ -1,3 +1,13 @@
+/**
+ * POST /api/stripe/create-subscription: step 2 of the SetupIntent-
+ * first subscribe flow. Consumes a SetupIntent (and its attached
+ * payment method) produced by create-setup-intent, then creates the
+ * Debrief subscription with that payment method as the default,
+ * forcing immediate payment via payment_behavior=error_if_incomplete.
+ *
+ * See POST docstring for the 3DS branching contract and the
+ * previousIntentId cleanup semantics.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import type Stripe from "stripe";

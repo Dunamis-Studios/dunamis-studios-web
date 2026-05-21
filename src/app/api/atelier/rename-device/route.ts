@@ -1,3 +1,10 @@
+/**
+ * Customer-portal-only endpoint for renaming an activation slot to
+ * a friendlier label. Common case: three Windows machines all auto-
+ * named DESKTOP-AB12CDE and the customer wants something readable
+ * like "Office Laptop." Auth is session cookie + license-email
+ * match; the Atelier desktop client never calls this endpoint.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

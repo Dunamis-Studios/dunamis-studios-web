@@ -1,3 +1,8 @@
+/**
+ * Lead-capture endpoint for the Workflow Audit free tool. Standard
+ * tool-report shape: server-side re-score, canonical Redis write
+ * (hard fail), HubSpot Forms mirror, Resend email.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { z } from "zod";

@@ -1,3 +1,8 @@
+/**
+ * Persist the signed-in account's preferred session lifetime
+ * (1, 3, or 7 days). New value only applies to subsequent sessions;
+ * see POST docstring for the full contract.
+ */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiError, parseJson } from "@/lib/api";

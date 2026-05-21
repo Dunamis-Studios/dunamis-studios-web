@@ -1,3 +1,11 @@
+/**
+ * Mark an Atelier license as refunded. Distinct from revoke:
+ * refunded clears any revocation metadata and signals retirement
+ * for customer-refund reasons, not policy enforcement. The Stripe
+ * refund itself happens in the Stripe dashboard; this endpoint
+ * only flips the Dunamis-side status flag and writes the audit
+ * log entry.
+ */
 import { runAdminAction } from "@/lib/admin/action-runner";
 import { service_admin_set_refund_flag } from "@/lib/admin/services";
 
