@@ -70,8 +70,8 @@
     "@fontsource-variable/fraunces": "^5.2.9",
     "@fontsource/fraunces": "^5.2.9",
     "@resvg/resvg-js": "^2.6.2",
-    "@tailwindcss/postcss": "^4.3.1",
-    "@types/node": "^26.0.1",
+    "@tailwindcss/postcss": "^4.3.2",
+    "@types/node": "^26.1.0",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.0.2",
     "autoprefixer": "^10.5.2",
@@ -80,7 +80,7 @@
     "eslint-config-next": "16.2.10",
     "postcss": "^8.5.16",
     "tailwindcss": "^4.0.0",
-    "tsx": "^4.22.4",
+    "tsx": "^4.23.0",
     "typescript": "^6.0.3"
   }
 }
