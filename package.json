@@ -67,20 +67,20 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@fontsource-variable/fraunces": "^5.2.9",
-    "@fontsource/fraunces": "^5.2.9",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource/fraunces": "^5.3.0",
     "@resvg/resvg-js": "^2.6.2",
-    "@tailwindcss/postcss": "^4.3.2",
-    "@types/node": "^26.1.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.1.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.0.2",
-    "autoprefixer": "^10.5.2",
+    "autoprefixer": "^10.5.4",
     "dotenv": "^17.4.2",
-    "eslint": "^9.17.0",
+    "eslint": "^9.39.5",
     "eslint-config-next": "16.2.10",
-    "postcss": "^8.5.16",
+    "postcss": "^8.5.20",
     "tailwindcss": "^4.0.0",
-    "tsx": "^4.23.0",
-    "typescript": "^6.0.3"
+    "tsx": "^4.23.1",
+    "typescript": "^7.0.2"
   }
 }
